@@ -1,0 +1,45 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.hello",
+  "version": "1.0.0",
+  "name": "Hello",
+  "description": "Minimal example app with greet and countdown tools. Demonstrates tools, health checks, progress reporting, and cancellation.",
+  "tagline": "Minimal sample app demonstrating tools, health, and streaming",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.png",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "samples",
+  "keywords": ["hello", "greeting", "sample", "countdown"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": true,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": false,
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

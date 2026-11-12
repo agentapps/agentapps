@@ -1,0 +1,38 @@
+/**
+ * Tool and health tests for the {{NAME}} Agent App.
+ */
+
+import { describe, expect, it } from 'vitest';
+import { callTool, runHealthCheck } from './harness.js';
+
+describe('greet', () => {
+  it('greets in the requested language', async () => {
+    const result = await callTool('greet', { name: 'Ana', language: 'es' });
+    expect(result.result).toEqual({ message: 'Hola, Ana!' });
+  });
+
+  it('rejects a missing name', async () => {
+    const result = await callTool('greet', {});
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('echo', () => {
+  it('echoes the text', async () => {
+    const result = await callTool('echo', { text: 'ping' });
+    expect(result.result).toEqual({ echo: 'ping' });
+  });
+});
+
+describe('countdown', () => {
+  it('counts down to zero', async () => {
+    const result = await callTool('countdown', { from: 3, delayMs: 0 });
+    expect(result.result).toEqual({ completed: true, from: 3 });
+  });
+});
+
+describe('health', () => {
+  it('reports ready', async () => {
+    expect((await runHealthCheck()).status).toBe('ready');
+  });
+});

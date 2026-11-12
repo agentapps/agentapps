@@ -1,0 +1,45 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.research",
+  "version": "1.0.0",
+  "name": "Research Assistant",
+  "description": "Agent App demo with stdio transport. Demonstrates multiple tools, progress reporting, streaming, health checks, and cancellation.",
+  "tagline": "Demo app showcasing stdio transport, tools, and streaming",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.png",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "samples",
+  "keywords": ["research", "search", "notes", "streaming", "sample"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": true,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": false,
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

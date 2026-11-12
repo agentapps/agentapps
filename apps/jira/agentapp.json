@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.jira",
+  "version": "2.0.0",
+  "name": "Jira",
+  "description": "Jira project management — search issues, create/update tickets, manage transitions, and track sprints.",
+  "tagline": "Manage issues and projects in Jira",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["jira", "atlassian", "issues", "tickets", "project-management"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["JIRA_URL", "JIRA_EMAIL", "JIRA_API_TOKEN"]
+  }
+}

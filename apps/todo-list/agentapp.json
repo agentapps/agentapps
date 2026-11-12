@@ -1,0 +1,110 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.todo-list",
+  "version": "1.0.0",
+  "name": "Todo List",
+  "description": "Workflowy-style hierarchical outliner. Single-tree architecture — no lists, every node is part of one tree. Nodes have text, description, instructions (markdown), and a chronological log. Toggle complete (cascades to descendants), collapse/expand, move subtrees, and search.",
+  "tagline": "Hierarchical outliner with markdown, logs, and tree operations",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": [
+    "todo",
+    "list",
+    "outliner",
+    "workflowy",
+    "hierarchy",
+    "bullets",
+    "tasks",
+    "checklist",
+    "tree",
+    "log"
+  ],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": true,
+    "health": true,
+    "streaming": false,
+    "ui": true,
+    "auth": false,
+    "storage": true,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "none",
+    "systemSecrets": []
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  },
+
+  "screens": [
+    {
+      "name": "tree-view",
+      "title": "My Tasks",
+      "description": "Full hierarchical tree of todo nodes — collapsible/expandable.",
+      "icon": "list-tree",
+      "bundleUrl": "./static/tree.html",
+      "launcher": true
+    },
+    {
+      "name": "node-detail",
+      "title": "Node Detail",
+      "description": "Single node with instructions (markdown) and chronological log.",
+      "icon": "file-text",
+      "bundleUrl": "./static/detail.html",
+      "propsSchema": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The node ID to display."
+          }
+        },
+        "required": ["nodeId"]
+      },
+      "launcher": false
+    },
+    {
+      "name": "node-form",
+      "title": "Add / Edit Node",
+      "description": "Form for creating or editing a todo node (text, description, instructions).",
+      "icon": "edit",
+      "bundleUrl": "./static/form.html",
+      "propsSchema": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Optional: the node to edit. Omit for add mode."
+          },
+          "parentId": {
+            "type": "string",
+            "description": "Optional: parent node to nest under. Omit for root-level."
+          }
+        }
+      },
+      "launcher": false
+    }
+  ]
+}

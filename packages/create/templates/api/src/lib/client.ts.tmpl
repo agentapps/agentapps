@@ -1,0 +1,318 @@
+/**
+ * HTTP client for the {{NAME}} API.
+ *
+ * - One 30 s deadline per call, retries included, so a call always ends inside the
+ *   host's 60 s tool budget with this client's own message
+ * - Idempotent requests (GET, PUT, DELETE, and a POST marked `idempotent`) retry on
+ *   429/502/503/504 and network errors, at most 3 attempts, honouring a short
+ *   Retry-After; other POSTs and PATCH never retry
+{{#API_KEY}}
+ * - Installation secrets are read on every call, never cached in module state
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+ * - System secrets (shared by every installation) are checked here: the SDK enforces
+ *   only the installation secrets of an api-key app
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+ * - OAuth: the access token is read from the installation secrets on every call. The host owns
+ *   the refresh (`ctx.auth.refresh()`), so the client secret never enters this process.
+ *   A 401 triggers exactly one refresh and replay, POST included: the service rejected
+ *   the request at the auth layer, before processing it
+{{/OAUTH}}
+ * - Network failures name the host; quoted error bodies are capped; no credential ever
+ *   appears in an error message
+ */
+
+export const BASE_URL = '{{BASE_URL}}';
+{{#API_KEY}}
+
+/** Installation secrets this app declares in agentapp.json. Every one is required. */
+export const REQUIRED_SECRETS: readonly string[] = {{SECRETS_LIST}};
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+
+/** System secrets this app declares in agentapp.json, set once on the app id. */
+export const REQUIRED_SYSTEM_SECRETS: readonly string[] = {{SYSTEM_SECRETS_LIST}};
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+
+const CONNECT_HINT =
+  'Connect the account with `agentapps <alias> auth` (or `agentapps <alias> auth reauth`).';
+{{/OAUTH}}
+
+export const REQUEST_TIMEOUT_MS = 30_000;
+const MAX_ATTEMPTS = 3;
+const MAX_RETRY_AFTER_MS = 5_000;
+const MAX_ERROR_BODY_CHARS = 2_000;
+const RETRY_STATUSES = new Set([429, 502, 503, 504]);
+
+/**
+ * The part of the SDK tool and health contexts the client uses. `secrets` is listed
+ * even when the app has no auth so that both contexts fit this type.
+ */
+export interface ClientContext {
+{{^AUTH}}
+  secrets: { getInstallation(): Promise<Record<string, string> | null> };
+{{/AUTH}}
+{{#AUTH}}
+  secrets: {
+    getInstallation(): Promise<Record<string, string> | null>;
+    getSystem(): Promise<Record<string, string> | null>;
+  };
+{{/AUTH}}
+{{#OAUTH}}
+  auth: { refresh(): Promise<{ accessToken: string }> };
+{{/OAUTH}}
+  signal?: AbortSignal;
+}
+
+export type QueryValue = string | number | boolean | undefined;
+
+export interface RequestOptions {
+  params?: Record<string, QueryValue | QueryValue[]>;
+  body?: unknown;
+  /** Overall deadline for the call, retries included (health checks use a shorter one). */
+  timeoutMs?: number;
+  /** For services with several hosts: a fixed base URL per tool, never taken from arguments. */
+  baseUrl?: string;
+  /**
+   * Retry like a GET. Only for a POST that reads (a search or report query sent as POST):
+   * a POST that creates something must never be sent twice.
+   */
+  idempotent?: boolean;
+}
+
+/** Thrown for non-2xx responses so callers can branch on the status. */
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+{{#API_KEY}}
+
+/** Reads the declared installation secrets, or explains exactly which ones are missing. */
+export async function getSecrets(ctx: ClientContext): Promise<Record<string, string>> {
+  const secrets = (await ctx.secrets.getInstallation().catch(() => null)) ?? {};
+  const missing = REQUIRED_SECRETS.filter((key) => !secrets[key]);
+  if (missing.length > 0) {
+    throw new Error(
+      `[AUTH_REQUIRED] Missing installation secret(s): ${missing.join(', ')}. ` +
+        `Set them with \`agentapps config <alias> ${missing[0]}:<value>\`.`,
+    );
+  }
+  return secrets;
+}
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+
+/** Reads the declared system secrets, or explains which ones the station is missing. */
+export async function getSystemSecrets(ctx: ClientContext): Promise<Record<string, string>> {
+  const secrets = (await ctx.secrets.getSystem().catch(() => null)) ?? {};
+  const missing = REQUIRED_SYSTEM_SECRETS.filter((key) => !secrets[key]);
+  if (missing.length > 0) {
+    throw new Error(
+      `[SYSTEM_CONFIG_MISSING] Missing system secret(s): ${missing.join(', ')}. ` +
+        `They are shared by every installation: set them with \`agentapps config {{APP_ID}} ${missing[0]}:<value>\`.`,
+    );
+  }
+  return secrets;
+}
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+
+/** Reads the stored access token, or explains how to connect the account. */
+export async function getAccessToken(ctx: ClientContext): Promise<string> {
+  // Only ACCESS_TOKEN is required: the SDK checks no OAuth installation secret, and which of the
+  // others the host writes (REFRESH_TOKEN, EXPIRY_DATE) depends on the provider.
+  const secrets = (await ctx.secrets.getInstallation().catch(() => null)) ?? {};
+  if (!secrets.ACCESS_TOKEN) {
+    throw new Error(`[AUTH_REQUIRED] No {{NAME}} account is connected. ${CONNECT_HINT}`);
+  }
+  return secrets.ACCESS_TOKEN;
+}
+
+/**
+ * Explains a failed refresh. A missing OAuth client is a station configuration problem
+ * (system secrets, set on the app id); anything else means the refresh token is dead
+ * (expired, revoked, or the user removed access) and the user must reconnect.
+ */
+async function refreshFailure(ctx: ClientContext, cause: unknown): Promise<Error> {
+  // The host's reason (such as invalid_grant), short; it never carries a token.
+  const reason = cause instanceof Error && cause.message ? ` (${cause.message.slice(0, 200)})` : '';
+  const system = (await ctx.secrets.getSystem().catch(() => null)) ?? null;
+  if (system && (!system.CLIENT_ID || !system.CLIENT_SECRET)) {
+    return new Error(
+      `[SYSTEM_CONFIG_MISSING] The OAuth client is not configured, so the access token cannot be refreshed${reason}. ` +
+        'Set it with `agentapps config {{APP_ID}} CLIENT_ID:<id> CLIENT_SECRET:<secret>`.',
+    );
+  }
+  return new Error(
+    `[AUTH_EXPIRED] The access token was rejected and refreshing it failed${reason}: ` +
+      `the refresh token is expired or revoked. ${CONNECT_HINT}`,
+  );
+}
+{{/OAUTH}}
+
+function buildUrl(base: string, path: string, params?: RequestOptions['params']): URL {
+  const url = new URL(`${base}${path}`);
+  for (const [key, value] of Object.entries(params ?? {})) {
+    if (value === undefined) continue;
+    // TODO: arrays are sent comma-joined. Check how the service wants them (repeated keys,
+    // a JSON array, Rest.li's List(...)) and change this to match.
+    if (Array.isArray(value)) {
+      const parts = value.filter((v) => v !== undefined);
+      if (parts.length > 0) url.searchParams.set(key, parts.join(','));
+    } else {
+      url.searchParams.set(key, String(value));
+    }
+  }
+  return url;
+}
+
+/** Retry-After in ms (seconds or an HTTP date), or undefined when absent or unparsable. */
+function retryAfterMs(response: Response): number | undefined {
+  const header = response.headers.get('retry-after');
+  if (!header) return undefined;
+  const seconds = Number(header);
+  if (Number.isFinite(seconds)) return seconds * 1000;
+  const date = Date.parse(header);
+  return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
+}
+
+const sleep = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+  });
+
+/** Turns an error response into a message with a bracketed code and a next step. */
+function describeError(response: Response, text: string): string {
+  const detail =
+    text.length > MAX_ERROR_BODY_CHARS ? `${text.slice(0, MAX_ERROR_BODY_CHARS)}...` : text;
+  const quoted = `${response.status} ${response.statusText}${detail ? `: ${detail}` : ''}`;
+  // TODO: parse the service's error body and tell its cases apart (bad argument, not found,
+  // quota) with a next step each.
+{{#OAUTH}}
+  if (response.status === 401) return `[AUTH_EXPIRED] ${quoted}. ${CONNECT_HINT}`;
+  if (response.status === 403) {
+    // TODO: tell a missing scope apart from a missing permission by the error body.
+    return (
+      `[FORBIDDEN] ${quoted}. If the account did not permission every requested permission, ` +
+      'reconnect with `agentapps <alias> auth reauth` and accept them all.'
+    );
+  }
+{{/OAUTH}}
+  if (response.status === 429) return `[RATE_LIMITED] ${quoted}`;
+  return `[{{ERROR_PREFIX}}_ERROR] ${quoted}`;
+}
+
+/** Calls the API and returns the parsed JSON body (undefined for 204). */
+export async function apiRequest<T = unknown>(
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  path: string,
+  ctx: ClientContext,
+  options: RequestOptions = {},
+): Promise<T> {
+{{#API_KEY}}
+  const secrets = await getSecrets(ctx);
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+  const system = await getSystemSecrets(ctx);
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+  let token = await getAccessToken(ctx);
+  let refreshed = false;
+{{/OAUTH}}
+  const url = buildUrl(options.baseUrl ?? BASE_URL, path, options.params);
+  const headers: Record<string, string> = { Accept: 'application/json' };
+{{#API_KEY}}
+  // TODO: send the credential the way the service expects, e.g.
+  // headers.Authorization = `Bearer ${secrets.SERVICE_API_KEY}`. Never log it.
+  void secrets;
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+  // TODO: send the system credential the way the service expects (an app id header).
+  void system;
+{{/SYSTEM_SECRETS}}
+  if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+
+  const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
+  const deadline = AbortSignal.timeout(timeoutMs);
+  const signal = ctx.signal ? AbortSignal.any([deadline, ctx.signal]) : deadline;
+  const retries =
+    method === 'GET' || method === 'PUT' || method === 'DELETE' || options.idempotent === true;
+
+  for (let attempt = 1; ; attempt++) {
+{{#OAUTH}}
+    const attemptHeaders = { ...headers, Authorization: `Bearer ${token}` };
+{{/OAUTH}}
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method,
+        headers{{#OAUTH}}: attemptHeaders{{/OAUTH}},
+        body: options.body === undefined ? undefined : JSON.stringify(options.body),
+        signal,
+      });
+    } catch (err) {
+      if (deadline.aborted) {
+        throw new Error(
+          `[{{ERROR_PREFIX}}_TIMEOUT] ${url.host} did not answer within ${timeoutMs / 1000} s.`,
+        );
+      }
+      if (signal.aborted) throw new Error('[CANCELLED] The request was cancelled.');
+      if (retries && attempt < MAX_ATTEMPTS) {
+        await sleep(250 * 2 ** (attempt - 1), signal);
+        continue;
+      }
+      const cause = (err as { cause?: { code?: string } })?.cause?.code ?? String(err);
+      throw new Error(`[{{ERROR_PREFIX}}_UNREACHABLE] Could not reach ${url.host}: ${cause}.`);
+    }
+
+    if (response.ok) {
+      // TODO: some APIs answer 200 with an error envelope ({ code, message }); check it here
+      // and throw like an error status would.
+      if (response.status === 204) return undefined as T;
+      return (await response.json()) as T;
+    }
+{{#OAUTH}}
+
+    // The host refreshes ahead of expiry, but a 401 can still arrive (revoked token, clock
+    // skew, stale expiry): refresh once and replay with the token the host returns.
+    if (response.status === 401 && !refreshed) {
+      refreshed = true;
+      await response.body?.cancel();
+      try {
+        token = (await ctx.auth.refresh()).accessToken;
+      } catch (err) {
+        throw await refreshFailure(ctx, err);
+      }
+      attempt--;
+      continue;
+    }
+{{/OAUTH}}
+
+    const wait = retryAfterMs(response) ?? 250 * 2 ** (attempt - 1);
+    if (retries && RETRY_STATUSES.has(response.status) && attempt < MAX_ATTEMPTS) {
+      if (wait <= MAX_RETRY_AFTER_MS) {
+        await response.body?.cancel();
+        await sleep(wait, signal);
+        continue;
+      }
+    }
+
+    const text = await response.text().catch(() => '');
+    throw new ApiError(response.status, describeError(response, text));
+  }
+}

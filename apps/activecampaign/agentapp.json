@@ -1,0 +1,41 @@
+{
+  "id": "app.activecampaign",
+  "name": "ActiveCampaign",
+  "version": "2.0.0",
+  "description": "ActiveCampaign CRM and email marketing — manage contacts, lists, campaigns, deals, and tags via the v3 API.",
+  "tagline": "Manage contacts, campaigns, deals, and tags in ActiveCampaign",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "communication",
+  "keywords": [
+    "activecampaign",
+    "crm",
+    "email-marketing",
+    "marketing-automation",
+    "contacts",
+    "campaigns",
+    "deals"
+  ],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["ACTIVECAMPAIGN_BASE_URL", "ACTIVECAMPAIGN_API_TOKEN"]
+  }
+}

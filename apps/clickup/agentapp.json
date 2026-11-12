@@ -1,0 +1,46 @@
+{
+  "id": "app.clickup",
+  "name": "ClickUp",
+  "version": "2.0.0",
+  "description": "ClickUp project management - manage tasks, lists, folders, spaces and workspaces via ClickUp API with OAuth2",
+  "tagline": "Manage tasks, lists, folders, spaces, and workspaces in ClickUp",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["clickup", "tasks", "project", "management", "productivity", "kanban"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "oauth2",
+    "provider": "clickup",
+    "authorizeUrl": "https://app.clickup.com/api",
+    "tokenUrl": "https://api.clickup.com/api/v2/oauth/token",
+    "scopes": ["read", "write"],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": [
+      "ACCESS_TOKEN",
+      "REFRESH_TOKEN",
+      "TOKEN_TYPE",
+      "USER_ID",
+      "USER_EMAIL",
+      "USER_USERNAME"
+    ]
+  }
+}

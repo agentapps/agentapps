@@ -1,0 +1,17 @@
+{
+  "id": "app.rentahuman",
+  "name": "RentAHuman.ai",
+  "version": "2.0.0",
+  "description": "Hire humans for physical-world tasks. Search 657,000+ verified humans in 50+ countries, create bookings, and manage tasks that require real-world presence.",
+  "tagline": "Search, hire, and manage humans for physical-world tasks via RentAHuman.ai",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["humans", "physical-tasks", "hire", "booking", "real-world", "errands", "workforce"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["RENTAHUMAN_API_KEY"] }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "@agentapps/protocol",
+  "version": "0.1.0",
+  "description": "Agent Apps Protocol v2.0 — message schemas, control + session planes, error codes",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentapps/agentapps.git",
+    "directory": "packages/protocol"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "agentapps",
+    "protocol",
+    "mcp",
+    "agent",
+    "ai",
+    "zod",
+    "schema"
+  ],
+  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "ws": "^8.18.0",
+    "@types/ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-quickbooks",
+  "version": "2.0.0",
+  "private": true,
+  "description": "QuickBooks Online Agent App — manage invoices, customers, payments, accounts, items, and reports.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

@@ -1,0 +1,193 @@
+/**
+ * Test harness for the YouTube Analytics Agent App.
+ *
+ * Runs the app in-process behind the real station AppStation, so tests take the same
+ * protocol path as the CLI and MCP clients. The host side answers secret requests from
+ * the mutable `installationSecrets` object; tests can delete a key to exercise the missing-secret
+ * path. `fetch` is replaced per test; an unexpected request fails loudly.
+ */
+
+import {
+  createEnvelope,
+  createInProcessTransportPair,
+  type MessageBase,
+  PROTOCOL_VERSION,
+  type Transport,
+} from '@agentapps/protocol';
+import { AppStation, InProcessRuntime } from '@agentapps/station';
+import { afterEach, beforeEach, type Mock, vi } from 'vitest';
+import { factory } from '../src/app.js';
+
+export type Message = Record<string, unknown>;
+export type ToolInfo = { name: string; annotations?: Record<string, unknown> };
+
+let appStation: AppStation;
+let host: Transport;
+let received: MessageBase[] = [];
+let openSessionId: string | undefined;
+
+/** Fake installation secrets the host hands to the app (never real ones). */
+export let installationSecrets: Record<string, string> = {};
+
+/**
+ * What the host does when the app asks it to refresh the OAuth token (`ctx.auth.refresh()`):
+ * answer with a new token, or with an error. Tests count the calls in `hostCalls`.
+ */
+export let refreshReply: { accessToken?: string; expiresAt?: string; error?: string } = {};
+export const hostCalls: { refresh: number; updates: Array<Record<string, string>> } = {
+  refresh: 0,
+  updates: [],
+};
+
+export function setRefreshReply(reply: typeof refreshReply): void {
+  refreshReply = reply;
+}
+
+beforeEach(() => {
+  openSessionId = undefined;
+  installationSecrets = {
+    ACCESS_TOKEN: 'fake-access-token',
+    REFRESH_TOKEN: 'fake-refresh-token',
+    EXPIRY_DATE: '2099-01-01T00:00:00.000Z',
+  };
+  refreshReply = { accessToken: 'fake-refreshed-token', expiresAt: '2099-01-02T00:00:00.000Z' };
+  hostCalls.refresh = 0;
+  hostCalls.updates = [];
+  // Any request a test did not queue fails with a clear message.
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('unexpected fetch in test')));
+
+  appStation = new AppStation({
+    appId: 'app.youtube-analytics',
+    appVersion: '1.0.0',
+    runtime: new InProcessRuntime(factory),
+  });
+  const [hostSide, ctrlSide] = createInProcessTransportPair();
+  host = hostSide;
+  received = [];
+  host.onMessage((msg) => {
+    received.push(msg);
+    const m = msg as Message;
+    if (m.type === 'get_installation_secrets') {
+      const requestId = (m.requestId as string) ?? (m.id as string);
+      host.send({
+        ...createEnvelope('installation_secrets', m.sessionId as string),
+        id: requestId,
+        requestId,
+        secrets: installationSecrets,
+      } as MessageBase);
+    }
+    if (m.type === 'refresh_token') {
+      hostCalls.refresh++;
+      const requestId = (m.requestId as string) ?? (m.id as string);
+      host.send({
+        ...createEnvelope('refresh_token_response', m.sessionId as string),
+        id: requestId,
+        requestId,
+        accessToken: refreshReply.accessToken ?? '',
+        ...(refreshReply.expiresAt ? { expiresAt: refreshReply.expiresAt } : {}),
+        ...(refreshReply.error ? { error: refreshReply.error } : {}),
+      } as MessageBase);
+    }
+    if (m.type === 'update_installation_secrets') {
+      const secrets = m.secrets as Record<string, string>;
+      hostCalls.updates.push(secrets);
+      Object.assign(installationSecrets, secrets);
+      const requestId = (m.requestId as string) ?? (m.id as string);
+      host.send({
+        ...createEnvelope('update_installation_secrets_response', m.sessionId as string),
+        id: requestId,
+        requestId,
+        success: true,
+      } as MessageBase);
+    }
+  });
+  appStation.accept(ctrlSide);
+});
+
+afterEach(async () => {
+  vi.unstubAllGlobals();
+  await appStation.shutdown();
+});
+
+async function waitFor(predicate: (msg: Message) => boolean, timeoutMs = 3000): Promise<Message> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const found = received.find((m) => predicate(m as Message));
+    if (found) return found as Message;
+    await new Promise((r) => setTimeout(r, 5));
+  }
+  throw new Error('Timeout waiting for message');
+}
+
+const waitForType = (type: string) => waitFor((m) => m.type === type);
+
+export async function initAndOpen(): Promise<string> {
+  host.send({
+    ...createEnvelope('initialize'),
+    supportedVersions: [PROTOCOL_VERSION],
+    host: { name: 'test', version: '1.0.0' },
+    capabilities: { directConnection: false },
+  } as MessageBase);
+  await waitForType('initialized');
+  received.length = 0;
+  host.send({
+    ...createEnvelope('session_open'),
+    installationId: 'inst_test',
+    tenant: { userId: 'u_test' },
+  } as MessageBase);
+  const opened = await waitForType('session_opened');
+  received.length = 0;
+  return opened.sessionId as string;
+}
+
+/** Calls a tool and returns the `tool_result` message ({ success, result | error }). */
+export async function callTool(tool: string, args: Record<string, unknown>): Promise<Message> {
+  openSessionId ??= await initAndOpen();
+  received.length = 0;
+  host.send({
+    ...createEnvelope('tool_call'),
+    sessionId: openSessionId,
+    tool,
+    arguments: args,
+    context: { userId: 'u_test', installationId: 'inst_test' },
+  } as MessageBase);
+  return waitForType('tool_result');
+}
+
+export async function listTools(): Promise<ToolInfo[]> {
+  const sessionId = await initAndOpen();
+  host.send({ ...createEnvelope('list_tools'), sessionId } as MessageBase);
+  return (await waitForType('tools_list')).tools as ToolInfo[];
+}
+
+export async function runHealthCheck(): Promise<Message> {
+  const sessionId = await initAndOpen();
+  host.send({ ...createEnvelope('health_check'), sessionId } as MessageBase);
+  return waitForType('health_status');
+}
+
+export function jsonResponse(
+  body: unknown,
+  status = 200,
+  headers: Record<string, string> = {},
+): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    statusText: status === 200 ? 'OK' : 'Error',
+    headers: { 'Content-Type': 'application/json', ...headers },
+  });
+}
+
+/** Answers the next fetch calls with these responses, in order; anything beyond fails. */
+export function mockFetch(...responses: Response[]): Mock {
+  const fetchMock = vi.fn().mockRejectedValue(new Error('unexpected fetch in test'));
+  for (const r of responses) fetchMock.mockResolvedValueOnce(r);
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock;
+}
+
+/** The URL and init of the n-th fetch call. */
+export function requestOf(fetchMock: Mock, index = 0): { url: URL; init: RequestInit } {
+  const [url, init] = fetchMock.mock.calls[index] as [string | URL, RequestInit];
+  return { url: new URL(String(url)), init: init ?? {} };
+}

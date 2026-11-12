@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.vercel",
+  "version": "2.0.0",
+  "name": "Vercel",
+  "description": "Vercel platform management — manage projects, deployments, domains, environment variables, and check deployment logs.",
+  "tagline": "Manage projects and deployments on Vercel",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": ["vercel", "deploy", "hosting", "serverless", "nextjs"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["API_TOKEN"]
+  }
+}

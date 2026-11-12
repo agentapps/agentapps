@@ -1,0 +1,41 @@
+# {{NAME}}: notes for coding agents
+
+This project is an Agent App (`{{APP_ID}}`) built with the open `@agentapps` SDK. These notes
+are for any coding agent (and for people) working on it.
+
+## Building or extending the app
+
+{{#SKILL}}
+Follow the create-agent-app skill: `{{SKILL_PATH}}/SKILL.md`. It covers tool design, tests, the
+live test and shipping, and reads its `references/` only when a step needs them.
+{{/SKILL}}
+{{^SKILL}}
+The full guide (tool design, tests, live test, shipping) is the create-agent-app skill that
+ships with `@agentapps/create`: `node_modules/@agentapps/create/skill/create-agent-app/SKILL.md`.
+{{/SKILL}}
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `npm test` | The app's tests (mocked API, no network) |
+| `npm run typecheck` | TypeScript check of `src/` and `test/` |
+| `npm run lint` | Biome lint and format check (`npx biome check --write .` fixes formatting) |
+| `npm run check` | `check-app`: loads the app and checks its manifest, the annotations of every tool it registers, logos and README sections. Must exit 0. Before shipping run `npx create-agent-app check-app --strict`, which also fails on TODO text left in the manifest or README; a logo TODO in the Logos section that lists where you looked still passes. |
+| `SERVICE_KEY=... npm run health` | The health check once against the real service (secrets from environment variables named like the manifest's `installationSecrets`; values are never printed) |
+| `npx agentapps ...` | The Agent Apps CLI for the live test (install the app under an alias, set its secrets, call tools). It is the `@agentapps/cli` devDependency. **Never install the unscoped `agentapps` package from npm: it is an unrelated project.** |
+| `npx create-agent-app --help` | Every scaffold and check option |
+
+## Rules
+
+- Every tool declares `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint` and
+  `sensitive` explicitly; `sensitive` is true exactly for tools that are not read-only. Never
+  infer them from the tool name.
+- `agentapp.json` and the `createApp()` config in `src/app.ts` describe the same app; change
+  both together (a test checks it).
+- Logos come from the service's official brand resources only, with the source in the README.
+  Never generate or draw one; leave a TODO instead.
+- Installation secrets are set per installed alias: `agentapps config <alias> KEY:value`. Never print,
+  log or commit a secret.
+- Ask the user before any live call that writes, and before pushing or publishing.
+- Code comments and docs in English.

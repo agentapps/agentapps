@@ -1,0 +1,21 @@
+/**
+ * list_cohorts — list all saved cohorts in a Mixpanel project.
+ */
+
+import type { AgentApp } from '@agentapps/sdk';
+import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
+
+export function registerListCohortsTool(app: AgentApp): void {
+  app.tool('list_cohorts', {
+    description:
+      'List all saved cohorts in your Mixpanel project. Returns cohort IDs, names, and descriptions.',
+    parameters: {
+      type: 'object',
+      properties: {},
+    },
+    annotations: { readOnlyHint: true },
+    handler: async (_args, ctx) => {
+      return await mixpanelRequest('GET', MIXPANEL_QUERY_URL, '/cohorts/list', null, ctx);
+    },
+  });
+}

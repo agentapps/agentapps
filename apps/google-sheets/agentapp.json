@@ -1,0 +1,41 @@
+{
+  "id": "app.google.sheets",
+  "name": "Google Sheets",
+  "version": "2.0.0",
+  "description": "Create, read, write, append, format, and export Google Sheets spreadsheets - create, write data, append rows, batch update (formatting, formulas, conditional formatting), read data, ranges, list tabs, export to CSV/XLSX/PDF. To delete a spreadsheet, use the Google Drive app.",
+  "tagline": "Create, read, write, format, and export Google Sheets spreadsheets",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "google",
+  "keywords": [
+    "google",
+    "sheets",
+    "spreadsheet",
+    "data",
+    "export",
+    "write",
+    "create",
+    "format",
+    "formulas"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "google",
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/spreadsheets.readonly",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
+  }
+}

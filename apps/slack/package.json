@@ -1,0 +1,11 @@
+{
+  "name": "@agentapps/example-slack",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "@slack/web-api": "^7.8.0"
+  }
+}

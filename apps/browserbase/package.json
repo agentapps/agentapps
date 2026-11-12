@@ -1,0 +1,21 @@
+{
+  "name": "@agentapps/example-browserbase",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "@browserbasehq/sdk": "^2.3.0",
+    "playwright-core": "^1.61.1"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

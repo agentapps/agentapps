@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.airtable",
+  "version": "2.0.0",
+  "name": "Airtable",
+  "description": "Airtable base management — list bases, query records, create/update/delete rows, and manage tables.",
+  "tagline": "Manage Airtable bases, tables, and records",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "database",
+  "keywords": ["airtable", "database", "spreadsheet", "records", "tables"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["API_TOKEN"]
+  }
+}

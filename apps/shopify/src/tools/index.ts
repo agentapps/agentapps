@@ -1,0 +1,42 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateDiscountTool } from './create-discount.js';
+import { registerCreateFulfillmentTool } from './create-fulfillment.js';
+import { registerCreateProductTool } from './create-product.js';
+import { registerCreateWebhookTool } from './create-webhook.js';
+import { registerDeleteProductTool } from './delete-product.js';
+import { registerGetCustomerTool } from './get-customer.js';
+import { registerGetOrderTool } from './get-order.js';
+import { registerGetProductTool } from './get-product.js';
+import { registerGetShopTool } from './get-shop.js';
+import { registerListCollectionsTool } from './list-collections.js';
+import { registerListCustomersTool } from './list-customers.js';
+import { registerListInventoryItemsTool } from './list-inventory-items.js';
+import { registerListOrdersTool } from './list-orders.js';
+import { registerListPagesTool } from './list-pages.js';
+import { registerListProductsTool } from './list-products.js';
+import { registerListWebhooksTool } from './list-webhooks.js';
+import { registerUpdateInventoryLevelTool } from './update-inventory-level.js';
+import { registerUpdateOrderTool } from './update-order.js';
+import { registerUpdateProductTool } from './update-product.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListProductsTool(app);
+  registerGetProductTool(app);
+  registerCreateProductTool(app);
+  registerUpdateProductTool(app);
+  registerDeleteProductTool(app);
+  registerListOrdersTool(app);
+  registerGetOrderTool(app);
+  registerUpdateOrderTool(app);
+  registerListCustomersTool(app);
+  registerGetCustomerTool(app);
+  registerGetShopTool(app);
+  registerListCollectionsTool(app);
+  registerCreateFulfillmentTool(app);
+  registerListInventoryItemsTool(app);
+  registerUpdateInventoryLevelTool(app);
+  registerCreateDiscountTool(app);
+  registerListPagesTool(app);
+  registerListWebhooksTool(app);
+  registerCreateWebhookTool(app);
+}

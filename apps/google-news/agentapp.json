@@ -1,0 +1,43 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.google-news",
+  "version": "1.0.0",
+  "name": "Google News",
+  "description": "Latest news headlines from Google News RSS. No API key required.",
+  "tagline": "Browse the latest news headlines from Google News",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "information",
+  "keywords": ["news", "google", "headlines", "rss"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

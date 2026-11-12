@@ -1,0 +1,11 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCountdownTool } from './countdown.js';
+import { registerEchoTool } from './echo.js';
+import { registerGreetTool } from './greet.js';
+
+/** Registers every tool. One file per tool, one line here per tool. */
+export function registerTools(app: AgentApp): void {
+  registerGreetTool(app);
+  registerEchoTool(app);
+  registerCountdownTool(app);
+}

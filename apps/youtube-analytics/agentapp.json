@@ -1,0 +1,51 @@
+{
+  "id": "app.youtube-analytics",
+  "name": "YouTube Analytics",
+  "version": "1.0.0",
+  "description": "Read YouTube channel analytics with the YouTube Analytics API and the YouTube Data API v3: views, watch time, subscribers, traffic sources, devices, geography, demographics, top videos, audience retention, and the channel's videos and playlists. Read-only; Google OAuth.",
+  "tagline": "Channel and video analytics for your YouTube channel: views, watch time, retention and audience",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "google",
+  "keywords": [
+    "youtube",
+    "youtube analytics",
+    "video",
+    "channel",
+    "marketing",
+    "watch time",
+    "subscribers",
+    "audience retention"
+  ],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "oauth2",
+    "provider": "google",
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EMAIL", "EXPIRY_DATE"],
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": [
+      "https://www.googleapis.com/auth/yt-analytics.readonly",
+      "https://www.googleapis.com/auth/youtube.readonly",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ],
+    "pkce": false
+  }
+}

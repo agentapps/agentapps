@@ -1,0 +1,18 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/protocol",
+    "packages/sdk",
+    "packages/controller",
+    "packages/host",
+    "packages/testing"
+  ],
+  "entryPointStrategy": "packages",
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  "name": "Agent Apps SDK",
+  "readme": "none",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeExternals": true
+}

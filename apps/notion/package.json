@@ -1,0 +1,22 @@
+{
+  "name": "@agentapps/example-notion",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Notion workspace agent app — pages, databases, blocks, search, comments, file uploads.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "@notionhq/client": "^5.20.0"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

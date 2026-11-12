@@ -1,0 +1,42 @@
+{
+  "id": "app.tiktok-ads",
+  "name": "TikTok Ads",
+  "version": "1.0.0",
+  "description": "TikTok Ads through the TikTok API for Business (Marketing API v1.3): list ad accounts, campaigns, ad groups and ads, run performance and audience reports, pause or enable delivery and change campaign or ad group budgets. Enabling delivery and budget changes affect spend and ask for approval.",
+  "tagline": "Report on TikTok ad campaigns and pause, enable or re-budget them",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "marketing",
+  "keywords": [
+    "tiktok",
+    "tiktok-ads",
+    "ads",
+    "advertising",
+    "marketing",
+    "campaigns",
+    "reports",
+    "ppc"
+  ],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["TIKTOK_APP_ID", "TIKTOK_APP_SECRET"],
+    "installationSecrets": ["TIKTOK_ACCESS_TOKEN"]
+  }
+}

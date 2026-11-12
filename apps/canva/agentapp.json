@@ -1,0 +1,56 @@
+{
+  "id": "app.canva",
+  "name": "Canva",
+  "version": "2.0.0",
+  "description": "Canva design management — designs, exports, resizes, folders, assets, brand templates, autofill, and comments via the Canva Connect API.",
+  "tagline": "Create, export, and manage Canva designs, folders, assets, and brand templates",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "design",
+  "keywords": ["canva", "design", "graphics", "templates", "export", "resize", "comments"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "oauth2",
+    "provider": "canva",
+    "authorizeUrl": "https://www.canva.com/api/oauth/authorize",
+    "tokenUrl": "https://api.canva.com/rest/v1/oauth/token",
+    "scopes": [
+      "design:content:read",
+      "design:content:write",
+      "design:meta:read",
+      "design:permission:read",
+      "design:permission:write",
+      "folder:read",
+      "folder:write",
+      "folder:permission:read",
+      "folder:permission:write",
+      "asset:read",
+      "asset:write",
+      "brandtemplate:meta:read",
+      "brandtemplate:content:read",
+      "comment:read",
+      "comment:write",
+      "profile:read"
+    ],
+    "pkce": true,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
+  }
+}

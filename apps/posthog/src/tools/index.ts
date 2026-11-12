@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateActionTool } from './create-action.js';
+import { registerCreateAnnotationTool } from './create-annotation.js';
+import { registerCreateFeatureFlagTool } from './create-feature-flag.js';
+import { registerGetDashboardTool } from './get-dashboard.js';
+import { registerGetEventTool } from './get-event.js';
+import { registerGetExperimentTool } from './get-experiment.js';
+import { registerGetFeatureFlagTool } from './get-feature-flag.js';
+import { registerGetPersonTool } from './get-person.js';
+import { registerListActionsTool } from './list-actions.js';
+import { registerListCohortsTool } from './list-cohorts.js';
+import { registerListDashboardsTool } from './list-dashboards.js';
+import { registerListEventsTool } from './list-events.js';
+import { registerListExperimentsTool } from './list-experiments.js';
+import { registerListFeatureFlagsTool } from './list-feature-flags.js';
+import { registerListInsightsTool } from './list-insights.js';
+import { registerListPersonsTool } from './list-persons.js';
+import { registerListSessionRecordingsTool } from './list-session-recordings.js';
+import { registerUpdateFeatureFlagTool } from './update-feature-flag.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListEventsTool(app);
+  registerGetEventTool(app);
+  registerListPersonsTool(app);
+  registerGetPersonTool(app);
+  registerListFeatureFlagsTool(app);
+  registerGetFeatureFlagTool(app);
+  registerCreateFeatureFlagTool(app);
+  registerUpdateFeatureFlagTool(app);
+  registerListInsightsTool(app);
+  registerListCohortsTool(app);
+  registerCreateAnnotationTool(app);
+  registerListActionsTool(app);
+  registerCreateActionTool(app);
+  registerListDashboardsTool(app);
+  registerGetDashboardTool(app);
+  registerListExperimentsTool(app);
+  registerGetExperimentTool(app);
+  registerListSessionRecordingsTool(app);
+}

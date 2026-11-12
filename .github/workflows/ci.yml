@@ -1,0 +1,203 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+# Cancel in-progress runs for the same branch/PR to save CI minutes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Core CI: lint + build + test on Node 24 and 26 ──────────────────────
+  ci:
+    name: CI (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24, 26]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.32.1
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+  # ── Spec traceability: no new code without an approved spec ───────────
+  # See CLAUDE.md "Spec-Driven Development". Fails only on violations that
+  # are not already in spec-check.baseline.json.
+  spec-check:
+    name: Spec Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+
+      - name: Check spec traceability
+        run: node tools/spec-check.mjs
+
+      - name: Write traceability matrix
+        if: always()
+        run: |
+          mkdir -p artifacts
+          node tools/spec-check.mjs --matrix artifacts/traceability-matrix.md || true
+
+      - name: Upload traceability matrix
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: traceability-matrix
+          path: artifacts/
+          retention-days: 14
+
+  # ── Coverage: run once on Node 26, upload report + badge ────────────────
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    env:
+      # Empty when the badge Gist is not configured; the badge step is skipped then.
+      GIST_ID: ${{ secrets.GIST_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.32.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Build test fixtures
+        run: pnpm --filter @agentapps/station build:fixtures
+
+      - name: Test with coverage
+        run: npx vitest run --coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+
+      # Extract coverage % and update the dynamic badge via a Gist.
+      # Requires secrets: GIST_TOKEN (PAT with gist scope) and GIST_ID.
+      # To set up:
+      #   1. Create a public Gist with a file named "coverage-badge.json"
+      #   2. Copy the Gist ID from the URL
+      #   3. Add GIST_ID and GIST_TOKEN as repo secrets
+      - name: Extract coverage percentage
+        if: github.ref == 'refs/heads/main'
+        id: coverage
+        continue-on-error: true
+        run: |
+          if [ ! -f ./coverage/coverage-summary.json ]; then
+            echo "Coverage report not found, skipping badge update"
+            echo "pct=0" >> "$GITHUB_OUTPUT"
+            echo "color=red" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          COVERAGE=$(node -e "
+            const s = require('./coverage/coverage-summary.json');
+            console.log(s.total.lines.pct);
+          ")
+          echo "pct=$COVERAGE" >> "$GITHUB_OUTPUT"
+
+          # Determine badge color based on coverage
+          if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+            echo "color=brightgreen" >> "$GITHUB_OUTPUT"
+          elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+            echo "color=yellow" >> "$GITHUB_OUTPUT"
+          else
+            echo "color=red" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update coverage badge
+        if: github.ref == 'refs/heads/main' && steps.coverage.outputs.pct != '0' && env.GIST_ID != ''
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ secrets.GIST_ID }}
+          filename: coverage-badge.json
+          label: coverage
+          message: ${{ steps.coverage.outputs.pct }}%
+          color: ${{ steps.coverage.outputs.color }}
+
+  # ── Changeset Gate ────────────────────────────────────────────────────
+  # Ensures every PR targeting main has a changeset (or the skip label).
+  changeset-gate:
+    name: Changeset Gate
+    runs-on: ubuntu-latest
+    # Only run on PRs targeting main; skip if the PR has the "skip-changeset" label
+    if: |
+      github.event_name == 'pull_request' &&
+      github.base_ref == 'main' &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-changeset')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.32.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fetch base branch
+        run: git fetch origin main --depth=1
+
+      - name: Check changeset status
+        run: pnpm changeset status --since origin/main

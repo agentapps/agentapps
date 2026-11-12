@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAddFollowersTool } from './add-followers.js';
+import { registerAddTagToTaskTool } from './add-tag-to-task.js';
+import { registerAddTaskToSectionTool } from './add-task-to-section.js';
+import { registerCreateSectionTool } from './create-section.js';
+import { registerCreateTagTool } from './create-tag.js';
+import { registerCreateTaskTool } from './create-task.js';
+import { registerDeleteTaskTool } from './delete-task.js';
+import { registerGetProjectTool } from './get-project.js';
+import { registerGetTaskTool } from './get-task.js';
+import { registerGetUserTool } from './get-user.js';
+import { registerListProjectsTool } from './list-projects.js';
+import { registerListSectionsTool } from './list-sections.js';
+import { registerListTagsTool } from './list-tags.js';
+import { registerListTasksTool } from './list-tasks.js';
+import { registerListTeamsTool } from './list-teams.js';
+import { registerListWorkspacesTool } from './list-workspaces.js';
+import { registerSearchTasksTool } from './search-tasks.js';
+import { registerUpdateTaskTool } from './update-task.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListWorkspacesTool(app);
+  registerListProjectsTool(app);
+  registerGetProjectTool(app);
+  registerListTasksTool(app);
+  registerGetTaskTool(app);
+  registerCreateTaskTool(app);
+  registerUpdateTaskTool(app);
+  registerDeleteTaskTool(app);
+  registerListSectionsTool(app);
+  registerCreateSectionTool(app);
+  registerAddTaskToSectionTool(app);
+  registerGetUserTool(app);
+  registerListTagsTool(app);
+  registerCreateTagTool(app);
+  registerAddTagToTaskTool(app);
+  registerListTeamsTool(app);
+  registerSearchTasksTool(app);
+  registerAddFollowersTool(app);
+}

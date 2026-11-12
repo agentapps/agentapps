@@ -1,0 +1,44 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.playwright",
+  "version": "1.0.0",
+  "name": "Playwright",
+  "description": "Browser automation and web scraping via Playwright. Navigate, interact, take screenshots, and extract data from web pages.",
+  "tagline": "Automate browsers and scrape web pages with Playwright",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": ["browser", "playwright", "automation", "web", "scraping", "screenshot"],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+  "permissions": { "volume": true },
+  "auth": {
+    "type": "none",
+    "systemSecrets": []
+  },
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-twilio",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Twilio Agent App — send SMS, make calls, manage phone numbers, and check message status.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

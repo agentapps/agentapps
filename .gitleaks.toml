@@ -1,0 +1,16 @@
+# gitleaks configuration for Agent Apps.
+# Extends the default ruleset (no rule is disabled) and allowlists the synthetic
+# test fixtures that the generic-api-key rule flags. Reviewed 2026-11-08 against
+# the tracked tree at HEAD and the full history: trufflehog finds 0 verified secrets.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic fixtures in unit tests: a fake OAuth token, a fake API key and an invented pagination cursor. None is a real credential."
+regexTarget = "match"
+regexes = [
+  '''tok_figma_123''',
+  '''rah_test_key_12345''',
+  '''DgGerr1iVQreCJVjZDOW_grcp63nueBDipsS4DJpvJo''',
+]

@@ -1,0 +1,36 @@
+{
+  "id": "app.microsoft.outlook",
+  "name": "Outlook",
+  "version": "2.0.0",
+  "description": "Microsoft Outlook email management — send, read, search, and organize emails via Microsoft Graph API.",
+  "tagline": "Send, read, search, and organize Outlook emails via Microsoft Graph",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["outlook", "email", "microsoft", "mail", "messages", "office365", "hotmail"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "microsoft",
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EMAIL", "EXPIRY_DATE"],
+    "authorizeUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "scopes": [
+      "openid",
+      "profile",
+      "email",
+      "offline_access",
+      "Mail.Read",
+      "Mail.ReadWrite",
+      "Mail.Send",
+      "User.Read"
+    ],
+    "pkce": false
+  }
+}

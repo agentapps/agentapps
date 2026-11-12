@@ -1,0 +1,48 @@
+{
+  "id": "app.linkedin-ads",
+  "name": "LinkedIn Ads",
+  "version": "1.0.0",
+  "description": "LinkedIn Marketing API (Advertising): list ad accounts, campaign groups, campaigns and creatives, report performance with adAnalytics, and pause, activate or re-budget campaigns.",
+  "tagline": "Report on LinkedIn ad campaigns and pause, activate or re-budget them",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "marketing",
+  "keywords": [
+    "linkedin",
+    "linkedin-ads",
+    "advertising",
+    "ads",
+    "campaigns",
+    "marketing",
+    "b2b",
+    "analytics",
+    "reporting"
+  ],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "oauth2",
+    "provider": "linkedin",
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EXPIRY_DATE"],
+    "authorizeUrl": "https://www.linkedin.com/oauth/v2/authorization",
+    "tokenUrl": "https://www.linkedin.com/oauth/v2/accessToken",
+    "scopes": ["r_ads", "r_ads_reporting", "rw_ads"],
+    "pkce": false
+  }
+}

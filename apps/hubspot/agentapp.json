@@ -1,0 +1,53 @@
+{
+  "id": "app.hubspot",
+  "name": "HubSpot",
+  "version": "2.0.0",
+  "description": "HubSpot CRM integration — manage contacts, companies, deals, tickets, engagements, lists, and conversations via HubSpot REST API v3 with OAuth2.",
+  "tagline": "Manage contacts, companies, deals, tickets, engagements, lists, and conversations in HubSpot CRM",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "other",
+  "keywords": [
+    "hubspot",
+    "crm",
+    "contacts",
+    "deals",
+    "tickets",
+    "sales",
+    "marketing",
+    "engagements",
+    "pipelines"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "hubspot",
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"],
+    "authorizeUrl": "https://app.hubspot.com/oauth/authorize",
+    "tokenUrl": "https://api.hubapi.com/oauth/v1/token",
+    "scopes": [
+      "oauth",
+      "crm.objects.contacts.read",
+      "crm.objects.contacts.write",
+      "crm.objects.companies.read",
+      "crm.objects.companies.write",
+      "crm.objects.deals.read",
+      "crm.objects.deals.write",
+      "crm.objects.owners.read"
+    ],
+    "optionalScopes": [
+      "tickets",
+      "crm.lists.read",
+      "crm.lists.write",
+      "conversations.read",
+      "conversations.write"
+    ],
+    "pkce": false
+  }
+}

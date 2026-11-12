@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-clickup",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

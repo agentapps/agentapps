@@ -1,0 +1,59 @@
+import { createApp } from '@agentapps/sdk';
+import {
+  apiRequest,
+{{#API_KEY}}
+  getSecrets,
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+  getSystemSecrets,
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+  getAccessToken,
+{{/OAUTH}}
+} from './lib/client.js';
+import { registerTools } from './tools/index.js';
+
+// Exported (not only wrapped in `factory`) so the tests can compare `app.toManifest()` with
+// agentapp.json: both describe the same app and must not drift apart.
+export const app = createApp({{CONFIG}});
+
+app.health(async (ctx) => {
+{{#AUTH}}
+  try {
+{{#API_KEY}}
+    await getSecrets(ctx);
+{{/API_KEY}}
+{{#SYSTEM_SECRETS}}
+    await getSystemSecrets(ctx);
+{{/SYSTEM_SECRETS}}
+{{#OAUTH}}
+    await getAccessToken(ctx);
+{{/OAUTH}}
+  } catch (err) {
+    const message = (err as Error).message;
+    return {
+      status: 'not_ready' as const,
+      message,
+      issues: [{ code: 'MISSING_SECRET', message, severity: 'error' as const }],
+    };
+  }
+{{/AUTH}}
+  try {
+    // TODO: the service's cheapest request that proves it is reachable{{#API_KEY}} and the key works{{/API_KEY}}{{#OAUTH}} and the token works{{/OAUTH}},
+    // with every query parameter it needs (many report endpoints answer 400 without them).
+    await apiRequest('GET', '{{HEALTH_PATH}}', ctx, { timeoutMs: 5_000 });
+    return { status: 'ready' as const, message: '{{NAME}} reachable' };
+  } catch (err) {
+    const message = (err as Error).message;
+    return {
+      status: 'degraded' as const,
+      message,
+      issues: [{ code: 'DEPENDENCY_UNAVAILABLE', message, severity: 'warning' as const }],
+    };
+  }
+});
+
+registerTools(app);
+
+export const factory = app.toFactory();
+export default factory;

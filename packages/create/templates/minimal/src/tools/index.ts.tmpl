@@ -1,0 +1,7 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerHelloTool } from './hello.js';
+
+/** Registers every tool. One file per tool, one line here per tool. */
+export function registerTools(app: AgentApp): void {
+  registerHelloTool(app);
+}

@@ -1,0 +1,47 @@
+{
+  "name": "@agentapps/testing",
+  "version": "0.1.0",
+  "description": "Test harness for Agent App developers — spin up apps and controllers in-process and assert on protocol traffic",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentapps/agentapps.git",
+    "directory": "packages/testing"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "agentapps",
+    "testing",
+    "mcp",
+    "agent",
+    "ai",
+    "test-harness"
+  ],
+  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/host": "workspace:*",
+    "@agentapps/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/sdk": "workspace:*"
+  }
+}

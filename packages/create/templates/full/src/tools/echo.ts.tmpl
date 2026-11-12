@@ -1,0 +1,25 @@
+import type { AgentApp } from '@agentapps/sdk';
+
+export function registerEchoTool(app: AgentApp): void {
+  app.tool('echo', {
+    description: 'Echo back the input text. Useful for testing a connection. Returns { echo }.',
+    parameters: {
+      type: 'object',
+      properties: {
+        text: { type: 'string', description: 'Text to echo back.' },
+      },
+      required: ['text'],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
+    handler: async (args) => {
+      const a = (args ?? {}) as Record<string, unknown>;
+      return { echo: String(a.text ?? '') };
+    },
+  });
+}

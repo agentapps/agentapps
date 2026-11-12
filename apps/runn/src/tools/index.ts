@@ -1,0 +1,44 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateActualTool } from './create-actual.js';
+import { registerCreateAssignmentTool } from './create-assignment.js';
+import { registerCreateClientTool } from './create-client.js';
+import { registerCreatePersonTool } from './create-person.js';
+import { registerCreatePlaceholderTool } from './create-placeholder.js';
+import { registerCreateProjectTool } from './create-project.js';
+import { registerDeleteAssignmentTool } from './delete-assignment.js';
+import { registerGetPersonTool } from './get-person.js';
+import { registerGetProjectTool } from './get-project.js';
+import { registerListActualsTool } from './list-actuals.js';
+import { registerListAssignmentsTool } from './list-assignments.js';
+import { registerListClientsTool } from './list-clients.js';
+import { registerListPeopleTool } from './list-people.js';
+import { registerListPlaceholdersTool } from './list-placeholders.js';
+import { registerListProjectsTool } from './list-projects.js';
+import { registerListRolesTool } from './list-roles.js';
+import { registerListSkillsTool } from './list-skills.js';
+import { registerListTeamsTool } from './list-teams.js';
+import { registerProjectTotalsTool } from './project-totals.js';
+import { registerUpdateProjectTool } from './update-project.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListProjectsTool(app);
+  registerGetProjectTool(app);
+  registerCreateProjectTool(app);
+  registerUpdateProjectTool(app);
+  registerListPeopleTool(app);
+  registerGetPersonTool(app);
+  registerCreatePersonTool(app);
+  registerListPlaceholdersTool(app);
+  registerCreatePlaceholderTool(app);
+  registerListAssignmentsTool(app);
+  registerCreateAssignmentTool(app);
+  registerDeleteAssignmentTool(app);
+  registerListActualsTool(app);
+  registerCreateActualTool(app);
+  registerListClientsTool(app);
+  registerCreateClientTool(app);
+  registerListRolesTool(app);
+  registerListTeamsTool(app);
+  registerListSkillsTool(app);
+  registerProjectTotalsTool(app);
+}

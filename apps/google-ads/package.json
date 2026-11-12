@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-google-ads",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && tsc -p test"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

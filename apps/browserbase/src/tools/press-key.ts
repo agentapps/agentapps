@@ -1,0 +1,25 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { requireSession } from '../lib/index.js';
+
+export function registerPressKeyTool(app: AgentApp): void {
+  app.tool('press-key', {
+    annotations: { readOnlyHint: false },
+    description: 'Press a keyboard key.',
+    parameters: {
+      type: 'object',
+      properties: {
+        sessionId: { type: 'string', description: 'Active session ID' },
+        key: {
+          type: 'string',
+          description: 'Key name or character, e.g. "Enter", "ArrowDown", "a"',
+        },
+      },
+      required: ['sessionId', 'key'],
+    },
+    handler: async (args, _ctx) => {
+      const { page } = requireSession(args.sessionId as string);
+      await page.keyboard.press(args.key as string);
+      return `Pressed key: ${args.key}`;
+    },
+  });
+}

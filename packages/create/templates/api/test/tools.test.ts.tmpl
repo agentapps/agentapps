@@ -1,0 +1,210 @@
+/**
+ * Tool, client and health tests for the {{NAME}} Agent App. The API is mocked (fetch).
+ *
+ * Per tool: assert the outgoing request (URL, query, method, body) and the returned
+ * shape. Build mock bodies from a real response shape with synthetic values, keeping
+ * the real types (numeric ids stay numbers, nulls stay null).
+ */
+
+import { describe, expect, it } from 'vitest';
+import { BASE_URL } from '../src/lib/client.js';
+import {
+  callTool,
+{{#AUTH}}
+  installationSecrets,
+{{/AUTH}}
+  jsonResponse,
+  mockFetch,
+{{#OAUTH}}
+  refresh,
+{{/OAUTH}}
+  requestOf,
+  runHealthCheck,
+{{#OAUTH}}
+  systemSecrets,
+{{/OAUTH}}
+{{#SYSTEM_SECRETS}}
+  systemSecrets,
+{{/SYSTEM_SECRETS}}
+} from './harness.js';
+
+describe('health', () => {
+  it('reports ready when the API answers', async () => {
+    const fetchMock = mockFetch(jsonResponse({}));
+    const health = await runHealthCheck();
+    expect(health.status).toBe('ready');
+    expect(requestOf(fetchMock).url.origin).toBe(new URL(BASE_URL).origin);
+  });
+
+  it('reports degraded and names the host when the API is unreachable', async () => {
+    const down = () =>
+      Promise.reject(
+        Object.assign(new TypeError('fetch failed'), { cause: { code: 'ENOTFOUND' } }),
+      );
+    const fetchMock = mockFetch();
+    fetchMock.mockImplementation(down);
+    const health = await runHealthCheck();
+    expect(health.status).toBe('degraded');
+    expect(String(health.message)).toContain(new URL(BASE_URL).host);
+  });
+{{#AUTH}}
+
+  it('reports not_ready with MISSING_SECRET when a secret is missing', async () => {
+    for (const key of Object.keys(installationSecrets)) delete installationSecrets[key];
+    const health = await runHealthCheck();
+    expect(health.status).toBe('not_ready');
+    expect(JSON.stringify(health.issues)).toContain('MISSING_SECRET');
+  });
+{{/AUTH}}
+{{#SYSTEM_SECRETS}}
+
+  it('reports not_ready and names the config command when a system secret is missing', async () => {
+    for (const key of Object.keys(systemSecrets)) delete systemSecrets[key];
+    const health = await runHealthCheck();
+    expect(health.status).toBe('not_ready');
+    expect(String(health.message)).toContain('agentapps config {{APP_ID}}');
+  });
+{{/SYSTEM_SECRETS}}
+});
+
+describe('client', () => {
+  it('retries a GET once on 503 and returns the second answer', async () => {
+    const fetchMock = mockFetch(
+      jsonResponse({}, 503, { 'Retry-After': '0' }),
+      jsonResponse({ id: 7, name: 'Retried' }),
+    );
+    const result = await callTool('get-example', { id: 7 });
+    expect(result.success).toBe(true);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('caps a long error body and reports the status', async () => {
+    mockFetch(new Response('x'.repeat(10_000), { status: 500, statusText: 'Server Error' }));
+    const result = await callTool('get-example', { id: 'boom' });
+    expect(result.success).toBe(false);
+    const message = JSON.stringify(result.error);
+    expect(message).toContain('500');
+    expect(message.length).toBeLessThan(3_000);
+  });
+{{#AUTH}}
+
+  it('never puts a secret value in an error message', async () => {
+{{^OAUTH}}
+    const secretValues = Object.values({{#SYSTEM_SECRETS}}{ ...systemSecrets, ...installationSecrets }{{/SYSTEM_SECRETS}}{{^SYSTEM_SECRETS}}installationSecrets{{/SYSTEM_SECRETS}});
+    mockFetch(jsonResponse({ error: 'unauthorized' }, 401));
+{{/OAUTH}}
+{{#OAUTH}}
+    const secretValues = [
+      ...Object.values(systemSecrets),
+      installationSecrets.ACCESS_TOKEN,
+      installationSecrets.REFRESH_TOKEN,
+      'fake-refreshed-access-token',
+    ];
+    mockFetch(jsonResponse({ error: 'unauthorized' }, 401), jsonResponse({}, 401));
+{{/OAUTH}}
+    const result = await callTool('get-example', { id: 'x' });
+    expect(result.success).toBe(false);
+    for (const value of secretValues) {
+      expect(JSON.stringify(result)).not.toContain(value);
+    }
+  });
+{{/AUTH}}
+});
+{{#OAUTH}}
+
+describe('oauth', () => {
+  it('asks to connect the account when no access token is stored, before any request', async () => {
+    delete installationSecrets.ACCESS_TOKEN;
+    const fetchMock = mockFetch();
+    const result = await callTool('get-example', { id: 1 });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toContain('AUTH_REQUIRED');
+    expect(JSON.stringify(result.error)).toContain('auth');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refreshes once through the host on 401 and replays with the new token', async () => {
+    const fetchMock = mockFetch(
+      jsonResponse({ error: 'expired' }, 401),
+      jsonResponse({ id: 7, name: 'Fresh' }),
+    );
+    const result = await callTool('get-example', { id: 7 });
+    expect(result.success).toBe(true);
+    expect(refresh.calls).toBe(1);
+    const header = (n: number) =>
+      (requestOf(fetchMock, n).init.headers as Record<string, string>).Authorization;
+    expect(header(0)).toBe('Bearer fake-access-token');
+    expect(header(1)).toBe('Bearer fake-refreshed-access-token');
+  });
+
+  it('stops after one refresh when the new token is rejected too', async () => {
+    const fetchMock = mockFetch(jsonResponse({}, 401), jsonResponse({}, 401));
+    const result = await callTool('get-example', { id: 7 });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toContain('AUTH_EXPIRED');
+    expect(refresh.calls).toBe(1);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('asks to reconnect when the refresh token is dead', async () => {
+    refresh.next = null;
+    mockFetch(jsonResponse({}, 401));
+    const result = await callTool('get-example', { id: 7 });
+    expect(result.success).toBe(false);
+    const message = JSON.stringify(result.error);
+    expect(message).toContain('AUTH_EXPIRED');
+    expect(message).toContain('auth reauth');
+  });
+
+  it('names the config command when the OAuth client is not configured', async () => {
+    refresh.next = null;
+    delete systemSecrets.CLIENT_SECRET;
+    mockFetch(jsonResponse({}, 401));
+    const result = await callTool('get-example', { id: 7 });
+    expect(result.success).toBe(false);
+    const message = JSON.stringify(result.error);
+    expect(message).toContain('SYSTEM_CONFIG_MISSING');
+    expect(message).toContain('agentapps config {{APP_ID}}');
+  });
+});
+{{/OAUTH}}
+{{#SYSTEM_SECRETS}}
+
+describe('system secrets', () => {
+  it('names the config command on the app id when one is missing, before any request', async () => {
+    for (const key of Object.keys(systemSecrets)) delete systemSecrets[key];
+    const fetchMock = mockFetch();
+    const result = await callTool('get-example', { id: 1 });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toContain('agentapps config {{APP_ID}}');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+{{/SYSTEM_SECRETS}}
+
+describe('get-example', () => {
+  // TODO: replace with tests for the real tools.
+  it('requests the item and returns a curated shape', async () => {
+    const fetchMock = mockFetch(jsonResponse({ id: 42, name: 'Example', noise: 'dropped' }));
+    const result = await callTool('get-example', { id: 42 });
+    expect(result.success).toBe(true);
+    expect(result.result).toEqual({ id: '42', name: 'Example' });
+    const { url, init } = requestOf(fetchMock);
+    expect(url.pathname).toMatch(/\/example\/42$/);
+    expect(init.method).toBe('GET');
+  });
+
+  it('rejects an id that would change the URL path, before any request', async () => {
+    const fetchMock = mockFetch();
+    const result = await callTool('get-example', { id: '../admin' });
+    expect(result.success).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('surfaces API errors with the status', async () => {
+    mockFetch(jsonResponse({ error: 'not found' }, 404));
+    const result = await callTool('get-example', { id: 'missing' });
+    expect(result.success).toBe(false);
+    expect(JSON.stringify(result.error)).toContain('404');
+  });
+});

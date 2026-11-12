@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.telegram",
+  "version": "2.0.0",
+  "name": "Telegram",
+  "description": "Telegram Bot API — send messages, manage chats, handle media, and interact with Telegram users and groups.",
+  "tagline": "Send messages and manage chats via Telegram Bot API",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "communication",
+  "keywords": ["telegram", "messaging", "bot", "chat", "notifications"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["BOT_TOKEN"]
+  }
+}

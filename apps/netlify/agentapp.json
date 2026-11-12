@@ -1,0 +1,18 @@
+{
+  "id": "app.netlify",
+  "name": "Netlify",
+  "version": "2.0.0",
+  "description": "Deploy static sites (HTML/CSS/JS) from the workspace to Netlify and return the public URL. Uses the file-digest REST API with a per-user Personal Access Token.",
+  "tagline": "Deploy static sites to Netlify from the workspace",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": ["netlify", "deploy", "static site", "hosting", "cdn", "web"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["NETLIFY_TOKEN"] }
+}

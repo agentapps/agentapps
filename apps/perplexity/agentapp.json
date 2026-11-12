@@ -1,0 +1,48 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.perplexity",
+  "version": "1.0.0",
+  "name": "Perplexity AI",
+  "description": "AI-powered web search and multi-turn chat via the Perplexity API. Provides real-time answers with source citations.",
+  "tagline": "AI-powered web search with real-time answers and citations",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "ai",
+  "keywords": ["perplexity", "search", "ai", "citations", "chat"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["APIKEY"]
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

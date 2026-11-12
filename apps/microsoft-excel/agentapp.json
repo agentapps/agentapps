@@ -1,0 +1,27 @@
+{
+  "id": "app.microsoft.excel",
+  "name": "Excel",
+  "version": "1.0.0",
+  "description": "Microsoft Excel workbook automation — read and write ranges, formulas, tables, and charts via the Microsoft Graph workbook API.",
+  "tagline": "Read and write Excel ranges, formulas, tables, and charts via Microsoft Graph",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["excel", "spreadsheet", "microsoft", "workbook", "xlsx", "office365", "formulas"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "microsoft",
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EMAIL", "EXPIRY_DATE"],
+    "authorizeUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+    "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+    "scopes": ["openid", "profile", "email", "offline_access", "User.Read", "Files.ReadWrite.All"],
+    "pkce": false
+  }
+}

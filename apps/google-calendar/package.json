@@ -1,0 +1,24 @@
+{
+  "name": "@agentapps/example-google-calendar",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Google Calendar PoC — real OAuth2 + Google Calendar API via @agentapps/sdk.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run",
+    "dev": "node --watch dist/app.js"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "@agentapps/testing": "workspace:*",
+    "tsx": "^4.19.4",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

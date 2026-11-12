@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAddNoteToTicketTool } from './add-note-to-ticket.js';
+import { registerCreateCompanyTool } from './create-company.js';
+import { registerCreateContactTool } from './create-contact.js';
+import { registerCreateTicketTool } from './create-ticket.js';
+import { registerDeleteTicketTool } from './delete-ticket.js';
+import { registerGetCompanyTool } from './get-company.js';
+import { registerGetContactTool } from './get-contact.js';
+import { registerGetTicketTool } from './get-ticket.js';
+import { registerListAgentsTool } from './list-agents.js';
+import { registerListCompaniesTool } from './list-companies.js';
+import { registerListContactsTool } from './list-contacts.js';
+import { registerListGroupsTool } from './list-groups.js';
+import { registerListTicketConversationsTool } from './list-ticket-conversations.js';
+import { registerListTicketsTool } from './list-tickets.js';
+import { registerListTimeEntriesTool } from './list-time-entries.js';
+import { registerReplyToTicketTool } from './reply-to-ticket.js';
+import { registerSearchTicketsTool } from './search-tickets.js';
+import { registerUpdateTicketTool } from './update-ticket.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListTicketsTool(app);
+  registerGetTicketTool(app);
+  registerCreateTicketTool(app);
+  registerUpdateTicketTool(app);
+  registerDeleteTicketTool(app);
+  registerListTicketConversationsTool(app);
+  registerReplyToTicketTool(app);
+  registerAddNoteToTicketTool(app);
+  registerSearchTicketsTool(app);
+  registerListContactsTool(app);
+  registerGetContactTool(app);
+  registerCreateContactTool(app);
+  registerListAgentsTool(app);
+  registerListGroupsTool(app);
+  registerListCompaniesTool(app);
+  registerGetCompanyTool(app);
+  registerCreateCompanyTool(app);
+  registerListTimeEntriesTool(app);
+}

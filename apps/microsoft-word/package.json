@@ -1,0 +1,24 @@
+{
+  "name": "@agentapps/example-microsoft-word",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "docx": "^9.7.1",
+    "jszip": "^3.10.1",
+    "mammoth": "^1.12.1",
+    "turndown": "^7.2.4"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "@types/turndown": "^5.0.6",
+    "vitest": "^3.2.0"
+  }
+}

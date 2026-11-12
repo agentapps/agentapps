@@ -1,0 +1,36 @@
+import type { AgentApp } from '@agentapps/sdk';
+
+const GREETINGS: Record<string, string> = { en: 'Hello', es: 'Hola', fr: 'Bonjour' };
+
+export function registerGreetTool(app: AgentApp): void {
+  app.tool('greet', {
+    description: 'Greet a person by name in English, Spanish or French. Returns { message }.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Name of the person to greet.' },
+        language: {
+          type: 'string',
+          enum: Object.keys(GREETINGS),
+          description: 'Greeting language (default "en").',
+        },
+      },
+      required: ['name'],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
+    handler: async (args) => {
+      const a = (args ?? {}) as Record<string, unknown>;
+      if (typeof a.name !== 'string' || !a.name.trim()) {
+        throw new Error('[BAD_REQUEST] Specify name.');
+      }
+      const prefix = GREETINGS[String(a.language ?? 'en')] ?? GREETINGS.en;
+      return { message: `${prefix}, ${a.name.trim()}!` };
+    },
+  });
+}

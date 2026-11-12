@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.shopify",
+  "version": "2.0.0",
+  "name": "Shopify",
+  "description": "Shopify store management — manage products, orders, customers, inventory, and collections.",
+  "tagline": "Manage products, orders, and customers with Shopify",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "ecommerce",
+  "keywords": ["shopify", "ecommerce", "store", "products", "orders"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["SHOP_DOMAIN", "ACCESS_TOKEN"]
+  }
+}

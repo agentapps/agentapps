@@ -1,0 +1,50 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.bash",
+  "version": "1.0.0",
+  "name": "Bash",
+  "description": "Execute bash commands on the system. Provides shell access for automation and system tasks.",
+  "tagline": "Run shell commands and automate system tasks",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": ["bash", "shell", "command", "terminal", "system"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "permissions": { "volume": true },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"],
+    "mountVolume": true
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "none",
+    "systemSecrets": []
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

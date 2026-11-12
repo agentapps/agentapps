@@ -1,0 +1,47 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.datetime",
+  "version": "1.0.0",
+  "name": "Date & Time",
+  "description": "Tells the model the current date, time and timezone on every turn.",
+  "tagline": "The current date, time and timezone on every turn",
+  "author": {
+    "name": "Pablo Lopez Torres",
+    "email": "pablolopeztorres@gmail.com"
+  },
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "samples",
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false
+  },
+  "permissions": {
+    "hooksContext": true
+  },
+  "hooks": [
+    {
+      "point": "pre-turn",
+      "maxTokens": 40,
+      "timeoutMs": 50
+    }
+  ],
+  "auth": false,
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

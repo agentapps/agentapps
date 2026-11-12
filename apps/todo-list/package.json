@@ -1,0 +1,24 @@
+{
+  "name": "@agentapps/example-todo-list",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Todo List Agent App — Workflowy-style hierarchical outliner with storage via callbacks.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build:web": "cd web && npx vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/host": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "@agentapps/station": "workspace:*",
+    "@agentapps/testing": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

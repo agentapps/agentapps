@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateActivityTool } from './create-activity.js';
+import { registerCreateDealTool } from './create-deal.js';
+import { registerCreateNoteTool } from './create-note.js';
+import { registerCreateOrganizationTool } from './create-organization.js';
+import { registerCreatePersonTool } from './create-person.js';
+import { registerDeleteDealTool } from './delete-deal.js';
+import { registerGetDealTool } from './get-deal.js';
+import { registerGetOrganizationTool } from './get-organization.js';
+import { registerGetPersonTool } from './get-person.js';
+import { registerListActivitiesTool } from './list-activities.js';
+import { registerListDealsTool } from './list-deals.js';
+import { registerListNotesTool } from './list-notes.js';
+import { registerListOrganizationsTool } from './list-organizations.js';
+import { registerListPersonsTool } from './list-persons.js';
+import { registerListPipelinesTool } from './list-pipelines.js';
+import { registerListStagesTool } from './list-stages.js';
+import { registerUpdateDealTool } from './update-deal.js';
+import { registerUpdateOrganizationTool } from './update-organization.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListDealsTool(app);
+  registerGetDealTool(app);
+  registerCreateDealTool(app);
+  registerUpdateDealTool(app);
+  registerDeleteDealTool(app);
+  registerListPersonsTool(app);
+  registerGetPersonTool(app);
+  registerCreatePersonTool(app);
+  registerListOrganizationsTool(app);
+  registerGetOrganizationTool(app);
+  registerCreateOrganizationTool(app);
+  registerUpdateOrganizationTool(app);
+  registerListActivitiesTool(app);
+  registerCreateActivityTool(app);
+  registerListNotesTool(app);
+  registerCreateNoteTool(app);
+  registerListPipelinesTool(app);
+  registerListStagesTool(app);
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@agentapps/example-stdio-demo",
+  "version": "0.0.1",
+  "private": true,
+  "description": "stdio demo — real child process Agent App with interactive host controller",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx test/demo.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.6"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "app.render",
+  "name": "Render",
+  "version": "2.0.0",
+  "description": "Deploy and manage services on Render directly from your workspace. Supports web services, static sites, deployments, environment variables, custom domains, and more.",
+  "tagline": "Deploy, manage, and monitor services on the Render cloud platform",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": [
+    "render",
+    "deploy",
+    "paas",
+    "hosting",
+    "web service",
+    "static site",
+    "deployment",
+    "production"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["RENDER_API_KEY"] }
+}

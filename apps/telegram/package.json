@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-telegram",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Telegram Agent App — send messages, manage chats, handle media, and interact with Telegram users and groups.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

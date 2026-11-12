@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.datadog",
+  "version": "2.0.0",
+  "name": "Datadog",
+  "description": "Datadog monitoring — query metrics, list monitors, manage incidents, search logs, and check service status.",
+  "tagline": "Monitor metrics, logs, incidents, and dashboards with Datadog",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "devops",
+  "keywords": ["datadog", "monitoring", "metrics", "logs", "apm"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["API_KEY", "APP_KEY"]
+  }
+}

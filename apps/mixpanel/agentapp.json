@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.mixpanel",
+  "version": "2.0.0",
+  "name": "Mixpanel",
+  "description": "Mixpanel analytics — track events, query funnels, retention, user profiles, and export data.",
+  "tagline": "Query events, funnels, retention, and user profiles with Mixpanel",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "analytics",
+  "keywords": ["mixpanel", "analytics", "events", "funnels", "retention"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["PROJECT_ID"],
+    "installationSecrets": ["SERVICE_ACCOUNT_USERNAME", "SERVICE_ACCOUNT_SECRET"]
+  }
+}

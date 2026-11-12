@@ -1,0 +1,11 @@
+{
+  "name": "@agentapps/example-linear",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "@linear/sdk": "^29.0.0"
+  }
+}

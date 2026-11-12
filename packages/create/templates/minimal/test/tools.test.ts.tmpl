@@ -1,0 +1,25 @@
+/**
+ * Tool and health tests for the {{NAME}} Agent App.
+ */
+
+import { describe, expect, it } from 'vitest';
+import { callTool, runHealthCheck } from './harness.js';
+
+describe('hello', () => {
+  it('greets by name', async () => {
+    const result = await callTool('hello', { name: 'Alice' });
+    expect(result.success).toBe(true);
+    expect(result.result).toEqual({ message: 'Hello, Alice!' });
+  });
+
+  it('uses a default name', async () => {
+    const result = await callTool('hello', {});
+    expect(result.result).toEqual({ message: 'Hello, World!' });
+  });
+});
+
+describe('health', () => {
+  it('reports ready', async () => {
+    expect((await runHealthCheck()).status).toBe('ready');
+  });
+});

@@ -1,0 +1,26 @@
+import type { AgentApp } from '@agentapps/sdk';
+
+export function registerHelloTool(app: AgentApp): void {
+  app.tool('hello', {
+    description: 'Return a friendly greeting. Returns { message }.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Name to greet (default "World").' },
+      },
+      required: [],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
+    handler: async (args) => {
+      const a = (args ?? {}) as Record<string, unknown>;
+      const name = typeof a.name === 'string' && a.name.trim() ? a.name.trim() : 'World';
+      return { message: `Hello, ${name}!` };
+    },
+  });
+}

@@ -1,0 +1,18 @@
+{
+  "id": "app.zendesk",
+  "name": "Zendesk",
+  "version": "2.0.0",
+  "description": "Zendesk support integration — manage tickets, users, organizations, views, groups, triggers, automations, attachments, webhooks, and satisfaction ratings via the Zendesk REST API v2 with rate limiting.",
+  "tagline": "Manage tickets, users, organizations, and support workflows in Zendesk",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "other",
+  "keywords": ["zendesk", "customer-support", "tickets", "helpdesk", "support", "crm"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["SUBDOMAIN", "EMAIL", "API_TOKEN"] }
+}

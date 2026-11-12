@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-vercel",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Vercel Agent App — manage projects, deployments, domains, environment variables, and check deployment logs.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

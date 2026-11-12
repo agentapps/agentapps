@@ -1,0 +1,48 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.elevenlabs",
+  "version": "1.0.0",
+  "name": "ElevenLabs",
+  "description": "Text-to-speech generation with multiple voices and models via the ElevenLabs API.",
+  "tagline": "Generate lifelike speech with multiple voices and models",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.svg",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "ai",
+  "keywords": ["elevenlabs", "tts", "text-to-speech", "voice", "audio"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["API_KEY"]
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

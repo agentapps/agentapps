@@ -1,0 +1,28 @@
+{
+  "id": "app.google.docs",
+  "name": "Google Docs",
+  "version": "2.0.0",
+  "description": "Create, read, and edit Google Docs documents - create, read content, insert text, append text, delete content, insert tables, insert images, find & replace, text styling, named ranges, batch updates. To delete a document, use the Google Drive app.",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "google",
+  "keywords": ["google", "docs", "documents", "write", "edit", "create"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "google",
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": [
+      "https://www.googleapis.com/auth/documents",
+      "https://www.googleapis.com/auth/documents.readonly",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
+  }
+}

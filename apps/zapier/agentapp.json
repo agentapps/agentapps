@@ -1,0 +1,32 @@
+{
+  "id": "app.zapier",
+  "version": "2.0.0",
+  "name": "Zapier",
+  "description": "Zapier automation — list and execute Zapier actions via Natural Language Actions API.",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "automation",
+  "keywords": ["zapier", "automation", "workflows", "integrations", "nla"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["API_KEY"]
+  }
+}

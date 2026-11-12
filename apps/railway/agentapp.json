@@ -1,0 +1,25 @@
+{
+  "id": "app.railway",
+  "name": "Railway",
+  "version": "2.0.0",
+  "description": "Deploy projects to Railway directly from your workspace. Supports automatic deployments, environment management, and database provisioning.",
+  "tagline": "Deploy, manage services, environments, variables, domains, and volumes on Railway",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": [
+    "railway",
+    "deploy",
+    "paas",
+    "hosting",
+    "docker",
+    "deployment",
+    "staging",
+    "production"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["RAILWAY_TOKEN"] }
+}

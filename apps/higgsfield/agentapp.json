@@ -1,0 +1,26 @@
+{
+  "id": "app.higgsfield",
+  "name": "Higgsfield",
+  "version": "2.0.0",
+  "description": "Generate AI images and videos with Higgsfield - text-to-image, image-to-video, and consistent character generation with Soul.",
+  "tagline": "AI image and video generation with text-to-image, image-to-video, and Soul characters",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "terms": "https://agentapps.tech/terms",
+  "category": "ai",
+  "keywords": [
+    "higgsfield",
+    "ai",
+    "image-generation",
+    "video-generation",
+    "text-to-image",
+    "image-to-video",
+    "soul",
+    "character"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["API_KEY", "API_SECRET"] }
+}

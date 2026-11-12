@@ -1,0 +1,21 @@
+{
+  "name": "@agentapps/example-intents-pair",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Intent binding example — CRM app calls a messenger app via ctx.intent().",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/host": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.6"
+  }
+}

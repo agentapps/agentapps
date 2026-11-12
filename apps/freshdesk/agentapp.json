@@ -1,0 +1,32 @@
+{
+  "id": "app.freshdesk",
+  "version": "2.0.0",
+  "name": "Freshdesk",
+  "description": "Freshdesk customer support — manage tickets, contacts, agents, companies, and ticket fields.",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "support",
+  "keywords": ["freshdesk", "support", "tickets", "helpdesk", "customer-service"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["DOMAIN", "API_KEY"]
+  }
+}

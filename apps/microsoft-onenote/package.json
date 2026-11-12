@@ -1,0 +1,22 @@
+{
+  "name": "@agentapps/example-microsoft-onenote",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "marked": "^15.0.12",
+    "turndown": "^7.2.4"
+  },
+  "devDependencies": {
+    "@agentapps/protocol": "workspace:*",
+    "@agentapps/station": "workspace:*",
+    "@types/turndown": "^5.0.6",
+    "vitest": "^3.2.0"
+  }
+}

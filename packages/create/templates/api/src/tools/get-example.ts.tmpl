@@ -1,0 +1,46 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { apiRequest } from '../lib/client.js';
+
+// TODO: the generated example tool. Rename it (file, function, tool name, EXPECTED_TOOLS in
+// test/manifest.test.ts) or replace it with the first real tool.
+export function registerGetExampleTool(app: AgentApp): void {
+  app.tool('get-example', {
+    description:
+      'Fetch one example item by id. Returns { id, name }. Replace this text: what the tool does, what it returns, its limits.',
+    parameters: {
+      type: 'object',
+      properties: {
+        id: {
+          type: ['string', 'number'],
+          description: 'Item id. Numbers are accepted too.',
+        },
+      },
+      required: ['id'],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
+    handler: async (args, ctx) => {
+      const a = (args ?? {}) as Record<string, unknown>;
+      // The agentapps CLI turns number-like values into numbers, so accept both.
+      const id =
+        typeof a.id === 'number' ? String(a.id) : typeof a.id === 'string' ? a.id.trim() : '';
+      // Validate before the id goes into a URL path.
+      if (!/^[A-Za-z0-9_-]+$/.test(id)) {
+        throw new Error(
+          `[BAD_REQUEST] Specify id as letters, digits, "-" or "_"; got ${JSON.stringify(a.id)}.`,
+        );
+      }
+      const item = await apiRequest<{ id: string | number; name: string }>(
+        'GET',
+        `/example/${id}`,
+        ctx,
+      );
+      return { id: String(item.id), name: item.name };
+    },
+  });
+}

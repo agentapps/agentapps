@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateAccountTool } from './create-account.js';
+import { registerCreateContactTool } from './create-contact.js';
+import { registerCreateLeadTool } from './create-lead.js';
+import { registerCreateOpportunityTool } from './create-opportunity.js';
+import { registerCreateTaskTool } from './create-task.js';
+import { registerDeleteRecordTool } from './delete-record.js';
+import { registerDescribeObjectTool } from './describe-object.js';
+import { registerGetAccountTool } from './get-account.js';
+import { registerGetContactTool } from './get-contact.js';
+import { registerGetRecordByExternalIdTool } from './get-record-by-external-id.js';
+import { registerListAccountsTool } from './list-accounts.js';
+import { registerListCasesTool } from './list-cases.js';
+import { registerListContactsTool } from './list-contacts.js';
+import { registerListOpportunitiesTool } from './list-opportunities.js';
+import { registerListTasksTool } from './list-tasks.js';
+import { registerListUsersTool } from './list-users.js';
+import { registerQueryTool } from './query.js';
+import { registerUpdateRecordTool } from './update-record.js';
+
+export function registerTools(app: AgentApp): void {
+  registerQueryTool(app);
+  registerListAccountsTool(app);
+  registerGetAccountTool(app);
+  registerCreateAccountTool(app);
+  registerListContactsTool(app);
+  registerGetContactTool(app);
+  registerCreateContactTool(app);
+  registerListOpportunitiesTool(app);
+  registerCreateOpportunityTool(app);
+  registerCreateLeadTool(app);
+  registerListCasesTool(app);
+  registerListTasksTool(app);
+  registerCreateTaskTool(app);
+  registerListUsersTool(app);
+  registerUpdateRecordTool(app);
+  registerDeleteRecordTool(app);
+  registerGetRecordByExternalIdTool(app);
+  registerDescribeObjectTool(app);
+}

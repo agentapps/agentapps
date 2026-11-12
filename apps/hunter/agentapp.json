@@ -1,0 +1,27 @@
+{
+  "id": "app.hunter",
+  "name": "Hunter",
+  "version": "2.0.0",
+  "description": "Hunter.io email finder — find professional email addresses by domain, guess a person's email from their name, and verify email deliverability.",
+  "tagline": "Find professional emails, guess addresses, and verify deliverability with Hunter.io",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "data",
+  "keywords": [
+    "hunter",
+    "email",
+    "email-finder",
+    "email-verifier",
+    "domain-search",
+    "lead-generation",
+    "prospecting",
+    "data"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["HUNTER_API_KEY"] }
+}

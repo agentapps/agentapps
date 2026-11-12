@@ -1,0 +1,35 @@
+{
+  "id": "app.plaud",
+  "name": "PLAUD",
+  "version": "2.0.0",
+  "description": "Access your PLAUD voice recordings, transcripts, and AI summaries through the official Plaud MCP server. Search and retrieve notes from your PLAUD library.",
+  "tagline": "Browse, search, and retrieve your PLAUD voice recordings and transcripts",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": [
+    "plaud",
+    "voice",
+    "recordings",
+    "transcripts",
+    "notes",
+    "ai-summary",
+    "productivity"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "plaud",
+    "systemSecrets": ["CLIENT_ID"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EXPIRY_DATE"],
+    "authorizeUrl": "https://mcp.plaud.ai/authorize",
+    "tokenUrl": "https://mcp.plaud.ai/token",
+    "scopes": ["recordings:read"],
+    "pkce": true
+  }
+}

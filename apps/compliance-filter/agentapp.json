@@ -1,0 +1,48 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.compliance-filter",
+  "version": "1.0.0",
+  "name": "Compliance Filter",
+  "description": "Scans messages for PII and blocks them before they reach the agent.",
+  "tagline": "Blocks messages that carry personal data before they reach the agent",
+  "author": {
+    "name": "Pablo Lopez Torres",
+    "email": "pablolopeztorres@gmail.com"
+  },
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "compliance",
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/main.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false
+  },
+  "permissions": {
+    "hooksVeto": true,
+    "hooksConversation": true
+  },
+  "hooks": [
+    {
+      "point": "pre-turn",
+      "timeoutMs": 200
+    },
+    "post-turn"
+  ],
+  "auth": false,
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

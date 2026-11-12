@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-jira",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Jira Agent App — search issues, create/update tickets, manage transitions, and track sprints.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

@@ -1,0 +1,46 @@
+import type { AgentApp } from '@agentapps/sdk';
+
+const MAX_FROM = 100;
+
+export function registerCountdownTool(app: AgentApp): void {
+  app.tool('countdown', {
+    description: `Count down from a number (max ${MAX_FROM}), reporting progress and streaming each step. Stops early when cancelled. Returns { completed, from } or { cancelled, stoppedAt }.`,
+    parameters: {
+      type: 'object',
+      properties: {
+        from: { type: 'number', description: `Number to count down from (1-${MAX_FROM}).` },
+        delayMs: {
+          type: 'number',
+          description: 'Delay between steps in milliseconds (0-1000, default 100).',
+        },
+      },
+      required: ['from'],
+    },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
+    handler: async (args, ctx) => {
+      const a = (args ?? {}) as Record<string, unknown>;
+      const total = Math.min(Math.max(Math.floor(Number(a.from) || 10), 1), MAX_FROM);
+      const delay = Math.min(Math.max(Number(a.delayMs ?? 100) || 0, 0), 1000);
+
+      ctx.log('info', `Starting countdown from ${total}`);
+      for (let i = total; i > 0; i--) {
+        if (ctx.signal.aborted) {
+          ctx.log('warn', `Countdown cancelled at ${i}`);
+          return { cancelled: true, stoppedAt: i };
+        }
+        ctx.progress(Math.round(((total - i) / total) * 100), `${i} remaining`);
+        ctx.stream(`${i}... `);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+      ctx.progress(100, 'Done');
+      ctx.stream('0!', true);
+      return { completed: true, from: total };
+    },
+  });
+}

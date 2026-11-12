@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.stripe",
+  "version": "2.0.0",
+  "name": "Stripe",
+  "description": "Stripe payment processing — manage customers, payments, invoices, subscriptions, and payment links.",
+  "tagline": "Manage payments, customers, and invoices with Stripe",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "finance",
+  "keywords": ["stripe", "payments", "invoices", "subscriptions", "billing"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["API_KEY"]
+  }
+}

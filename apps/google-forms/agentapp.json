@@ -1,0 +1,30 @@
+{
+  "id": "app.google.forms",
+  "name": "Google Forms",
+  "version": "2.0.0",
+  "description": "Manage Google Forms — create forms, add questions, and read responses via Google Forms API.",
+  "tagline": "Create and manage Google Forms, add questions, and read submitted responses",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "google",
+  "keywords": ["google", "forms", "survey", "responses", "questions"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "google",
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": [
+      "https://www.googleapis.com/auth/forms.body",
+      "https://www.googleapis.com/auth/forms.responses.readonly",
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/userinfo.email"
+    ],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
+  }
+}

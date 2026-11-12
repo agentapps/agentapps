@@ -1,0 +1,21 @@
+{
+  "name": "@agentapps/example-context7",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Context7 Agent App — up-to-date library documentation with real code examples.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

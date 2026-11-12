@@ -1,0 +1,11 @@
+{
+  "name": "@agentapps/example-github",
+  "version": "2.0.1",
+  "private": true,
+  "type": "module",
+  "main": "src/app.ts",
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "@octokit/auth-app": "^8.2.0"
+  }
+}

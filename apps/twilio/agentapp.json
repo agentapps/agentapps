@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.twilio",
+  "version": "2.0.0",
+  "name": "Twilio",
+  "description": "Twilio communications — send SMS, make calls, manage phone numbers, and check message status.",
+  "tagline": "Send SMS, make calls, and manage communications with Twilio",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "communication",
+  "keywords": ["twilio", "sms", "voice", "phone", "messaging"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["ACCOUNT_SID", "AUTH_TOKEN"]
+  }
+}

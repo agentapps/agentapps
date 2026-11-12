@@ -1,0 +1,48 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAddReactionTool } from './add-reaction.js';
+import { registerAssignRoleTool } from './assign-role.js';
+import { registerBanMemberTool } from './ban-member.js';
+import { registerCreateChannelTool } from './create-channel.js';
+import { registerCreateRoleTool } from './create-role.js';
+import { registerCreateWebhookTool } from './create-webhook.js';
+import { registerDeleteChannelTool } from './delete-channel.js';
+import { registerDeleteMessageTool } from './delete-message.js';
+import { registerGetChannelTool } from './get-channel.js';
+import { registerGetGuildTool } from './get-guild.js';
+import { registerGetMemberTool } from './get-member.js';
+import { registerKickMemberTool } from './kick-member.js';
+import { registerListChannelsTool } from './list-channels.js';
+import { registerListGuildsTool } from './list-guilds.js';
+import { registerListMembersTool } from './list-members.js';
+import { registerListMessagesTool } from './list-messages.js';
+import { registerListRolesTool } from './list-roles.js';
+import { registerListWebhooksTool } from './list-webhooks.js';
+import { registerRemoveRoleTool } from './remove-role.js';
+import { registerSendMessageTool } from './send-message.js';
+import { registerSendWebhookMessageTool } from './send-webhook-message.js';
+import { registerTimeoutMemberTool } from './timeout-member.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListGuildsTool(app);
+  registerGetGuildTool(app);
+  registerListChannelsTool(app);
+  registerGetChannelTool(app);
+  registerCreateChannelTool(app);
+  registerDeleteChannelTool(app);
+  registerSendMessageTool(app);
+  registerListMessagesTool(app);
+  registerDeleteMessageTool(app);
+  registerAddReactionTool(app);
+  registerListMembersTool(app);
+  registerGetMemberTool(app);
+  registerListRolesTool(app);
+  registerCreateRoleTool(app);
+  registerAssignRoleTool(app);
+  registerRemoveRoleTool(app);
+  registerListWebhooksTool(app);
+  registerCreateWebhookTool(app);
+  registerSendWebhookMessageTool(app);
+  registerKickMemberTool(app);
+  registerBanMemberTool(app);
+  registerTimeoutMemberTool(app);
+}

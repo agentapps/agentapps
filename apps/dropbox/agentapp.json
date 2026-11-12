@@ -1,0 +1,32 @@
+{
+  "id": "app.dropbox",
+  "version": "2.0.0",
+  "name": "Dropbox",
+  "description": "Dropbox file storage — list, search, upload, download, and share files and folders.",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "storage",
+  "keywords": ["dropbox", "files", "storage", "cloud", "sharing"],
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "oauth2",
+    "provider": "dropbox",
+    "authorizeUrl": "https://www.dropbox.com/oauth2/authorize",
+    "tokenUrl": "https://api.dropboxapi.com/oauth2/token",
+    "scopes": [
+      "files.content.read",
+      "files.content.write",
+      "files.metadata.read",
+      "sharing.read",
+      "sharing.write",
+      "account_info.read"
+    ],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
+  }
+}

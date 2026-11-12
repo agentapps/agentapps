@@ -1,0 +1,24 @@
+{
+  "id": "app.whatsapp",
+  "name": "WhatsApp",
+  "version": "2.0.0",
+  "description": "Send and receive WhatsApp messages via WAHA (WhatsApp HTTP API). Manage sessions, send text/media, and handle incoming messages. Account linking is always done with a numeric pairing code (request-pairing-code) — QR authentication is not supported.",
+  "tagline": "Send and receive WhatsApp messages, manage sessions, and share media via WAHA",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "communication",
+  "keywords": ["whatsapp", "messaging", "waha", "chat", "automation"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": { "tools": true, "health": true },
+  "auth": {
+    "type": "agent",
+    "systemSecrets": ["WAHA_API_KEY"],
+    "instructions": "This app connects through the agent. Ask in the chat to link your WhatsApp session: you will get a pairing code to enter in WhatsApp > Linked Devices > Link with phone number. You can also ask the agent to check the session status or disconnect."
+  }
+}

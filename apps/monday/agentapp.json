@@ -1,0 +1,18 @@
+{
+  "id": "app.monday",
+  "name": "Monday.com",
+  "version": "2.0.0",
+  "description": "Monday.com work management - boards, items, groups, columns, updates",
+  "tagline": "Create and manage boards, items, groups, columns, and updates in Monday.com",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["monday", "boards", "items", "project-management", "work-management"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["MONDAY_API_TOKEN"] }
+}

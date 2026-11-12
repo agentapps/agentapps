@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateCustomerTool } from './create-customer.js';
+import { registerCreateEstimateTool } from './create-estimate.js';
+import { registerCreateInvoiceTool } from './create-invoice.js';
+import { registerCreateVendorTool } from './create-vendor.js';
+import { registerGetAccountTool } from './get-account.js';
+import { registerGetBalanceSheetTool } from './get-balance-sheet.js';
+import { registerGetCompanyInfoTool } from './get-company-info.js';
+import { registerGetCustomerTool } from './get-customer.js';
+import { registerGetInvoiceTool } from './get-invoice.js';
+import { registerGetPaymentTool } from './get-payment.js';
+import { registerGetProfitAndLossTool } from './get-profit-and-loss.js';
+import { registerListAccountsTool } from './list-accounts.js';
+import { registerListBillsTool } from './list-bills.js';
+import { registerListCustomersTool } from './list-customers.js';
+import { registerListInvoicesTool } from './list-invoices.js';
+import { registerListItemsTool } from './list-items.js';
+import { registerListVendorsTool } from './list-vendors.js';
+import { registerUpdateCustomerTool } from './update-customer.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListInvoicesTool(app);
+  registerGetInvoiceTool(app);
+  registerCreateInvoiceTool(app);
+  registerListCustomersTool(app);
+  registerGetCustomerTool(app);
+  registerCreateCustomerTool(app);
+  registerUpdateCustomerTool(app);
+  registerListItemsTool(app);
+  registerGetPaymentTool(app);
+  registerGetCompanyInfoTool(app);
+  registerListAccountsTool(app);
+  registerGetAccountTool(app);
+  registerListVendorsTool(app);
+  registerCreateVendorTool(app);
+  registerListBillsTool(app);
+  registerCreateEstimateTool(app);
+  registerGetProfitAndLossTool(app);
+  registerGetBalanceSheetTool(app);
+}

@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateContactTool } from './create-contact.js';
+import { registerCreateExpenseTool } from './create-expense.js';
+import { registerCreateInvoiceTool } from './create-invoice.js';
+import { registerCreateProductTool } from './create-product.js';
+import { registerDeleteContactTool } from './delete-contact.js';
+import { registerDeleteInvoiceTool } from './delete-invoice.js';
+import { registerGetContactTool } from './get-contact.js';
+import { registerGetInvoiceTool } from './get-invoice.js';
+import { registerGetProductTool } from './get-product.js';
+import { registerListContactsTool } from './list-contacts.js';
+import { registerListExpensesTool } from './list-expenses.js';
+import { registerListInvoicesTool } from './list-invoices.js';
+import { registerListProductsTool } from './list-products.js';
+import { registerListPurchaseOrdersTool } from './list-purchase-orders.js';
+import { registerListTreasuryAccountsTool } from './list-treasury-accounts.js';
+import { registerUpdateContactTool } from './update-contact.js';
+import { registerUpdateInvoiceTool } from './update-invoice.js';
+import { registerUpdateProductTool } from './update-product.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListInvoicesTool(app);
+  registerGetInvoiceTool(app);
+  registerCreateInvoiceTool(app);
+  registerUpdateInvoiceTool(app);
+  registerDeleteInvoiceTool(app);
+  registerListContactsTool(app);
+  registerGetContactTool(app);
+  registerCreateContactTool(app);
+  registerUpdateContactTool(app);
+  registerDeleteContactTool(app);
+  registerListProductsTool(app);
+  registerGetProductTool(app);
+  registerCreateProductTool(app);
+  registerUpdateProductTool(app);
+  registerListTreasuryAccountsTool(app);
+  registerListExpensesTool(app);
+  registerCreateExpenseTool(app);
+  registerListPurchaseOrdersTool(app);
+}

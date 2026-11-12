@@ -1,0 +1,21 @@
+{
+  "name": "@agentapps/example-pushcut",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Pushcut Agent App — smart notifications and iOS automation via the Pushcut API.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

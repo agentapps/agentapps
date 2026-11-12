@@ -1,0 +1,19 @@
+{
+  "name": "@agentapps/example-holded",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Holded Agent App — manage invoices, contacts, products, and treasury via the Holded API.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
+  }
+}

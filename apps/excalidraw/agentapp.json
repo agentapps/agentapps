@@ -1,0 +1,56 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.excalidraw",
+  "version": "2.0.0",
+  "name": "Excalidraw",
+  "description": "Integrate with Excalidraw Plus to manage scenes, collections, workspaces, users, and invites programmatically. Create and update diagrams, wireframes, and whiteboards via the Excalidraw Plus REST API.",
+  "tagline": "Manage Excalidraw Plus scenes, collections, and workspaces",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "design",
+  "keywords": [
+    "excalidraw",
+    "whiteboard",
+    "diagrams",
+    "wireframes",
+    "design",
+    "collaboration",
+    "scenes",
+    "drawings"
+  ],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": false,
+    "health": true,
+    "streaming": false,
+    "auth": false,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["EXCALIDRAW_API_KEY"]
+  },
+
+  "installation": {
+    "singleton": false,
+    "requiresUserConsent": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.cloudflare",
+  "version": "2.0.0",
+  "name": "Cloudflare",
+  "description": "Cloudflare platform management — manage DNS records, zones, Workers, KV namespaces, and purge cache.",
+  "tagline": "Manage DNS, Workers, and caching with Cloudflare",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "development",
+  "keywords": ["cloudflare", "dns", "cdn", "workers", "cache"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["API_TOKEN"]
+  }
+}

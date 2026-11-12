@@ -1,0 +1,42 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCreateDraftTool } from './create-draft.js';
+import { registerCreateFilterTool } from './create-filter.js';
+import { registerCreateLabelTool } from './create-label.js';
+import { registerDeleteDraftTool } from './delete-draft.js';
+import { registerDeleteFilterTool } from './delete-filter.js';
+import { registerDeleteLabelTool } from './delete-label.js';
+import { registerGetAttachmentTool } from './get-attachment.js';
+import { registerGetMessageTool } from './get-message.js';
+import { registerListDraftsTool } from './list-drafts.js';
+import { registerListFiltersTool } from './list-filters.js';
+import { registerListLabelsTool } from './list-labels.js';
+import { registerListMessagesTool } from './list-messages.js';
+import { registerModifyLabelsTool } from './modify-labels.js';
+import { registerReplyMessageTool } from './reply-message.js';
+import { registerSearchMessagesTool } from './search-messages.js';
+import { registerSendMessageTool } from './send-message.js';
+import { registerStoreAttachmentTool } from './store-attachment.js';
+import { registerUpdateDraftTool } from './update-draft.js';
+import { registerUpdateLabelTool } from './update-label.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListMessagesTool(app);
+  registerGetMessageTool(app);
+  registerSendMessageTool(app);
+  registerReplyMessageTool(app);
+  registerSearchMessagesTool(app);
+  registerModifyLabelsTool(app);
+  registerListDraftsTool(app);
+  registerCreateDraftTool(app);
+  registerDeleteDraftTool(app);
+  registerUpdateDraftTool(app);
+  registerGetAttachmentTool(app);
+  registerStoreAttachmentTool(app);
+  registerListLabelsTool(app);
+  registerCreateLabelTool(app);
+  registerUpdateLabelTool(app);
+  registerDeleteLabelTool(app);
+  registerListFiltersTool(app);
+  registerCreateFilterTool(app);
+  registerDeleteFilterTool(app);
+}

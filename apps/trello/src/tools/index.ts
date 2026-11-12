@@ -1,0 +1,42 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAddCommentTool } from './add-comment.js';
+import { registerAddLabelToCardTool } from './add-label-to-card.js';
+import { registerCreateBoardTool } from './create-board.js';
+import { registerCreateCardTool } from './create-card.js';
+import { registerCreateLabelTool } from './create-label.js';
+import { registerCreateListTool } from './create-list.js';
+import { registerDeleteBoardTool } from './delete-board.js';
+import { registerGetBoardTool } from './get-board.js';
+import { registerGetCardTool } from './get-card.js';
+import { registerGetCardActionsTool } from './get-card-actions.js';
+import { registerListBoardListsTool } from './list-board-lists.js';
+import { registerListBoardsTool } from './list-boards.js';
+import { registerListCardsTool } from './list-cards.js';
+import { registerListLabelsTool } from './list-labels.js';
+import { registerRemoveLabelFromCardTool } from './remove-label-from-card.js';
+import { registerSearchTool } from './search.js';
+import { registerUpdateBoardTool } from './update-board.js';
+import { registerUpdateCardTool } from './update-card.js';
+import { registerUpdateListTool } from './update-list.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListBoardsTool(app);
+  registerCreateBoardTool(app);
+  registerGetBoardTool(app);
+  registerUpdateBoardTool(app);
+  registerDeleteBoardTool(app);
+  registerListBoardListsTool(app);
+  registerCreateListTool(app);
+  registerUpdateListTool(app);
+  registerListCardsTool(app);
+  registerGetCardTool(app);
+  registerCreateCardTool(app);
+  registerUpdateCardTool(app);
+  registerAddCommentTool(app);
+  registerGetCardActionsTool(app);
+  registerListLabelsTool(app);
+  registerCreateLabelTool(app);
+  registerAddLabelToCardTool(app);
+  registerRemoveLabelFromCardTool(app);
+  registerSearchTool(app);
+}

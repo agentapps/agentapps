@@ -1,0 +1,20 @@
+{
+  "name": "@agentapps/example-datetime",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Conversation hook example — the current date and time in every turn.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/host": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "@agentapps/station": "workspace:*",
+    "vitest": "^3.2.6"
+  }
+}

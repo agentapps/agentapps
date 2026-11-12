@@ -1,0 +1,41 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.quickbooks",
+  "version": "2.0.0",
+  "name": "QuickBooks",
+  "description": "QuickBooks Online accounting — manage invoices, customers, payments, accounts, items, and reports.",
+  "tagline": "Manage invoices, customers, and payments with QuickBooks Online",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "finance",
+  "keywords": ["quickbooks", "accounting", "invoices", "payments", "intuit"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "oauth2",
+    "provider": "quickbooks",
+    "authorizeUrl": "https://appcenter.intuit.com/connect/oauth2",
+    "tokenUrl": "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer",
+    "scopes": ["com.intuit.quickbooks.accounting"],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "REALM_ID"]
+  }
+}

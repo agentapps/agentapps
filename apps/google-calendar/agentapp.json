@@ -1,0 +1,57 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.google.calendar",
+  "version": "1.0.0",
+  "name": "Google Calendar",
+  "description": "Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.",
+  "tagline": "Manage Google Calendar events with full OAuth2 integration",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "icon": "icon.png",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["google", "calendar", "oauth", "crud", "events"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "events": true,
+    "health": true,
+    "streaming": false,
+    "auth": true,
+    "storage": false,
+    "intents": false
+  },
+
+  "auth": {
+    "type": "oauth2",
+    "provider": "google",
+    "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+    "tokenUrl": "https://oauth2.googleapis.com/token",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "https://www.googleapis.com/auth/calendar.events"
+    ],
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "expiresAt"]
+  },
+
+  "installation": {
+    "singleton": true,
+    "requiresUserConsent": true,
+    "permissions": ["read_calendar", "write_calendar"]
+  }
+}

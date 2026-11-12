@@ -1,0 +1,65 @@
+{
+  "id": "app.discord",
+  "name": "Discord",
+  "version": "2.0.0",
+  "description": "Full Discord integration: guilds, channels, messages, members, roles, webhooks, reactions, and moderation. Uses Discord REST API v10 with OAuth 2.0 / Bot Token.",
+  "tagline": "Manage guilds, channels, messages, roles, and moderation in Discord",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "communication",
+  "keywords": [
+    "discord",
+    "messaging",
+    "chat",
+    "guild",
+    "server",
+    "community",
+    "voice",
+    "moderation"
+  ],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": { "tools": true, "health": true },
+
+  "auth": {
+    "type": "oauth2",
+    "provider": "discord",
+    "authorizeUrl": "https://discord.com/oauth2/authorize",
+    "tokenUrl": "https://discord.com/api/oauth2/token",
+    "scopes": [
+      "identify",
+      "guilds",
+      "guilds.members.read",
+      "bot",
+      "messages.read",
+      "applications.commands"
+    ],
+    "pkce": false,
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
+    "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"],
+    "extraFields": [
+      {
+        "name": "BOT_TOKEN",
+        "label": "Bot Token",
+        "type": "password",
+        "required": false,
+        "placeholder": "Bot token from Discord Developer Portal",
+        "hint": "Optional. Enables full guild access (channels, members, moderation). Without it, only user-scoped operations are available."
+      }
+    ]
+  }
+}

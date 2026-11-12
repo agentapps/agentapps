@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
+  "id": "app.amplitude",
+  "version": "2.0.0",
+  "name": "Amplitude",
+  "description": "Amplitude analytics — query events, user activity, cohorts, charts, and retention data.",
+  "tagline": "Query events, cohorts, retention, and funnels with Amplitude",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "analytics",
+  "keywords": ["amplitude", "analytics", "events", "cohorts", "retention"],
+
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+
+  "auth": {
+    "type": "api-key",
+    "systemSecrets": ["API_KEY", "SECRET_KEY"]
+  }
+}

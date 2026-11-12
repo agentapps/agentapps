@@ -1,0 +1,43 @@
+{
+  "id": "app.meta-ads",
+  "name": "Meta Ads",
+  "version": "1.0.0",
+  "description": "Meta (Facebook and Instagram) ads through the Marketing API: list ad accounts, campaigns, ad sets, ads and creatives, run performance reports with breakdowns, pause or activate delivery, change budgets, and create campaigns and ad sets (always paused)",
+  "tagline": "Report on Meta ad performance and manage campaigns, ad sets, ads and budgets",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "homepage": "https://developers.facebook.com/docs/marketing-api",
+  "terms": "https://agentapps.tech/terms",
+  "category": "marketing",
+  "keywords": [
+    "meta",
+    "facebook",
+    "instagram",
+    "ads",
+    "advertising",
+    "marketing",
+    "campaigns",
+    "insights",
+    "ppc"
+  ],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["META_ACCESS_TOKEN"]
+  }
+}

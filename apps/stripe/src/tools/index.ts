@@ -1,0 +1,44 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerCancelSubscriptionTool } from './cancel-subscription.js';
+import { registerCreateCheckoutSessionTool } from './create-checkout-session.js';
+import { registerCreateCustomerTool } from './create-customer.js';
+import { registerCreatePaymentLinkTool } from './create-payment-link.js';
+import { registerCreatePriceTool } from './create-price.js';
+import { registerCreateProductTool } from './create-product.js';
+import { registerCreateRefundTool } from './create-refund.js';
+import { registerGetBalanceTool } from './get-balance.js';
+import { registerGetCustomerTool } from './get-customer.js';
+import { registerGetInvoiceTool } from './get-invoice.js';
+import { registerGetPaymentTool } from './get-payment.js';
+import { registerGetSubscriptionTool } from './get-subscription.js';
+import { registerListChargesTool } from './list-charges.js';
+import { registerListCustomersTool } from './list-customers.js';
+import { registerListInvoicesTool } from './list-invoices.js';
+import { registerListPaymentsTool } from './list-payments.js';
+import { registerListPayoutsTool } from './list-payouts.js';
+import { registerListPricesTool } from './list-prices.js';
+import { registerListProductsTool } from './list-products.js';
+import { registerListSubscriptionsTool } from './list-subscriptions.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListCustomersTool(app);
+  registerGetCustomerTool(app);
+  registerCreateCustomerTool(app);
+  registerListPaymentsTool(app);
+  registerGetPaymentTool(app);
+  registerListInvoicesTool(app);
+  registerGetInvoiceTool(app);
+  registerGetBalanceTool(app);
+  registerListSubscriptionsTool(app);
+  registerGetSubscriptionTool(app);
+  registerCancelSubscriptionTool(app);
+  registerCreatePaymentLinkTool(app);
+  registerListProductsTool(app);
+  registerCreateProductTool(app);
+  registerListPricesTool(app);
+  registerCreatePriceTool(app);
+  registerListChargesTool(app);
+  registerCreateRefundTool(app);
+  registerCreateCheckoutSessionTool(app);
+  registerListPayoutsTool(app);
+}

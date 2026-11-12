@@ -1,0 +1,41 @@
+{
+  "name": "@agentapps/app.hello",
+  "version": "0.1.0",
+  "description": "Hello — minimal Agent App example (greet + countdown tools).",
+  "type": "module",
+  "main": "./dist/app.js",
+  "exports": {
+    ".": "./dist/app.js",
+    "./agentapp.json": "./agentapp.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "agentapp.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentapps/agentapps.git",
+    "directory": "apps/hello"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.6"
+  }
+}

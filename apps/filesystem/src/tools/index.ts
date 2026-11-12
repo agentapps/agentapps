@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAppendTool } from './append.js';
+import { registerCopyTool } from './copy.js';
+import { registerDeleteTool } from './delete.js';
+import { registerEditTool } from './edit.js';
+import { registerGlobTool } from './glob.js';
+import { registerGrepTool } from './grep.js';
+import { registerHashTool } from './hash.js';
+import { registerListTool } from './list.js';
+import { registerListRootsTool } from './list-roots.js';
+import { registerMkdirTool } from './mkdir.js';
+import { registerMoveTool } from './move.js';
+import { registerPatchTool } from './patch.js';
+import { registerReadTool } from './read.js';
+import { registerReadBatchTool } from './read-batch.js';
+import { registerReadMediaTool } from './read-media.js';
+import { registerStatTool } from './stat.js';
+import { registerTreeTool } from './tree.js';
+import { registerWriteTool } from './write.js';
+
+export function registerTools(app: AgentApp): void {
+  registerReadTool(app);
+  registerReadBatchTool(app);
+  registerReadMediaTool(app);
+  registerWriteTool(app);
+  registerAppendTool(app);
+  registerEditTool(app);
+  registerPatchTool(app);
+  registerListTool(app);
+  registerTreeTool(app);
+  registerStatTool(app);
+  registerHashTool(app);
+  registerGlobTool(app);
+  registerGrepTool(app);
+  registerDeleteTool(app);
+  registerCopyTool(app);
+  registerMoveTool(app);
+  registerMkdirTool(app);
+  registerListRootsTool(app);
+}

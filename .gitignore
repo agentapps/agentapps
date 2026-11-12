@@ -1,0 +1,18 @@
+core
+coverage/
+*.disabled
+dist/
+.DS_Store
+*.log
+node_modules/
+*.tsbuildinfo
+packages/station/test/fixtures/echo-app.js
+.agentapps/
+.secrets/
+docs/api/
+
+# Subagent-driven development scratch (ledgers, briefs, review packages)
+.superpowers/
+
+# Claude Code agent worktrees
+.claude/worktrees/

@@ -1,0 +1,61 @@
+import type { AgentApp } from '@agentapps/sdk';
+import {
+  ALL_DRIVES,
+  ensureAuthenticated,
+  initializeGoogleClients,
+  withAuthRetry,
+} from '../lib/index.js';
+
+export function registerCreateFolderTool(app: AgentApp): void {
+  app.tool('create-folder', {
+    description: 'Create a new folder in Google Drive.',
+    parameters: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+          description: 'Name of the folder to create',
+        },
+        parentFolderId: {
+          type: 'string',
+          description: 'Optional: ID of the parent folder (default: root)',
+        },
+      },
+      required: ['name'],
+    },
+    annotations: {
+      readOnlyHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+    },
+    handler: async (args, ctx) => {
+      const clients = await initializeGoogleClients(ctx);
+      await ensureAuthenticated(ctx);
+
+      const { name, parentFolderId } = args as { name: string; parentFolderId?: string };
+
+      return withAuthRetry(
+        ctx,
+        async () => {
+          const fileMetadata: { name: string; mimeType: string; parents?: string[] } = {
+            name,
+            mimeType: 'application/vnd.google-apps.folder',
+          };
+
+          if (parentFolderId) {
+            fileMetadata.parents = [parentFolderId];
+          }
+
+          const response = await clients.drive.files.create({
+            ...ALL_DRIVES,
+            requestBody: fileMetadata,
+            fields: 'id, name, webViewLink',
+          });
+
+          return response.data;
+        },
+        'create-folder',
+      );
+    },
+  });
+}

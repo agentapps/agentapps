@@ -1,0 +1,46 @@
+{
+  "name": "@agentapps/host",
+  "version": "0.1.0",
+  "description": "Host side of the Agent Apps protocol — embed in a platform to consume agent apps via their controllers",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentapps/agentapps.git",
+    "directory": "packages/host"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "agentapps",
+    "host",
+    "mcp",
+    "agent",
+    "ai",
+    "platform"
+  ],
+  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@agentapps/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/sdk": "workspace:*"
+  }
+}

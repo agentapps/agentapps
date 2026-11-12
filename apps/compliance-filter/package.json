@@ -1,0 +1,20 @@
+{
+  "name": "@agentapps/example-compliance-filter",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Conversation hook example — PII veto at pre-turn, audit at post-turn.",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.6"
+  }
+}

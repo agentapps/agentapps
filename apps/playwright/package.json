@@ -1,0 +1,23 @@
+{
+  "name": "@agentapps/example-playwright",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Playwright browser automation agent app — navigate, interact, take screenshots, and extract data from web pages.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "postinstall": "node -e \"process.env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD || require('node:child_process').execSync('npx playwright install chromium', { stdio: 'inherit' })\"",
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*",
+    "playwright": "1.65.0"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

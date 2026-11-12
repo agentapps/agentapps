@@ -1,0 +1,40 @@
+import type { AgentApp } from '@agentapps/sdk';
+import { registerAddSubscriberTool } from './add-subscriber.js';
+import { registerCreateCampaignTool } from './create-campaign.js';
+import { registerCreateSegmentTool } from './create-segment.js';
+import { registerDeleteSubscriberTool } from './delete-subscriber.js';
+import { registerGetAudienceTool } from './get-audience.js';
+import { registerGetCampaignTool } from './get-campaign.js';
+import { registerGetCampaignReportTool } from './get-campaign-report.js';
+import { registerGetTemplateTool } from './get-template.js';
+import { registerListAudiencesTool } from './list-audiences.js';
+import { registerListAutomationsTool } from './list-automations.js';
+import { registerListCampaignsTool } from './list-campaigns.js';
+import { registerListMergeFieldsTool } from './list-merge-fields.js';
+import { registerListSegmentsTool } from './list-segments.js';
+import { registerListSubscribersTool } from './list-subscribers.js';
+import { registerListTagsTool } from './list-tags.js';
+import { registerListTemplatesTool } from './list-templates.js';
+import { registerSendCampaignTool } from './send-campaign.js';
+import { registerUpdateSubscriberTool } from './update-subscriber.js';
+
+export function registerTools(app: AgentApp): void {
+  registerListAudiencesTool(app);
+  registerGetAudienceTool(app);
+  registerListSubscribersTool(app);
+  registerAddSubscriberTool(app);
+  registerUpdateSubscriberTool(app);
+  registerDeleteSubscriberTool(app);
+  registerListCampaignsTool(app);
+  registerGetCampaignTool(app);
+  registerCreateCampaignTool(app);
+  registerSendCampaignTool(app);
+  registerGetCampaignReportTool(app);
+  registerListTemplatesTool(app);
+  registerGetTemplateTool(app);
+  registerListSegmentsTool(app);
+  registerCreateSegmentTool(app);
+  registerListTagsTool(app);
+  registerListMergeFieldsTool(app);
+  registerListAutomationsTool(app);
+}

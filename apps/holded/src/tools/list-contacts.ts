@@ -1,0 +1,30 @@
+/**
+ * list_contacts — list Holded contacts.
+ */
+
+import type { AgentApp } from '@agentapps/sdk';
+import { holdedRequest } from '../lib/holded-client.js';
+
+export function registerListContactsTool(app: AgentApp): void {
+  app.tool('list_contacts', {
+    description:
+      'List contacts from your Holded account. Returns customers, suppliers, and other contacts.',
+    parameters: {
+      type: 'object',
+      properties: {
+        page: {
+          type: 'number',
+          description: 'Page number for pagination (default 1).',
+        },
+      },
+    },
+    annotations: { readOnlyHint: true },
+    handler: async (args, ctx) => {
+      let path = 'invoicing/v1/contacts';
+      if (args.page) {
+        path += `?page=${args.page}`;
+      }
+      return await holdedRequest('GET', path, null, ctx);
+    },
+  });
+}

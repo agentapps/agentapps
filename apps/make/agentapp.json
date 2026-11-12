@@ -1,0 +1,28 @@
+{
+  "id": "app.make",
+  "name": "Make",
+  "version": "2.0.0",
+  "description": "Make.com automation — trigger scenarios via webhooks (no token needed) and manage scenarios via the account API: create, read, update, delete, clone, start, stop, list, run, and inspect blueprints.",
+  "tagline": "Trigger webhooks and manage Make.com scenarios",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": [
+    "make",
+    "make.com",
+    "integromat",
+    "automation",
+    "webhook",
+    "scenario",
+    "no-code",
+    "integration",
+    "blueprint"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["MAKE_API_TOKEN", "MAKE_REGION"] }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@agentapps/sdk",
+  "version": "0.1.0",
+  "description": "Agent Apps SDK — author apps: tools, lifecycle hooks, events, UI resources, storage, app agent",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agentapps/agentapps.git",
+    "directory": "packages/sdk"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "agentapps",
+    "sdk",
+    "mcp",
+    "agent",
+    "ai",
+    "tools"
+  ],
+  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@agentapps/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*"
+  }
+}

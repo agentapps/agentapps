@@ -1,0 +1,21 @@
+{
+  "name": "@agentapps/example-elevenlabs",
+  "version": "0.0.1",
+  "private": true,
+  "description": "ElevenLabs Agent App — text-to-speech with multiple voices and models.",
+  "type": "module",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@agentapps/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "tsx": "^4.19.4",
+    "vitest": "^3.2.0"
+  }
+}

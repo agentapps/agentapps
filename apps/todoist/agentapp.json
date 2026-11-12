@@ -1,0 +1,16 @@
+{
+  "id": "app.todoist",
+  "name": "Todoist",
+  "version": "2.0.0",
+  "description": "Todoist task management — create, update, complete and delete tasks, organize projects, sections, labels and comments.",
+  "tagline": "Manage tasks, projects, labels, sections and comments in Todoist",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": ["todoist", "tasks", "todo", "productivity", "gtd"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["TODOIST_API_TOKEN"] }
+}

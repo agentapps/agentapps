@@ -1,0 +1,10 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
+# esbuild's install script fetches its platform-native binary; without it tsx and
+# vitest cannot run. pnpm blocks dependency build scripts by default, so it has
+# to be approved explicitly here. `onlyBuiltDependencies` is understood by both
+# pnpm 10 (the pinned version) and pnpm 11.
+onlyBuiltDependencies:
+  - esbuild

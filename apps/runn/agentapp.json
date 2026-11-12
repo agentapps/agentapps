@@ -1,0 +1,23 @@
+{
+  "id": "app.runn",
+  "name": "Runn",
+  "version": "2.0.0",
+  "description": "Runn resource management — projects, people, assignments, timesheets and capacity planning through the Runn API.",
+  "tagline": "Manage projects, people, assignments, timesheets, and capacity in Runn",
+  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "license": "MIT",
+  "logo": "assets/logo.png",
+  "terms": "https://agentapps.tech/terms",
+  "category": "productivity",
+  "keywords": [
+    "runn",
+    "resource-management",
+    "capacity-planning",
+    "project-management",
+    "timesheets"
+  ],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
+  "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
+  "capabilities": { "tools": true, "health": true },
+  "auth": { "type": "api-key", "installationSecrets": ["API_KEY"] }
+}

@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Calendly',
   description:
     'Calendly scheduling — manage event types, scheduled events, invitees, and availability.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'scheduling',
   keywords: ['calendly', 'scheduling', 'calendar', 'meetings', 'appointments'],

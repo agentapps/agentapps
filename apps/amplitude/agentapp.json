@@ -5,7 +5,7 @@
   "name": "Amplitude",
   "description": "Amplitude analytics — query events, user activity, cohorts, charts, and retention data.",
   "tagline": "Query events, cohorts, retention, and funnels with Amplitude",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

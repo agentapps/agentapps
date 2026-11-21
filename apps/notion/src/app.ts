@@ -15,7 +15,7 @@ const app = createApp({
   version: '2.0.0',
   name: 'Notion',
   description: 'Notion workspace - pages, databases, blocks, search, comments, file uploads',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['notion', 'notes', 'wiki', 'documentation', 'knowledge-base', 'databases'],

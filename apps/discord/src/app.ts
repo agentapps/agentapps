@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Discord',
   description:
     'Full Discord integration: guilds, channels, messages, members, roles, webhooks, reactions, and moderation. Uses Discord REST API v10 with OAuth 2.0 / Bot Token.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['discord', 'messaging', 'chat', 'guild', 'server', 'community', 'voice', 'moderation'],

@@ -23,7 +23,7 @@ const app = createApp({
   name: 'Replicate',
   description:
     'Run any AI model on Replicate. Discover models, start async predictions, poll for results, and manage running jobs.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'ai',
   keywords: ['replicate', 'ai', 'models', 'predictions', 'image-generation', 'video-generation'],

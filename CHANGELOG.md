@@ -5,6 +5,37 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-11-22
+
+The first version meant to be installed from npm: `npm install -g @agentapps/cli`.
+
+### Added
+
+- **Install without the repository.** The CLI works from any directory with a home workspace, carries a catalog of 90 apps, and downloads an app when it is installed. An app that is not in the catalog is found by its name: `agentapps install app.github github-work` fetches `@agentapps/app.github` from npm.
+- **App packages.** Every app is published as `@agentapps/<appId>`, a self-contained package with no dependencies to resolve.
+- **`agentapps connect <name>`** connects any agent platform that speaks MCP: it creates an API key with that name and prints the MCP server entry to add. `connect claude-code` registers it for you. The gateway is `agentapps mcp <name>`.
+- **`npx @agentapps/cli`** runs the CLI by its package name.
+- **Policies by key name.** API key names are unique among active keys, and `agentapps policy` accepts the name: `agentapps policy set cursor app.github merge-pull-request ask`.
+- **Gateways see only what their Policy allows.** A gateway lists the Installations its key may use.
+- A single executable per platform and a `curl | sh` installer, built by the release (not served yet).
+
+### Fixed
+
+- The MCP gateway waits for an Approval instead of timing out, and reopens its session after the Station restarts.
+- A call waiting for an Approval keeps its session, and a caller that goes away cancels its Approval.
+- The CLI and the Station no longer miss each other's writes to the same storage file.
+- `--config` no longer changes the saved workspace.
+
+### Security
+
+- `@modelcontextprotocol/sdk` 1.32.2 and `zod` 4.6.6 or later are required; both had known vulnerabilities in the versions used before.
+
+### Not included
+
+- The apps `playwright`, `browserbase`, `discord` and `filesystem` need native dependencies and are not published yet.
+
+---
+
 ## [1.0.0] — 2026-07-28
 
 First stable release of the Agent Apps open SDK, protocol, and toolchain.
@@ -216,5 +247,6 @@ Initial pre-alpha release of the Agent Apps open SDK, controller, and protocol.
 - [ ] `mca.scheduler` — Scheduler & Reminders
 - [ ] `mca.webfetch` — Web Fetch
 
+[0.2.0]: https://github.com/agentapps/agentapps/releases/tag/v0.2.0
 [1.0.0]: https://github.com/agentapps/agentapps/releases/tag/v1.0.0
 [0.1.0]: https://github.com/agentapps/agentapps/commits/main

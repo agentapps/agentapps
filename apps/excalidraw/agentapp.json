@@ -5,7 +5,7 @@
   "name": "Excalidraw",
   "description": "Integrate with Excalidraw Plus to manage scenes, collections, workspaces, users, and invites programmatically. Create and update diagrams, wireframes, and whiteboards via the Excalidraw Plus REST API.",
   "tagline": "Manage Excalidraw Plus scenes, collections, and workspaces",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

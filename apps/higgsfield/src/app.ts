@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Higgsfield',
   description:
     'Generate AI images and videos with Higgsfield - text-to-image, image-to-video, and consistent character generation with Soul.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'ai',
   keywords: [

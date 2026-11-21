@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-jira",
+  "name": "@agentapps/app.jira",
   "version": "2.0.0",
   "private": true,
   "description": "Jira Agent App — search issues, create/update tickets, manage transitions, and track sprints.",

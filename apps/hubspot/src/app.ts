@@ -8,7 +8,7 @@ const app = createApp({
   name: 'HubSpot',
   description:
     'HubSpot CRM integration — manage contacts, companies, deals, tickets, engagements, lists, and conversations via HubSpot REST API v3 with OAuth2.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'other',
   keywords: [

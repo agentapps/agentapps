@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Mixpanel',
   description:
     'Mixpanel analytics — track events, query funnels, retention, user profiles, and export data.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'analytics',
   keywords: ['mixpanel', 'analytics', 'events', 'funnels', 'retention'],

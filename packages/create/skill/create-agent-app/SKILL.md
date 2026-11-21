@@ -175,7 +175,7 @@ repo's.
 
 Read `references/live-testing.md` before calling the real service. The rules that matter most:
 run the health check first (`create-agent-app health`, secrets from environment variables),
-install the app under an alias with the `agentapps` CLI (`npx agentapps` in a scaffolded
+install the app under an alias with the `agentapps` CLI (`npx @agentapps/cli` in a scaffolded
 project; never the unscoped `agentapps` npm package) and set installation secrets on that alias
 (`agentapps config <alias> KEY:value`), prove you are in the sandbox with a read before any
 write, write only what was approved, clean up and verify it is gone, and never print a secret.

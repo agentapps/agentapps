@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Railway',
   description:
     'Deploy projects to Railway directly from your workspace. Supports automatic deployments, environment management, and database provisioning.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: [

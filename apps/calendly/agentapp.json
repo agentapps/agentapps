@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "name": "Calendly",
   "description": "Calendly scheduling — manage event types, scheduled events, invitees, and availability.",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

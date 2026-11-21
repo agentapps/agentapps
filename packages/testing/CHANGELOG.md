@@ -1,5 +1,18 @@
 # @agentapps/testing
 
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies [d21a8d8]
+- Updated dependencies [aa59ce6]
+- Updated dependencies [be3018a]
+- Updated dependencies [6a5e931]
+- Updated dependencies [3a05ab1]
+  - @agentapps/station@0.2.0
+  - @agentapps/protocol@0.2.0
+  - @agentapps/host@0.2.0
+
 ## 1.0.0
 
 ### Major Changes

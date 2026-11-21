@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Stripe',
   description:
     'Stripe payment processing — manage customers, payments, invoices, subscriptions, products, prices, charges, refunds, checkout sessions, payouts, and payment links.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'finance',
   keywords: ['stripe', 'payments', 'invoices', 'subscriptions', 'billing'],

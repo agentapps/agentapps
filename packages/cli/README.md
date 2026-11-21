@@ -13,11 +13,12 @@ aligned tables, emoji glyphs, and concise success/error messages.
 
 ```bash
 npm install -g @agentapps/cli
-# or use the local alias
+# or run it without installing
 npx @agentapps/cli
 ```
 
-The CLI is published as `agentapps` (`aa` alias is planned for the future).
+Installed, the command is `agentapps` (or `aa`). Never use `npx agentapps`: the unscoped
+`agentapps` package on npm is an unrelated project.
 
 ## Quick start
 

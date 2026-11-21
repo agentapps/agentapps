@@ -11,7 +11,7 @@ const app = createApp({
   version: '2.0.0',
   name: 'Slack',
   description: 'Full Slack workspace integration via Web API with OAuth 2.0',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['slack', 'messaging', 'chat', 'workspace', 'collaboration'],

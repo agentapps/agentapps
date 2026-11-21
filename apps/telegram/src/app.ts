@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Telegram',
   description:
     'Telegram Bot API — send messages, manage chats, handle media, and interact with Telegram users and groups.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['telegram', 'messaging', 'bot', 'chat', 'notifications'],

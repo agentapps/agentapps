@@ -42,7 +42,7 @@ const app = createApp({
   description:
     'Workflowy-style hierarchical outliner. Single-tree architecture — no lists, every node is part of one tree. Nodes have text, description, instructions (markdown), and a chronological log. Toggle complete (cascades to descendants), collapse/expand, move subtrees, and search.',
   tagline: 'Hierarchical outliner with markdown, logs, and tree operations',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: [

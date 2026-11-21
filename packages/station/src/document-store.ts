@@ -12,6 +12,7 @@
  *   installation and collection under the local data directory.
  */
 
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import type { StorageDocument } from '@agentapps/protocol';
@@ -195,7 +196,13 @@ function collectionFileName(collection: string): string {
  * sized for a single user's local installations, not for a server.
  */
 export class FileDocumentStore extends InMemoryDocumentStore {
-  private readonly loaded = new Set<string>();
+  /**
+   * Hash of the bytes last read from or written to each collection file.
+   * A digest, not an mtime: two writes can land inside the same filesystem
+   * timestamp tick (ext4 stores ~4 ms granularity), and a mtime comparison
+   * then sees no change and serves a stale copy.
+   */
+  private readonly seen = new Map<string, string>();
 
   constructor(private readonly baseDir: string) {
     super();
@@ -205,22 +212,40 @@ export class FileDocumentStore extends InMemoryDocumentStore {
     return resolve(this.baseDir, installationId, collectionFileName(collection));
   }
 
+  /**
+   * Load the collection from disk when the file changed since this process
+   * last read or wrote it, so the CLI and the station see each other's writes
+   * (CLI-REQ-3). The whole file is read and digested on every call: correct
+   * beats cheap here, and a single user's collections are small.
+   */
   protected override async hydrate(installationId: string, collection: string): Promise<void> {
     const key = `${installationId}\u0000${collection}`;
-    if (this.loaded.has(key)) return;
-    this.loaded.add(key);
     const path = this.filePath(installationId, collection);
-    if (!existsSync(path)) return;
     const documents = this.collectionOf(installationId, collection);
-    const raw = JSON.parse(readFileSync(path, 'utf8')) as Record<string, StorageDocument>;
-    for (const [documentId, document] of Object.entries(raw)) documents.set(documentId, document);
+    if (!existsSync(path)) {
+      if (this.seen.delete(key)) documents.clear();
+      return;
+    }
+    const raw = readFileSync(path, 'utf8');
+    const digest = createHash('sha256').update(raw).digest('hex');
+    if (this.seen.get(key) === digest) return;
+    this.seen.set(key, digest);
+    const parsed = JSON.parse(raw) as Record<string, StorageDocument>;
+    documents.clear();
+    for (const [documentId, document] of Object.entries(parsed))
+      documents.set(documentId, document);
   }
 
   protected override async persist(installationId: string, collection: string): Promise<void> {
     const path = this.filePath(installationId, collection);
     mkdirSync(dirname(path), { recursive: true });
     const documents = this.collectionOf(installationId, collection);
-    writeFileSync(path, `${JSON.stringify(Object.fromEntries(documents), null, 2)}\n`, 'utf8');
+    const raw = `${JSON.stringify(Object.fromEntries(documents), null, 2)}\n`;
+    writeFileSync(path, raw, 'utf8');
+    this.seen.set(
+      `${installationId}\u0000${collection}`,
+      createHash('sha256').update(raw).digest('hex'),
+    );
   }
 }
 

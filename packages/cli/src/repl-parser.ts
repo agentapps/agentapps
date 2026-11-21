@@ -47,6 +47,8 @@ export type ReplCommand =
   | { type: 'policy-unset'; principalId: string; ruleId: string }
   | { type: 'policy-delete'; principalId: string }
   | { type: 'key-list' }
+  | { type: 'connect'; client: string; remove: boolean }
+  | { type: 'mcp'; keyName: string }
   | { type: 'key-create'; name: string; userId: string; workspaceId?: string }
   | { type: 'hooks-claude-code'; event: string }
   | { type: 'hooks-claude-code-install'; settingsPath: string }
@@ -83,6 +85,8 @@ const TOP_LEVEL_COMMANDS = new Set([
   'permissions',
   'policy',
   'key',
+  'connect',
+  'mcp',
   'serve',
   'station',
   'warm',
@@ -187,6 +191,17 @@ export function parseReplTokens(tokens: string[], options: ParseReplOptions): Re
         port: port && !Number.isNaN(port) ? port : undefined,
         stationUrl,
       };
+    }
+    if (first === 'connect') {
+      // connect <client> [--remove]
+      const args = tokens.slice(1);
+      const client = args.find((t) => t !== '--remove');
+      if (!client) return { type: 'unknown', token: 'connect' };
+      return { type: 'connect', client, remove: args.includes('--remove') };
+    }
+    if (first === 'mcp') {
+      if (!second) return { type: 'unknown', token: 'mcp' };
+      return { type: 'mcp', keyName: second };
     }
     if (first === 'warm') return { type: 'warm' };
     if (first === 'sync') return { type: 'sync' };

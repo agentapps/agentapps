@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-vercel",
+  "name": "@agentapps/app.vercel",
   "version": "2.0.0",
   "private": true,
   "description": "Vercel Agent App — manage projects, deployments, domains, environment variables, and check deployment logs.",

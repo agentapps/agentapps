@@ -127,3 +127,45 @@ function globMatch(glob: string, value: string): boolean {
 function escapeRegExp(s: string): string {
   return s.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
 }
+
+/** A Rule whose `when` reads the call's arguments, unknown when listing. */
+function dependsOnArgs(rule: Rule): boolean {
+  return !!rule.when && !('annotation' in rule.when);
+}
+
+/**
+ * Whether a tool stays in a Principal's tool list: hidden only when the Policy
+ * denies it whatever the arguments.
+ *
+ * @spec POLICY-REQ-11
+ */
+export function toolVisible(
+  policy: Policy,
+  app: string,
+  tool: string,
+  annotations?: Record<string, unknown>,
+): boolean {
+  const known = { ...policy, rules: policy.rules.filter((r) => !dependsOnArgs(r)) };
+  if (evaluatePolicy(known, { app, tool, args: {}, annotations }).effect !== 'deny') return true;
+  return policy.rules.some(
+    (r) =>
+      dependsOnArgs(r) &&
+      (r.app === '*' || r.app === app) &&
+      (r.tool === '*' || r.tool === tool) &&
+      r.effect !== 'deny',
+  );
+}
+
+/**
+ * Whether an Installation of `app` is listed to a Principal: hidden only when
+ * the Policy denies the App as a whole.
+ *
+ * @spec POLICY-REQ-10
+ */
+export function appVisible(policy: Policy, app: string): boolean {
+  const known = { ...policy, rules: policy.rules.filter((r) => !dependsOnArgs(r) && !r.when) };
+  // A tool name no Rule can name stands for "any tool of this App".
+  const anyTool = '\u0000';
+  if (evaluatePolicy(known, { app, tool: anyTool, args: {} }).effect !== 'deny') return true;
+  return policy.rules.some((r) => r.app === app && r.tool !== '*' && r.effect !== 'deny');
+}

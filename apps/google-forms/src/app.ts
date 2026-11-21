@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Forms',
   description:
     'Manage Google Forms — create forms, add questions, and read responses via Google Forms API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: ['google', 'forms', 'survey', 'responses', 'questions'],

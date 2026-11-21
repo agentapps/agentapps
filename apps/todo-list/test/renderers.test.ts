@@ -164,33 +164,35 @@ describe('Renderers', () => {
       expect(out.variants?.markdown).toBeDefined();
     });
 
-    it('renders folder icon for parent nodes and circle for leaves', async () => {
+    it('[TODOLIST-AC-2] renders folder icon for parent nodes and circle for leaves', async () => {
       const out = await treeRenderer({ tree: sampleTree }, ctx);
-      expect(out.variants!.markdown!).toContain('📁 Comprar pan');
+      expect(out.variants!.markdown!).toContain('● Comprar pan');
       expect(out.variants!.markdown!).toContain('○ Comprar leche');
     });
 
     it('ends each line with the node id so it can be reused in other tools', async () => {
       const out = await treeRenderer({ tree: sampleTree }, ctx);
-      expect(out.variants!.markdown!.split('\n')[0]).toBe('📁 Comprar pan ✓  `node_1`');
+      expect(out.variants!.markdown!.split('\n')[0]).toBe('● Comprar pan  `node_1`');
     });
 
-    it('renders ✓ mark for completed nodes', async () => {
+    it('[TODOLIST-AC-1] renders ● in the icon slot for completed nodes', async () => {
       const out = await treeRenderer({ tree: sampleTree }, ctx);
-      expect(out.variants!.markdown!).toContain('Comprar pan ✓');
-      expect(out.variants!.markdown!).toContain('Pan integral ✓');
+      expect(out.variants!.markdown!).toContain('● Comprar pan');
+      expect(out.variants!.markdown!).toContain('  ├─ ● Pan integral');
     });
 
-    it('does not render ✓ for incomplete nodes', async () => {
+    it('[TODOLIST-AC-2] renders ○ for incomplete leaves and no ● for them', async () => {
       const out = await treeRenderer({ tree: sampleTree }, ctx);
-      expect(out.variants!.markdown!).not.toContain('Pan de centeno ✓');
-      expect(out.variants!.markdown!).not.toContain('Comprar leche ✓');
+      expect(out.variants!.markdown!).toContain('  └─ ○ Pan de centeno');
+      expect(out.variants!.markdown!).toContain('○ Comprar leche');
+      expect(out.variants!.markdown!).not.toContain('Pan de centeno ●');
+      expect(out.variants!.markdown!).not.toContain('Comprar leche ●');
     });
 
     it('renders nested children with indentation', async () => {
       const out = await treeRenderer({ tree: sampleTree }, ctx);
       // First child (not last) uses ├─, second child (last) uses └─
-      expect(out.variants!.markdown!).toContain('  ├─ ○ Pan integral ✓');
+      expect(out.variants!.markdown!).toContain('  ├─ ● Pan integral');
       expect(out.variants!.markdown!).toContain('  └─ ○ Pan de centeno');
     });
 
@@ -221,12 +223,12 @@ describe('Renderers', () => {
       }
     });
 
-    it('renders title as h2 with status icon', async () => {
+    it('[TODOLIST-AC-3] renders title as h2 with status icon', async () => {
       const out = await detailRenderer({ node: sampleNodeDetail }, ctx);
-      expect(out.variants!.markdown!).toContain('## ✓ Comprar pan');
+      expect(out.variants!.markdown!).toContain('## ● Comprar pan');
     });
 
-    it('renders incomplete nodes with circle icon', async () => {
+    it('[TODOLIST-AC-3] renders incomplete nodes with circle icon', async () => {
       const incomplete = { ...sampleNodeDetail, completed: false };
       const out = await detailRenderer({ node: incomplete }, ctx);
       expect(out.variants!.markdown!).toContain('## ○ Comprar pan');
@@ -291,7 +293,7 @@ describe('Renderers', () => {
       }
     });
 
-    it('renders bold title with status icon', async () => {
+    it('[TODOLIST-AC-4] renders bold title with status icon', async () => {
       const out = await nodeCardRenderer(
         { node: { nodeId: 'n1', text: 'My Task', completed: false } },
         ctx,
@@ -299,12 +301,12 @@ describe('Renderers', () => {
       expect(out.variants!.markdown!).toContain('**○ My Task**');
     });
 
-    it('renders ✓ for completed nodes', async () => {
+    it('renders ● for completed nodes', async () => {
       const out = await nodeCardRenderer(
         { node: { nodeId: 'n1', text: 'Done Task', completed: true } },
         ctx,
       );
-      expect(out.variants!.markdown!).toContain('**✓ Done Task**');
+      expect(out.variants!.markdown!).toContain('**● Done Task**');
     });
 
     it('includes metadata line with nodeId and completed status', async () => {
@@ -426,7 +428,7 @@ describe('Renderers', () => {
         },
         ctx,
       );
-      expect(out.variants!.markdown!).toContain('**✓ Completed Task**');
+      expect(out.variants!.markdown!).toContain('**● Completed Task**');
       expect(out.variants!.markdown!).toContain('completed: yes');
     });
 

@@ -1,6 +1,6 @@
 {
-  "name": "@agentapps/example-compliance-filter",
-  "version": "0.0.1",
+  "name": "@agentapps/app.compliance-filter",
+  "version": "1.0.0",
   "private": true,
   "description": "Conversation hook example — PII veto at pre-turn, audit at post-turn.",
   "type": "module",

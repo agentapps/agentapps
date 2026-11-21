@@ -16,7 +16,7 @@ const app = createApp({
   name: 'Canva',
   description:
     'Canva design management — designs, exports, resizes, folders, assets, brand templates, autofill, and comments via the Canva Connect API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'design',
   keywords: ['canva', 'design', 'graphics', 'templates', 'export', 'resize', 'comments'],

@@ -8,14 +8,44 @@
  *   policy unset <principal> <ruleId>                   — remove a Rule
  *   policy delete <principal>                           — back to the default Policy
  *
+ * `<principal>` is a Principal id (`admin`, or the one `key create` printed) or
+ * the name of an active API key; names are unique among active keys.
+ *
  * `app` and `tool` accept `*`; `when` is the Rule's condition as JSON, e.g.
  * `{"to":{"endsWith":"@hexagon.sh"}}` or `{"annotation":"sensitive"}`.
  */
 
 import { type Rule, RuleConditionSchema } from '@agentapps/protocol';
-import { getPolicy, loadPolicies, putPolicy, savePolicies } from '../state.js';
+import { getPolicy, loadApiKeys, loadPolicies, putPolicy, savePolicies } from '../state.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
+
+/**
+ * The Principal a `policy` command names: an id as given, or the Principal
+ * behind a key name. A value that is neither is refused, so a Rule is never
+ * stored for a Principal that does not exist.
+ *
+ * @spec POLICY-REQ-15
+ */
+function resolvePrincipal(
+  configPath: string,
+  given: string,
+): { id: string; label: string } | { error: string; suggestion?: string } {
+  const keys = loadApiKeys(configPath);
+  if (
+    given === 'admin' ||
+    keys.some((k) => k.principalId === given) ||
+    loadPolicies(configPath).some((p) => p.principalId === given)
+  ) {
+    return { id: given, label: given };
+  }
+  const named = keys.find((k) => k.name === given && !k.revokedAt);
+  if (named) return { id: named.principalId, label: `${given} (${named.principalId})` };
+  return {
+    error: `No Principal is called ${given}`,
+    suggestion: 'Use admin, a Principal id, or the name of an active API key (see: key list).',
+  };
+}
 
 function describeRule(r: Rule): Record<string, ResultValue> {
   return {
@@ -46,13 +76,18 @@ export async function handlePolicyList(
   return { success: true, data: { Policies: data } as unknown as ResultValue, exitCode: 0 };
 }
 
-/** @spec POLICY-REQ-2 */
+/**
+ * @spec POLICY-REQ-2
+ * @spec POLICY-REQ-15
+ */
 export async function handlePolicyShow(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-show') return internal();
-  const policy = getPolicy(context.ctx.configPath, command.principalId);
+  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
+  if ('error' in who) return invalid(who.error, who.suggestion);
+  const policy = getPolicy(context.ctx.configPath, who.id);
   const rules: Record<string, ResultValue> = {};
   for (const r of policy.rules) rules[r.id] = describeRule(r);
   return {
@@ -67,7 +102,10 @@ export async function handlePolicyShow(
   };
 }
 
-/** @spec POLICY-REQ-3 */
+/**
+ * @spec POLICY-REQ-3
+ * @spec POLICY-REQ-15
+ */
 export async function handlePolicySet(
   command: ReplCommand,
   context: HandlerContext,
@@ -85,7 +123,9 @@ export async function handlePolicySet(
     if (!result.success) return invalid(`Invalid condition: ${result.error.message}`);
     when = result.data;
   }
-  const policy = getPolicy(context.ctx.configPath, command.principalId);
+  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
+  if ('error' in who) return invalid(who.error, who.suggestion);
+  const policy = getPolicy(context.ctx.configPath, who.id);
   const id = when
     ? `${command.app}/${command.tool}#${JSON.stringify(when)}`
     : `${command.app}/${command.tool}`;
@@ -100,41 +140,51 @@ export async function handlePolicySet(
   putPolicy(context.ctx.configPath, { ...policy, rules });
   return {
     success: true,
-    message: `${command.principalId}: ${command.app}/${command.tool} → ${command.effect}${when ? ` when ${JSON.stringify(when)}` : ''} (rule ${id})`,
+    message: `${who.label}: ${command.app}/${command.tool} → ${command.effect}${when ? ` when ${JSON.stringify(when)}` : ''} (rule ${id})`,
     exitCode: 0,
   };
 }
 
-/** @spec POLICY-REQ-3 */
+/**
+ * @spec POLICY-REQ-3
+ * @spec POLICY-REQ-15
+ */
 export async function handlePolicyUnset(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-unset') return internal();
-  const policy = getPolicy(context.ctx.configPath, command.principalId);
+  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
+  if ('error' in who) return invalid(who.error, who.suggestion);
+  const policy = getPolicy(context.ctx.configPath, who.id);
   const rules = policy.rules.filter((r) => r.id !== command.ruleId);
   if (rules.length === policy.rules.length) {
-    return invalid(`No rule ${command.ruleId} in ${command.principalId}'s Policy`);
+    return invalid(`No rule ${command.ruleId} in ${who.label}'s Policy`);
   }
   putPolicy(context.ctx.configPath, { ...policy, rules });
   return { success: true, message: `Removed rule ${command.ruleId}`, exitCode: 0 };
 }
 
-/** @spec POLICY-REQ-2 */
+/**
+ * @spec POLICY-REQ-2
+ * @spec POLICY-REQ-15
+ */
 export async function handlePolicyDelete(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-delete') return internal();
+  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
+  if ('error' in who) return invalid(who.error, who.suggestion);
   const policies = loadPolicies(context.ctx.configPath);
-  const kept = policies.filter((p) => p.principalId !== command.principalId);
+  const kept = policies.filter((p) => p.principalId !== who.id);
   if (kept.length === policies.length) {
-    return invalid(`No stored Policy for ${command.principalId}`);
+    return invalid(`No stored Policy for ${who.label}`);
   }
   savePolicies(context.ctx.configPath, kept);
   return {
     success: true,
-    message: `${command.principalId} is back to the default Policy`,
+    message: `${who.label} is back to the default Policy`,
     exitCode: 0,
   };
 }
@@ -143,6 +193,6 @@ function internal(): HandlerResult {
   return { success: false, exitCode: 2, error: { message: 'Internal error' } };
 }
 
-function invalid(message: string): HandlerResult {
-  return { success: false, exitCode: 2, error: { message } };
+function invalid(message: string, suggestion?: string): HandlerResult {
+  return { success: false, exitCode: 2, error: { message, ...(suggestion ? { suggestion } : {}) } };
 }

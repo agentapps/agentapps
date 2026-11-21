@@ -2,6 +2,9 @@
   "name": "@agentapps/example-intents-pair",
   "version": "0.0.1",
   "private": true,
+  "agentapps": {
+    "publish": false
+  },
   "description": "Intent binding example — CRM app calls a messenger app via ctx.intent().",
   "type": "module",
   "main": "src/index.ts",

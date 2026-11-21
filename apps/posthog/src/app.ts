@@ -12,7 +12,7 @@ const app = createApp({
   name: 'PostHog',
   description:
     'PostHog product analytics — events, persons, feature flags, insights, cohorts, annotations, actions, dashboards, experiments, and session recordings.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'analytics',
   keywords: [

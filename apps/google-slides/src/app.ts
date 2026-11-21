@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Slides',
   description:
     'Create, read, update, and delete Google Slides presentations — full read/write support for slides, text, and batch operations',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: ['google', 'slides', 'presentation', 'deck'],

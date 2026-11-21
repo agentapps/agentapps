@@ -3,7 +3,7 @@
   "name": "Google Docs",
   "version": "2.0.0",
   "description": "Create, read, and edit Google Docs documents - create, read content, insert text, append text, delete content, insert tables, insert images, find & replace, text styling, named ranges, batch updates. To delete a document, use the Google Drive app.",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "google",

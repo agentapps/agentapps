@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-youtube-analytics",
+  "name": "@agentapps/app.youtube-analytics",
   "version": "1.0.0",
   "private": true,
   "type": "module",

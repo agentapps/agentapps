@@ -23,7 +23,7 @@ const app = createApp({
   name: 'Hello',
   description:
     'Minimal example app with greet and countdown tools. Demonstrates tools, health checks, progress reporting, and cancellation.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   category: 'samples',
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
 });

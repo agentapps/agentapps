@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Zendesk',
   description:
     'Zendesk support integration — manage tickets, users, organizations, views, groups, triggers, automations, attachments, webhooks, and satisfaction ratings via the Zendesk REST API v2 with rate limiting.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'other',
   keywords: ['zendesk', 'customer-support', 'tickets', 'helpdesk', 'support', 'crm'],

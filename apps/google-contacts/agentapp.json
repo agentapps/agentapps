@@ -5,7 +5,7 @@
   "version": "2.0.0",
   "description": "Manage Google Contacts — list, search, create, update, and delete contacts, plus organize them into groups and labels via the Google People API.",
   "tagline": "List, search, create, update, and delete contacts and contact groups in Google Contacts",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

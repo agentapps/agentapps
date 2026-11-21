@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Docs',
   description:
     'Create, read, and edit Google Docs documents - create, read content, insert text, append text, delete content, insert tables, insert images, find & replace, text styling, named ranges, batch updates. To delete a document, use the Google Drive app.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: ['google', 'docs', 'documents', 'write', 'edit', 'create'],

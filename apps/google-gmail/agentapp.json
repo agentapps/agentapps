@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Gmail email management — send, read, search, label, and filter emails via Google Gmail API.",
   "tagline": "Send, read, search, and manage emails in Gmail",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

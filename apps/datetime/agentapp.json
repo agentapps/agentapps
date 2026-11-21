@@ -6,7 +6,7 @@
   "description": "Tells the model the current date, time and timezone on every turn.",
   "tagline": "The current date, time and timezone on every turn",
   "author": {
-    "name": "Pablo Lopez Torres",
+    "name": "Pablo López Torres",
     "email": "pablolopeztorres@gmail.com"
   },
   "logo": "assets/logo.svg",

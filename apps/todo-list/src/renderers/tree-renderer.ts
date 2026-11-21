@@ -5,9 +5,9 @@
  * UI Component, plus a markdown variant for hosts that cannot draw components:
  *
  * ```markdown
- * 📁 Comprar pan ✓  `tn_a1`
- *   └─ Pan integral ✓  `tn_b2`
- *   └─ Pan de centeno  `tn_c3`
+ * ● Comprar pan  `tn_a1`
+ *   └─ ● Pan integral  `tn_b2`
+ *   └─ ○ Pan de centeno  `tn_c3`
  * ○ Comprar leche  `tn_d4`
  * ```
  */
@@ -31,7 +31,7 @@ export function toTreeNode(node: FormattedNode): UITreeNode {
       node.childCount > 0
         ? `${node.completedChildren}/${node.childCount} done`
         : node.completed
-          ? '✓'
+          ? '●'
           : undefined,
     completed: node.completed,
     collapsed: node.collapsed,
@@ -53,10 +53,10 @@ export function toTreeNode(node: FormattedNode): UITreeNode {
  */
 function renderNode(node: FormattedNode, depth: number, isLast: boolean): string {
   const prefix = depth === 0 ? '' : '  '.repeat(depth) + (isLast ? '└─ ' : '├─ ');
-  const icon = node.childCount > 0 ? '📁' : '○';
-  const checkMark = node.completed ? ' ✓' : '';
+  // A completed node shows ● in the icon slot; open nodes show 📁 (folder) or ○ (leaf).
+  const icon = node.completed ? '●' : node.childCount > 0 ? '📁' : '○';
   // The id goes last so it can be copied into get-node, add-node parentId, etc.
-  let line = `${prefix}${icon} ${node.text}${checkMark}  \`${node.nodeId}\``;
+  let line = `${prefix}${icon} ${node.text}  \`${node.nodeId}\``;
 
   if (node.children && node.children.length > 0) {
     const childLines = node.children.map((child, i) =>

@@ -7,13 +7,14 @@
  */
 
 import { getAuthInfo } from '../auth-helper.js';
-import { resolveSourcePath } from '../config.js';
+import { resolveSourcePath, sourceMetadata } from '../config.js';
 import { resolveApp } from '../resolve.js';
 import { openAppSession } from '../session.js';
 import { getInstallation } from '../state.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** @spec DIST-REQ-2 */
 export async function handleInfo(
   command: ReplCommand,
   context: HandlerContext,
@@ -53,13 +54,13 @@ export async function handleInfo(
     };
   }
 
-  const source = resolveSourcePath(ctx.configPath, entry.source);
   let manifest: Record<string, unknown> | undefined;
   try {
-    const app = await resolveApp(appId, source);
+    const app = await resolveApp(appId, resolveSourcePath(ctx.configPath, entry.source));
     manifest = app.manifest;
   } catch {
-    manifest = undefined;
+    // DIST-REQ-2: not downloaded yet, so describe it from the catalog.
+    manifest = sourceMetadata(ctx.configPath, entry.source);
   }
 
   if (!manifest) {

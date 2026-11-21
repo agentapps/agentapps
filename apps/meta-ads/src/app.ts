@@ -11,7 +11,7 @@ export const app = createApp({
   description:
     'Meta (Facebook and Instagram) ads through the Marketing API: list ad accounts, campaigns, ad sets, ads and creatives, run performance reports with breakdowns, pause or activate delivery, change budgets, and create campaigns and ad sets (always paused)',
   tagline: 'Report on Meta ad performance and manage campaigns, ad sets, ads and budgets',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

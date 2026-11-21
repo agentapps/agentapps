@@ -29,7 +29,7 @@ const app = createApp({
   name: 'Factorial',
   description:
     'Factorial HR — manage employees, time off, attendance, payroll, documents, contracts and teams via Factorial API with OAuth2',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: [

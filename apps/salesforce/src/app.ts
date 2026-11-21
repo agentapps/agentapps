@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Salesforce',
   description:
     'Salesforce CRM — manage accounts, contacts, opportunities, leads, cases, and run SOQL queries.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'crm',
   keywords: ['salesforce', 'crm', 'sales', 'leads', 'opportunities'],

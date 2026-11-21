@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Look up places by name and get weather from the free Open-Meteo APIs (no key): current conditions, daily and hourly forecasts up to 16 days, and historical weather back to 1940. Free tier is for non-commercial use only; data are CC BY 4.0.",
   "tagline": "Weather forecasts and historical weather for any place, from Open-Meteo",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

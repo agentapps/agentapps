@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-microsoft-outlook",
+  "name": "@agentapps/app.microsoft.outlook",
   "version": "2.0.0",
   "private": true,
   "type": "module",

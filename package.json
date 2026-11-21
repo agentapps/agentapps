@@ -4,7 +4,7 @@
   "description": "Agent Apps — open SDK, controller and protocol for building apps that plug into agent platforms",
   "license": "MIT",
   "packageManager": "pnpm@10.32.1",
-  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "author": "Pablo López Torres <pablolopeztorres@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/agentapps/agentapps.git"
@@ -13,7 +13,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node packages/cli/scripts/build-catalog.mjs",
     "pretest": "pnpm --filter @agentapps/station build:fixtures",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -21,7 +21,7 @@
     "lint:fix": "biome check --write .",
     "changeset": "changeset",
     "docs": "pnpm build && typedoc",
-    "release": "pnpm build && changeset publish",
+    "release": "pnpm build && changeset publish && node packages/cli/scripts/release-apps.mjs --publish",
     "agentapps": "agentapps",
     "aa": "agentapps"
   },

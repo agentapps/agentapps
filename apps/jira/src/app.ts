@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Jira',
   description:
     'Jira project management — search issues, create/update tickets, manage transitions, and track sprints.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['jira', 'atlassian', 'issues', 'tickets', 'project-management'],

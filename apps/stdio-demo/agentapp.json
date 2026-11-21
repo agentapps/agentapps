@@ -5,7 +5,7 @@
   "name": "Research Assistant",
   "description": "Agent App demo with stdio transport. Demonstrates multiple tools, progress reporting, streaming, health checks, and cancellation.",
   "tagline": "Demo app showcasing stdio transport, tools, and streaming",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.png",
   "logo": "assets/logo.svg",

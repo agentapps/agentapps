@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Mailchimp',
   description:
     'Mailchimp email marketing — manage audiences, campaigns, subscribers, templates, and automations.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'marketing',
   keywords: ['mailchimp', 'email', 'marketing', 'campaigns', 'newsletters'],

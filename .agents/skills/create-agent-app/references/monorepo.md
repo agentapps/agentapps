@@ -20,7 +20,7 @@ On Node 26 the install hangs or fails in the Playwright postinstall; use
 |---|---|
 | `create-agent-app <id> ...` | `node packages/create/dist/cli.js <id> ...` from the repo root. It detects the monorepo, writes `apps/<id>/` with workspace dependencies and adds `{ "source": "./apps/<id>" }` to `agentapps.example.json`, right after the entry that sorts just before it, so apps built in parallel do not conflict there. |
 | `npm test` | `pnpm vitest run apps/<id>` |
-| `npm run typecheck` | `pnpm --filter @agentapps/example-<id> typecheck` (tsc on `src/`, then on `test/`) |
+| `npm run typecheck` | `pnpm --filter @agentapps/app.<id> typecheck` (tsc on `src/`, then on `test/`) |
 | `npx biome check .` | `pnpm exec biome check apps/<id>` |
 | `create-agent-app check-app` | `node packages/create/dist/cli.js check-app apps/<id>` (also checks the `agentapps.example.json` entry and the lockfile importer; add `--strict` before the PR) |
 | `create-agent-app health` | `node packages/create/dist/cli.js health apps/<id>` |
@@ -36,9 +36,9 @@ alphabetical order and run pnpm again.
 
 ## House conventions
 
-- Author `{ "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" }`, license MIT, `terms`
+- Author `{ "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" }`, license MIT, `terms`
   `https://agentapps.tech/terms` (the scaffold sets these in repo mode).
-- Package name `@agentapps/example-<id>`, private, `workspace:*` dependencies (the scaffold).
+- Package name `@agentapps/<appId>` (for example `@agentapps/app.weather`), private, `workspace:*` dependencies (the scaffold).
 - Ids: `app.google.<product>` and `app.microsoft.<product>` for those vendors' apps (directory
   `google-<product>`; scaffold with `--id app.google.<product>`), `app.<service>` otherwise.
 - OAuth: start from `--auth oauth2`; its client is the model. The existing OAuth apps predate
@@ -95,7 +95,7 @@ node packages/create/dist/cli.js check-app --strict apps/<id>
   trailer, comments in English.
 - Never push without the user's consent; never merge your own PR.
 - Never run a bare `git stash` (the stash is shared between worktrees); use a WIP commit.
-- App-only PRs (`@agentapps/example-*`) need no changeset; a PR that touches `packages/` does
+- App-only PRs (`@agentapps/app.*`) need no changeset; a PR that touches `packages/` does
   (`pnpm changeset`).
 - The PR description follows the short template in `ship-it.md`; base it on the branch the user
   names and put `Depends on #N.` on its own line when stacked.

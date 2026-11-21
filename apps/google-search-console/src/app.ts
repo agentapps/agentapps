@@ -11,7 +11,7 @@ export const app = createApp({
   description:
     'Google Search Console: query search performance (clicks, impressions, CTR, position by query, page, country, device, date), compare periods, inspect URL index status, and manage sitemaps and properties through the Search Console API.',
   tagline: 'SEO performance, URL inspection and sitemaps from Google Search Console',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

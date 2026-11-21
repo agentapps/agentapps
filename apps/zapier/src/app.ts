@@ -22,7 +22,7 @@ const app = createApp({
   name: 'Zapier',
   description:
     'Zapier automation — list and execute Zapier actions via Natural Language Actions API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'automation',
   keywords: ['zapier', 'automation', 'workflows', 'integrations', 'nla'],

@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "MinIO S3-compatible object storage — manage buckets, upload/download objects, generate presigned URLs.",
   "tagline": "Manage buckets, objects, and presigned URLs in MinIO S3-compatible storage",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

@@ -30,13 +30,16 @@ Commands:
   bind <alias> <req> <target>        Bind a requirement to a target instance
   unbind <alias> <req>               Remove a binding
   list-bindings <alias>              Show bindings for an instance
-  permissions <alias>                Show every tool's effective permission
-  permissions <alias> set <t> <e>    Override a tool (e = allow|ask|deny)
-  permissions <alias> remove <t>     Clear a tool's override
+  permissions <alias>                Show every tool's effective permission for the CLI (admin)
+  permissions <alias> set <t> <e>    Override a tool for the admin (e = allow|ask|deny); keys: policy set
+  permissions <alias> remove <t>     Clear the admin's override for a tool
   policy [list|show <principal>]     Policies, one per Principal (CLI = admin)
   policy set <p> <app> <tool> <e>    Add a Rule; optional JSON condition last
   policy unset <p> <ruleId>          Remove a Rule
   key create <name> <userId>         New API key; it is a new Principal
+  connect claude-code [--remove]     Give Claude Code its key and register the MCP server
+  connect <name> [--remove]          Give any other agent platform its key; prints the MCP server entry
+  mcp <keyName>                      MCP server over stdio (run by the agent client)
   approvals                          Calls waiting for your approval
   approve <id> | deny <id>           Decide a waiting call
   hooks claude-code install <file>   Add conversation hooks to a Claude Code settings file

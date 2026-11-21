@@ -11,6 +11,7 @@ import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { catalogEntryForPackage, loadCatalog } from './catalog.js';
 import type { AppConfigEntry, StationConfig, WorkspaceConfig } from './types.js';
 
 const CONFIG_NAME = 'agentapps.json';
@@ -129,6 +130,36 @@ export function saveGlobalWorkspace(workspacePath: string): void {
 }
 
 /**
+ * Remember the workspace a run used, so later runs from other directories find
+ * it. A workspace given with `--config` is a one-off and is not remembered.
+ *
+ * @spec CLI-REQ-4
+ */
+export function rememberWorkspace(configPath: string, viaConfigFlag: boolean): void {
+  if (viaConfigFlag) return;
+  saveGlobalWorkspace(dirname(resolve(configPath)));
+}
+
+/** The workspace used outside any clone or saved workspace (DIST-REQ-1). */
+const HOME_WORKSPACE = join(GLOBAL_DIR, 'workspace');
+
+/**
+ * The home workspace's `agentapps.json`, created on first use with the
+ * catalog's apps as `npm:` sources.
+ *
+ * @spec DIST-REQ-1
+ */
+export function ensureHomeWorkspace(): string {
+  const configPath = join(HOME_WORKSPACE, CONFIG_NAME);
+  if (!existsSync(configPath)) {
+    mkdirSync(HOME_WORKSPACE, { recursive: true });
+    const apps = loadCatalog().map((e) => ({ source: `npm:${e.package}@${e.version}` }));
+    writeFileSync(configPath, `${JSON.stringify({ apps }, null, 2)}\n`, 'utf8');
+  }
+  return configPath;
+}
+
+/**
  * Ensure `~/.agentapps/config.json` exists, creating a template if needed.
  * Returns the absolute path to the file.
  */
@@ -175,17 +206,18 @@ export function loadWorkspaceConfig(configPath: string): WorkspaceConfig {
     try {
       manifest = readSourceManifest(resolveSourcePath(configPath, e.source));
     } catch (err) {
-      if (e.source.startsWith('npm:')) {
+      if (!e.source.startsWith('npm:')) throw err;
+    }
+    if (!manifest && e.source.startsWith('npm:')) {
+      // DIST-REQ-2: an app the catalog knows is available before it is downloaded.
+      const known = catalogEntryForPackage(npmPackageName(e.source.slice('npm:'.length)));
+      if (!known) {
         missing.push(e.source);
         return;
       }
-      throw err;
+      manifest = { id: known.id, name: known.name };
     }
     if (!manifest) {
-      if (e.source.startsWith('npm:')) {
-        missing.push(e.source);
-        return;
-      }
       throw new Error(
         `Invalid ${CONFIG_NAME}: source "${e.source}" has no readable ${MANIFEST_NAME}. ` +
           `Build the app first so its manifest (with the canonical "id") exists.`,
@@ -225,6 +257,51 @@ export function loadWorkspaceConfig(configPath: string): WorkspaceConfig {
 }
 
 /**
+ * What `apps` and `info` show for a source: its manifest once downloaded,
+ * otherwise its catalog entry (DIST-REQ-2).
+ *
+ * @spec DIST-REQ-2
+ */
+export function sourceMetadata(
+  configPath: string,
+  source: string,
+): Record<string, unknown> | undefined {
+  try {
+    const manifest = readSourceManifest(resolveSourcePath(configPath, source));
+    if (manifest) return manifest;
+  } catch {
+    // Not downloaded yet: fall back to the catalog.
+  }
+  if (!source.startsWith('npm:')) return undefined;
+  const entry = catalogEntryForPackage(npmPackageName(source.slice('npm:'.length)));
+  return entry ? { ...entry } : undefined;
+}
+
+/**
+ * Add a source to the workspace's `agentapps.json`, unless it is already listed.
+ *
+ * @spec DIST-REQ-9
+ */
+export function addAppSource(configPath: string, source: string): void {
+  const raw = JSON.parse(readFileSync(configPath, 'utf8')) as { apps?: { source?: string }[] };
+  const apps = Array.isArray(raw.apps) ? raw.apps : [];
+  if (apps.some((a) => a?.source === source)) return;
+  raw.apps = [...apps, { source }];
+  writeFileSync(configPath, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
+}
+
+/** Whether an `npm:` source still has to be downloaded. @spec DIST-REQ-3 */
+export function needsDownload(configPath: string, source: string): boolean {
+  if (!source.startsWith('npm:')) return false;
+  try {
+    resolveSourcePath(configPath, source);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+/**
  * Read a source directory's `agentapp.json`, if present and valid JSON.
  *
  * @spec CLI-REQ-1
@@ -253,6 +330,10 @@ export function resolveSourcePath(configPath: string, source: string): string {
 
   if (source.startsWith('npm:')) {
     const pkg = npmPackageName(source.slice('npm:'.length));
+    // The CLI-managed app store first, by path: Bun's resolver (the single
+    // executable, DIST-REQ-4) does not resolve packages on disk this way.
+    const stored = join(configDir, '.agentapps', 'apps', 'node_modules', ...pkg.split('/'));
+    if (existsSync(join(stored, 'package.json'))) return stored;
     // Search: the CLI-managed app store first (where `sync` installs), then the
     // workspace, then the global store.
     const roots = [

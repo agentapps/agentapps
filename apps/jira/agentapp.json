@@ -5,7 +5,7 @@
   "name": "Jira",
   "description": "Jira project management — search issues, create/update tickets, manage transitions, and track sprints.",
   "tagline": "Manage issues and projects in Jira",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "productivity",

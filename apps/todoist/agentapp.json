@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Todoist task management — create, update, complete and delete tasks, organize projects, sections, labels and comments.",
   "tagline": "Manage tasks, projects, labels, sections and comments in Todoist",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "productivity",

@@ -16,7 +16,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Google News',
   description: 'Latest news headlines from Google News RSS. No API key required.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'information',
   keywords: ['news', 'google', 'headlines', 'rss'],

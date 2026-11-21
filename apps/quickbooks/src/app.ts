@@ -12,7 +12,7 @@ const app = createApp({
   name: 'QuickBooks',
   description:
     'QuickBooks Online accounting — manage invoices, customers, payments, accounts, items, and reports.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'finance',
   keywords: ['quickbooks', 'accounting', 'invoices', 'payments', 'intuit'],

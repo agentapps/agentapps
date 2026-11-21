@@ -12,7 +12,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'ElevenLabs',
   description: 'Text-to-speech generation with multiple voices and models via the ElevenLabs API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'ai',
   keywords: ['elevenlabs', 'tts', 'text-to-speech', 'voice', 'audio'],

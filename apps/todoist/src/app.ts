@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Todoist',
   description:
     'Todoist task management — create, update, complete and delete tasks, organize projects, sections, labels and comments.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['todoist', 'tasks', 'todo', 'productivity', 'gtd'],

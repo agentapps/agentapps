@@ -60,7 +60,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Simple CRM',
   description: 'Lightweight CRM with messenger integration via intents.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   category: 'productivity',
   runtime: { transport: 'stdio', command: 'node', args: ['./dist/main.js'] },
   permissions: { intents: true },

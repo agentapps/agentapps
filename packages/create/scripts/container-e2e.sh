@@ -14,7 +14,7 @@
 #     failed (no git identity yet); AGENTS.md, CLAUDE.md, .gemini/settings.json and the skill
 #     in .agents/skills and .claude/skills are there, without the monorepo-only reference;
 #   - npm test, typecheck, lint and check pass; `check-app --strict` fails on the scaffold's
-#     TODOs; `npx agentapps` is the real CLI and installs the app; `npm pack --dry-run` ships
+#     TODOs; `npx @agentapps/cli` is the real CLI and installs the app; `npm pack --dry-run` ships
 #     no tests and no skill folders;
 #   - with a git identity, the first commit includes package-lock.json;
 #   - `pnpm create @agentapps` works, its project passes test and check (check-app's verdict
@@ -108,11 +108,11 @@ step sh -c 'npm run check 2>&1 | tee "$HOME/check.log"; grep -q "Validation pass
 expect_fail npx agentapps-check-app --strict
 
 # The agentapps CLI comes with the project.
-step sh -c 'npx agentapps --help | grep -q "install <app-id> <alias>"'
+step sh -c 'npx @agentapps/cli --help | grep -q "install <app-id> <alias>"'
 mkdir -p "$HOME/scratch"
 printf '{ "apps": [ { "source": "%s" } ] }\n' "$PWD" > "$HOME/scratch/agentapps.json"
-step npx agentapps --config "$HOME/scratch/agentapps.json" install app.weather w
-step npx agentapps --config "$HOME/scratch/agentapps.json" w tools
+step npx @agentapps/cli --config "$HOME/scratch/agentapps.json" install app.weather w
+step npx @agentapps/cli --config "$HOME/scratch/agentapps.json" w tools
 
 # What would be published.
 npm pack --dry-run > "$HOME/pack.log" 2>&1

@@ -1,6 +1,6 @@
 {
-  "name": "@agentapps/example-stdio-demo",
-  "version": "0.0.1",
+  "name": "@agentapps/app.research",
+  "version": "1.0.0",
   "private": true,
   "description": "stdio demo — real child process Agent App with interactive host controller",
   "type": "module",

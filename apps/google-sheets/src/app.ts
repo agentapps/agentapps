@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Sheets',
   description:
     'Create, read, write, append, clear, format, and export Google Sheets spreadsheets - create spreadsheets, get metadata, add/delete/copy sheet tabs, write data, append rows, batch update values and formatting (formulas, conditional formatting), clear ranges, read data, list tabs, export to CSV/XLSX/PDF. To delete a spreadsheet, use the Google Drive app.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: [

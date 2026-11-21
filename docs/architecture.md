@@ -13,7 +13,7 @@ Five roles. Two of them are defined by the protocol (Host and Station); the othe
 | Role | What it does | Examples |
 |---|---|---|
 | **Agent Platform** | Where the user talks to an agent. Third-party software. Reaches apps through a Gateway. | Claude Code, Cursor, Claude Desktop |
-| **Gateway** | A stateless, thin Host that translates another protocol (MCP, A2A) into Agent Apps. Holds no secrets, no sessions. | `gateway-mcp` |
+| **Gateway** | A stateless, thin Host that translates another protocol (MCP, A2A) into Agent Apps. Holds no secrets, no sessions. | `agentapps mcp` |
 | **Host** | The consuming side: discovers apps, opens Sessions, calls Tools, draws UI, answers the Instance's Requests (secrets, storage, permissions). Declares its Host Capabilities at handshake. | the CLI, Teros, any Gateway |
 | **Station** | The running side: spawns and retires Instances, proxies traffic between Hosts and Instances, holds what apps may not hold (secrets, Storage, Policies). | `agentapps serve` |
 | **App** | The program itself: Tools plus whatever else it offers. | `app.github`, `app.google-gmail` |

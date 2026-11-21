@@ -33,7 +33,7 @@ const app = createApp({
   name: 'Google Calendar',
   description:
     'Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['google', 'calendar', 'oauth', 'crud', 'events'],

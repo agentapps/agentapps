@@ -12,7 +12,7 @@ export const app = createApp({
   description:
     'Microsoft Word document automation — create documents, read their text and structure, and make surgical edits that leave the rest of the file untouched. Edits overwrite the stored file; recover earlier states through OneDrive version history.',
   tagline: 'Create, read, and surgically edit Word documents in OneDrive',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

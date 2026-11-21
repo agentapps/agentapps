@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Supabase',
   description:
     'Supabase database and storage — query tables, manage rows, run SQL, list buckets, and upload/download files.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'database',
   keywords: ['supabase', 'database', 'postgres', 'storage', 'sql'],

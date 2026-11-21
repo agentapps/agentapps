@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-slides",
+  "name": "@agentapps/app.google.slides",
   "version": "2.0.0",
   "private": true,
   "type": "module",

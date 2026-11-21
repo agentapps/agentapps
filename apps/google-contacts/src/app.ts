@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Contacts',
   description:
     'Manage Google Contacts — list, search, create, update, and delete contacts, plus organize them into groups and labels via the Google People API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['google', 'contacts', 'people', 'crm'],

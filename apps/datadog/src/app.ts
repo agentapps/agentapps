@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Datadog',
   description:
     'Datadog monitoring — query metrics, list monitors, manage incidents, search logs, and check service status.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'devops',
   keywords: ['datadog', 'monitoring', 'metrics', 'logs', 'apm'],

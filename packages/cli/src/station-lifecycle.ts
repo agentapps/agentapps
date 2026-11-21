@@ -21,6 +21,7 @@ import { get as httpGet } from 'node:http';
 import { createServer as createNetServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isExecutable } from './build-info.js';
 import { stateDir } from './state.js';
 import type { HandlerResult } from './types.js';
 
@@ -147,7 +148,9 @@ export async function launchDetachedStation(
 
   // POLICY-REQ-7: a per-launch local admin token, known only to this CLI and the station.
   const adminToken = randomBytes(32).toString('hex');
-  const child = spawn(process.execPath, [resolveBinPath(), ...args], {
+  // The single executable is its own entry; a Node build re-runs dist/bin.js.
+  const command = isExecutable ? [...args] : [resolveBinPath(), ...args];
+  const child = spawn(process.execPath, command, {
     detached: true,
     stdio: ['ignore', logFd, logFd],
     cwd: dirname(configPath),

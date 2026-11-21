@@ -23,7 +23,7 @@ ships with `@agentapps/create`: `node_modules/@agentapps/create/skill/create-age
 | `npm run lint` | Biome lint and format check (`npx biome check --write .` fixes formatting) |
 | `npm run check` | `check-app`: loads the app and checks its manifest, the annotations of every tool it registers, logos and README sections. Must exit 0. Before shipping run `npx create-agent-app check-app --strict`, which also fails on TODO text left in the manifest or README; a logo TODO in the Logos section that lists where you looked still passes. |
 | `SERVICE_KEY=... npm run health` | The health check once against the real service (secrets from environment variables named like the manifest's `installationSecrets`; values are never printed) |
-| `npx agentapps ...` | The Agent Apps CLI for the live test (install the app under an alias, set its secrets, call tools). It is the `@agentapps/cli` devDependency. **Never install the unscoped `agentapps` package from npm: it is an unrelated project.** |
+| `npx @agentapps/cli ...` | The Agent Apps CLI for the live test (install the app under an alias, set its secrets, call tools). It is the `@agentapps/cli` devDependency. **Never install the unscoped `agentapps` package from npm: it is an unrelated project.** |
 | `npx create-agent-app --help` | Every scaffold and check option |
 
 ## Rules

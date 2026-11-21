@@ -15,7 +15,7 @@ const app = createApp({
   name: 'Freshdesk',
   description:
     'Freshdesk customer support — manage tickets, contacts, agents, companies, and ticket fields.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'support',
   keywords: ['freshdesk', 'support', 'tickets', 'helpdesk', 'customer-service'],

@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-zapier",
+  "name": "@agentapps/app.zapier",
   "version": "2.0.0",
   "private": true,
   "description": "Zapier Agent App — list and execute Zapier actions via Natural Language Actions API.",

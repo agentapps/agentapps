@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Cloudflare',
   description:
     'Cloudflare platform management — manage DNS records, zones, Workers, KV namespaces, page rules, firewall rules, analytics, and cache purging.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['cloudflare', 'dns', 'cdn', 'workers', 'cache'],

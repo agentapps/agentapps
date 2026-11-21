@@ -8,7 +8,7 @@ const app = createApp({
   name: 'MinIO',
   description:
     'MinIO S3-compatible object storage — manage buckets, upload/download objects, generate presigned URLs.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'storage',
   keywords: ['minio', 's3', 'storage', 'objects', 'buckets', 'files', 'backup'],

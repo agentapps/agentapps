@@ -5,7 +5,7 @@
   "name": "Telegram",
   "description": "Telegram Bot API — send messages, manage chats, handle media, and interact with Telegram users and groups.",
   "tagline": "Send messages and manage chats via Telegram Bot API",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "communication",

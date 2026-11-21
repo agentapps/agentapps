@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-microsoft-onedrive",
+  "name": "@agentapps/app.microsoft.onedrive",
   "version": "1.0.0",
   "private": true,
   "type": "module",

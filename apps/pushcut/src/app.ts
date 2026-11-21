@@ -14,7 +14,7 @@ const app = createApp({
   name: 'Pushcut',
   description:
     'Send smart notifications, execute Shortcuts and HomeKit scenes on your iOS devices via the Pushcut API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'automation',
   keywords: ['pushcut', 'notifications', 'shortcuts', 'homekit', 'ios', 'automation'],

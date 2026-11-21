@@ -9,7 +9,7 @@ const app = createApp({
   name: 'WhatsApp',
   description:
     'Send and receive WhatsApp messages via WAHA (WhatsApp HTTP API). Manage sessions, send text/media, and handle incoming messages. Real-time events for incoming messages, reactions, and session status changes. Account linking is always done with a numeric pairing code (request-pairing-code) — QR authentication is not supported.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['whatsapp', 'messaging', 'waha', 'chat', 'automation'],

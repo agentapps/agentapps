@@ -17,7 +17,11 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
-import { type REPLServer, start as startReplServer } from 'node:repl';
+import { createInterface } from 'node:readline';
+import type { REPLServer } from 'node:repl';
+// A namespace import: the single executable's runtime (Bun) has no `start`, and a
+// named import would fail when the module loads, even outside the REPL.
+import * as nodeRepl from 'node:repl';
 import { dispatchCommand } from './dispatch.js';
 import { renderHelp } from './help.js';
 import { CYAN, RESET } from './render/colors.js';
@@ -38,8 +42,14 @@ interface HistoryStore {
   history: string[];
 }
 
-const asHistoryStore = (server: REPLServer | undefined): HistoryStore | undefined =>
+const asHistoryStore = (server: LineEditor | undefined): HistoryStore | undefined =>
   server as unknown as HistoryStore | undefined;
+
+/** What the REPL needs from its line editor: node:repl's server or a readline interface. */
+interface LineEditor {
+  prompt(preserveCursor?: boolean): void;
+  close(): void;
+}
 
 export interface ReplOptions {
   ctx: CliContext;
@@ -65,7 +75,7 @@ export async function startRepl(options: ReplOptions): Promise<void> {
 
   const prompt = isTTY && !noColor ? `${CYAN}agentapps>${RESET} ` : 'agentapps> ';
 
-  let server: REPLServer | undefined;
+  let server: LineEditor | undefined;
   let finishRepl: (() => void) | undefined;
   // Tracks the in-flight command so teardown (e.g. EOF on piped stdin) waits
   // for it to finish writing before resolving.
@@ -276,6 +286,19 @@ export async function startRepl(options: ReplOptions): Promise<void> {
       return;
     }
 
+    if (command.type === 'mcp') {
+      output.write(
+        `${renderer.render({
+          success: false,
+          error: {
+            message: "mcp runs as an agent client's MCP server, not in the REPL.",
+            suggestion: 'Register it with: connect claude-code',
+          },
+        })}\n\n`,
+      );
+      return;
+    }
+
     // Commands that may ask on the terminal (secret prompts, the OAuth flow,
     // permission approval, uninstall confirmation, an inline Policy approval)
     // need exclusive control of it, or the REPL also takes the answer.
@@ -294,7 +317,7 @@ export async function startRepl(options: ReplOptions): Promise<void> {
   };
 
   const createServer = (): REPLServer => {
-    const repl = startReplServer({
+    const repl = nodeRepl.start({
       prompt,
       input,
       output,
@@ -308,7 +331,7 @@ export async function startRepl(options: ReplOptions): Promise<void> {
       useColors: !noColor,
       // Node 26 makes `historySize` read-only once the REPL exists.
       historySize: 1000,
-    } as Parameters<typeof startReplServer>[0]);
+    } as Parameters<typeof nodeRepl.start>[0]);
 
     // Preload history into the REPL's own in-memory store (what reverse-i-search
     // walks) instead of `setupHistory`, so we control exactly what is persisted
@@ -334,9 +357,46 @@ export async function startRepl(options: ReplOptions): Promise<void> {
     return repl;
   };
 
+  /**
+   * The line editor when the runtime has no `node:repl` server (the single
+   * executable runs on Bun, DIST-REQ-4): readline gives the same prompt,
+   * completion and history, without reverse-i-search.
+   */
+  const createLineEditor = (): LineEditor => {
+    const rl = createInterface({
+      input,
+      output,
+      prompt,
+      terminal: isTTY,
+      completer,
+      historySize: 1000,
+    });
+    if (isTTY) {
+      const store = asHistoryStore(rl);
+      if (store) store.history = loadHistory();
+    }
+    let closed = false;
+    rl.on('line', (line) => {
+      pending = pending.then(() => handleLine(line));
+      void pending.then(() => {
+        if (!closed) rl.prompt();
+      });
+    });
+    rl.on('close', () => {
+      closed = true;
+      void (async () => {
+        await pending;
+        await sessions.closeAll();
+        finishRepl?.();
+      })();
+    });
+    rl.prompt();
+    return rl;
+  };
+
   return new Promise<void>((resolvePromise) => {
     finishRepl = resolvePromise;
-    server = createServer();
+    server = typeof nodeRepl.start === 'function' ? createServer() : createLineEditor();
   });
 }
 

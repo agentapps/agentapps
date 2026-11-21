@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Hunter',
   description:
     "Hunter.io email finder — find professional email addresses by domain, guess a person's email from their name, and verify email deliverability.",
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'data',
   keywords: [

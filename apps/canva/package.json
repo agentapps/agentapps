@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-canva",
+  "name": "@agentapps/app.canva",
   "version": "2.0.0",
   "private": true,
   "type": "module",

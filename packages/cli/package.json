@@ -1,12 +1,13 @@
 {
   "name": "@agentapps/cli",
-  "version": "0.1.0",
-  "description": "Agent Apps CLI \u2014 run and exercise Agent Apps locally from a workspace",
+  "version": "0.2.0",
+  "description": "Agent Apps CLI — run and exercise Agent Apps locally from a workspace",
   "license": "MIT",
   "type": "module",
   "bin": {
     "agentapps": "./dist/bin.js",
     "aa": "./dist/bin.js",
+    "cli": "./dist/bin.js",
     "agentapps-daemon": "./dist/daemon.js"
   },
   "exports": {
@@ -19,7 +20,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node scripts/build-catalog.mjs",
     "test": "vitest run --root ../.."
   },
   "repository": {
@@ -38,14 +39,15 @@
     "ai",
     "repl"
   ],
-  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "author": "Pablo López Torres <pablolopeztorres@gmail.com>",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@agentapps/station": "workspace:*",
     "@agentapps/host": "workspace:*",
     "@agentapps/protocol": "workspace:*",
+    "@agentapps/station": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "tsx": "^4.19.4"
   },
   "devDependencies": {

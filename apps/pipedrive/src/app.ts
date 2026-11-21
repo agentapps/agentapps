@@ -11,7 +11,7 @@ const app = createApp({
   version: '2.0.0',
   name: 'Pipedrive',
   description: 'Pipedrive CRM — manage deals, persons, organizations, activities, and pipelines.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'crm',
   keywords: ['pipedrive', 'crm', 'deals', 'sales', 'pipeline'],

@@ -61,5 +61,6 @@ Always use the official CLI API to save secrets; never write `.secrets/` JSON fi
 ## Git
 
 - Commits follow conventional commits (`feat:`, `fix:`, `perf:`, `refactor:`, `chore:`)
+- Commit messages are always in English, subject and body
 - Never push without explicit user consent
 - No `Co-Authored-By` trailer

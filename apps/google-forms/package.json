@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-forms",
+  "name": "@agentapps/app.google.forms",
   "version": "2.0.0",
   "private": true,
   "type": "module",

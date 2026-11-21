@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-twilio",
+  "name": "@agentapps/app.twilio",
   "version": "2.0.0",
   "private": true,
   "description": "Twilio Agent App — send SMS, make calls, manage phone numbers, and check message status.",

@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-search-console",
+  "name": "@agentapps/app.google.search-console",
   "version": "1.0.0",
   "private": true,
   "type": "module",

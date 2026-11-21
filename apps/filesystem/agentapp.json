@@ -5,7 +5,7 @@
   "name": "Filesystem",
   "description": "Filesystem operations: read, write, edit, patch, search (glob/grep), list, tree, stat, hash, copy, move, delete, and mkdir. Path-traversal safe, shell-injection safe, gitignore aware.",
   "tagline": "Safe file operations with read, write, search, and more",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

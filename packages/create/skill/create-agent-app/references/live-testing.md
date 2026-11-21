@@ -40,11 +40,11 @@ cannot refresh one.
 Use the `agentapps` CLI:
 
 - In a project made with `npm create @agentapps`, it is already there as the `@agentapps/cli`
-  devDependency: run it as `npx agentapps`.
+  devDependency: run it as `npx @agentapps/cli`.
 - In any other project: `npm i -D @agentapps/cli` (or `npm i -g @agentapps/cli`).
 - In the agentapps monorepo: the one built from your checkout, see `monorepo.md`.
 - **Never install the unscoped `agentapps` package from npm.** It is an unrelated project with
-  the same name. If `npx agentapps --help` does not list `install`, `config` and `permissions`,
+  the same name. If `npx @agentapps/cli --help` does not list `install`, `config` and `permissions`,
   you are running the wrong program: stop and check.
 
 Give it a scratch config that lists only your app, so nothing else is touched:
@@ -53,7 +53,7 @@ Give it a scratch config that lists only your app, so nothing else is touched:
 SCRATCH=<a scratch directory>; mkdir -p "$SCRATCH"
 printf '{ "apps": [ { "source": "%s" } ] }\n' "$(cd <app-dir> && pwd)" > "$SCRATCH/agentapps.json"
 cp ~/.agentapps/config.json "$SCRATCH/global-config.backup.json" 2>/dev/null || true
-aa() { npx agentapps --config "$SCRATCH/agentapps.json" "$@"; }   # a function works in bash and zsh
+aa() { npx @agentapps/cli --config "$SCRATCH/agentapps.json" "$@"; }   # a function works in bash and zsh
 ```
 
 The CLI can rewrite `~/.agentapps/config.json` (its `workspace` entry) when it runs from a new

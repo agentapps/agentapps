@@ -1,7 +1,10 @@
 {
-  "name": "@agentapps/example-playwright",
-  "version": "0.0.1",
+  "name": "@agentapps/app.playwright",
+  "version": "1.0.0",
   "private": true,
+  "agentapps": {
+    "publish": false
+  },
   "description": "Playwright browser automation agent app — navigate, interact, take screenshots, and extract data from web pages.",
   "type": "module",
   "main": "src/app.ts",

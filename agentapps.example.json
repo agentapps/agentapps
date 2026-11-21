@@ -44,6 +44,7 @@
     { "source": "./apps/hubspot" },
     { "source": "./apps/hunter" },
     { "source": "./apps/intercom" },
+    { "source": "./apps/kelify" },
     { "source": "./apps/make" },
     { "source": "./apps/microsoft-outlook" },
     { "source": "./apps/microsoft-onedrive" },

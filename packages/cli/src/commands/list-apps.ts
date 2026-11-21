@@ -2,7 +2,7 @@
  * @agentapps/cli — list-apps command.
  */
 
-import { readSourceManifest, resolveSourcePath } from '../config.js';
+import { sourceMetadata } from '../config.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
@@ -11,6 +11,7 @@ import type { HandlerContext } from './types.js';
  * tagline, description or keywords contain the query, ignoring case.
  *
  * @spec CLI-REQ-1
+ * @spec DIST-REQ-2
  */
 export async function handleListApps(
   command: ReplCommand,
@@ -60,9 +61,12 @@ function appDisplayName(id: string): string {
   return fallback.charAt(0).toUpperCase() + fallback.slice(1);
 }
 
-/** The lowercased text `apps <query>` searches: name, tagline, description and keywords. */
+/**
+ * The lowercased text `apps <query>` searches: name, tagline, description and
+ * keywords, from the catalog when the app is not downloaded yet (DIST-REQ-2).
+ */
 function searchText(configPath: string, source: string): string {
-  const manifest = readSourceManifest(resolveSourcePath(configPath, source)) ?? {};
+  const manifest = sourceMetadata(configPath, source) ?? {};
   const keywords = Array.isArray(manifest.keywords) ? manifest.keywords : [];
   return [manifest.name, manifest.tagline, manifest.description, ...keywords]
     .filter((v): v is string => typeof v === 'string')

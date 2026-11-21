@@ -37,6 +37,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
+      # Builds the single executable and the self-contained app packages (DIST-REQ-4, DIST-REQ-5).
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -51,7 +57,8 @@ jobs:
 
   # ── Spec traceability: no new code without an approved spec ───────────
   # See CLAUDE.md "Spec-Driven Development". Fails only on violations that
-  # are not already in spec-check.baseline.json.
+  # are not already in spec-check.baseline.json. The tool and the specs are not
+  # part of the public tree, so there every step is skipped and the job passes.
   spec-check:
     name: Spec Check
     runs-on: ubuntu-latest
@@ -65,16 +72,17 @@ jobs:
           node-version: 26
 
       - name: Check spec traceability
+        if: hashFiles('tools/spec-check.mjs') != ''
         run: node tools/spec-check.mjs
 
       - name: Write traceability matrix
-        if: always()
+        if: always() && hashFiles('tools/spec-check.mjs') != ''
         run: |
           mkdir -p artifacts
           node tools/spec-check.mjs --matrix artifacts/traceability-matrix.md || true
 
       - name: Upload traceability matrix
-        if: always()
+        if: always() && hashFiles('tools/spec-check.mjs') != ''
         uses: actions/upload-artifact@v4
         with:
           name: traceability-matrix
@@ -102,6 +110,11 @@ jobs:
         with:
           node-version: 26
           cache: 'pnpm'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

@@ -13,7 +13,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Date & Time',
   description: 'Tells the model the current date, time and timezone on every turn.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   category: 'samples',
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   permissions: { hooksContext: true },

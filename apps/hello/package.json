@@ -1,6 +1,7 @@
 {
   "name": "@agentapps/app.hello",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "private": true,
   "description": "Hello — minimal Agent App example (greet + countdown tools).",
   "type": "module",
   "main": "./dist/app.js",
@@ -17,9 +18,6 @@
     "build": "tsc",
     "dev": "tsx src/main.ts",
     "test": "vitest run"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "repository": {
     "type": "git",

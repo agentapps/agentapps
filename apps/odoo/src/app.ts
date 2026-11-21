@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Odoo',
   description:
     'Odoo ERP integration — manage partners, products, sales orders, invoices, projects, tasks, employees, leaves and timesheets via the Odoo JSON-RPC API using an API key.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: [

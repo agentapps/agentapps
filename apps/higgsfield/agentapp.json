@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Generate AI images and videos with Higgsfield - text-to-image, image-to-video, and consistent character generation with Soul.",
   "tagline": "AI image and video generation with text-to-image, image-to-video, and Soul characters",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.png",
   "terms": "https://agentapps.tech/terms",

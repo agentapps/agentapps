@@ -8,7 +8,7 @@ const app = createApp({
   name: 'RentAHuman.ai',
   description:
     'Hire humans for physical-world tasks. Search 657,000+ verified humans in 50+ countries, create bookings, and manage tasks that require real-world presence.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['humans', 'physical-tasks', 'hire', 'booking', 'real-world', 'errands', 'workforce'],

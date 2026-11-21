@@ -31,7 +31,7 @@ What you get:
 - A README with Setup, Terms of use and Logos sections.
 - Outside the monorepo: an `AGENTS.md` and the create-agent-app skill for coding agents
   (`--agent claude,codex,...` or `--no-skill`), biome, and the `@agentapps/cli` devDependency
-  for live tests (`npx agentapps`; never the unscoped `agentapps` npm package, which is
+  for live tests (`npx @agentapps/cli`; never the unscoped `agentapps` npm package, which is
   unrelated). The package is `private` and named after the app id until you pick a scoped name
   (`--package-name @you/agentapp-x`) and publish.
 

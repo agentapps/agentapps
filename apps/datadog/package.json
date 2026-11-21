@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-datadog",
+  "name": "@agentapps/app.datadog",
   "version": "2.0.0",
   "private": true,
   "description": "Datadog Agent App — query metrics, list monitors, manage incidents, search logs, and check service status.",

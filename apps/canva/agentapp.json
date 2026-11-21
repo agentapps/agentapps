@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Canva design management — designs, exports, resizes, folders, assets, brand templates, autofill, and comments via the Canva Connect API.",
   "tagline": "Create, export, and manage Canva designs, folders, assets, and brand templates",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

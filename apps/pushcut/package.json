@@ -1,6 +1,6 @@
 {
-  "name": "@agentapps/example-pushcut",
-  "version": "0.0.1",
+  "name": "@agentapps/app.pushcut",
+  "version": "1.0.0",
   "private": true,
   "description": "Pushcut Agent App — smart notifications and iOS automation via the Pushcut API.",
   "type": "module",

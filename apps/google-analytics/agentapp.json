@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams",
   "tagline": "Run GA4 reports, query realtime data, and manage properties and data streams",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "google",

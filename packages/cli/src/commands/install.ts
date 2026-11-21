@@ -2,8 +2,10 @@
  * @agentapps/cli — install command.
  */
 
+import { AppIdRegex } from '@agentapps/protocol';
+import { downloadAppPackages } from '../app-store.js';
 import { requiresAuth } from '../auth-helper.js';
-import { resolveSourcePath } from '../config.js';
+import { addAppSource, loadWorkspaceConfig, needsDownload, resolveSourcePath } from '../config.js';
 import { readLine } from '../host.js';
 import { resolveApp } from '../resolve.js';
 import { loadAppSecrets } from '../secrets-store.js';
@@ -80,7 +82,11 @@ function formatPermissions(permissions: Record<string, unknown>): string[] {
 // Install handler
 // ---------------------------------------------------------------------------
 
-/** @spec POLICY-REQ-9 */
+/**
+ * @spec POLICY-REQ-9
+ * @spec DIST-REQ-3
+ * @spec DIST-REQ-9
+ */
 export async function handleInstall(
   command: ReplCommand,
   context: HandlerContext,
@@ -95,17 +101,52 @@ export async function handleInstall(
 
   const { appId, alias } = command;
   const { ctx, options } = context;
-  const entry = ctx.config.apps[appId];
+  const notFound: HandlerResult = {
+    success: false,
+    exitCode: 2,
+    error: {
+      message: `App not found: ${appId}`,
+      suggestion: 'Run "apps" to see available apps.',
+    },
+  };
+  let entry = ctx.config.apps[appId];
 
+  // DIST-REQ-9: an app the workspace does not know is looked up in the registry
+  // by its name, `@agentapps/<appId>`, and added to the workspace when found.
   if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `App not found: ${appId}`,
-        suggestion: 'Run "apps" to see available apps.',
-      },
-    };
+    if (!AppIdRegex.test(appId)) return notFound;
+    const pkg = `@agentapps/${appId}`;
+    console.error(`  Downloading ${appId}…`);
+    const { code, stderr } = await downloadAppPackages(ctx.configPath, [pkg]);
+    if (code !== 0) {
+      if (stderr.includes('is not in the registry')) return notFound;
+      const reason = stderr.replace(/^ERR /, '').trim();
+      return {
+        success: false,
+        exitCode: 1,
+        error: { message: `Could not download ${appId} (${pkg}): ${reason}` },
+      };
+    }
+    addAppSource(ctx.configPath, `npm:${pkg}`);
+    ctx.config = loadWorkspaceConfig(ctx.configPath);
+    entry = ctx.config.apps[appId];
+    if (!entry) return notFound;
+  }
+
+  // DIST-REQ-3: download a catalog app before installing it; no Installation
+  // is created when the download fails.
+  if (needsDownload(ctx.configPath, entry.source)) {
+    console.error(`  Downloading ${appId}…`);
+    const spec = entry.source.slice('npm:'.length);
+    const { code, stderr } = await downloadAppPackages(ctx.configPath, [spec]);
+    if (code !== 0 || needsDownload(ctx.configPath, entry.source)) {
+      const reason = stderr.replace(/^ERR /, '').trim();
+      return {
+        success: false,
+        exitCode: 1,
+        error: { message: `Could not download ${appId} (${spec})${reason ? `: ${reason}` : ''}` },
+      };
+    }
   }
 
   // Resolve the app to inspect its manifest.

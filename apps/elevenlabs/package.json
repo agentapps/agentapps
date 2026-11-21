@@ -1,6 +1,6 @@
 {
-  "name": "@agentapps/example-elevenlabs",
-  "version": "0.0.1",
+  "name": "@agentapps/app.elevenlabs",
+  "version": "1.0.0",
   "private": true,
   "description": "ElevenLabs Agent App — text-to-speech with multiple voices and models.",
   "type": "module",

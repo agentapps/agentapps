@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Manage Google Drive files and folders - upload, download, share, search, read content",
   "tagline": "Browse, upload, share, and organize Drive files, read Sheets and Slides, and edit Docs",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

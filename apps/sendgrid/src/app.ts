@@ -12,7 +12,7 @@ const app = createApp({
   name: 'SendGrid',
   description:
     'SendGrid email delivery — send emails, manage contacts, lists, templates, and view statistics.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['sendgrid', 'email', 'delivery', 'marketing', 'transactional'],

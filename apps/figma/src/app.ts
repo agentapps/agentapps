@@ -13,7 +13,7 @@ const app = createApp({
   name: 'Figma',
   description:
     'Access Figma design files, extract styles, components, design tokens, and export assets',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'design',
   keywords: ['figma', 'design', 'ui', 'ux', 'styles', 'components', 'tokens'],

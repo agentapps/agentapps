@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Full Slack workspace integration: channels, messages, threads, reactions, files, users, search, and presence. Uses Slack Web API with OAuth 2.0.",
   "tagline": "Manage channels, messages, files, and users in Slack",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

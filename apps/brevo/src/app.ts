@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Brevo',
   description:
     'Brevo email marketing — send transactional emails, manage contacts and lists, create email templates, and browse email campaigns through the Brevo API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: [

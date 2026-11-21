@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-cloudflare",
+  "name": "@agentapps/app.cloudflare",
   "version": "2.0.0",
   "private": true,
   "description": "Cloudflare Agent App — manage DNS records, zones, Workers, KV namespaces, and purge cache.",

@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/protocol",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent Apps Protocol v2.0 — message schemas, control + session planes, error codes",
   "license": "MIT",
   "type": "module",
@@ -33,15 +33,15 @@
     "zod",
     "schema"
   ],
-  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "author": "Pablo López Torres <pablolopeztorres@gmail.com>",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "zod": "^4.1.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "ws": "^8.18.0",
-    "@types/ws": "^8.18.0"
+    "@types/ws": "^8.18.0",
+    "ws": "^8.18.0"
   }
 }

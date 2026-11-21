@@ -62,6 +62,9 @@ export function parseGlobalArgs(argv: string[]): ParsedGlobalArgs {
     } else if (arg === '--foreground') {
       // Internal: used by the detached `serve` worker. Not documented in help.
       options.foreground = true;
+    } else if (arg === '--remove') {
+      // Belongs to `connect <client> --remove`; the command parser reads it.
+      commandTokens.push(arg);
     } else if (arg.startsWith('-') && arg !== '-') {
       throw new Error(`Unknown option: ${arg}`);
     } else {

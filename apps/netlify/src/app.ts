@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Netlify',
   description:
     'Deploy static sites (HTML/CSS/JS) from the workspace to Netlify and return the public URL. Uses the file-digest REST API with a per-user Personal Access Token.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['netlify', 'deploy', 'static site', 'hosting', 'cdn', 'web'],

@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/host",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Host side of the Agent Apps protocol — embed in a platform to consume agent apps via their controllers",
   "license": "MIT",
   "type": "module",
@@ -32,7 +32,7 @@
     "ai",
     "platform"
   ],
-  "author": "Pablo Lopez Torres <pablolopeztorres@gmail.com>",
+  "author": "Pablo López Torres <pablolopeztorres@gmail.com>",
   "publishConfig": {
     "access": "public"
   },

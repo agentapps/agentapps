@@ -13,7 +13,7 @@ const app = createApp({
   name: 'Bash',
   description:
     'Execute bash commands on the system. Provides shell access for automation and system tasks.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['bash', 'shell', 'command', 'terminal', 'system'],

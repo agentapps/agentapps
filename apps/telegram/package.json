@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-telegram",
+  "name": "@agentapps/app.telegram",
   "version": "2.0.0",
   "private": true,
   "description": "Telegram Agent App — send messages, manage chats, handle media, and interact with Telegram users and groups.",

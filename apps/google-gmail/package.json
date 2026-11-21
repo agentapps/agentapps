@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-gmail",
+  "name": "@agentapps/app.google.gmail",
   "version": "2.0.0",
   "private": true,
   "type": "module",

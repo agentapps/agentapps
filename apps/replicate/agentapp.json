@@ -5,7 +5,7 @@
   "name": "Replicate",
   "description": "Run any AI model on Replicate. Discover models, start async predictions, poll for results, and manage running jobs.",
   "tagline": "Run any AI model with async predictions and job management",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

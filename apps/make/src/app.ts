@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Make',
   description:
     'Make.com automation — trigger scenarios via webhooks (no token needed) and manage scenarios via the account API: create, read, update, delete, clone, start, stop, list, run, and inspect blueprints.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: [

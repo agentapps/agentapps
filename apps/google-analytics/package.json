@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-analytics",
+  "name": "@agentapps/app.google.analytics",
   "version": "2.0.0",
   "private": true,
   "type": "module",

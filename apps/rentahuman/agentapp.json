@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Hire humans for physical-world tasks. Search 657,000+ verified humans in 50+ countries, create bookings, and manage tasks that require real-world presence.",
   "tagline": "Search, hire, and manage humans for physical-world tasks via RentAHuman.ai",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.png",
   "terms": "https://agentapps.tech/terms",

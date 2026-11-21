@@ -12,7 +12,7 @@ export const app = createApp({
   description:
     'Microsoft OneDrive file management — browse, upload, download, organize, and share files via Microsoft Graph API.',
   tagline: 'Browse, upload, organize, and share OneDrive files via Microsoft Graph',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-ads",
+  "name": "@agentapps/app.google.ads",
   "version": "1.0.0",
   "private": true,
   "type": "module",

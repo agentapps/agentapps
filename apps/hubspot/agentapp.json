@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "HubSpot CRM integration — manage contacts, companies, deals, tickets, engagements, lists, and conversations via HubSpot REST API v3 with OAuth2.",
   "tagline": "Manage contacts, companies, deals, tickets, engagements, lists, and conversations in HubSpot CRM",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

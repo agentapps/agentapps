@@ -51,7 +51,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Compliance Filter',
   description: 'Scans messages for PII and blocks them before they reach the agent.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   category: 'compliance',
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/main.ts'] },
   permissions: {

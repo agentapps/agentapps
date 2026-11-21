@@ -1,5 +1,32 @@
 # @agentapps/cli
 
+## 0.2.0
+
+### Patch Changes
+
+- 6a5e931: Require the fixed versions of two libraries with known vulnerabilities: `@modelcontextprotocol/sdk` 1.32.2 or later in the CLI and `zod` 4.6.6 or later in the protocol.
+- 3a05ab1: Add HTTP routes for app manifest, launcher HTML, and static bundle serving
+
+  StationServer now exposes four new public GET routes:
+
+  - `GET /apps` — JSON catalog of all registered apps (id, version, name, manifestUrl, bundlesUrl)
+  - `GET /apps/:appId/manifest` — full manifest JSON for a specific app
+  - `GET /launcher` — generic HTML launcher page listing apps and their launcher screens
+  - `GET /apps/:appId/bundles/*` — static file serving from app source directory with path traversal prevention
+
+  AppEntry interface extended with optional `manifest` and `sourcePath` fields.
+  CLI `serve` command now passes the full manifest and source path to StationServer.
+
+- b67a536: zsh completions no longer print `command not found: compdef` in shells that never ran compinit (stock macOS zsh): the script loads compinit first when needed.
+- Updated dependencies [d21a8d8]
+- Updated dependencies [aa59ce6]
+- Updated dependencies [be3018a]
+- Updated dependencies [6a5e931]
+- Updated dependencies [3a05ab1]
+  - @agentapps/station@0.2.0
+  - @agentapps/protocol@0.2.0
+  - @agentapps/host@0.2.0
+
 ## 1.0.0
 
 ### Major Changes

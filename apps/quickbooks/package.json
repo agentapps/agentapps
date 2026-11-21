@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-quickbooks",
+  "name": "@agentapps/app.quickbooks",
   "version": "2.0.0",
   "private": true,
   "description": "QuickBooks Online Agent App — manage invoices, customers, payments, accounts, items, and reports.",

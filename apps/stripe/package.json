@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-stripe",
+  "name": "@agentapps/app.stripe",
   "version": "2.0.0",
   "private": true,
   "description": "Stripe Agent App — manage customers, payments, invoices, subscriptions, and payment links.",

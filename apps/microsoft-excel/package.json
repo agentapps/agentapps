@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-microsoft-excel",
+  "name": "@agentapps/app.microsoft.excel",
   "version": "1.0.0",
   "private": true,
   "type": "module",

@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Shopify',
   description:
     'Shopify store management — manage products, orders, customers, inventory, collections, fulfillments, discounts, pages, and webhooks.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'ecommerce',
   keywords: [

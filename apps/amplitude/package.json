@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-amplitude",
+  "name": "@agentapps/app.amplitude",
   "version": "2.0.0",
   "private": true,
   "description": "Amplitude Agent App — query events, user activity, cohorts, charts, and retention data.",

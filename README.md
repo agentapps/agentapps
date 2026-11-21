@@ -1,7 +1,6 @@
 # Agent Apps
 
 [![CI](https://github.com/agentapps/agentapps/actions/workflows/ci.yml/badge.svg)](https://github.com/agentapps/agentapps/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/supertowers/9681b338d54e3f17f94493e6c25b056b/raw/coverage-badge.json)](https://github.com/agentapps/agentapps/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/node-24%20%7C%2026-brightgreen)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -42,7 +41,7 @@ Agent Platform ── MCP ──▶ Gateway ── Agent Apps ──▶ Station 
 ```
 
 - **App**: your code, built with `@agentapps/sdk`.
-- **Station**: runs apps, proxies traffic, holds secrets and storage. `agentapps serve`.
+- **Station**: runs apps, proxies traffic, holds secrets and storage. `agentapps station start`.
 - **Host**: consumes apps on behalf of a user. The CLI is a single-user host with an embedded station.
 - **Gateway**: a thin host that translates another protocol, such as MCP.
 
@@ -58,40 +57,21 @@ Agent Platform ── MCP ──▶ Gateway ── Agent Apps ──▶ Station 
 | [`@agentapps/testing`](./packages/testing) | Test harness for app authors |
 | [`@agentapps/create`](./packages/create) | Scaffolding, validation, health checks and dev mode for new apps |
 
-The packages are not published to npm yet; everything runs from this repository.
-
 ## Install
 
-You need **git**, **curl** and **Node 24 or 26** (26 recommended; these are the versions CI tests). Nothing below needs sudo.
-
-**1. Node.js.** If `node --version` does not print v24 or v26, install Node 26 for your user with [fnm](https://github.com/Schniz/fnm) or [nvm](https://github.com/nvm-sh/nvm):
+You need **Node 24 or 26**.
 
 ```bash
-# fnm
-curl -fsSL https://fnm.vercel.app/install | bash
-fnm install 26 && fnm default 26
-
-# or nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-nvm install 26
+npm install -g @agentapps/cli
 ```
 
-Open a new terminal afterwards.
+That gives you the `agentapps` command (`aa` for short). To try it without installing, use `npx @agentapps/cli`. The package is always `@agentapps/cli`: the unscoped `agentapps` package on npm is an unrelated project.
 
-**2. pnpm.** It comes with Node through corepack: `corepack enable`. If that says permission denied (a system-wide Node), skip it: `install.sh` links pnpm into `~/.local/bin` for you.
-
-**3. Agent Apps.** The repository is private for now: you need access to the agentapps GitHub organization and an SSH key on your GitHub account.
-
-```bash
-git clone git@github.com:agentapps/agentapps.git
-cd agentapps
-./install.sh
-```
-
-The script installs dependencies, builds the packages, and symlinks `agentapps` into `~/.local/bin`. It never uses sudo and never stops to ask a question. If `~/.local/bin` is not on your `PATH`, it adds it to your shell rc file. Open a new terminal and try the sample app:
+Install an app under a name of your choice, the alias, and call one of its tools:
 
 ```console
 $ agentapps install app.hello hello
+  Downloading app.hello…
   ✓ Installed hello (app.hello)
 $ agentapps hello tools
   greet  name:<string> language:<string>?
@@ -102,29 +82,57 @@ $ agentapps hello tool greet name:World
   ✓ greet succeeded
 ```
 
-`agentapps apps` lists every app in the catalog and `agentapps info <app id>` shows one. The browser app works the same way: `agentapps install app.playwright browser`, then `agentapps browser tool navigate url:https://example.com`. On Linux, Chromium also needs system libraries, installed once by someone with sudo: `cd apps/playwright && sudo env "PATH=$PATH" npx playwright install-deps chromium`.
+`agentapps apps` lists the catalog and `agentapps info <app id>` describes one app. Apps are downloaded when you install them. An app for a service needs that service's credentials: `agentapps github-work auth` after `agentapps install app.github github-work`, for example. You can install the same app more than once under different aliases, such as `github-work` and `github-personal`.
 
-After pulling changes, run `pnpm build` to recompile; the `agentapps` symlink points to compiled output, so it updates automatically.
+## Connecting an agent
 
-## Using Agent Apps from Claude Code, Cursor and other MCP clients
+Start a Station, which runs your installed apps, and connect the agent platform you use:
 
-Start a station serving your installed apps, then add the [MCP Gateway](https://github.com/agentapps/gateway-mcp) to your client:
+```console
+$ agentapps station start
+$ agentapps connect claude-code
+  ✓ API key claude-code created (ak_…); its Policy: policy show ak_…
+Claude Code runs "agentapps mcp claude-code" as the MCP server "agentapps".
 
-```bash
-# Start a station on port 4100
-agentapps serve 4100
-
-# Add the gateway to Claude Code
-claude mcp add agentapps \
-  -e CONTROLLER_URL=http://localhost:4100 \
-  -- node /path/to/gateway-mcp/dist/index.js
+Open a new Claude Code session to use your Installations.
 ```
 
-The [Gateway setup guide](https://github.com/agentapps/gateway-mcp/blob/main/docs/setup.md) has the snippets for Claude Code, Claude Desktop, Cursor, Windsurf, VS Code and Zed.
+For any other platform that speaks MCP (Codex, Cursor, Gemini CLI, VS Code, Windsurf, Zed), `agentapps connect <name>` creates the key and prints the MCP server entry to add to that platform's settings:
+
+```console
+$ agentapps connect cursor
+Add this MCP server to the settings of cursor:
+{
+  "mcpServers": {
+    "agentapps": {
+      "command": "agentapps",
+      "args": [
+        "mcp",
+        "cursor"
+      ]
+    }
+  }
+}
+```
+
+Each connection has its own API key, so each agent is a Principal with its own Policy. The key stays in the workspace's secret store, never in the platform's settings. The agent sees your Installations as tools named `<alias>__<tool>`.
+
+You decide what each agent may do. A rule allows a tool, denies it, or makes the call wait for your approval:
+
+```bash
+agentapps policy set cursor app.github merge-pull-request ask
+agentapps policy set claude-code app.todo-list delete-node deny
+```
 
 ## Writing an app
 
-Scaffold one into the catalog, check it against the repository rules, and test it:
+Start a project of your own with the scaffolder. It includes the test harness and the `create-agent-app` skill, which walks a coding agent through research, tool design, tests and a live check:
+
+```bash
+npm create @agentapps <app-id>
+```
+
+To add an app to this repository's catalog instead, clone it and scaffold into `apps/`:
 
 ```bash
 node packages/create/dist/cli.js <id> --base-url <url> [--auth api-key --secrets KEY]
@@ -132,18 +140,27 @@ node packages/create/dist/cli.js check-app apps/<id>
 pnpm vitest run apps/<id>
 ```
 
-[`AGENTS.md`](./AGENTS.md) has the rules every app follows: manifest fields, tool annotations, branding assets, secrets. The `create-agent-app` skill in `.agents/skills/` walks a coding agent through the whole process. [`CONTRIBUTING.md`](./CONTRIBUTING.md) says how a change gets into `main`.
+[`AGENTS.md`](./AGENTS.md) has the rules every app follows: manifest fields, tool annotations, branding assets, secrets. [`CONTRIBUTING.md`](./CONTRIBUTING.md) says how to propose a change.
 
 ## Development
 
+You need git, Node 24 or 26 and pnpm (`corepack enable`).
+
 ```bash
-pnpm install
+git clone https://github.com/agentapps/agentapps.git
+cd agentapps
+./install.sh   # installs, builds and links `agentapps` into ~/.local/bin, without sudo
+```
+
+Inside the clone the CLI uses the repository's own apps, including the ones that are not published to npm yet, such as the browser app: `agentapps install app.playwright browser`.
+
+```bash
 pnpm build     # tsc -b
 pnpm test      # vitest
 pnpm lint      # biome
 ```
 
-Versioning and publishing go through [changesets](https://github.com/changesets/changesets): add one with `pnpm changeset` in your PR.
+After pulling changes, run `pnpm build` again. Versioning and publishing go through [changesets](https://github.com/changesets/changesets): add one with `pnpm changeset` in your PR.
 
 ## License
 

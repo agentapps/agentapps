@@ -527,7 +527,7 @@ export async function scaffoldApp(options: ScaffoldOptions): Promise<ScaffoldRes
     description: options.description ?? spec.description(name),
     tagline: `TODO: one-line tagline for ${name}`,
     author: {
-      name: options.author || (repoRoot ? 'Pablo Lopez Torres' : 'Your Name'),
+      name: options.author || (repoRoot ? 'Pablo López Torres' : 'Your Name'),
       email: options.authorEmail || (repoRoot ? 'pablolopeztorres@gmail.com' : 'you@example.com'),
     },
     license: 'MIT',
@@ -609,7 +609,7 @@ export async function scaffoldApp(options: ScaffoldOptions): Promise<ScaffoldRes
   writeJson(join(destDir, 'agentapp.json'), manifest);
   writeJson(
     join(destDir, 'package.json'),
-    packageJson(id, String(manifest.description), mode, options.packageName),
+    packageJson(id, appId, String(manifest.description), mode, options.packageName),
   );
   writeJson(join(destDir, 'tsconfig.json'), tsconfigJson(destDir, repoRoot));
   // Type-checks the tests as well as src/ (vitest itself does not type-check).
@@ -811,13 +811,15 @@ function writeJson(path: string, value: unknown): void {
 
 function packageJson(
   id: string,
+  appId: string,
   description: string,
   mode: ScaffoldMode,
   packageName?: string,
 ): Record<string, unknown> {
   if (mode === 'repo') {
     return {
-      name: `@agentapps/example-${id}`,
+      // DIST-REQ-10: an app's package is named after its app id.
+      name: `@agentapps/${appId}`,
       version: '1.0.0',
       private: true,
       type: 'module',
@@ -850,7 +852,7 @@ function packageJson(
     },
     dependencies: { '@agentapps/sdk': publishedRange('@agentapps/sdk'), tsx: '^4.19.4' },
     devDependencies: {
-      // The agentapps CLI for live tests: `npx agentapps ...`. Never the unscoped `agentapps`
+      // The agentapps CLI for live tests: `npx @agentapps/cli ...`. Never the unscoped `agentapps`
       // package on npm, which is an unrelated project.
       '@agentapps/cli': publishedRange('@agentapps/cli'),
       '@agentapps/create': `^${ownVersion()}`,

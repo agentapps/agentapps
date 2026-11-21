@@ -15,7 +15,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'GitHub',
   description: 'GitHub REST API (user-to-server OAuth) + local git operations',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'developer-tools',
   keywords: ['github', 'git', 'repos', 'issues', 'pull-requests', 'actions', 'ci-cd'],

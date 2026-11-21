@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Gmail',
   description:
     'Gmail email management — send, read, search, label, and filter emails via Google Gmail API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: ['gmail', 'email', 'google', 'mail', 'messages'],

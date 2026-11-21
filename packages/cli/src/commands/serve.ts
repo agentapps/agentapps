@@ -14,15 +14,16 @@
 import { hostname } from 'node:os';
 import {
   type AppEntry,
+  FileDocumentStore,
   type SecretsManager,
   type StationEndpoint,
   StationServer,
 } from '@agentapps/station';
 import { resolveSourcePath } from '../config.js';
-import { InstallationSecretsStore } from '../host.js';
+import { InstallationSecretsStore, workspaceStoragePath } from '../host.js';
 import { resolveApp } from '../resolve.js';
 import { loadAppSecrets } from '../secrets-store.js';
-import { getInstallationById, loadApiKeys } from '../state.js';
+import { getInstallationById, loadApiKeys, loadInstallations } from '../state.js';
 import { detectPortState, launchDetachedStation } from '../station-lifecycle.js';
 import { createLocalApiKeyStore, createLocalPolicyStore } from '../station-stores.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
@@ -180,10 +181,20 @@ export async function handleServe(
     publicUrl,
     stationId: `serve-${hostname()}-${port}`,
     secrets: createLocalSecretsManager(ctx.configPath),
+    // CLI-REQ-3: the same on-disk Storage the CLI uses, not process memory.
+    documentStore: new FileDocumentStore(workspaceStoragePath(ctx.configPath)),
     resolveInstallation: (installationId) => {
       const instance = getInstallationById(ctx.configPath, installationId);
       return instance ? { appId: instance.appId } : undefined;
     },
+    // POLICY-REQ-10: Gateways discover and open sessions as these Installations.
+    installations: () =>
+      loadInstallations(ctx.configPath).map((i) => ({
+        installationId: i.installationId,
+        alias: i.alias,
+        appId: i.appId,
+        ...(i.permissions ? { permissions: i.permissions } : {}),
+      })),
     // Permissions and API keys are backed by the CLI state files, so `permission` /
     // `key` commands apply to this running station without a restart. While
     // no active key exists the station stays open (no auth required).

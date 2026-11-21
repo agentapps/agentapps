@@ -32,7 +32,11 @@ import type { ApiKeyStore } from './api-key-store.js';
 import { hashApiKey } from './api-key-store.js';
 import { AppStation } from './app-station.js';
 import { ApprovalManager } from './approval-manager.js';
-import { handleStorageRequest, InMemoryDocumentStore } from './document-store.js';
+import {
+  type DocumentStore,
+  handleStorageRequest,
+  InMemoryDocumentStore,
+} from './document-store.js';
 import { handleObjectRequest, ObjectStore } from './file-handlers/object-store.js';
 import { getStationSecret } from './file-handlers/signed-url.js';
 import {
@@ -45,7 +49,7 @@ import {
 import { type AppFactory, InProcessRuntime } from './in-process-runtime.js';
 import { OAuthManager, type OAuthStartParams } from './oauth-manager.js';
 import { errorPage, successPage } from './oauth-pages.js';
-import { evaluatePolicy } from './permission-enforcer.js';
+import { appVisible, evaluatePolicy, toolVisible } from './permission-enforcer.js';
 import type { PolicyStore } from './policy-store.js';
 import { policyFor } from './policy-store.js';
 import type { SecretsManager } from './secrets-manager.js';
@@ -59,13 +63,18 @@ const SECRET_CALLBACK_TYPES = new Set([
   'update_installation_secrets',
 ]);
 
-// Storage (document store) for standalone/dev mode, kept in memory and
-// scoped by installationId.
-const inMemoryStorage = new InMemoryDocumentStore();
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+
+/** One Installation as the Station knows it (POLICY-REQ-10). */
+export interface StationInstallation {
+  installationId: string;
+  alias: string;
+  appId: string;
+  /** The Installation's Effective Permissions. */
+  permissions?: Record<string, unknown>;
+}
 
 export interface AppEntry {
   id: string;
@@ -130,6 +139,12 @@ export interface StationServerOptions {
    * managed app. In CLI mode, this queries the instance registry.
    */
   resolveInstallation?: (installationId: string) => { appId: string } | undefined;
+  /**
+   * The workspace's Installations, read on every request so changes apply
+   * without a restart. Gateways discover them through `GET /installations`
+   * and open sessions as them (POLICY-REQ-10).
+   */
+  installations?: () => StationInstallation[];
   /** API key store. When provided, enables multi-key authentication. */
   apiKeys?: ApiKeyStore;
   /** Policy store, one Policy per Principal. When provided, tool calls are evaluated (POLICY-REQ-5). */
@@ -161,6 +176,12 @@ export interface StationServerOptions {
    * `volumesBasePath`, its secret and its public URL once it starts.
    */
   objectStore?: ObjectStore;
+  /**
+   * Where Installations' Storage lives. Defaults to process memory; the CLI's
+   * `serve` passes the workspace's on-disk store so it shares data with the
+   * CLI (CLI-REQ-3).
+   */
+  documentStore?: DocumentStore;
 }
 
 export interface ServerInfo {
@@ -221,6 +242,10 @@ function json(res: ServerResponse, status: number, data: unknown): void {
 export class StationServer {
   private managedApps = new Map<string, ManagedApp>();
   private sessionIndex = new Map<string, string>();
+  /** Parked calls per Session (POLICY-REQ-13). */
+  private readonly parkedCalls = new Map<string, number>();
+  /** `session_close` messages held back until their Session's parked calls end (POLICY-REQ-13). */
+  private readonly heldCloses = new Map<string, { managed: ManagedApp; message: MessageBase }>();
   private httpServer: ReturnType<typeof createServer> | null = null;
   private _info: ServerInfo | null = null;
 
@@ -231,7 +256,9 @@ export class StationServer {
   private readonly defaultHost: string;
   private readonly stations: StationEndpoint[];
   private readonly secrets?: SecretsManager;
+  private readonly documentStore: DocumentStore;
   private readonly resolveInstallation?: (installationId: string) => { appId: string } | undefined;
+  private readonly installations?: () => StationInstallation[];
   private readonly oauth = new OAuthManager();
   private readonly publicUrl?: string;
   private readonly apiKeyStore?: ApiKeyStore;
@@ -256,6 +283,7 @@ export class StationServer {
   >();
 
   constructor(options: StationServerOptions = {}) {
+    this.documentStore = options.documentStore ?? new InMemoryDocumentStore();
     this.stationId = options.stationId ?? `station-${hostname()}-${options.port ?? 4100}`;
     this.token = options.token;
     this.idleTimeoutMs = options.idleTimeoutMs ?? 10 * 60 * 1000;
@@ -264,6 +292,7 @@ export class StationServer {
     this.stations = options.stations ?? [];
     this.secrets = options.secrets;
     this.resolveInstallation = options.resolveInstallation;
+    this.installations = options.installations;
     this.publicUrl = options.publicUrl;
     this.apiKeyStore = options.apiKeys;
     this.policyStore = options.policies;
@@ -471,6 +500,50 @@ export class StationServer {
     });
   }
 
+  /**
+   * Relay a `session_close`. A Session with parked calls is answered
+   * `session_closed` at once and ends after its last parked call.
+   *
+   * @spec POLICY-REQ-13
+   */
+  private closeSession(
+    managed: ManagedApp,
+    message: MessageBase,
+    timeoutMs?: number,
+  ): Promise<MessageBase> {
+    const sessionId = (message as Record<string, unknown>).sessionId;
+    if (typeof sessionId === 'string' && this.parkedCalls.has(sessionId)) {
+      this.heldCloses.set(sessionId, { managed, message });
+      return Promise.resolve({
+        id: message.id,
+        type: 'session_closed',
+        timestamp: new Date().toISOString(),
+        version: '2.0',
+        sessionId,
+      } as MessageBase);
+    }
+    return this.sendAndWait(managed, message, timeoutMs);
+  }
+
+  /** A call parked on `sessionId` (POLICY-REQ-13). */
+  private holdSession(sessionId: string): void {
+    this.parkedCalls.set(sessionId, (this.parkedCalls.get(sessionId) ?? 0) + 1);
+  }
+
+  /** A parked call on `sessionId` was decided and answered: end the Session if a close was held. */
+  private releaseSession(sessionId: string): void {
+    const left = (this.parkedCalls.get(sessionId) ?? 1) - 1;
+    if (left > 0) {
+      this.parkedCalls.set(sessionId, left);
+      return;
+    }
+    this.parkedCalls.delete(sessionId);
+    const held = this.heldCloses.get(sessionId);
+    if (!held) return;
+    this.heldCloses.delete(sessionId);
+    this.sendAndWait(held.managed, held.message, 5_000).catch(() => {});
+  }
+
   private async autoInitialize(managed: ManagedApp): Promise<void> {
     if (managed.initialized) return;
     const msg: MessageBase = {
@@ -566,10 +639,56 @@ export class StationServer {
     }
   }
 
+  private findInstallation(installationId: string): StationInstallation | undefined {
+    return this.installations?.().find((i) => i.installationId === installationId);
+  }
+
+  /**
+   * `GET /installations`: the Installations the caller's Principal may use.
+   * Needs a credential even when the Station is otherwise open.
+   *
+   * @spec POLICY-REQ-10
+   * @spec POLICY-REQ-12
+   */
+  private async handleInstallations(req: IncomingMessage, res: ServerResponse): Promise<void> {
+    const principalId = await this.identifyCredential(req);
+    if (!principalId) {
+      json(res, 401, { error: 'Unauthorized: GET /installations needs an API key' });
+      return;
+    }
+    const policy = this.policyStore ? await policyFor(this.policyStore, principalId) : undefined;
+    const installations = (this.installations?.() ?? [])
+      .filter((i) => this.managedApps.has(i.appId))
+      .filter((i) => !policy || appVisible(policy, i.appId))
+      .map((i) => ({
+        installationId: i.installationId,
+        alias: i.alias,
+        appId: i.appId,
+        name: this.managedApps.get(i.appId)?.entry.name ?? i.appId,
+      }));
+    json(res, 200, { installations });
+  }
+
+  /** The Principal a request's bearer credential names, checked even on an open Station. */
+  private async identifyCredential(req: IncomingMessage): Promise<string | undefined> {
+    const header = req.headers.authorization;
+    const bearer = header?.startsWith('Bearer ') ? header.slice(7) : undefined;
+    if (!bearer) return undefined;
+    if (this.apiKeyStore && bearer.startsWith('aak_')) {
+      const record = await this.apiKeyStore.getByHash(hashApiKey(bearer));
+      return record?.principalId;
+    }
+    if (this.adminToken && bearer === this.adminToken) return ADMIN_PRINCIPAL_ID;
+    if (this.token && bearer === this.token) return ADMIN_PRINCIPAL_ID;
+    return undefined;
+  }
+
   private resolveApp(message: Record<string, unknown>): ManagedApp | undefined {
     if (typeof message.installationId === 'string') {
       const m = this.managedApps.get(message.installationId);
       if (m) return m;
+      const installation = this.findInstallation(message.installationId);
+      if (installation) return this.managedApps.get(installation.appId);
     }
 
     if (typeof message.sessionId === 'string') {
@@ -590,8 +709,8 @@ export class StationServer {
   // -------------------------------------------------------------------------
 
   /**
-   * Answer an instance→host Storage request with the in-memory document store,
-   * scoped by installationId.
+   * Answer an instance→host Storage request with the configured document
+   * store (in memory by default), scoped by installationId.
    */
   private async handleStorageCallback(
     managed: ManagedApp,
@@ -617,7 +736,7 @@ export class StationServer {
     };
 
     try {
-      const response = await handleStorageRequest(inMemoryStorage, installationId, msg);
+      const response = await handleStorageRequest(this.documentStore, installationId, msg);
       reply(response.type, response.fields);
     } catch (err) {
       const error = err instanceof Error ? err.message : 'Storage error';
@@ -839,7 +958,7 @@ export class StationServer {
           sessionId,
           reason: 'announce-complete',
         } as MessageBase;
-        this.sendAndWait(managed, closeMsg, 5_000).catch(() => {});
+        this.closeSession(managed, closeMsg, 5_000).catch(() => {});
 
         // Cache tool annotations for permission enforcement
         this.cacheTools(
@@ -907,6 +1026,13 @@ export class StationServer {
     const authResult = await this.authenticateRequest(req, url);
     if (authResult === false) {
       json(res, 401, { error: 'Unauthorized' });
+      return;
+    }
+
+    // @spec POLICY-REQ-10
+    // @spec POLICY-REQ-12
+    if (url === '/installations' && req.method === 'GET') {
+      await this.handleInstallations(req, res);
       return;
     }
 
@@ -1265,6 +1391,20 @@ export class StationServer {
       return;
     }
 
+    // POLICY-REQ-10: a session opened as a known Installation gets that
+    // Installation's Effective Permissions from the Station's record, not
+    // from what the caller claims.
+    if (message.type === 'session_open') {
+      const open = message as MessageBase & Record<string, unknown>;
+      const installation =
+        typeof open.installationId === 'string'
+          ? this.findInstallation(open.installationId)
+          : undefined;
+      if (installation) {
+        open.effectivePermissions = { permissions: installation.permissions ?? {} };
+      }
+    }
+
     const managed = this.resolveApp(message as Record<string, unknown>);
     if (!managed) {
       json(res, 404, { error: 'No matching app found' });
@@ -1278,6 +1418,11 @@ export class StationServer {
         // AppStation will reject with "not initialized"
       }
     }
+
+    // The Approval this call was parked on and approved by, if any (POLICY-REQ-14).
+    let approved: { id: string; principalId: string; app: string; tool: string } | undefined;
+    // The Session this call held while parked (POLICY-REQ-13).
+    let heldSessionId: string | undefined;
 
     // POLICY-REQ-5: evaluate the Principal's Policy before relaying a tool call.
     // An open station (no credential configured) serves only its local admin.
@@ -1294,17 +1439,37 @@ export class StationServer {
         annotations: this.getToolAnnotations(managed.entry.id, toolName),
       });
 
-      let outcome: 'allow' | 'deny' | 'timeout' = decision.effect === 'deny' ? 'deny' : 'allow';
+      let outcome: 'allow' | 'deny' | 'timeout' | 'cancelled' =
+        decision.effect === 'deny' ? 'deny' : 'allow';
       if (decision.effect === 'ask' && this.approvalManager) {
+        const approvals = this.approvalManager;
+        const call = { principalId, app: managed.entry.id, tool: toolName };
+        // POLICY-REQ-13: the Session stays able to relay this call while it is parked.
+        const sessionId = (message as Record<string, unknown>).sessionId;
+        if (typeof sessionId === 'string') {
+          heldSessionId = sessionId;
+          this.holdSession(sessionId);
+        }
+        // POLICY-REQ-14: a caller that goes away cancels its Approval.
+        let approvalId: string | undefined;
+        const onCallerGone = (): void => {
+          if (approvalId) approvals.cancel(approvalId);
+        };
+        res.once('close', onCallerGone);
         // POLICY-REQ-6: park until the Approver decides or the Approval expires.
-        const answer = await this.approvalManager.park({
-          principalId,
-          app: managed.entry.id,
-          tool: toolName,
-          args,
-          rule: decision.rule,
+        const answer = await approvals.park({ ...call, args, rule: decision.rule }, (info) => {
+          approvalId = info.id;
+          if (res.destroyed) approvals.cancel(info.id);
         });
+        res.off('close', onCallerGone);
         outcome = answer === 'approve' ? 'allow' : answer;
+        if (answer === 'approve' && approvalId) approved = { id: approvalId, ...call };
+      }
+
+      if (outcome === 'cancelled') {
+        // Nobody is left to answer; the cancellation is already logged.
+        if (heldSessionId) this.releaseSession(heldSessionId);
+        return;
       }
 
       if (outcome !== 'allow') {
@@ -1328,12 +1493,21 @@ export class StationServer {
             details: { layer: 'policy', rule: decision.rule, reason },
           },
         });
+        if (heldSessionId) this.releaseSession(heldSessionId);
         return;
       }
     }
 
     try {
-      const response = await this.sendAndWait(managed, message);
+      const response =
+        message.type === 'session_close'
+          ? await this.closeSession(managed, message)
+          : await this.sendAndWait(managed, message);
+      // POLICY-REQ-14: an approved call that the Instance answers with an error is logged.
+      if (approved && response.type === 'error') {
+        const code = (response as { error?: { code?: string } }).error?.code ?? 'UNKNOWN';
+        this.approvalManager?.logApprovedCallFailed(approved.id, approved, code);
+      }
       if (message.type === 'session_open' && response.type === 'session_opened') {
         const open = message as Record<string, unknown>;
         const tenant = open.tenant as { workspaceId?: string } | undefined;
@@ -1349,12 +1523,30 @@ export class StationServer {
         const tools = (response as Record<string, unknown>).tools as
           | Array<{ name: string; annotations?: Record<string, unknown> }>
           | undefined;
-        if (tools) this.cacheTools(managed.entry.id, tools);
+        if (tools) {
+          this.cacheTools(managed.entry.id, tools);
+          // POLICY-REQ-11: drop the tools this Principal's Policy always denies.
+          if (this.policyStore) {
+            const policy = await policyFor(
+              this.policyStore,
+              authResult?.principalId ?? ADMIN_PRINCIPAL_ID,
+            );
+            (response as Record<string, unknown>).tools = tools.filter((t) =>
+              toolVisible(policy, managed.entry.id, t.name, t.annotations),
+            );
+          }
+        }
       }
       json(res, 200, response);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      // POLICY-REQ-14: an approved call that could not be relayed is logged.
+      if (approved) {
+        this.approvalManager?.logApprovedCallFailed(approved.id, approved, ErrorCode.TIMEOUT);
+      }
       json(res, 504, { error: errMsg });
+    } finally {
+      if (heldSessionId) this.releaseSession(heldSessionId);
     }
   }
 

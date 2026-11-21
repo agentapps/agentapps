@@ -6,7 +6,7 @@
   "description": "Scans messages for PII and blocks them before they reach the agent.",
   "tagline": "Blocks messages that carry personal data before they reach the agent",
   "author": {
-    "name": "Pablo Lopez Torres",
+    "name": "Pablo López Torres",
     "email": "pablolopeztorres@gmail.com"
   },
   "logo": "assets/logo.svg",

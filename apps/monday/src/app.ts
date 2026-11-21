@@ -7,7 +7,7 @@ const app = createApp({
   version: '2.0.0',
   name: 'Monday.com',
   description: 'Monday.com work management - boards, items, groups, columns, updates',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['monday', 'boards', 'items', 'project-management', 'work-management'],

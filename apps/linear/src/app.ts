@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Linear',
   description:
     'Linear issue tracking - list, create, update issues, manage projects, labels, teams and users',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['linear', 'issues', 'tasks', 'project-management'],

@@ -12,7 +12,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Sentry',
   description: 'Monitor errors and issues in your applications via the Sentry API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'devops',
   keywords: ['sentry', 'errors', 'monitoring', 'issues', 'debugging'],

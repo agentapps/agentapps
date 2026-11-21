@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Homey',
   description:
     'Homey smart home controller — control devices, manage flows, and monitor your home via Athom Cloud API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'other',
   keywords: ['homey', 'home-automation', 'iot', 'devices', 'flows', 'athom'],

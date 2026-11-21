@@ -5,7 +5,7 @@
   "name": "Vercel",
   "description": "Vercel platform management — manage projects, deployments, domains, environment variables, and check deployment logs.",
   "tagline": "Manage projects and deployments on Vercel",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "development",

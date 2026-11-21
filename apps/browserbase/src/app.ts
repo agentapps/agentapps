@@ -7,7 +7,7 @@ const app = createApp({
   name: 'Browserbase',
   description:
     'Cloud browser automation at scale. Anti-bot bypass, CAPTCHA solving, residential proxies, session recording, and parallel browsers.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: [

@@ -8,7 +8,7 @@ const app = createApp({
   name: 'ActiveCampaign',
   description:
     'ActiveCampaign CRM and email marketing — manage contacts, lists, campaigns, deals, and tags via the v3 API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: [

@@ -7,7 +7,7 @@
  *
  * Example markdown:
  * ```markdown
- * **✓ Comprar pan**
+ * **● Comprar pan**
  *
  * `node_abc123` | completed: yes | parent: (root) | position: 0
  *
@@ -60,7 +60,7 @@ export function toCardComponent(res: NodeCardResult): UIComponent {
   if (node.updatedAt !== undefined) {
     fields.push({ label: 'Updated', value: formatTimestamp(node.updatedAt) });
   }
-  const statusIcon = node.completed ? '✓' : '○';
+  const statusIcon = node.completed ? '●' : '○';
   return { type: 'card', title: `${statusIcon} ${node.text ?? '(untitled)'}`, fields };
 }
 
@@ -79,7 +79,7 @@ export async function nodeCardRenderer(
   const node = res.node;
 
   const completed = node.completed;
-  const statusIcon = completed ? '✓' : '○';
+  const statusIcon = completed ? '●' : '○';
   const text = node.text ?? '(untitled)';
 
   const lines: string[] = [];

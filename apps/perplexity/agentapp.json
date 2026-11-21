@@ -5,7 +5,7 @@
   "name": "Perplexity AI",
   "description": "AI-powered web search and multi-turn chat via the Perplexity API. Provides real-time answers with source citations.",
   "tagline": "AI-powered web search with real-time answers and citations",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

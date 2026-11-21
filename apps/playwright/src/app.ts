@@ -13,7 +13,7 @@ const app = createApp({
   name: 'Playwright',
   description:
     'Browser automation and web scraping via Playwright. Navigate, interact, take screenshots, and extract data from web pages.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['browser', 'playwright', 'automation', 'web', 'scraping', 'screenshot'],

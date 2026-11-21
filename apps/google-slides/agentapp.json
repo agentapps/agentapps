@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Create, read, update, and delete Google Slides presentations — full read/write support for slides, text, and batch operations",
   "tagline": "Create, read, update, and delete slides in Google Slides presentations",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
   "logoMono": "assets/logo-mono.svg",

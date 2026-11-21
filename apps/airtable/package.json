@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-airtable",
+  "name": "@agentapps/app.airtable",
   "version": "2.0.0",
   "private": true,
   "description": "Airtable Agent App — manage bases, tables, and records.",

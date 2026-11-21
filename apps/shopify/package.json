@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-shopify",
+  "name": "@agentapps/app.shopify",
   "version": "2.0.0",
   "private": true,
   "description": "Shopify Agent App — manage products, orders, customers, inventory, and collections.",

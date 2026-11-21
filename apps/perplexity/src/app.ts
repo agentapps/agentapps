@@ -23,7 +23,7 @@ const app = createApp({
   name: 'Perplexity AI',
   description:
     'AI-powered web search and multi-turn chat via the Perplexity API. Provides real-time answers with source citations.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'ai',
   keywords: ['perplexity', 'search', 'ai', 'citations', 'chat'],

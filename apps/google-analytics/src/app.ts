@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Analytics',
   description:
     'Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: [

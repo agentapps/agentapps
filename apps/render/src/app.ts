@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Render',
   description:
     'Deploy and manage services on Render directly from your workspace. Supports web services, static sites, deployments, environment variables, custom domains, and more.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: [

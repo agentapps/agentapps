@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-mixpanel",
+  "name": "@agentapps/app.mixpanel",
   "version": "2.0.0",
   "private": true,
   "description": "Mixpanel Agent App — track events, query funnels, retention, user profiles, and export data.",

@@ -2,7 +2,7 @@
  * Interactive stdio demo — spawns the Research Assistant as a real child
  * process and exercises it through the full protocol lifecycle.
  *
- * Usage:  pnpm --filter @agentapps/example-stdio-demo dev
+ * Usage:  pnpm --filter @agentapps/app.research dev
  *   or:  npx tsx test/demo.ts
  */
 

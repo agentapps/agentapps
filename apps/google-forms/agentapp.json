@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Manage Google Forms — create forms, add questions, and read responses via Google Forms API.",
   "tagline": "Create and manage Google Forms, add questions, and read submitted responses",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "google",

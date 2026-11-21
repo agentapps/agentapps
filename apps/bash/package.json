@@ -1,6 +1,6 @@
 {
-  "name": "@agentapps/example-bash",
-  "version": "0.0.1",
+  "name": "@agentapps/app.bash",
+  "version": "1.0.0",
   "private": true,
   "description": "Bash Agent App — execute shell commands with timeout and working directory support.",
   "type": "module",

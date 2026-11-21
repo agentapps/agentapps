@@ -29,6 +29,16 @@ const INSTALLATION_SECRETS_FILE = 'installation-secrets.json';
 /** Local data directory for the Volume and Objects (NOT secrets). */
 const DATA_DIR = '.agentapps/data';
 
+/**
+ * Where the workspace keeps every Installation's Storage on disk. The CLI and
+ * the station started by `serve` both use it, so they see the same data.
+ *
+ * @spec CLI-REQ-3
+ */
+export function workspaceStoragePath(configPath: string): string {
+  return resolve(dirname(resolve(configPath)), DATA_DIR, 'storage');
+}
+
 /** Context needed to build host requests for an app. */
 export interface HostContext {
   app: ResolvedApp;
@@ -59,9 +69,7 @@ export function createCliHostRequestHandlers(ctx: HostContext): RequestHandlers 
   const installationSecretsStore = new InstallationSecretsStore(ctx.configPath, ctx.installationId);
   const authConfig = getAuthConfig(ctx);
   // Storage: one JSON file per installation and collection under the data dir.
-  const documentStore = new FileDocumentStore(
-    resolve(dirname(resolve(ctx.configPath)), DATA_DIR, 'storage'),
-  );
+  const documentStore = new FileDocumentStore(workspaceStoragePath(ctx.configPath));
   const storageInstallation = ctx.installationId ?? '_default';
   const volumesBasePath = resolve(dirname(resolve(ctx.configPath)), DATA_DIR);
   const publicUrl =

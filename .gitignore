@@ -16,3 +16,8 @@ docs/api/
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Single-executable builds (DIST-REQ-4)
+packages/cli/dist-bin/
+packages/cli/dist-apps/
+packages/cli/dist-release/

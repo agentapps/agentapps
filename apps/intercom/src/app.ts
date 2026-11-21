@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Intercom',
   description:
     'Intercom customer support integration — manage conversations, tickets, contacts, and teams via the Intercom API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'other',
   keywords: ['intercom', 'customer-support', 'tickets', 'conversations', 'helpdesk', 'crm'],

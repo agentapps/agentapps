@@ -8,7 +8,7 @@ const app = createApp({
   name: 'PLAUD',
   description:
     'Access your PLAUD voice recordings, transcripts, and AI summaries through the official Plaud MCP server. Search and retrieve notes from your PLAUD library.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['plaud', 'voice', 'recordings', 'transcripts', 'notes', 'ai-summary', 'productivity'],

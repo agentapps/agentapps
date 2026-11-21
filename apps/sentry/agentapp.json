@@ -5,7 +5,7 @@
   "name": "Sentry",
   "description": "Monitor errors and issues in your applications via the Sentry API.",
   "tagline": "Track and monitor application errors and issues",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

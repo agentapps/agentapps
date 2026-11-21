@@ -5,7 +5,7 @@
   "name": "Pushcut",
   "description": "Send smart notifications, execute Shortcuts and HomeKit scenes on your iOS devices via the Pushcut API.",
   "tagline": "Smart notifications, Shortcuts, and HomeKit for iOS",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

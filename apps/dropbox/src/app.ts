@@ -15,7 +15,7 @@ const app = createApp({
   name: 'Dropbox',
   description:
     'Dropbox file storage — list, search, upload, download, and share files and folders.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'storage',
   keywords: ['dropbox', 'files', 'storage', 'cloud', 'sharing'],

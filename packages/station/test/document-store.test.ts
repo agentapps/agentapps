@@ -3,7 +3,15 @@
  * paging, filters, partial updates and the request handler's response shapes.
  */
 
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -120,6 +128,47 @@ describe('FileDocumentStore', () => {
     ]);
     await reopened.delete(INST, 'nodes', 'n1');
     expect(JSON.parse(readFileSync(nodesFile, 'utf8'))).toEqual({});
+  });
+
+  it("[CLI-AC-3] two processes on the same directory see each other's writes", async () => {
+    dir = mkdtempSync(join(tmpdir(), 'agentapps-docstore-'));
+    // One store per process: the long-running station and a one-shot CLI call.
+    const station = new FileDocumentStore(dir);
+    await station.put(INST, 'nodes', 'root', { text: 'My Tasks' });
+    expect((await station.query(INST, 'nodes')).documents).toHaveLength(1);
+
+    const cli = new FileDocumentStore(dir);
+    await cli.put(INST, 'nodes', 'work', { text: 'Work' });
+    expect(await station.get(INST, 'nodes', 'work')).toEqual({ text: 'Work' });
+
+    await station.update(INST, 'nodes', 'work', { done: true });
+    expect(await new FileDocumentStore(dir).get(INST, 'nodes', 'work')).toEqual({
+      text: 'Work',
+      done: true,
+    });
+    expect((await cli.query(INST, 'nodes')).documents).toHaveLength(2);
+  });
+
+  it('[CLI-AC-3] a write that leaves the mtime untouched is still seen', async () => {
+    dir = mkdtempSync(join(tmpdir(), 'agentapps-docstore-'));
+    const station = new FileDocumentStore(dir);
+    await station.put(INST, 'nodes', 'root', { text: 'My Tasks' });
+
+    // Pin the file's timestamp to a whole second, then read it back so the
+    // store records exactly that timestamp.
+    const collectionFile = join(dir, INST, `${Buffer.from('nodes').toString('base64url')}.json`);
+    const pinned = new Date(1_600_000_000_000);
+    utimesSync(collectionFile, pinned, pinned);
+    await station.get(INST, 'nodes', 'root');
+
+    // Another process rewrites the collection and the timestamp lands on the
+    // very same tick, so mtime alone cannot tell the two writes apart.
+    const documents = JSON.parse(readFileSync(collectionFile, 'utf8')) as Record<string, unknown>;
+    documents.work = { text: 'Work' };
+    writeFileSync(collectionFile, `${JSON.stringify(documents, null, 2)}\n`, 'utf8');
+    utimesSync(collectionFile, pinned, pinned);
+
+    expect(await station.get(INST, 'nodes', 'work')).toEqual({ text: 'Work' });
   });
 });
 

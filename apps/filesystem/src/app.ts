@@ -14,7 +14,7 @@ const app = createApp({
   name: 'Filesystem',
   description:
     'Filesystem operations: read, write, edit, patch, search (glob/grep), list, tree, stat, hash, copy, move, delete, and mkdir.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['files', 'filesystem', 'read', 'write', 'edit', 'search', 'grep', 'glob'],

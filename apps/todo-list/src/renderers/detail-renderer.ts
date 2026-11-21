@@ -6,7 +6,7 @@
  *
  * Example markdown:
  * ```markdown
- * ## ✓ Comprar pan
+ * ## ● Comprar pan
  *
  * **Description:** Pan para la semana
  *
@@ -85,7 +85,7 @@ export async function detailRenderer(result: unknown, _ctx: ToolContext): Promis
   const { node } = result as GetNodeResult;
 
   const lines: string[] = [];
-  const statusIcon = node.completed ? '✓' : '○';
+  const statusIcon = node.completed ? '●' : '○';
   lines.push(`## ${statusIcon} ${node.text}`);
   lines.push('');
 

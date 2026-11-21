@@ -7,6 +7,7 @@
  *   key revoke <keyId>                                — revoke a key
  */
 
+import type { ApiKeyRecord } from '@agentapps/protocol';
 import { generateApiKey } from '@agentapps/station';
 import { loadApiKeys, saveApiKeys } from '../state.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
@@ -38,6 +39,45 @@ export async function handleKeyList(
   return { success: true, data: { 'API Keys': data } as unknown as ResultValue, exitCode: 0 };
 }
 
+/**
+ * Create and store an API key; the key is its own Principal with the default
+ * Policy. Returns the record and the raw key, which is shown only once.
+ *
+ * Throws when an active key already has that name: names are unique among
+ * active keys, which is what lets `policy` take a name (POLICY-REQ-15).
+ *
+ * @spec POLICY-REQ-1
+ * @spec POLICY-REQ-15
+ */
+export function createApiKey(
+  configPath: string,
+  name: string,
+  userId: string,
+  workspaceId?: string,
+): { record: ApiKeyRecord; raw: string } {
+  const keys = loadApiKeys(configPath);
+  const taken = keys.find((k) => k.name === name && !k.revokedAt);
+  if (taken) throw new Error(`An active API key is already named ${name} (${taken.id})`);
+
+  const { raw, hash, prefix } = generateApiKey();
+  const now = new Date().toISOString();
+  const id = `ak_${randomHex(8)}`;
+  const record: ApiKeyRecord = {
+    id,
+    name,
+    keyHash: hash,
+    prefix,
+    identity: { userId, ...(workspaceId ? { workspaceId } : {}) },
+    // POLICY-REQ-1: each key is its own Principal, with the default Policy (POLICY-REQ-2).
+    principalId: id,
+    createdAt: now,
+    updatedAt: now,
+  };
+  keys.push(record);
+  saveApiKeys(configPath, keys);
+  return { record, raw };
+}
+
 /** @spec POLICY-REQ-1 */
 export async function handleKeyCreate(
   command: ReplCommand,
@@ -46,29 +86,25 @@ export async function handleKeyCreate(
   if (command.type !== 'key-create') {
     return { success: false, exitCode: 2, error: { message: 'Internal error' } };
   }
-  const { ctx } = context;
-
-  const { raw, hash, prefix } = generateApiKey();
-  const now = new Date().toISOString();
-  const id = `ak_${randomHex(8)}`;
-  const record = {
-    id,
-    name: command.name,
-    keyHash: hash,
-    prefix,
-    identity: {
-      userId: command.userId,
-      ...(command.workspaceId ? { workspaceId: command.workspaceId } : {}),
-    },
-    // POLICY-REQ-1: each key is its own Principal, with the default Policy (POLICY-REQ-2).
-    principalId: id,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  const keys = loadApiKeys(ctx.configPath);
-  keys.push(record);
-  saveApiKeys(ctx.configPath, keys);
+  let created: ReturnType<typeof createApiKey>;
+  try {
+    created = createApiKey(
+      context.ctx.configPath,
+      command.name,
+      command.userId,
+      command.workspaceId,
+    );
+  } catch (err) {
+    return {
+      success: false,
+      exitCode: 2,
+      error: {
+        message: (err as Error).message,
+        suggestion: 'Pick another name, or revoke that key first with: key revoke <id>',
+      },
+    };
+  }
+  const { record, raw } = created;
 
   return {
     success: true,

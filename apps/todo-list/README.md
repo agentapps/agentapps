@@ -1,4 +1,4 @@
-# @agentapps/example-todo-list
+# @agentapps/app.todo-list
 
 Workflowy-style hierarchical outliner — single-tree architecture.
 

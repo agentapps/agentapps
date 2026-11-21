@@ -11,7 +11,7 @@ const app = createApp({
   name: 'Airtable',
   description:
     'Airtable base management — list bases, query records, create/update/delete rows, and manage tables.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'database',
   keywords: ['airtable', 'database', 'spreadsheet', 'records', 'tables'],

@@ -8,7 +8,7 @@ const app = createApp({
   name: 'ClickUp',
   description:
     'ClickUp project management - manage tasks, lists, folders, spaces and workspaces via ClickUp API with OAuth2',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['clickup', 'tasks', 'project', 'management', 'productivity', 'kanban'],

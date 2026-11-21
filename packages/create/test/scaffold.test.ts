@@ -112,7 +112,7 @@ describe('scaffoldApp', () => {
     expect(example.apps.at(-1)).toEqual({ source: './apps/weather' });
 
     const pkg = JSON.parse(readFileSync(join(result.destDir, 'package.json'), 'utf-8'));
-    expect(pkg.name).toBe('@agentapps/example-weather');
+    expect(pkg.name).toBe('@agentapps/app.weather');
     expect(pkg.dependencies['@agentapps/sdk']).toBe('workspace:*');
     const tsconfig = JSON.parse(readFileSync(join(result.destDir, 'tsconfig.json'), 'utf-8'));
     expect(tsconfig.extends).toBe('../../tsconfig.base.json');

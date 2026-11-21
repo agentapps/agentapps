@@ -6,26 +6,32 @@
  * Usage:
  *   agentapps                          Start the REPL
  *   agentapps <command> [args...]      Execute a single REPL command
+ *
+ * The package manifest also exposes this file as `aa` and as `cli`, the latter so that
+ * `npx @agentapps/cli` finds a command named after the package.
+ *
+ * @spec CLI-REQ-8
  */
 
 process.on('unhandledRejection', (reason) => {
   console.error('[agentapps] unhandled rejection:', reason);
 });
 
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { parseGlobalArgs } from './args.js';
+import { buildVersion } from './build-info.js';
 import { bashCompletionScript, zshCompletionScript } from './completions.js';
 import {
-  ensureGlobalConfig,
+  ensureHomeWorkspace,
   findConfigPath,
   getDefaultCwd,
   loadWorkspaceConfig,
+  rememberWorkspace,
   saveGlobalWorkspace,
 } from './config.js';
 import { dispatchCommand } from './dispatch.js';
 import { printHelp } from './help.js';
 import { createRenderer } from './render/index.js';
-import { startRepl } from './repl.js';
 import { getCompletions, parseReplTokens } from './repl-parser.js';
 import type { CliContext, WorkspaceConfig } from './types.js';
 
@@ -86,6 +92,12 @@ async function main(): Promise<number> {
       return handleGetCompletions(argv[gcIdx + 1] ?? '');
     }
 
+    // DIST-REQ-4: the version of this build.
+    if (argv[0] === '--version' || argv[0] === '-V') {
+      console.log(buildVersion());
+      return 0;
+    }
+
     const swIdx = argv.indexOf('--set-workspace');
     if (swIdx >= 0) {
       const wsPath = argv[swIdx + 1];
@@ -111,20 +123,12 @@ async function main(): Promise<number> {
     }
 
     const cwd = options.cwd ?? getDefaultCwd();
-    const configPath = options.config ? resolve(cwd, options.config) : findConfigPath(cwd);
+    // DIST-REQ-1: outside any clone or saved workspace, use the home workspace.
+    const configPath = options.config
+      ? resolve(cwd, options.config)
+      : (findConfigPath(cwd) ?? ensureHomeWorkspace());
 
-    if (!configPath) {
-      const globalPath = ensureGlobalConfig();
-      console.error(
-        'No agentapps.json found.\n\n' +
-          `  Set "workspace" in your global config:\n` +
-          `  ${globalPath}\n`,
-      );
-      return 2;
-    }
-
-    // Auto-persist workspace path so future runs from other directories find it.
-    saveGlobalWorkspace(dirname(configPath));
+    rememberWorkspace(configPath, options.config !== undefined);
 
     const config = loadWorkspaceConfig(configPath);
     const ctx: CliContext = { cwd, config, configPath };
@@ -138,6 +142,8 @@ async function main(): Promise<number> {
 
     // REPL mode: no command tokens.
     if (commandTokens.length === 0) {
+      // Loaded only for the REPL: the single executable's runtime may lack node:repl.
+      const { startRepl } = await import('./repl.js');
       await startRepl({ ctx, options });
       return 0;
     }

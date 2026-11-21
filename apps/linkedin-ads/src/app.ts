@@ -11,7 +11,7 @@ export const app = createApp({
   description:
     'LinkedIn Marketing API (Advertising): list ad accounts, campaign groups, campaigns and creatives, report performance with adAnalytics, and pause, activate or re-budget campaigns.',
   tagline: 'Report on LinkedIn ad campaigns and pause, activate or re-budget them',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

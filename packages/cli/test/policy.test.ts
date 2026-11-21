@@ -104,6 +104,50 @@ describe('Policies in the CLI', () => {
     expect(data.rules['default-sensitive']?.effect).toBe('ask');
   });
 
+  it('[POLICY-AC-17] key names are unique among active keys and policy commands accept them', async () => {
+    const run = (command: Parameters<typeof dispatchCommand>[0]) =>
+      dispatchCommand(command, { ctx, options: options() });
+    const idOf = (message?: string) => /Principal: (ak_[0-9a-f]+)/.exec(message ?? '')?.[1] ?? '';
+
+    const first = idOf(
+      (await run({ type: 'key-create', name: 'cursor', userId: 'pablo' })).message,
+    );
+
+    const set = await run({
+      type: 'policy-set',
+      principalId: 'cursor',
+      app: 'app.github',
+      tool: 'merge-pull',
+      effect: 'ask',
+    });
+    expect(set.success).toBe(true);
+    expect(getPolicy(ctx.configPath, first).rules.map((r) => r.id)).toContain(
+      'app.github/merge-pull',
+    );
+    // Nothing was stored under the name itself.
+    expect(getPolicy(ctx.configPath, 'cursor').rules.map((r) => r.id)).not.toContain(
+      'app.github/merge-pull',
+    );
+    const shown = await run({ type: 'policy-show', principalId: 'cursor' });
+    expect((shown.data as { principal: string }).principal).toBe(first);
+
+    // Names are unique among active keys, so a name always means one Principal.
+    const again = await run({ type: 'key-create', name: 'cursor', userId: 'pablo' });
+    expect(again.success).toBe(false);
+    expect(again.error?.message).toContain('cursor');
+    expect((await run({ type: 'policy-show', principalId: 'cursor' })).success).toBe(true);
+
+    const unknown = await run({
+      type: 'policy-set',
+      principalId: 'nobody',
+      app: '*',
+      tool: '*',
+      effect: 'deny',
+    });
+    expect(unknown.success).toBe(false);
+    expect(getPolicy(ctx.configPath, 'nobody').rules.some((r) => r.effect === 'deny')).toBe(false);
+  });
+
   it('[POLICY-AC-7] an ask prompts inline and the answer decides the call', async () => {
     addInstallation(ctx.configPath, 'hello', 'hello');
     const admin = getPolicy(ctx.configPath, 'admin');

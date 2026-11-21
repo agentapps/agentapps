@@ -24,7 +24,7 @@ const app = createApp({
   name: 'Context7',
   description:
     'Up-to-date library and framework documentation via Context7 (Upstash). Resolves library identifiers and fetches structured doc snippets with code examples.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['docs', 'documentation', 'context7', 'upstash', 'library', 'research', 'snippets'],

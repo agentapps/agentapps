@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Amplitude',
   description:
     'Amplitude analytics — query events, user activity, cohorts, charts, and retention data.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'analytics',
   keywords: ['amplitude', 'analytics', 'events', 'cohorts', 'retention'],

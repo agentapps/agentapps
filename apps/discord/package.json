@@ -1,7 +1,10 @@
 {
-  "name": "@agentapps/example-discord",
+  "name": "@agentapps/app.discord",
   "version": "2.0.0",
   "private": true,
+  "agentapps": {
+    "publish": false
+  },
   "type": "module",
   "main": "src/app.ts",
   "scripts": {

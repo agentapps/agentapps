@@ -12,7 +12,7 @@ export const app = createApp({
   description:
     'Microsoft OneNote automation — browse notebooks and sections, read and write pages as markdown, and search notes via the Microsoft Graph OneNote API.',
   tagline: 'Read, write, and search OneNote notebooks, sections, and pages',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   logo: 'assets/logo.svg',
   logoMono: 'assets/logo-mono.svg',

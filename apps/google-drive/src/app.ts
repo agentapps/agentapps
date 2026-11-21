@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Google Drive',
   description:
     'Manage Google Drive files and folders - upload, download, share, search, read content',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'google',
   keywords: ['google', 'drive', 'files', 'storage'],

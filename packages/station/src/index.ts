@@ -85,10 +85,12 @@ export {
   type OAuthTokens,
 } from './oauth-manager.js';
 export {
+  appVisible,
   defaultPolicy,
   evaluatePolicy,
   type PolicyDecision,
   type ToolCallFacts,
+  toolVisible,
 } from './permission-enforcer.js';
 export { InMemoryPolicyStore, type PolicyStore, policyFor } from './policy-store.js';
 // Secrets manager
@@ -98,6 +100,7 @@ export {
   type AppEntry,
   type ServerInfo,
   type StationEndpoint,
+  type StationInstallation,
   StationServer,
   type StationServerOptions,
   serve,

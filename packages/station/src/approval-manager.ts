@@ -21,8 +21,8 @@ export interface PendingApprovalInfo {
   expiresAt: string;
 }
 
-/** How a parked call ends. */
-export type ApprovalOutcome = 'approve' | 'deny' | 'timeout';
+/** How a parked call ends. `cancelled` is a caller that went away (POLICY-REQ-14). */
+export type ApprovalOutcome = 'approve' | 'deny' | 'timeout' | 'cancelled';
 
 interface PendingApproval extends PendingApprovalInfo {
   finish: (outcome: ApprovalOutcome) => void;
@@ -103,6 +103,39 @@ export class ApprovalManager {
     );
     entry.finish(decision);
     return true;
+  }
+
+  /**
+   * Cancel a pending Approval whose caller went away: it stops being
+   * decidable and its call is never relayed. Returns false when the Approval
+   * is unknown, already decided or expired.
+   *
+   * @spec POLICY-REQ-14
+   */
+  cancel(id: string): boolean {
+    const entry = this.pending.get(id);
+    if (!entry) return false;
+    this.log(
+      `[approvals] ${id} cancelled: principal=${entry.principalId} app=${entry.app} tool=${entry.tool} rule=${entry.rule} at=${new Date().toISOString()}`,
+    );
+    entry.finish('cancelled');
+    return true;
+  }
+
+  /**
+   * Record that an approved call did not run: it could not be relayed or the
+   * Instance answered an error.
+   *
+   * @spec POLICY-REQ-14
+   */
+  logApprovedCallFailed(
+    id: string,
+    call: { principalId: string; app: string; tool: string },
+    code: string,
+  ): void {
+    this.log(
+      `[approvals] ${id} approved call failed: principal=${call.principalId} app=${call.app} tool=${call.tool} code=${code} at=${new Date().toISOString()}`,
+    );
   }
 
   /** Pending Approvals, oldest first (POLICY-REQ-7). */

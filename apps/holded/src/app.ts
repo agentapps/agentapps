@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Holded',
   description:
     'Holded ERP — manage invoices, contacts, products, documents, and treasury via the Holded API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'finance',
   keywords: ['holded', 'erp', 'invoices', 'accounting', 'spain'],

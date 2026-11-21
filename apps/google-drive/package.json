@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-google-drive",
+  "name": "@agentapps/app.google.drive",
   "version": "2.0.0",
   "private": true,
   "type": "module",

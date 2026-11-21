@@ -2,6 +2,7 @@
  * @agentapps/cli — command dispatch.
  */
 
+import { handleConnect } from './commands/connect.js';
 import { installClaudeCodeHooks, runClaudeCodeHook } from './commands/hooks-claude-code.js';
 import {
   handleApprovalDecide,
@@ -37,6 +38,7 @@ import {
   handleUninstall,
   handleWarm,
 } from './commands/index.js';
+import { runMcp } from './commands/mcp.js';
 import type { HandlerContext } from './commands/types.js';
 import type { ReplCommand } from './repl-parser.js';
 import type { HandlerResult } from './types.js';
@@ -106,6 +108,12 @@ export async function dispatchCommand(
       return handleKeyCreate(command, context);
     case 'key-revoke':
       return handleKeyRevoke(command, context);
+    // @spec CLI-REQ-5
+    case 'connect':
+      return handleConnect(command, context);
+    // @spec CLI-REQ-6
+    case 'mcp':
+      return runMcp(context.ctx.configPath, command.keyName);
     case 'permissions':
       return handlePermissions(command, context);
     case 'permissions-set':

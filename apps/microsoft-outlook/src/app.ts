@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Outlook',
   description:
     'Microsoft Outlook email management — send, read, search, and organize emails via Microsoft Graph API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['outlook', 'email', 'microsoft', 'mail', 'messages', 'office365', 'hotmail'],

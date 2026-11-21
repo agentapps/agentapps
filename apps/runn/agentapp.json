@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "description": "Runn resource management — projects, people, assignments, timesheets and capacity planning through the Runn API.",
   "tagline": "Manage projects, people, assignments, timesheets, and capacity in Runn",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.png",
   "terms": "https://agentapps.tech/terms",

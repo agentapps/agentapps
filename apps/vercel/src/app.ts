@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Vercel',
   description:
     'Vercel platform management — manage projects, deployments, domains, environment variables, and check deployment logs.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'development',
   keywords: ['vercel', 'deploy', 'hosting', 'serverless', 'nextjs'],

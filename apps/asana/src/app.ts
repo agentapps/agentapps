@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Asana',
   description:
     'Asana project management — manage tasks, projects, workspaces, sections, tags, teams, and users.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'project-management',
   keywords: ['asana', 'tasks', 'projects', 'management', 'collaboration'],

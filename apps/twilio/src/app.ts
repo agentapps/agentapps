@@ -12,7 +12,7 @@ const app = createApp({
   name: 'Twilio',
   description:
     'Twilio communications — send SMS, make calls, manage phone numbers, and check message status.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'communication',
   keywords: ['twilio', 'sms', 'voice', 'phone', 'messaging'],

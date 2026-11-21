@@ -45,7 +45,7 @@ const app = createApp({
   version: '1.0.0',
   name: 'Messenger',
   description: 'Simple messenger — send and list messages.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   category: 'communication',
   runtime: { transport: 'stdio', command: 'node', args: ['./dist/main.js'] },
 });

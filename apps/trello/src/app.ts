@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Trello',
   description:
     'Trello project management — manage boards, lists, cards, labels, and search across your Trello workspace.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['trello', 'boards', 'cards', 'project-management', 'kanban'],

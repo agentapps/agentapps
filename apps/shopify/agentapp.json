@@ -5,7 +5,7 @@
   "name": "Shopify",
   "description": "Shopify store management — manage products, orders, customers, inventory, and collections.",
   "tagline": "Manage products, orders, and customers with Shopify",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "terms": "https://agentapps.tech/terms",
   "category": "ecommerce",

@@ -13,7 +13,7 @@ const app = createApp({
   name: 'Granola',
   description:
     'Access your Granola meeting notes, transcripts, AI summaries, and folders via the Granola public API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: ['granola', 'meeting-notes', 'transcripts', 'ai-summary', 'productivity'],

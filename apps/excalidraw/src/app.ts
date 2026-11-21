@@ -14,7 +14,7 @@ const app = createApp({
   name: 'Excalidraw',
   description:
     'Integrate with Excalidraw Plus to manage scenes, collections, workspaces, users, and invites programmatically.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'design',
   keywords: [

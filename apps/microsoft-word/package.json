@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-microsoft-word",
+  "name": "@agentapps/app.microsoft.word",
   "version": "1.0.0",
   "private": true,
   "type": "module",

@@ -8,7 +8,7 @@ const app = createApp({
   name: 'Runn',
   description:
     'Runn resource management — projects, people, assignments, timesheets and capacity planning through the Runn API.',
-  author: { name: 'Pablo Lopez Torres', email: 'pablolopeztorres@gmail.com' },
+  author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'productivity',
   keywords: [

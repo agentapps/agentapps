@@ -6,9 +6,10 @@
  *   permissions <alias> set <tool> <allow|ask|deny> — override one tool
  *   permissions <alias> remove <tool>            — clear a tool's override
  *
- * Each tool's effective permission is `override ?? (sensitive ? ask : allow)`,
- * where `sensitive` comes from the tool's declared annotation. Overrides are
- * stored per-installation in `.agentapps/permissions.json`.
+ * Each tool's effective permission is what the local admin's Policy decides
+ * for it. An override is a per-tool Rule on that Policy, so it applies to the
+ * CLI only: an API Key is another Principal with its own Policy, changed with
+ * `policy set <principal> <app> <tool> <effect>`.
  */
 
 import { ADMIN_PRINCIPAL_ID } from '@agentapps/protocol';

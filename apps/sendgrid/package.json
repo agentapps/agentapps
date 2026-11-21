@@ -1,5 +1,5 @@
 {
-  "name": "@agentapps/example-sendgrid",
+  "name": "@agentapps/app.sendgrid",
   "version": "2.0.0",
   "private": true,
   "type": "module",

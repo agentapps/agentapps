@@ -5,7 +5,7 @@
   "name": "Bash",
   "description": "Execute bash commands on the system. Provides shell access for automation and system tasks.",
   "tagline": "Run shell commands and automate system tasks",
-  "author": { "name": "Pablo Lopez Torres", "email": "pablolopeztorres@gmail.com" },
+  "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "icon": "icon.svg",
   "logo": "assets/logo.svg",

@@ -6,7 +6,7 @@
  * across all installations of the same app.
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 const SECRETS_DIR = '.secrets';
@@ -60,4 +60,47 @@ export function listAppsWithSecrets(configPath: string): string[] {
   return readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => f.slice(0, -5));
+}
+
+// ── Client keys ───────────────────────────────────────────────────────────
+// The raw API key an agent client (Claude Code, …) uses, kept here so the
+// client's own settings only name it (CLI-REQ-5).
+
+const CLIENTS_SECRETS_DIR = 'clients';
+
+export interface ClientKey {
+  /** The API key record's id (`ak_…`), which is also its Principal. */
+  keyId: string;
+  /** The raw `aak_…` value. */
+  key: string;
+}
+
+function clientKeyPath(configPath: string, name: string): string {
+  return resolve(dirname(resolve(configPath)), SECRETS_DIR, CLIENTS_SECRETS_DIR, `${name}.json`);
+}
+
+/** @spec CLI-REQ-5 */
+export function loadClientKey(configPath: string, name: string): ClientKey | undefined {
+  const path = clientKeyPath(configPath, name);
+  if (!existsSync(path)) return undefined;
+  try {
+    const parsed = JSON.parse(readFileSync(path, 'utf8')) as Partial<ClientKey>;
+    return typeof parsed.keyId === 'string' && typeof parsed.key === 'string'
+      ? { keyId: parsed.keyId, key: parsed.key }
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** @spec CLI-REQ-5 */
+export function saveClientKey(configPath: string, name: string, value: ClientKey): void {
+  const path = clientKeyPath(configPath, name);
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 });
+}
+
+/** @spec CLI-REQ-5 */
+export function deleteClientKey(configPath: string, name: string): void {
+  rmSync(clientKeyPath(configPath, name), { force: true });
 }

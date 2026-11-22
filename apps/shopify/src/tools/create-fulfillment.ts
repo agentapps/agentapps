@@ -1,12 +1,12 @@
 /**
- * create_fulfillment — create a fulfillment for a Shopify order.
+ * create-fulfillment — create a fulfillment for a Shopify order.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerCreateFulfillmentTool(app: AgentApp): void {
-  app.tool('create_fulfillment', {
+  app.tool('create-fulfillment', {
     description:
       'Create a fulfillment for an order in your Shopify store. Marks items as shipped with optional tracking info.',
     parameters: {

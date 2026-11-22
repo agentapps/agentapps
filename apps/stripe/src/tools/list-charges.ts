@@ -1,12 +1,12 @@
 /**
- * list_charges — list Stripe charges.
+ * list-charges — list Stripe charges.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListChargesTool(app: AgentApp): void {
-  app.tool('list_charges', {
+  app.tool('list-charges', {
     description:
       'List charges from your Stripe account. Supports filtering by customer and payment intent.',
     parameters: {

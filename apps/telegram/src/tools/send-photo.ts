@@ -1,12 +1,12 @@
 /**
- * send_photo — send a photo to a Telegram chat.
+ * send-photo — send a photo to a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerSendPhotoTool(app: AgentApp): void {
-  app.tool('send_photo', {
+  app.tool('send-photo', {
     description:
       'Send a photo to a Telegram chat. The photo can be a URL or a file_id of an already uploaded photo.',
     parameters: {

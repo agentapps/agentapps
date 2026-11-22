@@ -9,10 +9,10 @@ interface RenderDisk {
 }
 
 /**
- * render-list-disks -- GET /services/{serviceId}/disks.
+ * list-disks -- GET /services/{serviceId}/disks.
  */
 export function registerListDisksTool(app: AgentApp): void {
-  app.tool('render-list-disks', {
+  app.tool('list-disks', {
     description:
       'List persistent disks attached to a Render service. Returns { disks: [{ id, name, mountPath, sizeGB }] }. Params: serviceId (required).',
     parameters: {

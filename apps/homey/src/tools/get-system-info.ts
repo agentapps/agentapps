@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerGetSystemInfoTool(app: AgentApp): void {
-  app.tool('homey-get-system-info', {
+  app.tool('get-system-info', {
     description:
       'Get Homey system information including firmware version, model, uptime, Wi-Fi status, and more.',
     parameters: {

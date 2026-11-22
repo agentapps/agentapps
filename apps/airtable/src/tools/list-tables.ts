@@ -1,12 +1,12 @@
 /**
- * list_tables — list all tables in an Airtable base.
+ * list-tables — list all tables in an Airtable base.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerListTablesTool(app: AgentApp): void {
-  app.tool('list_tables', {
+  app.tool('list-tables', {
     description:
       'List all tables in an Airtable base, including their names, IDs, and field definitions.',
     parameters: {

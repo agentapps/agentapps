@@ -4,7 +4,7 @@ import { validateIssueId } from './_linear-helpers.js';
 import { wrapLinearCall } from './utils.js';
 
 export function registerRemoveIssuesFromProjectTool(app: AgentApp): void {
-  app.tool('linear-remove-issues-from-project', {
+  app.tool('remove-issues-from-project', {
     description:
       'Detach one or more Linear issues from their project. Returns { removed, failed, results: [{ issueId, identifier?, success, error? }] }.',
     parameters: {
@@ -18,7 +18,7 @@ export function registerRemoveIssuesFromProjectTool(app: AgentApp): void {
       },
       required: ['issueIds'],
     },
-    // Detaches issues from their project (linear-add-issues-to-project puts them back); nothing is deleted.
+    // Detaches issues from their project (add-issues-to-project puts them back); nothing is deleted.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,

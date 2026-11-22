@@ -1,12 +1,12 @@
 /**
- * get_domain — retrieve details about a specific domain.
+ * get-domain — retrieve details about a specific domain.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerGetDomainTool(app: AgentApp): void {
-  app.tool('get_domain', {
+  app.tool('get-domain', {
     description: 'Get detailed information about a specific domain in your Vercel account.',
     parameters: {
       type: 'object',

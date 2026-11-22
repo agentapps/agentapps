@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerGetEnergyTool(app: AgentApp): void {
-  app.tool('homey-get-energy', {
+  app.tool('get-energy', {
     description:
       'Get live energy report from Homey including current power usage and generation across the home.',
     parameters: {

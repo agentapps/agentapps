@@ -1,12 +1,12 @@
 /**
- * update_invoice — update an existing Holded invoice.
+ * update-invoice — update an existing Holded invoice.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerUpdateInvoiceTool(app: AgentApp): void {
-  app.tool('update_invoice', {
+  app.tool('update-invoice', {
     description: 'Update an existing invoice in Holded. Only provided fields are changed.',
     parameters: {
       type: 'object',

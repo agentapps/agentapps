@@ -136,20 +136,20 @@ describe('Vercel Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'add_domain',
-      'cancel_deployment',
-      'create_env_var',
-      'delete_env_var',
-      'get_deployment',
-      'get_deployment_events',
-      'get_domain',
-      'get_project',
-      'list_aliases',
-      'list_deployments',
-      'list_domains',
-      'list_env_vars',
-      'list_projects',
-      'list_teams',
+      'add-domain',
+      'cancel-deployment',
+      'create-env-var',
+      'delete-env-var',
+      'get-deployment',
+      'get-deployment-events',
+      'get-domain',
+      'get-project',
+      'list-aliases',
+      'list-deployments',
+      'list-domains',
+      'list-env-vars',
+      'list-projects',
+      'list-teams',
       'redeploy',
     ]);
   });
@@ -175,7 +175,7 @@ describe('Vercel Agent App', () => {
     expect(health.message).toBe('Vercel connected as testuser');
   });
 
-  it('list_projects sends correct URL', async () => {
+  it('list-projects sends correct URL', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -192,7 +192,7 @@ describe('Vercel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_projects', { limit: 10 });
+    sendToolCall(sessionId, 'list-projects', { limit: 10 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -211,7 +211,7 @@ describe('Vercel Agent App', () => {
     expect(url).toContain('limit=10');
   });
 
-  it('get_deployment returns deployment data', async () => {
+  it('get-deployment returns deployment data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -230,7 +230,7 @@ describe('Vercel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_deployment', { deploymentId: 'dpl_abc123' });
+    sendToolCall(sessionId, 'get-deployment', { deploymentId: 'dpl_abc123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -241,7 +241,7 @@ describe('Vercel Agent App', () => {
     expect(data.target).toBe('production');
   });
 
-  it('list_env_vars sends correct project path', async () => {
+  it('list-env-vars sends correct project path', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -257,7 +257,7 @@ describe('Vercel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_env_vars', { projectId: 'my-app' });
+    sendToolCall(sessionId, 'list-env-vars', { projectId: 'my-app' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -273,7 +273,7 @@ describe('Vercel Agent App', () => {
     expect(getCall).toBeDefined();
   });
 
-  it('delete_env_var sends DELETE to correct path', async () => {
+  it('delete-env-var sends DELETE to correct path', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({}),
@@ -283,7 +283,7 @@ describe('Vercel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'delete_env_var', { projectId: 'my-app', envId: 'env_abc123' });
+    sendToolCall(sessionId, 'delete-env-var', { projectId: 'my-app', envId: 'env_abc123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -321,7 +321,7 @@ describe('Vercel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_projects', {});
+    sendToolCall(sessionId, 'list-projects', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

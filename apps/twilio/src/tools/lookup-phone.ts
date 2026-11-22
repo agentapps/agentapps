@@ -1,12 +1,12 @@
 /**
- * lookup_phone — look up information about a phone number via the Twilio Lookups API.
+ * lookup-phone — look up information about a phone number via the Twilio Lookups API.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioLookupRequest } from '../lib/twilio-client.js';
 
 export function registerLookupPhoneTool(app: AgentApp): void {
-  app.tool('lookup_phone', {
+  app.tool('lookup-phone', {
     description:
       'Look up information about a phone number using the Twilio Lookups API. Returns carrier, caller name, and formatting details.',
     parameters: {

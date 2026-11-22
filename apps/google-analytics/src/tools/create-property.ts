@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-create-property — Create a new GA4 property under an account.
+ * create-property — Create a new GA4 property under an account.
  */
 export function registerCreatePropertyTool(app: AgentApp): void {
-  app.tool('analytics-create-property', {
+  app.tool('create-property', {
     description:
       'Create a new GA4 property under an account. Returns { property: { propertyId, displayName, parent, timeZone, currencyCode, ... } }.',
     parameters: {

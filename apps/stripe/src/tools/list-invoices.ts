@@ -1,12 +1,12 @@
 /**
- * list_invoices — list Stripe invoices.
+ * list-invoices — list Stripe invoices.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListInvoicesTool(app: AgentApp): void {
-  app.tool('list_invoices', {
+  app.tool('list-invoices', {
     description:
       'List invoices from your Stripe account. Supports filtering by customer and status.',
     parameters: {

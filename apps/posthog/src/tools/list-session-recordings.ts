@@ -1,12 +1,12 @@
 /**
- * list_session_recordings — list session recordings in PostHog.
+ * list-session-recordings — list session recordings in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListSessionRecordingsTool(app: AgentApp): void {
-  app.tool('list_session_recordings', {
+  app.tool('list-session-recordings', {
     description:
       'List session recordings captured in the PostHog project. Returns recent recordings with optional limit.',
     parameters: {

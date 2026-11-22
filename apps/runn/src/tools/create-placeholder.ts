@@ -6,7 +6,7 @@ import { validateId } from './_runn-helpers.js';
 import { firstOf, resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreatePlaceholderTool(app: AgentApp): void {
-  app.tool('runn-create-placeholder', {
+  app.tool('create-placeholder', {
     description:
       'Create a Runn placeholder (an unnamed role slot for planning before a real person is hired/assigned). Returns the curated created placeholder. Not retryable (no idempotency key). Params: roleId (required), teamId?, costPerHour?, fields?, includeRaw.',
     parameters: {

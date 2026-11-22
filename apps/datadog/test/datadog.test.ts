@@ -136,17 +136,17 @@ describe('Datadog Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_monitor',
-      'get_dashboard',
-      'get_incident',
-      'get_monitor',
-      'list_dashboards',
-      'list_downtimes',
-      'list_incidents',
-      'list_monitors',
-      'mute_monitor',
-      'query_metrics',
-      'search_logs',
+      'create-monitor',
+      'get-dashboard',
+      'get-incident',
+      'get-monitor',
+      'list-dashboards',
+      'list-downtimes',
+      'list-incidents',
+      'list-monitors',
+      'mute-monitor',
+      'query-metrics',
+      'search-logs',
     ]);
   });
 
@@ -159,7 +159,7 @@ describe('Datadog Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('query_metrics returns metric data', async () => {
+  it('query-metrics returns metric data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -180,7 +180,7 @@ describe('Datadog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'query_metrics', {
+    sendToolCall(sessionId, 'query-metrics', {
       query: 'avg:system.cpu.user{*}',
       from: 1609459200,
       to: 1609462800,
@@ -199,7 +199,7 @@ describe('Datadog Agent App', () => {
     ]);
   });
 
-  it('list_monitors returns monitor list', async () => {
+  it('list-monitors returns monitor list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -215,7 +215,7 @@ describe('Datadog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_monitors', {});
+    sendToolCall(sessionId, 'list-monitors', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -226,7 +226,7 @@ describe('Datadog Agent App', () => {
     expect(data[1].name).toBe('Memory Monitor');
   });
 
-  it('search_logs returns log events', async () => {
+  it('search-logs returns log events', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -247,7 +247,7 @@ describe('Datadog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'search_logs', {
+    sendToolCall(sessionId, 'search-logs', {
       query: 'service:web status:error',
       from: 'now-1h',
       to: 'now',
@@ -279,7 +279,7 @@ describe('Datadog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_monitors', {});
+    sendToolCall(sessionId, 'list-monitors', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

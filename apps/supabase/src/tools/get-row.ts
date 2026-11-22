@@ -1,12 +1,12 @@
 /**
- * get_row — retrieve a single row from a Supabase table by column value.
+ * get-row — retrieve a single row from a Supabase table by column value.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerGetRowTool(app: AgentApp): void {
-  app.tool('get_row', {
+  app.tool('get-row', {
     description:
       'Get a single row from a Supabase table by matching a column value. Returns the row object directly.',
     parameters: {

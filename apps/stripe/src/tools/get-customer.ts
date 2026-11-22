@@ -1,12 +1,12 @@
 /**
- * get_customer — retrieve a single Stripe customer by ID.
+ * get-customer — retrieve a single Stripe customer by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerGetCustomerTool(app: AgentApp): void {
-  app.tool('get_customer', {
+  app.tool('get-customer', {
     description: 'Get detailed information about a specific Stripe customer by their ID.',
     parameters: {
       type: 'object',

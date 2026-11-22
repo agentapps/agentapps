@@ -1,12 +1,12 @@
 /**
- * list_dns_records — list DNS records for a Cloudflare zone.
+ * list-dns-records — list DNS records for a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListDnsRecordsTool(app: AgentApp): void {
-  app.tool('list_dns_records', {
+  app.tool('list-dns-records', {
     description:
       'List DNS records for a zone. Supports filtering by record type and name, with pagination.',
     parameters: {

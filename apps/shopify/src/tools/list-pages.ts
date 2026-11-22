@@ -1,12 +1,12 @@
 /**
- * list_pages — list Shopify pages.
+ * list-pages — list Shopify pages.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListPagesTool(app: AgentApp): void {
-  app.tool('list_pages', {
+  app.tool('list-pages', {
     description:
       'List pages from your Shopify store. Pages are used for static content like About Us or Contact.',
     parameters: {

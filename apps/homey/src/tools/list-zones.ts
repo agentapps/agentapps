@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getSecrets, getZones, withTokenRefresh } from '../lib/index.js';
 
 export function registerListZonesTool(app: AgentApp): void {
-  app.tool('homey-list-zones', {
+  app.tool('list-zones', {
     description: 'List all zones (rooms/areas) configured in Homey.',
     parameters: {
       type: 'object',

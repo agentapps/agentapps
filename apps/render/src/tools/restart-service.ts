@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-restart-service -- POST /services/{serviceId}/restart.
+ * restart-service -- POST /services/{serviceId}/restart.
  */
 export function registerRestartServiceTool(app: AgentApp): void {
-  app.tool('render-restart-service', {
+  app.tool('restart-service', {
     description:
       'Restart a running Render service. Returns { serviceId, restarted }. Params: serviceId (required).',
     parameters: {

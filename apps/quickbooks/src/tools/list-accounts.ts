@@ -1,12 +1,12 @@
 /**
- * list_accounts — list QuickBooks Online accounts (chart of accounts) via query.
+ * list-accounts — list QuickBooks Online accounts (chart of accounts) via query.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerListAccountsTool(app: AgentApp): void {
-  app.tool('list_accounts', {
+  app.tool('list-accounts', {
     description:
       'List accounts (chart of accounts) from your QuickBooks Online account. Returns up to maxResults accounts.',
     parameters: {

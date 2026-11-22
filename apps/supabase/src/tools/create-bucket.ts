@@ -1,12 +1,12 @@
 /**
- * create_bucket — create a new storage bucket in Supabase.
+ * create-bucket — create a new storage bucket in Supabase.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerCreateBucketTool(app: AgentApp): void {
-  app.tool('create_bucket', {
+  app.tool('create-bucket', {
     description:
       'Create a new storage bucket in your Supabase project. Specify a unique id/name and whether it should be publicly accessible.',
     parameters: {

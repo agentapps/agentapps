@@ -1,12 +1,12 @@
 /**
- * list_firewall_rules — list firewall rules for a Cloudflare zone.
+ * list-firewall-rules — list firewall rules for a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListFirewallRulesTool(app: AgentApp): void {
-  app.tool('list_firewall_rules', {
+  app.tool('list-firewall-rules', {
     description:
       'List firewall rules for a Cloudflare zone. Firewall rules match requests using filter expressions and apply actions like block, challenge, or allow.',
     parameters: {

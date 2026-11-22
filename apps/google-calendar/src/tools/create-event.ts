@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { ensureAuthenticated, type GoogleCalendarEvent, googleCalendarFetch } from '../types.js';
 
 export function registerCreateEventTool(app: AgentApp): void {
-  app.tool('create_event', {
+  app.tool('create-event', {
     description: 'Create a new Google Calendar event',
     parameters: {
       type: 'object',

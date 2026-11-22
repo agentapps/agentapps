@@ -3,7 +3,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getDefaultGuard } from '../lib/path-safety.js';
 
 export function registerListRootsTool(app: AgentApp): void {
-  app.tool('list_roots', {
+  app.tool('list-roots', {
     description: 'List the workspace roots this app can access.',
     parameters: {
       type: 'object',

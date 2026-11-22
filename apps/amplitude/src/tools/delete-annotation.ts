@@ -1,14 +1,14 @@
 /**
- * delete_annotation — delete a chart annotation from Amplitude.
+ * delete-annotation — delete a chart annotation from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_DASHBOARD_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerDeleteAnnotationTool(app: AgentApp): void {
-  app.tool('delete_annotation', {
+  app.tool('delete-annotation', {
     description:
-      'Delete a chart annotation from Amplitude by its ID. Use get_annotations to find annotation IDs first.',
+      'Delete a chart annotation from Amplitude by its ID. Use get-annotations to find annotation IDs first.',
     parameters: {
       type: 'object',
       properties: {

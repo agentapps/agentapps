@@ -1,12 +1,12 @@
 /**
- * set_chat_title — change the title of a Telegram chat.
+ * set-chat-title — change the title of a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerSetChatTitleTool(app: AgentApp): void {
-  app.tool('set_chat_title', {
+  app.tool('set-chat-title', {
     description:
       'Change the title of a Telegram group, supergroup, or channel. The bot must be an administrator with the appropriate permissions.',
     parameters: {

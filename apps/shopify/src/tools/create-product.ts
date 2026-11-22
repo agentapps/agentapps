@@ -1,12 +1,12 @@
 /**
- * create_product — create a new Shopify product.
+ * create-product — create a new Shopify product.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerCreateProductTool(app: AgentApp): void {
-  app.tool('create_product', {
+  app.tool('create-product', {
     description: 'Create a new product in your Shopify store. Returns the created product object.',
     parameters: {
       type: 'object',

@@ -9,10 +9,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-get-data-stream — Get a single data stream's details.
+ * get-data-stream — Get a single data stream's details.
  */
 export function registerGetDataStreamTool(app: AgentApp): void {
-  app.tool('analytics-get-data-stream', {
+  app.tool('get-data-stream', {
     description:
       "Get a single data stream's details. Returns { stream: { streamId, displayName, type, webStreamData?, androidAppStreamData?, iosAppStreamData? } }.",
     parameters: {

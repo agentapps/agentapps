@@ -1,12 +1,12 @@
 /**
- * list_available_numbers — search for available local phone numbers to purchase.
+ * list-available-numbers — search for available local phone numbers to purchase.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerListAvailableNumbersTool(app: AgentApp): void {
-  app.tool('list_available_numbers', {
+  app.tool('list-available-numbers', {
     description:
       'Search for available local phone numbers that can be purchased. Filter by area code, region, or capabilities.',
     parameters: {

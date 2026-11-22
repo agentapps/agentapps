@@ -6,10 +6,10 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-text-to-video — generate video from text prompt.
+ * generate-video — generate video from text prompt.
  */
 export function registerTextToVideoTool(app: AgentApp): void {
-  app.tool('higgsfield-text-to-video', {
+  app.tool('generate-video', {
     description:
       'Generate video from text prompt. Params: prompt (required), duration? (seconds, default 5), resolution? ("720p"|"1080p", default "1080p"), aspect_ratio? ("16:9"|"9:16"|"1:1", default "16:9"), wait? (default false).',
     parameters: {
@@ -81,7 +81,7 @@ export function registerTextToVideoTool(app: AgentApp): void {
         status: result.status,
         status_url: result.status_url,
         cancel_url: result.cancel_url,
-        message: 'Request submitted. Use higgsfield-get-prediction to check status.',
+        message: 'Request submitted. Use get-prediction to check status.',
       };
     },
   });

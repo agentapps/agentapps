@@ -1,5 +1,5 @@
 /**
- * update_customer — update an existing QuickBooks Online customer.
+ * update-customer — update an existing QuickBooks Online customer.
  *
  * QuickBooks uses POST (not PUT) for updates. The request body must include
  * the customer's Id and SyncToken (for optimistic concurrency).
@@ -9,9 +9,9 @@ import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerUpdateCustomerTool(app: AgentApp): void {
-  app.tool('update_customer', {
+  app.tool('update-customer', {
     description:
-      'Update an existing customer in QuickBooks Online. Requires the customer Id and SyncToken (from a previous get_customer call).',
+      'Update an existing customer in QuickBooks Online. Requires the customer Id and SyncToken (from a previous get-customer call).',
     parameters: {
       type: 'object',
       properties: {

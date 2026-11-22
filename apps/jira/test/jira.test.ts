@@ -141,21 +141,21 @@ describe('Jira Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'add_comment',
-      'assign_issue',
-      'create_issue',
-      'get_issue',
-      'get_myself',
-      'get_project',
-      'get_sprint',
-      'get_transitions',
-      'list_boards',
-      'list_projects',
-      'list_sprints',
-      'search_issues',
-      'search_users',
-      'transition_issue',
-      'update_issue',
+      'add-comment',
+      'assign-issue',
+      'create-issue',
+      'get-issue',
+      'get-myself',
+      'get-project',
+      'get-sprint',
+      'get-transitions',
+      'list-boards',
+      'list-projects',
+      'list-sprints',
+      'search-issues',
+      'search-users',
+      'transition-issue',
+      'update-issue',
     ]);
   });
 
@@ -169,7 +169,7 @@ describe('Jira Agent App', () => {
     expect(health.message).toContain('Test User');
   });
 
-  it('search_issues sends correct JQL query', async () => {
+  it('search-issues sends correct JQL query', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -189,7 +189,7 @@ describe('Jira Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'search_issues', { jql: 'project = PROJ' });
+    sendToolCall(sessionId, 'search-issues', { jql: 'project = PROJ' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -208,7 +208,7 @@ describe('Jira Agent App', () => {
     expect(url).toContain('jql=project');
   });
 
-  it('create_issue sends correct JSON body with ADF description', async () => {
+  it('create-issue sends correct JSON body with ADF description', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
@@ -224,7 +224,7 @@ describe('Jira Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_issue', {
+    sendToolCall(sessionId, 'create-issue', {
       projectKey: 'PROJ',
       issueType: 'Bug',
       summary: 'Something is broken',
@@ -256,7 +256,7 @@ describe('Jira Agent App', () => {
     );
   });
 
-  it('get_transitions returns transitions array', async () => {
+  it('get-transitions returns transitions array', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -276,7 +276,7 @@ describe('Jira Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_transitions', { issueKey: 'PROJ-1' });
+    sendToolCall(sessionId, 'get-transitions', { issueKey: 'PROJ-1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -287,7 +287,7 @@ describe('Jira Agent App', () => {
     expect(transitions[2].id).toBe('31');
   });
 
-  it('assign_issue sends PUT with accountId', async () => {
+  it('assign-issue sends PUT with accountId', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 204,
@@ -298,7 +298,7 @@ describe('Jira Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'assign_issue', {
+    sendToolCall(sessionId, 'assign-issue', {
       issueKey: 'PROJ-99',
       accountId: '5b10ac8d82e05b22cc7d4ef5',
     });
@@ -336,7 +336,7 @@ describe('Jira Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_myself', {});
+    sendToolCall(sessionId, 'get-myself', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -5,7 +5,7 @@ import { PROJECT_TOTALS_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerProjectTotalsTool(app: AgentApp): void {
-  app.tool('runn-project-totals', {
+  app.tool('get-project-totals', {
     description:
       'Get aggregated minute totals per project (billable, non-billable, total — from actuals when available, falling back to assignments). Returns { items: [{ id, billableMinutes, nonBillableMinutes, totalMinutes, assignments, actuals }], total, hasMore, nextCursor }. Params: includeArchived (default false), limit (1-10, def 10), cursor?, fields?, includeRaw.',
     parameters: {

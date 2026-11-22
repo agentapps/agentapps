@@ -6,10 +6,10 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-image-to-video — convert an image to video with motion.
+ * animate-image — convert an image to video with motion.
  */
 export function registerImageToVideoTool(app: AgentApp): void {
-  app.tool('higgsfield-image-to-video', {
+  app.tool('animate-image', {
     description:
       'Convert an image to video with motion. Supports various motion styles and camera movements. Params: image_url (required), prompt (required), duration? (seconds, default 5), motion_strength? (0.0-1.0, default 0.5), camera_motion? ("none"|"zoom_in"|"zoom_out"|"pan_left"|"pan_right"|"tilt_up"|"tilt_down"), wait? (default false).',
     parameters: {
@@ -89,7 +89,7 @@ export function registerImageToVideoTool(app: AgentApp): void {
         status: result.status,
         status_url: result.status_url,
         cancel_url: result.cancel_url,
-        message: 'Request submitted. Use higgsfield-get-prediction to check status.',
+        message: 'Request submitted. Use get-prediction to check status.',
       };
     },
   });

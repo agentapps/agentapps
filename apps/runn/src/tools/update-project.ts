@@ -9,7 +9,7 @@ const PRICING_MODEL_ENUM = ['fp', 'tm', 'nb'] as const;
 const RATE_TYPE_ENUM = ['hours', 'days'] as const;
 
 export function registerUpdateProjectTool(app: AgentApp): void {
-  app.tool('runn-update-project', {
+  app.tool('update-project', {
     description:
       'Update a Runn project. Only the fields you pass are changed (PATCH semantics). Idempotent — safe to retry. Returns the curated updated project. Params: projectId (required), name?, clientId?, isConfirmed?, teamId?, budget?, expensesBudget?, pricingModel?, rateType?, rateCardId?, fields?, includeRaw.',
     parameters: {

@@ -36,7 +36,7 @@ async function resolveParentId(
 }
 
 export function registerCreateIssueTool(app: AgentApp): void {
-  app.tool('linear-create-issue', {
+  app.tool('create-issue', {
     description:
       'Create a Linear issue. Returns curated { id, identifier, title, url, status, priority, assignee, team, createdAt, updatedAt }. Not retryable (no idempotency key). Params: title, teamId, description?, assigneeId?, priority?, projectId?, labelIds?, stateId?, parentId? (UUID or "TER-123"), fields?, includeRaw.',
     parameters: {

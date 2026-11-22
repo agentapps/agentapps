@@ -3,7 +3,7 @@ import { getLinearClient } from '../lib/index.js';
 import { validateIssueId } from './_linear-helpers.js';
 
 export function registerDeleteIssueTool(app: AgentApp): void {
-  app.tool('linear-delete-issue', {
+  app.tool('delete-issue', {
     description: 'Permanently delete a Linear issue. Irreversible. Returns { success, issueId }.',
     parameters: {
       type: 'object',

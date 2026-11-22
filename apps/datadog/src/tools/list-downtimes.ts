@@ -1,12 +1,12 @@
 /**
- * list_downtimes — list scheduled Datadog downtimes.
+ * list-downtimes — list scheduled Datadog downtimes.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerListDowntimesTool(app: AgentApp): void {
-  app.tool('list_downtimes', {
+  app.tool('list-downtimes', {
     description:
       'List scheduled downtimes from your Datadog account. Optionally filter to only show currently active downtimes.',
     parameters: {

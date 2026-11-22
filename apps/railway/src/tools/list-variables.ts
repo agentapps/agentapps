@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-variables — List environment variables for a service.
+ * list-variables — List environment variables for a service.
  */
 export function registerListVariablesTool(app: AgentApp): void {
-  app.tool('railway-list-variables', {
+  app.tool('list-variables', {
     description: 'List environment variables for a service.',
     parameters: {
       type: 'object',

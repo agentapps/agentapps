@@ -1,12 +1,12 @@
 /**
- * query_events — query event segmentation data from Amplitude.
+ * query-events — query event segmentation data from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerQueryEventsTool(app: AgentApp): void {
-  app.tool('query_events', {
+  app.tool('query-events', {
     description:
       'Query event segmentation data from Amplitude. Returns event counts and breakdowns within a date range.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_profit_and_loss — retrieve the Profit and Loss report from QuickBooks Online.
+ * get-profit-and-loss — retrieve the Profit and Loss report from QuickBooks Online.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerGetProfitAndLossTool(app: AgentApp): void {
-  app.tool('get_profit_and_loss', {
+  app.tool('get-profit-and-loss', {
     description:
       'Get the Profit and Loss (income statement) report for a date range from QuickBooks Online.',
     parameters: {

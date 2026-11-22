@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerGetUserTool(app: AgentApp): void {
-  app.tool('homey-get-user', {
+  app.tool('get-user', {
     description: 'Get authenticated user information from Homey.',
     parameters: {
       type: 'object',

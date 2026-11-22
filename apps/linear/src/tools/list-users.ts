@@ -5,7 +5,7 @@ import { extractUser, validateUuid } from './_linear-helpers.js';
 import { resolveFieldsList, sanitizeLimit, wrapLinearCall } from './utils.js';
 
 export function registerListUsersTool(app: AgentApp): void {
-  app.tool('linear-list-users', {
+  app.tool('list-users', {
     description:
       'List Linear workspace users. Optionally filters by team membership. Returns curated rows { id, name, displayName, email, avatarUrl, active, admin }. Params: teamId?, limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

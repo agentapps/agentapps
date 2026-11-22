@@ -148,19 +148,19 @@ describe('Mixpanel Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'export_events',
-      'get_cohort',
-      'get_event_names',
-      'get_funnel',
-      'get_property_values',
-      'get_retention',
-      'get_segmentation',
-      'get_top_events',
-      'get_user_profile',
-      'list_cohorts',
-      'list_dashboards',
-      'list_funnels',
-      'query_events',
+      'export-events',
+      'get-cohort',
+      'get-event-names',
+      'get-funnel',
+      'get-property-values',
+      'get-retention',
+      'get-segmentation',
+      'get-top-events',
+      'get-user-profile',
+      'list-cohorts',
+      'list-dashboards',
+      'list-funnels',
+      'query-events',
     ]);
   });
 
@@ -173,7 +173,7 @@ describe('Mixpanel Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('query_events returns event data', async () => {
+  it('query-events returns event data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -193,7 +193,7 @@ describe('Mixpanel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'query_events', {
+    sendToolCall(sessionId, 'query-events', {
       event: 'Signup',
       from_date: '2024-01-01',
       to_date: '2024-01-02',
@@ -207,7 +207,7 @@ describe('Mixpanel Agent App', () => {
     expect(data.data).toBeDefined();
   });
 
-  it('list_funnels returns funnel list', async () => {
+  it('list-funnels returns funnel list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -223,7 +223,7 @@ describe('Mixpanel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_funnels', {});
+    sendToolCall(sessionId, 'list-funnels', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -234,7 +234,7 @@ describe('Mixpanel Agent App', () => {
     expect(data[1].name).toBe('Purchase Funnel');
   });
 
-  it('get_user_profile returns profile data', async () => {
+  it('get-user-profile returns profile data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -258,7 +258,7 @@ describe('Mixpanel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_user_profile', { distinct_id: 'user_abc' });
+    sendToolCall(sessionId, 'get-user-profile', { distinct_id: 'user_abc' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -269,7 +269,7 @@ describe('Mixpanel Agent App', () => {
     expect(results[0].$distinct_id).toBe('user_abc');
   });
 
-  it('get_top_events returns top events by volume', async () => {
+  it('get-top-events returns top events by volume', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -288,7 +288,7 @@ describe('Mixpanel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_top_events', { type: 'general', limit: 3 });
+    sendToolCall(sessionId, 'get-top-events', { type: 'general', limit: 3 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -316,7 +316,7 @@ describe('Mixpanel Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_funnels', {});
+    sendToolCall(sessionId, 'list-funnels', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

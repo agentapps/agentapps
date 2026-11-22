@@ -8,10 +8,10 @@ interface RenderDeploy {
 }
 
 /**
- * render-trigger-deploy -- POST /services/{serviceId}/deploys.
+ * trigger-deploy -- POST /services/{serviceId}/deploys.
  */
 export function registerTriggerDeployTool(app: AgentApp): void {
-  app.tool('render-trigger-deploy', {
+  app.tool('trigger-deploy', {
     description:
       'Trigger a new deploy for a Render service. Returns { deployId, status, createdAt }. Params: serviceId (required), clearCache? ("clear" or "do_not_clear", default "do_not_clear").',
     parameters: {
@@ -29,7 +29,7 @@ export function registerTriggerDeployTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
-    // A new deploy replaces the running build; render-rollback-deploy returns to the previous one.
+    // A new deploy replaces the running build; rollback-deploy returns to the previous one.
     annotations: {
       sensitive: true,
       readOnlyHint: false,

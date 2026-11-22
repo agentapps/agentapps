@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.render',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Render',
   description:
     'Deploy and manage services on Render directly from your workspace. Supports web services, static sites, deployments, environment variables, custom domains, and more.',

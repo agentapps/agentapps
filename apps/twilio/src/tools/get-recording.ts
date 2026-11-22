@@ -1,12 +1,12 @@
 /**
- * get_recording — retrieve a single Twilio recording by SID.
+ * get-recording — retrieve a single Twilio recording by SID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerGetRecordingTool(app: AgentApp): void {
-  app.tool('get_recording', {
+  app.tool('get-recording', {
     description:
       'Get detailed information about a specific Twilio recording by its SID, including duration, channels, and media URL.',
     parameters: {

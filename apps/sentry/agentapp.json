@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.sentry",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "name": "Sentry",
   "description": "Monitor errors and issues in your applications via the Sentry API.",
   "tagline": "Track and monitor application errors and issues",

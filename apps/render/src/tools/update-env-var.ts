@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-update-env-var -- PUT /services/{serviceId}/env-vars/{key}.
+ * update-env-var -- PUT /services/{serviceId}/env-vars/{key}.
  */
 export function registerUpdateEnvVarTool(app: AgentApp): void {
-  app.tool('render-update-env-var', {
+  app.tool('update-env-var', {
     description:
       'Add or update a single environment variable for a Render service. Returns { key, updated }. Params: serviceId (required), key (required), value (required).',
     parameters: {

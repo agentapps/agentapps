@@ -1,12 +1,12 @@
 /**
- * create_customer — create a new Stripe customer.
+ * create-customer — create a new Stripe customer.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreateCustomerTool(app: AgentApp): void {
-  app.tool('create_customer', {
+  app.tool('create-customer', {
     description: 'Create a new customer in Stripe. Returns the created customer object.',
     parameters: {
       type: 'object',

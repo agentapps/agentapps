@@ -12,7 +12,7 @@ import {
 import { firstOf, resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreateAssignmentTool(app: AgentApp): void {
-  app.tool('runn-create-assignment', {
+  app.tool('create-assignment', {
     description:
       'Allocate a person (or placeholder) to a project at a role over a date range. Returns the curated created assignment. Not retryable (no idempotency key). Params: personId, projectId, roleId, startDate, endDate (YYYY-MM-DD), minutesPerDay (all required), isBillable?, note?, phaseId?, workstreamId?, isNonWorkingDay?, fields?, includeRaw.',
     parameters: {

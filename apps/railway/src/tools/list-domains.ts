@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-domains — List domains for a service.
+ * list-domains — List domains for a service.
  */
 export function registerListDomainsTool(app: AgentApp): void {
-  app.tool('railway-list-domains', {
+  app.tool('list-domains', {
     description: 'List domains for a service.',
     parameters: {
       type: 'object',
@@ -43,7 +43,7 @@ export function registerListDomainsTool(app: AgentApp): void {
       const domains = await client.listDomains(projectId, serviceId, environmentId);
 
       if (domains.length === 0) {
-        return 'No domains configured. Use railway-create-domain to create one.';
+        return 'No domains configured. Use create-domain to create one.';
       }
 
       const list = domains.map((d) => `- **${d.domain}** (${d.id})`).join('\n');

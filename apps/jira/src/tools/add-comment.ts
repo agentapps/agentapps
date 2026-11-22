@@ -1,12 +1,12 @@
 /**
- * add_comment — add a comment to a Jira issue.
+ * add-comment — add a comment to a Jira issue.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerAddCommentTool(app: AgentApp): void {
-  app.tool('add_comment', {
+  app.tool('add-comment', {
     description: 'Add a comment to a Jira issue. The comment body is plain text converted to ADF.',
     parameters: {
       type: 'object',

@@ -1,12 +1,12 @@
 /**
- * delete_contact — delete a Holded contact by ID.
+ * delete-contact — delete a Holded contact by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerDeleteContactTool(app: AgentApp): void {
-  app.tool('delete_contact', {
+  app.tool('delete-contact', {
     description: 'Delete a contact from your Holded account.',
     parameters: {
       type: 'object',

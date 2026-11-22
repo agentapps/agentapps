@@ -1,12 +1,12 @@
 /**
- * get_public_url — construct the public URL for a file in a Supabase storage bucket.
+ * get-public-url — construct the public URL for a file in a Supabase storage bucket.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { getSupabaseConfig } from '../lib/supabase-client.js';
 
 export function registerGetPublicUrlTool(app: AgentApp): void {
-  app.tool('get_public_url', {
+  app.tool('get-public-url', {
     description:
       'Get the public URL for a file in a Supabase storage bucket. The bucket must have public access enabled for the URL to work without authentication.',
     parameters: {

@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryEvent, sentryRequest } from '../types.js';
 
 export function registerListEventsTool(app: AgentApp): void {
-  app.tool('list_events', {
+  app.tool('list-events', {
     description: 'List events (individual error occurrences) for an issue.',
     parameters: {
       type: 'object',

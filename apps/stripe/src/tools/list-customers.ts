@@ -1,12 +1,12 @@
 /**
- * list_customers — list Stripe customers with optional filtering.
+ * list-customers — list Stripe customers with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListCustomersTool(app: AgentApp): void {
-  app.tool('list_customers', {
+  app.tool('list-customers', {
     description:
       'List customers from your Stripe account. Supports filtering by email and cursor-based pagination.',
     parameters: {

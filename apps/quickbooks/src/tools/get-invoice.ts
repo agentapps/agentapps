@@ -1,12 +1,12 @@
 /**
- * get_invoice — retrieve a single QuickBooks Online invoice by ID.
+ * get-invoice — retrieve a single QuickBooks Online invoice by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerGetInvoiceTool(app: AgentApp): void {
-  app.tool('get_invoice', {
+  app.tool('get-invoice', {
     description: 'Get detailed information about a specific QuickBooks invoice.',
     parameters: {
       type: 'object',

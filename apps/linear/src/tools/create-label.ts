@@ -5,7 +5,7 @@ import { extractLabel, validateUuid } from './_linear-helpers.js';
 import { resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreateLabelTool(app: AgentApp): void {
-  app.tool('linear-create-label', {
+  app.tool('create-label', {
     description:
       'Create a Linear label. Returns curated { id, name, color, description }. Not retryable. Params: name, teamId, color?, description?, fields?, includeRaw.',
     parameters: {

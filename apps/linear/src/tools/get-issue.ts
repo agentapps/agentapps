@@ -5,7 +5,7 @@ import { buildIssueShape, validateIssueId } from './_linear-helpers.js';
 import { resolveFields, wrapLinearCall } from './utils.js';
 
 export function registerGetIssueTool(app: AgentApp): void {
-  app.tool('linear-get-issue', {
+  app.tool('get-issue', {
     description:
       'Retrieve a Linear issue by UUID or identifier (e.g. "TER-123"). Returns curated { id, identifier, title, url, status, priority, assignee, team, project, cycle, labels, description, createdAt, updatedAt }. Params: issueId, fields?, includeRaw.',
     parameters: {

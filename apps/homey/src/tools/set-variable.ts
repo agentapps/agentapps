@@ -15,9 +15,9 @@ function parseValue(value: unknown): unknown {
 }
 
 export function registerSetVariableTool(app: AgentApp): void {
-  app.tool('homey-set-variable', {
+  app.tool('set-variable', {
     description:
-      'Set the value of a Homey logic variable by its ID. Use homey-get-variables to find variable IDs.',
+      'Set the value of a Homey logic variable by its ID. Use get-variables to find variable IDs.',
     parameters: {
       type: 'object',
       properties: {

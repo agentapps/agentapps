@@ -1,12 +1,12 @@
 /**
- * list_dashboards — list all dashboards in a Mixpanel project.
+ * list-dashboards — list all dashboards in a Mixpanel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerListDashboardsTool(app: AgentApp): void {
-  app.tool('list_dashboards', {
+  app.tool('list-dashboards', {
     description:
       'List all dashboards in your Mixpanel project. Returns dashboard IDs, names, and metadata.',
     parameters: {

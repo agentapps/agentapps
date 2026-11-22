@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-deployments — List recent deployments for a service.
+ * list-deployments — List recent deployments for a service.
  */
 export function registerListDeploymentsTool(app: AgentApp): void {
-  app.tool('railway-list-deployments', {
+  app.tool('list-deployments', {
     description: 'List recent deployments for a service.',
     parameters: {
       type: 'object',

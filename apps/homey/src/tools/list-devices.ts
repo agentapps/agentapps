@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, getZones, withTokenRefresh } from '../lib/index.js';
 
 export function registerListDevicesTool(app: AgentApp): void {
-  app.tool('homey-list-devices', {
+  app.tool('list-devices', {
     description:
       'List all devices connected to Homey with their zone, class, capabilities, and availability status.',
     parameters: {

@@ -7,7 +7,7 @@ import { getDefaultGuard } from '../lib/path-safety.js';
 const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
 
 export function registerReadMediaTool(app: AgentApp): void {
-  app.tool('read_media', {
+  app.tool('read-media', {
     description:
       'Read a binary file and return base64 + detected MIME type. Hard cap 10 MB. For text files use read.',
     parameters: {
@@ -35,7 +35,7 @@ export function registerReadMediaTool(app: AgentApp): void {
       if (!stat.isFile()) throw new Error(`Not a regular file: ${canonical}`);
       if (stat.size > MAX_MEDIA_BYTES)
         throw new Error(
-          `File too large for read_media (${stat.size} bytes > ${MAX_MEDIA_BYTES} cap).`,
+          `File too large for read-media (${stat.size} bytes > ${MAX_MEDIA_BYTES} cap).`,
         );
 
       const mimeType = (await detectMimeType(canonical)) ?? 'application/octet-stream';

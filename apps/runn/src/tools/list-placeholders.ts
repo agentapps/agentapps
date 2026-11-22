@@ -5,7 +5,7 @@ import { PLACEHOLDER_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListPlaceholdersTool(app: AgentApp): void {
-  app.tool('runn-list-placeholders', {
+  app.tool('list-placeholders', {
     description:
       'List Runn placeholders (unnamed role slots used for planning before a real person is assigned). Returns { items: [{ id, firstName, lastName, isArchived, tags, references, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

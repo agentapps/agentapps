@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerListFlowsTool(app: AgentApp): void {
-  app.tool('homey-list-flows', {
+  app.tool('list-flows', {
     description: 'List all flows (automations) configured in Homey.',
     parameters: {
       type: 'object',

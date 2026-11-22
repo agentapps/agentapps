@@ -1,12 +1,12 @@
 /**
- * list_phone_numbers — list incoming phone numbers on your Twilio account.
+ * list-phone-numbers — list incoming phone numbers on your Twilio account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerListPhoneNumbersTool(app: AgentApp): void {
-  app.tool('list_phone_numbers', {
+  app.tool('list-phone-numbers', {
     description:
       'List incoming phone numbers on your Twilio account. Optionally filter by phone number.',
     parameters: {

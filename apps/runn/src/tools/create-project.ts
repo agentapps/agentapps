@@ -9,7 +9,7 @@ const PRICING_MODEL_ENUM = ['fp', 'tm', 'nb'] as const;
 const RATE_TYPE_ENUM = ['hours', 'days'] as const;
 
 export function registerCreateProjectTool(app: AgentApp): void {
-  app.tool('runn-create-project', {
+  app.tool('create-project', {
     description:
       'Create a Runn project from scratch. Returns the curated created project. Not retryable (no idempotency key). Params: name, clientId (both required), isConfirmed?, teamId?, budget?, expensesBudget?, pricingModel? (fp|tm|nb), rateType? (hours|days), rateCardId?, fields?, includeRaw.',
     parameters: {
@@ -18,7 +18,7 @@ export function registerCreateProjectTool(app: AgentApp): void {
         name: { type: 'string', description: 'Project name.' },
         clientId: {
           type: 'number',
-          description: 'Client id (required). Use runn-list-clients to find it.',
+          description: 'Client id (required). Use list-clients to find it.',
         },
         isConfirmed: {
           type: 'boolean',

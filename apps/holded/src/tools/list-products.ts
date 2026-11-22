@@ -1,12 +1,12 @@
 /**
- * list_products — list Holded products.
+ * list-products — list Holded products.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListProductsTool(app: AgentApp): void {
-  app.tool('list_products', {
+  app.tool('list-products', {
     description: 'List products from your Holded account. Returns all products and services.',
     parameters: {
       type: 'object',

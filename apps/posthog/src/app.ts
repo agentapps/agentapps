@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.posthog',
-  version: '2.1.1',
+  version: '3.0.0',
   name: 'PostHog',
   description:
     'PostHog product analytics — events, persons, feature flags, insights, cohorts, annotations, actions, dashboards, experiments, and session recordings.',

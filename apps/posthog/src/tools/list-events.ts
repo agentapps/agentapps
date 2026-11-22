@@ -1,12 +1,12 @@
 /**
- * list_events — list recent events from PostHog.
+ * list-events — list recent events from PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListEventsTool(app: AgentApp): void {
-  app.tool('list_events', {
+  app.tool('list-events', {
     description:
       'List recent events captured by PostHog. Returns the most recent events with optional limit.',
     parameters: {

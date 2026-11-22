@@ -1,12 +1,12 @@
 /**
- * list_calls — list calls from your Twilio account.
+ * list-calls — list calls from your Twilio account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerListCallsTool(app: AgentApp): void {
-  app.tool('list_calls', {
+  app.tool('list-calls', {
     description:
       'List calls from your Twilio account. Supports filtering by phone number and call status.',
     parameters: {

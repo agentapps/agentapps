@@ -1,12 +1,12 @@
 /**
- * get_account — retrieve your Twilio account information.
+ * get-account — retrieve your Twilio account information.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerGetAccountTool(app: AgentApp): void {
-  app.tool('get_account', {
+  app.tool('get-account', {
     description:
       'Get information about your Twilio account, including SID, friendly name, status, and type.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_prediction — poll prediction status and retrieve results.
+ * get-prediction — poll prediction status and retrieve results.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, replicateRequest } from '../types.js';
 
 export function registerGetPredictionTool(app: AgentApp): void {
-  app.tool('get_prediction', {
+  app.tool('get-prediction', {
     description:
       'Get the status and result of a prediction by ID. ' +
       'Poll this after run until status is "succeeded" or "failed". ' +

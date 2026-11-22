@@ -1,12 +1,12 @@
 /**
- * list_dashboards — list Datadog dashboards.
+ * list-dashboards — list Datadog dashboards.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerListDashboardsTool(app: AgentApp): void {
-  app.tool('list_dashboards', {
+  app.tool('list-dashboards', {
     description:
       'List dashboards from your Datadog account. Optionally limit the number of results.',
     parameters: {

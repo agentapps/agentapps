@@ -5,7 +5,7 @@ import { extractCommentShape, validateIssueId } from './_linear-helpers.js';
 import { resolveFields } from './utils.js';
 
 export function registerAddCommentTool(app: AgentApp): void {
-  app.tool('linear-add-comment', {
+  app.tool('add-comment', {
     description:
       'Add a comment to a Linear issue. Returns curated { id, body, authorId, authorName, issueId, url, createdAt }. Not retryable. Params: issueId, body, fields?, includeRaw.',
     parameters: {

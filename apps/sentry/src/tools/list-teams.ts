@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryTeam, sentryRequest } from '../types.js';
 
 export function registerListTeamsTool(app: AgentApp): void {
-  app.tool('list_teams', {
+  app.tool('list-teams', {
     description: 'List teams in a Sentry organization.',
     parameters: {
       type: 'object',

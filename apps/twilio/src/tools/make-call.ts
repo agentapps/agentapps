@@ -1,12 +1,12 @@
 /**
- * make_call — initiate a phone call via Twilio.
+ * make-call — initiate a phone call via Twilio.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerMakeCallTool(app: AgentApp): void {
-  app.tool('make_call', {
+  app.tool('make-call', {
     description:
       'Initiate a phone call via Twilio. Provide either a TwiML URL or inline TwiML markup to control call behavior. Returns the call object.',
     parameters: {

@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-cancel-deploy -- POST /services/{serviceId}/deploys/{deployId}/cancel.
+ * cancel-deploy -- POST /services/{serviceId}/deploys/{deployId}/cancel.
  */
 export function registerCancelDeployTool(app: AgentApp): void {
-  app.tool('render-cancel-deploy', {
+  app.tool('cancel-deploy', {
     description:
       'Cancel a running Render deploy. Returns { deployId, cancelled }. Params: serviceId (required), deployId (required).',
     parameters: {

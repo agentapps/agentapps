@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { ensureAuthenticated, googleCalendarFetch } from '../types.js';
 
 export function registerDeleteEventTool(app: AgentApp): void {
-  app.tool('delete_event', {
+  app.tool('delete-event', {
     description: 'Delete a Google Calendar event',
     parameters: {
       type: 'object',

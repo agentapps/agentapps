@@ -1,12 +1,12 @@
 /**
- * create_expense — create a new Holded expense.
+ * create-expense — create a new Holded expense.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerCreateExpenseTool(app: AgentApp): void {
-  app.tool('create_expense', {
+  app.tool('create-expense', {
     description:
       'Create a new expense in Holded. Requires a contact ID and at least one line item.',
     parameters: {

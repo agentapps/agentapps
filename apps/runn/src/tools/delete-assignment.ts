@@ -3,7 +3,7 @@ import { runnRequest } from '../lib/runn-client.js';
 import { validateId } from './_runn-helpers.js';
 
 export function registerDeleteAssignmentTool(app: AgentApp): void {
-  app.tool('runn-delete-assignment', {
+  app.tool('delete-assignment', {
     description:
       'Delete a Runn assignment by id. Irreversible. Returns { success, assignmentId }. Params: assignmentId (required).',
     parameters: {

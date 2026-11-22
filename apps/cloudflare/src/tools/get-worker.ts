@@ -1,12 +1,12 @@
 /**
- * get_worker — retrieve details about a specific Workers script.
+ * get-worker — retrieve details about a specific Workers script.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerGetWorkerTool(app: AgentApp): void {
-  app.tool('get_worker', {
+  app.tool('get-worker', {
     description:
       'Get metadata about a specific Workers script by name, including bindings, compatibility date, and usage model.',
     parameters: {

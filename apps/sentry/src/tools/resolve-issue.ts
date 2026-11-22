@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryIssue, sentryRequest } from '../types.js';
 
 export function registerResolveIssueTool(app: AgentApp): void {
-  app.tool('resolve_issue', {
+  app.tool('resolve-issue', {
     description: 'Mark a Sentry issue as resolved.',
     parameters: {
       type: 'object',

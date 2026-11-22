@@ -1,12 +1,12 @@
 /**
- * list_actions — list actions defined in PostHog.
+ * list-actions — list actions defined in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListActionsTool(app: AgentApp): void {
-  app.tool('list_actions', {
+  app.tool('list-actions', {
     description:
       'List all actions defined in the PostHog project. Actions are named collections of events.',
     parameters: {

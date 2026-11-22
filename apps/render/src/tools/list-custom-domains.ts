@@ -8,10 +8,10 @@ interface RenderCustomDomain {
 }
 
 /**
- * render-list-custom-domains -- GET /services/{serviceId}/custom-domains.
+ * list-custom-domains -- GET /services/{serviceId}/custom-domains.
  */
 export function registerListCustomDomainsTool(app: AgentApp): void {
-  app.tool('render-list-custom-domains', {
+  app.tool('list-custom-domains', {
     description:
       'List custom domains configured for a Render service. Returns { domains: [{ id, name, verificationStatus }] }. Params: serviceId (required).',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * list_bases — list all Airtable bases accessible to the user.
+ * list-bases — list all Airtable bases accessible to the user.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerListBasesTool(app: AgentApp): void {
-  app.tool('list_bases', {
+  app.tool('list-bases', {
     description:
       'List all Airtable bases accessible to the authenticated user. Supports cursor-based pagination via offset.',
     parameters: {

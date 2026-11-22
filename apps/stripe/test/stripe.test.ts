@@ -136,26 +136,26 @@ describe('Stripe Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'cancel_subscription',
-      'create_checkout_session',
-      'create_customer',
-      'create_payment_link',
-      'create_price',
-      'create_product',
-      'create_refund',
-      'get_balance',
-      'get_customer',
-      'get_invoice',
-      'get_payment',
-      'get_subscription',
-      'list_charges',
-      'list_customers',
-      'list_invoices',
-      'list_payments',
-      'list_payouts',
-      'list_prices',
-      'list_products',
-      'list_subscriptions',
+      'cancel-subscription',
+      'create-checkout-session',
+      'create-customer',
+      'create-payment-link',
+      'create-price',
+      'create-product',
+      'create-refund',
+      'get-balance',
+      'get-customer',
+      'get-invoice',
+      'get-payment',
+      'get-subscription',
+      'list-charges',
+      'list-customers',
+      'list-invoices',
+      'list-payments',
+      'list-payouts',
+      'list-prices',
+      'list-products',
+      'list-subscriptions',
     ]);
   });
 
@@ -168,7 +168,7 @@ describe('Stripe Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('get_balance returns balance data', async () => {
+  it('get-balance returns balance data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -185,7 +185,7 @@ describe('Stripe Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_balance', {});
+    sendToolCall(sessionId, 'get-balance', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -196,7 +196,7 @@ describe('Stripe Agent App', () => {
     expect(data.pending).toEqual([{ amount: 12000, currency: 'usd' }]);
   });
 
-  it('list_customers returns customer list', async () => {
+  it('list-customers returns customer list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -216,7 +216,7 @@ describe('Stripe Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_customers', { limit: 10 });
+    sendToolCall(sessionId, 'list-customers', { limit: 10 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -227,7 +227,7 @@ describe('Stripe Agent App', () => {
     expect(data.has_more).toBe(false);
   });
 
-  it('create_customer sends correct form-urlencoded params', async () => {
+  it('create-customer sends correct form-urlencoded params', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -243,7 +243,7 @@ describe('Stripe Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_customer', {
+    sendToolCall(sessionId, 'create-customer', {
       email: 'jane@example.com',
       name: 'Jane Doe',
       metadata: { source: 'agent' },
@@ -272,7 +272,7 @@ describe('Stripe Agent App', () => {
     expect(body).toContain('metadata%5Bsource%5D=agent');
   });
 
-  it('create_product sends correct form-urlencoded params', async () => {
+  it('create-product sends correct form-urlencoded params', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -288,7 +288,7 @@ describe('Stripe Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_product', {
+    sendToolCall(sessionId, 'create-product', {
       name: 'Premium Plan',
       description: 'Access to all features',
       metadata: { tier: 'premium' },
@@ -337,7 +337,7 @@ describe('Stripe Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_balance', {});
+    sendToolCall(sessionId, 'get-balance', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

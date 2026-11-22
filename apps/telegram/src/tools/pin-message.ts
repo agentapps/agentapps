@@ -1,12 +1,12 @@
 /**
- * pin_message — pin a message in a Telegram chat.
+ * pin-message — pin a message in a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerPinMessageTool(app: AgentApp): void {
-  app.tool('pin_message', {
+  app.tool('pin-message', {
     description:
       'Pin a message in a Telegram group, supergroup, or channel. The bot must be an administrator with the appropriate permissions.',
     parameters: {

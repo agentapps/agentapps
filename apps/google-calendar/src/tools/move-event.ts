@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { ensureAuthenticated, type GoogleCalendarEvent, googleCalendarFetch } from '../types.js';
 
 export function registerMoveEventTool(app: AgentApp): void {
-  app.tool('move_event', {
+  app.tool('move-event', {
     description: 'Move a Google Calendar event to a different calendar',
     parameters: {
       type: 'object',

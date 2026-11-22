@@ -8,7 +8,10 @@ the tool from a CLI or MCP client, and has to act on the result without a human 
 - Start from the jobs (search, read one, list children, create, update, delete), not from the
   API's endpoint list. 5-15 tools is typical; 20 is a lot.
 - Name tools in kebab-case, verb first: `list-spaces`, `get-page`, `create-page`,
-  `search-content`. No app prefix: the host already namespaces them (`<alias>_<tool>` over MCP).
+  `search-content`. Never snake_case or camelCase, and no app prefix (`confluence-get-page`): the
+  host already namespaces them (`<alias>__<tool>` over MCP), so the app's name would appear twice.
+  `check-app` rejects a name that breaks either rule. A rename later is a major version: it
+  breaks every Policy rule and prompt that names the tool.
 - Prefer one flexible read tool with filters over five near-identical ones. Keep reads and writes
   in separate tools so annotations stay true.
 

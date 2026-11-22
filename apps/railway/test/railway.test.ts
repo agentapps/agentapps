@@ -168,29 +168,29 @@ describe('Railway Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'railway-connect-repo',
-      'railway-create-domain',
-      'railway-create-environment',
-      'railway-create-project',
-      'railway-create-service',
-      'railway-create-volume',
-      'railway-delete-project',
-      'railway-delete-service',
-      'railway-deploy-public-repo',
-      'railway-get-build-logs',
-      'railway-get-deploy-logs',
-      'railway-get-deployment',
-      'railway-get-project',
-      'railway-get-user',
-      'railway-list-deployments',
-      'railway-list-domains',
-      'railway-list-environments',
-      'railway-list-projects',
-      'railway-list-services',
-      'railway-list-variables',
-      'railway-list-workspaces',
-      'railway-redeploy',
-      'railway-set-variables',
+      'connect-repo',
+      'create-domain',
+      'create-environment',
+      'create-project',
+      'create-service',
+      'create-volume',
+      'delete-project',
+      'delete-service',
+      'deploy-public-repo',
+      'get-build-logs',
+      'get-deploy-logs',
+      'get-deployment',
+      'get-project',
+      'get-user',
+      'list-deployments',
+      'list-domains',
+      'list-environments',
+      'list-projects',
+      'list-services',
+      'list-variables',
+      'list-workspaces',
+      'redeploy',
+      'set-variables',
     ]);
   });
 
@@ -206,7 +206,7 @@ describe('Railway Agent App', () => {
     expect(health.message as string).toContain('invalid or expired');
   });
 
-  it('railway-get-user returns user info', async () => {
+  it('get-user returns user info', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -224,7 +224,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-get-user', {});
+    sendToolCall(sessionId, 'get-user', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -235,7 +235,7 @@ describe('Railway Agent App', () => {
     expect(text).toContain('My Workspace');
   });
 
-  it('railway-list-projects returns projects', async () => {
+  it('list-projects returns projects', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -289,7 +289,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-list-projects', {});
+    sendToolCall(sessionId, 'list-projects', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -299,7 +299,7 @@ describe('Railway Agent App', () => {
     expect(text).toContain('my-app');
   });
 
-  it('railway-get-project returns project details', async () => {
+  it('get-project returns project details', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -336,7 +336,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-get-project', { projectId: 'proj-1' });
+    sendToolCall(sessionId, 'get-project', { projectId: 'proj-1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -349,7 +349,7 @@ describe('Railway Agent App', () => {
     expect(text).toContain('web');
   });
 
-  it('railway-list-deployments returns deployment list', async () => {
+  it('list-deployments returns deployment list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -382,7 +382,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-list-deployments', {
+    sendToolCall(sessionId, 'list-deployments', {
       projectId: 'proj-1',
       serviceId: 'svc-1',
       environmentId: 'env-1',
@@ -404,7 +404,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-get-user', {});
+    sendToolCall(sessionId, 'get-user', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
@@ -429,7 +429,7 @@ describe('Railway Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'railway-get-project', { projectId: 'nonexistent' });
+    sendToolCall(sessionId, 'get-project', { projectId: 'nonexistent' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -1,12 +1,12 @@
 /**
- * list_recordings — list recordings from your Twilio account.
+ * list-recordings — list recordings from your Twilio account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerListRecordingsTool(app: AgentApp): void {
-  app.tool('list_recordings', {
+  app.tool('list-recordings', {
     description:
       'List recordings from your Twilio account. Supports filtering by date and call SID.',
     parameters: {

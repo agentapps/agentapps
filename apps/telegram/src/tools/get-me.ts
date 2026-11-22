@@ -1,12 +1,12 @@
 /**
- * get_me — get information about the bot.
+ * get-me — get information about the bot.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerGetMeTool(app: AgentApp): void {
-  app.tool('get_me', {
+  app.tool('get-me', {
     description: 'Get basic information about the bot — username, name, and capabilities.',
     parameters: {
       type: 'object',

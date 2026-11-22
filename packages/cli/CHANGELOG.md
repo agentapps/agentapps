@@ -1,5 +1,14 @@
 # @agentapps/cli
 
+## 0.2.5
+
+### Patch Changes
+
+- 3fb431f: Tool names follow one rule across the catalog: kebab-case, verb first, without the app's name. 400 tools of 31 apps are renamed, so an agent sees `linear__list-issues` where it saw `linear__linear-list-issues`, and `delete-event` where it saw `delete_event`. Each of those apps has a new major version: a Policy rule or a prompt that names a tool by its old name has to be updated. Slack loses its leftover `health-check` tool; the app's health check now does that probe.
+  - @agentapps/protocol@0.2.5
+  - @agentapps/station@0.2.5
+  - @agentapps/host@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes

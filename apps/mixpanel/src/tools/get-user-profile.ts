@@ -1,12 +1,12 @@
 /**
- * get_user_profile — get a user profile from Mixpanel.
+ * get-user-profile — get a user profile from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetUserProfileTool(app: AgentApp): void {
-  app.tool('get_user_profile', {
+  app.tool('get-user-profile', {
     description:
       'Get a user profile (People record) from Mixpanel by distinct_id. Returns user properties and metadata.',
     parameters: {

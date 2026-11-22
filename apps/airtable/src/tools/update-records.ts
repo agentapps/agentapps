@@ -1,12 +1,12 @@
 /**
- * update_records — update existing records in an Airtable table.
+ * update-records — update existing records in an Airtable table.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerUpdateRecordsTool(app: AgentApp): void {
-  app.tool('update_records', {
+  app.tool('update-records', {
     description:
       'Update one or more existing records in an Airtable table. Each record must include its ID and the fields to update.',
     parameters: {

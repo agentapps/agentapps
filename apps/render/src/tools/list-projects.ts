@@ -10,10 +10,10 @@ interface RenderProject {
 }
 
 /**
- * render-list-projects -- GET /projects.
+ * list-projects -- GET /projects.
  */
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('render-list-projects', {
+  app.tool('list-projects', {
     description:
       'List all projects in the Render account. Returns { projects: [{ id, name, ownerId, createdAt, updatedAt }] }.',
     parameters: {

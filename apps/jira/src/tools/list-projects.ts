@@ -1,12 +1,12 @@
 /**
- * list_projects — list Jira projects.
+ * list-projects — list Jira projects.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('list_projects', {
+  app.tool('list-projects', {
     description: 'List projects in your Jira instance. Supports pagination.',
     parameters: {
       type: 'object',

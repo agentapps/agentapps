@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerGetVariablesTool(app: AgentApp): void {
-  app.tool('homey-get-variables', {
+  app.tool('get-variables', {
     description:
       'List all logic variables configured in Homey. Logic variables are used in flows/automations for state tracking.',
     parameters: {

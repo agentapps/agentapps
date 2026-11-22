@@ -1,12 +1,12 @@
 /**
- * get_myself — get the current authenticated Jira user.
+ * get-myself — get the current authenticated Jira user.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerGetMyselfTool(app: AgentApp): void {
-  app.tool('get_myself', {
+  app.tool('get-myself', {
     description:
       'Get information about the currently authenticated Jira user, including display name, email, and account ID.',
     parameters: {

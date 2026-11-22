@@ -1,14 +1,14 @@
 /**
- * list_sprints — list sprints for a Jira agile board.
+ * list-sprints — list sprints for a Jira agile board.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerListSprintsTool(app: AgentApp): void {
-  app.tool('list_sprints', {
+  app.tool('list-sprints', {
     description:
-      'List sprints for a given agile board. Use list_boards to find board IDs. Supports filtering by sprint state.',
+      'List sprints for a given agile board. Use list-boards to find board IDs. Supports filtering by sprint state.',
     parameters: {
       type: 'object',
       properties: {

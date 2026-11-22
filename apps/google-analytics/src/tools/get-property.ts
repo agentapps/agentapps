@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-get-property — Get a GA4 property's details.
+ * get-property — Get a GA4 property's details.
  */
 export function registerGetPropertyTool(app: AgentApp): void {
-  app.tool('analytics-get-property', {
+  app.tool('get-property', {
     description:
       "Get a GA4 property's details. Returns { property: { propertyId, displayName, propertyType, parent, timeZone, currencyCode, industryCategory, serviceLevel, createTime, updateTime } }.",
     parameters: {

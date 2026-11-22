@@ -1,12 +1,12 @@
 /**
- * get_retention — get retention data from Amplitude.
+ * get-retention — get retention data from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetRetentionTool(app: AgentApp): void {
-  app.tool('get_retention', {
+  app.tool('get-retention', {
     description:
       'Get retention data from Amplitude. Returns retention rates for users who performed a start event and then a return event within a date range.',
     parameters: {

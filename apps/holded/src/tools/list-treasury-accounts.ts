@@ -1,12 +1,12 @@
 /**
- * list_treasury_accounts — list Holded treasury (bank) accounts.
+ * list-treasury-accounts — list Holded treasury (bank) accounts.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListTreasuryAccountsTool(app: AgentApp): void {
-  app.tool('list_treasury_accounts', {
+  app.tool('list-treasury-accounts', {
     description:
       'List treasury (bank) accounts from your Holded account. Shows balances and account details.',
     parameters: {

@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-update-property — Update mutable fields of a GA4 property.
+ * update-property — Update mutable fields of a GA4 property.
  */
 export function registerUpdatePropertyTool(app: AgentApp): void {
-  app.tool('analytics-update-property', {
+  app.tool('update-property', {
     description:
       'Update mutable fields of a GA4 property (displayName, timeZone, currencyCode, industryCategory). Returns { property: <updated> }.',
     parameters: {

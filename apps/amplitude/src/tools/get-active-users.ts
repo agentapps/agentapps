@@ -1,12 +1,12 @@
 /**
- * get_active_users — get active/new user counts from Amplitude.
+ * get-active-users — get active/new user counts from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetActiveUsersTool(app: AgentApp): void {
-  app.tool('get_active_users', {
+  app.tool('get-active-users', {
     description:
       'Get active or new user counts from Amplitude within a date range. Returns daily/weekly/monthly active user metrics.',
     parameters: {

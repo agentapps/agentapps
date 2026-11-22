@@ -28,6 +28,8 @@ ships with `@agentapps/create`: `node_modules/@agentapps/create/skill/create-age
 
 ## Rules
 
+- Tool names are kebab-case, verb first, without the app's name: `list-issues`, never
+  `list_issues` or `linear-list-issues`. An agent already sees a tool as `<alias>__<tool>`.
 - Every tool declares `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint` and
   `sensitive` explicitly. Never infer them from the tool name.
 - `sensitive` is `true` when the tool changes something outside the app's own data in Agent Apps:

@@ -1,12 +1,12 @@
 /**
- * update_contact — update an existing Holded contact.
+ * update-contact — update an existing Holded contact.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerUpdateContactTool(app: AgentApp): void {
-  app.tool('update_contact', {
+  app.tool('update-contact', {
     description: 'Update an existing contact in Holded. Only provided fields are changed.',
     parameters: {
       type: 'object',

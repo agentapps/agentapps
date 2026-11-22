@@ -1,12 +1,12 @@
 /**
- * send_message — send a text message to a Telegram chat.
+ * send-message — send a text message to a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerSendMessageTool(app: AgentApp): void {
-  app.tool('send_message', {
+  app.tool('send-message', {
     description:
       'Send a text message to a Telegram chat. Supports HTML, Markdown, and MarkdownV2 formatting.',
     parameters: {

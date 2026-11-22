@@ -1,14 +1,14 @@
 /**
- * transition_issue — transition a Jira issue to a new status.
+ * transition-issue — transition a Jira issue to a new status.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerTransitionIssueTool(app: AgentApp): void {
-  app.tool('transition_issue', {
+  app.tool('transition-issue', {
     description:
-      'Transition a Jira issue to a new status. Use get_transitions first to find the available transition IDs.',
+      'Transition a Jira issue to a new status. Use get-transitions first to find the available transition IDs.',
     parameters: {
       type: 'object',
       properties: {
@@ -19,7 +19,7 @@ export function registerTransitionIssueTool(app: AgentApp): void {
         transitionId: {
           type: 'string',
           description:
-            'The ID of the transition to perform (use get_transitions to find available IDs).',
+            'The ID of the transition to perform (use get-transitions to find available IDs).',
         },
       },
       required: ['issueKey', 'transitionId'],

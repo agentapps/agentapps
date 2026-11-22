@@ -8,10 +8,10 @@ interface RenderCustomDomain {
 }
 
 /**
- * render-verify-custom-domain -- POST /services/{serviceId}/custom-domains/{domainId}/verify.
+ * verify-custom-domain -- POST /services/{serviceId}/custom-domains/{domainId}/verify.
  */
 export function registerVerifyCustomDomainTool(app: AgentApp): void {
-  app.tool('render-verify-custom-domain', {
+  app.tool('verify-custom-domain', {
     description:
       'Verify DNS configuration for a custom domain on a Render service. Returns { domainId, name, verificationStatus }. Params: serviceId (required), domainId (required).',
     parameters: {

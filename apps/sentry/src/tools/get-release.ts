@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryRelease, sentryRequest } from '../types.js';
 
 export function registerGetReleaseTool(app: AgentApp): void {
-  app.tool('get_release', {
+  app.tool('get-release', {
     description: 'Get detailed information about a specific release.',
     parameters: {
       type: 'object',

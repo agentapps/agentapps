@@ -1,12 +1,12 @@
 /**
- * create_refund — create a Stripe refund.
+ * create-refund — create a Stripe refund.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreateRefundTool(app: AgentApp): void {
-  app.tool('create_refund', {
+  app.tool('create-refund', {
     description: 'Create a refund in Stripe. Provide either a charge ID or a payment intent ID.',
     parameters: {
       type: 'object',

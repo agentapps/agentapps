@@ -1,12 +1,12 @@
 /**
- * list_messages — list SMS messages from your Twilio account.
+ * list-messages — list SMS messages from your Twilio account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerListMessagesTool(app: AgentApp): void {
-  app.tool('list_messages', {
+  app.tool('list-messages', {
     description:
       'List SMS messages from your Twilio account. Supports filtering by sender, recipient, and date.',
     parameters: {

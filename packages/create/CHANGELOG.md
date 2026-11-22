@@ -1,5 +1,14 @@
 # @agentapps/create
 
+## 0.2.5
+
+### Patch Changes
+
+- 5856a6b: `check-app` rejects a tool name that is not kebab-case or that starts with the app's own name (DEVX-REQ-5); the scaffold's rules and the create-agent-app skill say so.
+  - @agentapps/protocol@0.2.5
+  - @agentapps/sdk@0.2.5
+  - @agentapps/station@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes

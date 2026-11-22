@@ -4,7 +4,7 @@ import { validateIssueId, validateUuid } from './_linear-helpers.js';
 import { wrapLinearCall } from './utils.js';
 
 export function registerAddIssuesToProjectTool(app: AgentApp): void {
-  app.tool('linear-add-issues-to-project', {
+  app.tool('add-issues-to-project', {
     description:
       'Attach one or more Linear issues to a project. Returns { projectId, added, failed, results: [{ issueId, identifier?, success, error? }] }.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_record — retrieve a single record from an Airtable table.
+ * get-record — retrieve a single record from an Airtable table.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerGetRecordTool(app: AgentApp): void {
-  app.tool('get_record', {
+  app.tool('get-record', {
     description: 'Get a single record from an Airtable table by its record ID.',
     parameters: {
       type: 'object',

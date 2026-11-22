@@ -1,12 +1,12 @@
 /**
- * send_sms — send an SMS message via Twilio.
+ * send-sms — send an SMS message via Twilio.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerSendSmsTool(app: AgentApp): void {
-  app.tool('send_sms', {
+  app.tool('send-sms', {
     description:
       'Send an SMS message via Twilio. Returns the message object with sid, status, and delivery details.',
     parameters: {

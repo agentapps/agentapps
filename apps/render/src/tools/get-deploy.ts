@@ -17,10 +17,10 @@ interface RenderDeploy {
 }
 
 /**
- * render-get-deploy -- GET /services/{serviceId}/deploys/{deployId}.
+ * get-deploy -- GET /services/{serviceId}/deploys/{deployId}.
  */
 export function registerGetDeployTool(app: AgentApp): void {
-  app.tool('render-get-deploy', {
+  app.tool('get-deploy', {
     description:
       'Get the status and details of a specific Render deploy. Returns { id, serviceId, status, trigger, createdAt, updatedAt, finishedAt?, commit? }. Params: serviceId (required), deployId (required).',
     parameters: {

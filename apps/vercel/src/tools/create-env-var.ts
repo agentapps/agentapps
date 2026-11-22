@@ -1,12 +1,12 @@
 /**
- * create_env_var — create an environment variable for a Vercel project.
+ * create-env-var — create an environment variable for a Vercel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerCreateEnvVarTool(app: AgentApp): void {
-  app.tool('create_env_var', {
+  app.tool('create-env-var', {
     description:
       'Create a new environment variable for a Vercel project. Returns the created env var object.',
     parameters: {

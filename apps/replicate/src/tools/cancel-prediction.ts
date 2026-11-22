@@ -1,12 +1,12 @@
 /**
- * cancel_prediction — cancel a running or queued prediction.
+ * cancel-prediction — cancel a running or queued prediction.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, replicateRequest } from '../types.js';
 
 export function registerCancelPredictionTool(app: AgentApp): void {
-  app.tool('cancel_prediction', {
+  app.tool('cancel-prediction', {
     description: 'Cancel a running or queued prediction by ID.',
     parameters: {
       type: 'object',

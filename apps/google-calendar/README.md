@@ -9,8 +9,8 @@ Proof-of-concept Agent App that integrates with **Google Calendar** using real *
 - **Secure token persistence** via `ctx.secrets.updateInstallation()` — never in environment variables.
 - **Automatic token refresh** when the access token expires.
 - **Tools**:
-  - `list_events` — list upcoming events from Google Calendar.
-  - `create_event` — create a new event in Google Calendar.
+  - `list-events` — list upcoming events from Google Calendar.
+  - `create-event` — create a new event in Google Calendar.
 
 ## Quick Start
 
@@ -29,13 +29,13 @@ export AGENTAPPS_SECRET_CLIENT_SECRET="your-client-secret"
 agentapps google-calendar tool
 
 # List upcoming events
-agentapps google-calendar tool list_events
+agentapps google-calendar tool list-events
 
 # Create an event
-agentapps google-calendar tool create_event '{"summary":"Demo","startTime":"2026-06-25T10:00:00Z","endTime":"2026-06-25T11:00:00Z"}'
+agentapps google-calendar tool create-event '{"summary":"Demo","startTime":"2026-06-25T10:00:00Z","endTime":"2026-06-25T11:00:00Z"}'
 
 # Force manual OAuth code entry (no localhost callback)
-agentapps google-calendar tool list_events --manual-code
+agentapps google-calendar tool list-events --manual-code
 ```
 
 On first run, the CLI opens a browser for OAuth. After authorization, tokens are persisted to `.agentapps/installation-secrets.json` in the workspace.
@@ -63,7 +63,7 @@ Tests mock the Google OAuth token endpoint and Calendar API so they run without 
 - Missing OAuth secrets produce a clear error.
 - The OAuth flow triggers and persists `ACCESS_TOKEN`, `REFRESH_TOKEN`, and `expiresAt`.
 - Existing valid tokens are reused without re-authentication.
-- `list_events` and `create_event` work against mocked Google Calendar responses.
+- `list-events` and `create-event` work against mocked Google Calendar responses.
 - Conformance with the Agent Apps protocol.
 
 ## Security Notes

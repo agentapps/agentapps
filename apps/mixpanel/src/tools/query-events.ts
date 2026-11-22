@@ -1,12 +1,12 @@
 /**
- * query_events — query event data from Mixpanel.
+ * query-events — query event data from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerQueryEventsTool(app: AgentApp): void {
-  app.tool('query_events', {
+  app.tool('query-events', {
     description:
       'Query event data from Mixpanel. Returns event counts and properties for the specified event within a date range.',
     parameters: {

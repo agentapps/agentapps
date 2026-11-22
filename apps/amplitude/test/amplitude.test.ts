@@ -136,22 +136,22 @@ describe('Amplitude Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_annotation',
-      'delete_annotation',
-      'export_events',
-      'get_active_users',
-      'get_annotations',
-      'get_chart',
-      'get_cohort',
-      'get_funnel',
-      'get_retention',
-      'get_revenue',
-      'get_user_activity',
-      'list_charts',
-      'list_cohorts',
-      'list_event_types',
-      'query_events',
-      'search_users',
+      'create-annotation',
+      'delete-annotation',
+      'export-events',
+      'get-active-users',
+      'get-annotations',
+      'get-chart',
+      'get-cohort',
+      'get-funnel',
+      'get-retention',
+      'get-revenue',
+      'get-user-activity',
+      'list-charts',
+      'list-cohorts',
+      'list-event-types',
+      'query-events',
+      'search-users',
     ]);
   });
 
@@ -164,7 +164,7 @@ describe('Amplitude Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('query_events returns event segmentation data', async () => {
+  it('query-events returns event segmentation data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -183,7 +183,7 @@ describe('Amplitude Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'query_events', {
+    sendToolCall(sessionId, 'query-events', {
       e: '{"event_type":"signup"}',
       start: '20240101',
       end: '20240131',
@@ -196,7 +196,7 @@ describe('Amplitude Agent App', () => {
     expect(data.data).toBeDefined();
   });
 
-  it('list_cohorts returns cohort data', async () => {
+  it('list-cohorts returns cohort data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -214,7 +214,7 @@ describe('Amplitude Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_cohorts', {});
+    sendToolCall(sessionId, 'list-cohorts', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -223,7 +223,7 @@ describe('Amplitude Agent App', () => {
     expect(data.cohorts as Array<Record<string, unknown>>).toHaveLength(2);
   });
 
-  it('get_user_activity returns user events', async () => {
+  it('get-user-activity returns user events', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -244,7 +244,7 @@ describe('Amplitude Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_user_activity', { user: 'user_123' });
+    sendToolCall(sessionId, 'get-user-activity', { user: 'user_123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -255,7 +255,7 @@ describe('Amplitude Agent App', () => {
     expect(userData.events as Array<Record<string, unknown>>).toHaveLength(2);
   });
 
-  it('search_users returns matching users', async () => {
+  it('search-users returns matching users', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -274,7 +274,7 @@ describe('Amplitude Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'search_users', { user: 'alice' });
+    sendToolCall(sessionId, 'search-users', { user: 'alice' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -301,7 +301,7 @@ describe('Amplitude Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'query_events', {
+    sendToolCall(sessionId, 'query-events', {
       e: '{"event_type":"signup"}',
       start: '20240101',
       end: '20240131',

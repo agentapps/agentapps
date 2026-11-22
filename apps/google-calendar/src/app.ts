@@ -5,12 +5,12 @@
  * - Real OAuth2 with Google (system secrets CLIENT_ID / CLIENT_SECRET).
  * - Automatic access-token refresh using persisted REFRESH_TOKEN.
  * - Full CRUD against the Google Calendar API:
- *     list_events, get_event, create_event, update_event, delete_event,
- *     quick_add_event, move_event.
- * - Calendar management: list_calendars, create_calendar.
- * - Free/busy queries: get_freebusy.
+ *     list-events, get-event, create-event, update-event, delete-event,
+ *     quick-add-event, move-event.
+ * - Calendar management: list-calendars, create-calendar.
+ * - Free/busy queries: get-freebusy.
  * - Real-time events (calendar_updated) emitted on mutating operations.
- * - Explicit authenticate tool and open_calendar helper.
+ * - Explicit authenticate tool and open-calendar helper.
  * - Health check with secrets validation.
  *
  * Token refresh is delegated to the host via ctx.auth.refresh(): the host owns
@@ -29,7 +29,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.calendar',
-  version: '1.0.2',
+  version: '2.0.0',
   name: 'Google Calendar',
   description:
     'Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.',

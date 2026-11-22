@@ -1,12 +1,12 @@
 /**
- * update_dns_record — update an existing DNS record in a Cloudflare zone.
+ * update-dns-record — update an existing DNS record in a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerUpdateDnsRecordTool(app: AgentApp): void {
-  app.tool('update_dns_record', {
+  app.tool('update-dns-record', {
     description:
       'Update an existing DNS record in a Cloudflare zone. Only provided fields are changed.',
     parameters: {

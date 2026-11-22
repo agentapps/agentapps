@@ -1,12 +1,12 @@
 /**
- * send_location — send a geographic location to a Telegram chat.
+ * send-location — send a geographic location to a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerSendLocationTool(app: AgentApp): void {
-  app.tool('send_location', {
+  app.tool('send-location', {
     description: 'Send a geographic location (latitude and longitude) to a Telegram chat.',
     parameters: {
       type: 'object',

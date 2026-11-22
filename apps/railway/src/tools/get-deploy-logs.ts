@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-get-deploy-logs — Get runtime/deployment logs for a deployment.
+ * get-deploy-logs — Get runtime/deployment logs for a deployment.
  */
 export function registerGetDeployLogsTool(app: AgentApp): void {
-  app.tool('railway-get-deploy-logs', {
+  app.tool('get-deploy-logs', {
     description:
       'Get runtime/deployment logs for a deployment. Shows application output, errors, and startup logs.',
     parameters: {

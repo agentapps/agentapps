@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-resume-service -- POST /services/{serviceId}/resume.
+ * resume-service -- POST /services/{serviceId}/resume.
  */
 export function registerResumeServiceTool(app: AgentApp): void {
-  app.tool('render-resume-service', {
+  app.tool('resume-service', {
     description:
       'Resume a suspended Render service. Returns { serviceId, resumed }. Params: serviceId (required).',
     parameters: {
@@ -18,7 +18,7 @@ export function registerResumeServiceTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
-    // Reversible with render-suspend-service; it restores a service that already existed.
+    // Reversible with suspend-service; it restores a service that already existed.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,

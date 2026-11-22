@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-get-user — Get current Railway user info including available workspaces.
+ * get-user — Get current Railway user info including available workspaces.
  */
 export function registerGetUserTool(app: AgentApp): void {
-  app.tool('railway-get-user', {
+  app.tool('get-user', {
     description: 'Get current Railway user info including available workspaces.',
     parameters: {
       type: 'object',

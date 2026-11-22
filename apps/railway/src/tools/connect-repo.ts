@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-connect-repo — Connect a GitHub repository to a Railway service.
+ * connect-repo — Connect a GitHub repository to a Railway service.
  */
 export function registerConnectRepoTool(app: AgentApp): void {
-  app.tool('railway-connect-repo', {
+  app.tool('connect-repo', {
     description:
       'Connect a GitHub repository to a Railway service. Works with both public and private repos (if GitHub is connected in your Railway account). Automatically triggers a deployment.',
     parameters: {
@@ -55,7 +55,7 @@ export function registerConnectRepoTool(app: AgentApp): void {
         serviceName: result.name,
         repo,
         branch,
-        note: 'A deployment has been triggered automatically. Use railway-list-deployments to check status.',
+        note: 'A deployment has been triggered automatically. Use list-deployments to check status.',
       };
     },
   });

@@ -19,7 +19,7 @@ interface BatchFileResult {
 }
 
 export function registerReadBatchTool(app: AgentApp): void {
-  app.tool('read_batch', {
+  app.tool('read-batch', {
     description:
       'Read multiple text files in a single call. Individual failures do not abort the batch.',
     parameters: {

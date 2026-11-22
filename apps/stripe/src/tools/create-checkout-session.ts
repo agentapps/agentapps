@@ -1,12 +1,12 @@
 /**
- * create_checkout_session — create a Stripe Checkout session.
+ * create-checkout-session — create a Stripe Checkout session.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreateCheckoutSessionTool(app: AgentApp): void {
-  app.tool('create_checkout_session', {
+  app.tool('create-checkout-session', {
     description:
       'Create a Stripe Checkout session. Returns a URL where the customer can complete payment.',
     parameters: {

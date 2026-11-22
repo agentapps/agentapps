@@ -5,7 +5,7 @@ import { extractLabel, validateUuid } from './_linear-helpers.js';
 import { resolveFieldsList, sanitizeLimit, wrapLinearCall } from './utils.js';
 
 export function registerListLabelsTool(app: AgentApp): void {
-  app.tool('linear-list-labels', {
+  app.tool('list-labels', {
     description:
       'List Linear labels. Returns curated rows { id, name, color, description, isGroup, parentId }. Params: teamId?, limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

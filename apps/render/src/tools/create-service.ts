@@ -12,12 +12,12 @@ interface CreateServiceResponse {
 }
 
 /**
- * render-create-service -- POST /services.
+ * create-service -- POST /services.
  */
 export function registerCreateServiceTool(app: AgentApp): void {
-  app.tool('render-create-service', {
+  app.tool('create-service', {
     description:
-      'Create a new service on Render from a GitHub repository. Use render-list-owners to get ownerId. Returns { serviceId, name, type, status, deployId? }. Params: name (required), ownerId (required), type (required), repoURL (required), branch?, buildCommand?, startCommand?, plan?, region?, autoDeploy?.',
+      'Create a new service on Render from a GitHub repository. Use list-owners to get ownerId. Returns { serviceId, name, type, status, deployId? }. Params: name (required), ownerId (required), type (required), repoURL (required), branch?, buildCommand?, startCommand?, plan?, region?, autoDeploy?.',
     parameters: {
       type: 'object',
       properties: {
@@ -27,7 +27,7 @@ export function registerCreateServiceTool(app: AgentApp): void {
         },
         ownerId: {
           type: 'string',
-          description: 'Owner/workspace ID (use render-list-owners to get IDs).',
+          description: 'Owner/workspace ID (use list-owners to get IDs).',
         },
         type: {
           type: 'string',

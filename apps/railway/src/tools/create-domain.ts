@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-create-domain — Create a Railway-generated domain for a service.
+ * create-domain — Create a Railway-generated domain for a service.
  */
 export function registerCreateDomainTool(app: AgentApp): void {
-  app.tool('railway-create-domain', {
+  app.tool('create-domain', {
     description: 'Create a Railway-generated domain for a service (e.g., myapp.up.railway.app).',
     parameters: {
       type: 'object',

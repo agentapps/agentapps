@@ -1,12 +1,12 @@
 /**
- * get_cohort — get a single cohort by ID from Amplitude.
+ * get-cohort — get a single cohort by ID from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_DASHBOARD_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetCohortTool(app: AgentApp): void {
-  app.tool('get_cohort', {
+  app.tool('get-cohort', {
     description:
       'Get details of a specific cohort by ID from Amplitude. Returns the cohort definition, size, and metadata.',
     parameters: {

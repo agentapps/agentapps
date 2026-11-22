@@ -4,7 +4,7 @@ import { validateIssueId, validateUuid } from './_linear-helpers.js';
 import { wrapLinearCall } from './utils.js';
 
 export function registerAddLabelsToIssueTool(app: AgentApp): void {
-  app.tool('linear-add-labels-to-issue', {
+  app.tool('add-labels-to-issue', {
     description:
       'Add labels to a Linear issue (deduped server-side against existing labels). Returns { issueId, added, total, labelIds }.',
     parameters: {

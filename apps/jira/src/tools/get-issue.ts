@@ -1,12 +1,12 @@
 /**
- * get_issue — retrieve a single Jira issue by key.
+ * get-issue — retrieve a single Jira issue by key.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerGetIssueTool(app: AgentApp): void {
-  app.tool('get_issue', {
+  app.tool('get-issue', {
     description: 'Get detailed information about a specific Jira issue by its key (e.g. PROJ-123).',
     parameters: {
       type: 'object',

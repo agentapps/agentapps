@@ -5,7 +5,7 @@ import { SKILL_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListSkillsTool(app: AgentApp): void {
-  app.tool('runn-list-skills', {
+  app.tool('list-skills', {
     description:
       'List Runn skills. Returns { items: [{ id, name, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

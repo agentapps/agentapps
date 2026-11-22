@@ -1,12 +1,12 @@
 /**
- * create_estimate — create a new QuickBooks Online estimate.
+ * create-estimate — create a new QuickBooks Online estimate.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerCreateEstimateTool(app: AgentApp): void {
-  app.tool('create_estimate', {
+  app.tool('create-estimate', {
     description:
       'Create a new estimate in QuickBooks Online. Requires a customer reference and at least one line item.',
     parameters: {

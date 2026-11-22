@@ -17,10 +17,10 @@ interface RenderService {
 }
 
 /**
- * render-list-services -- GET /services.
+ * list-services -- GET /services.
  */
 export function registerListServicesTool(app: AgentApp): void {
-  app.tool('render-list-services', {
+  app.tool('list-services', {
     description:
       'List all services in the Render account. Optionally filter by type or name. Returns { services: [{ id, name, type, status, url?, region? }], count }. Params: type? (web_service, static_site, background_worker, private_service, cron_job), name? (partial match).',
     parameters: {

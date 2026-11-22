@@ -1,12 +1,12 @@
 /**
- * get_order — retrieve a single Shopify order by ID.
+ * get-order — retrieve a single Shopify order by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerGetOrderTool(app: AgentApp): void {
-  app.tool('get_order', {
+  app.tool('get-order', {
     description: 'Get detailed information about a specific Shopify order by its ID.',
     parameters: {
       type: 'object',

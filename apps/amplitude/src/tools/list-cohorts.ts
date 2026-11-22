@@ -1,12 +1,12 @@
 /**
- * list_cohorts — list all cohorts in an Amplitude project.
+ * list-cohorts — list all cohorts in an Amplitude project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_DASHBOARD_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerListCohortsTool(app: AgentApp): void {
-  app.tool('list_cohorts', {
+  app.tool('list-cohorts', {
     description:
       'List all cohorts in your Amplitude project. Returns cohort IDs, names, descriptions, and sizes.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * list_items — list QuickBooks Online items (products/services) via query.
+ * list-items — list QuickBooks Online items (products/services) via query.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerListItemsTool(app: AgentApp): void {
-  app.tool('list_items', {
+  app.tool('list-items', {
     description:
       'List items (products and services) from your QuickBooks Online account. Returns up to maxResults items.',
     parameters: {

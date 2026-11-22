@@ -1,12 +1,12 @@
 /**
- * list_zones — list Cloudflare zones with optional filtering.
+ * list-zones — list Cloudflare zones with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListZonesTool(app: AgentApp): void {
-  app.tool('list_zones', {
+  app.tool('list-zones', {
     description:
       'List zones in your Cloudflare account. Supports filtering by domain name and pagination.',
     parameters: {

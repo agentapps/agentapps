@@ -136,25 +136,25 @@ describe('Shopify Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_discount',
-      'create_fulfillment',
-      'create_product',
-      'create_webhook',
-      'delete_product',
-      'get_customer',
-      'get_order',
-      'get_product',
-      'get_shop',
-      'list_collections',
-      'list_customers',
-      'list_inventory_items',
-      'list_orders',
-      'list_pages',
-      'list_products',
-      'list_webhooks',
-      'update_inventory_level',
-      'update_order',
-      'update_product',
+      'create-discount',
+      'create-fulfillment',
+      'create-product',
+      'create-webhook',
+      'delete-product',
+      'get-customer',
+      'get-order',
+      'get-product',
+      'get-shop',
+      'list-collections',
+      'list-customers',
+      'list-inventory-items',
+      'list-orders',
+      'list-pages',
+      'list-products',
+      'list-webhooks',
+      'update-inventory-level',
+      'update-order',
+      'update-product',
     ]);
   });
 
@@ -179,7 +179,7 @@ describe('Shopify Agent App', () => {
     expect(health.message).toContain('Test Store');
   });
 
-  it('list_products returns product list', async () => {
+  it('list-products returns product list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -197,7 +197,7 @@ describe('Shopify Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_products', { limit: 10 });
+    sendToolCall(sessionId, 'list-products', { limit: 10 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -206,7 +206,7 @@ describe('Shopify Agent App', () => {
     expect(data.products as Array<Record<string, unknown>>).toHaveLength(2);
   });
 
-  it('get_order returns order data', async () => {
+  it('get-order returns order data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -226,7 +226,7 @@ describe('Shopify Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_order', { orderId: '789' });
+    sendToolCall(sessionId, 'get-order', { orderId: '789' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -237,7 +237,7 @@ describe('Shopify Agent App', () => {
     expect(order.total_price).toBe('99.95');
   });
 
-  it('create_product sends correct JSON body', async () => {
+  it('create-product sends correct JSON body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -255,7 +255,7 @@ describe('Shopify Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_product', {
+    sendToolCall(sessionId, 'create-product', {
       title: 'New Widget',
       vendor: 'TestCo',
       product_type: 'Hardware',
@@ -303,7 +303,7 @@ describe('Shopify Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_shop', {});
+    sendToolCall(sessionId, 'get-shop', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
@@ -312,7 +312,7 @@ describe('Shopify Agent App', () => {
     expect(error.message as string).toContain('401');
   });
 
-  it('create_webhook sends correct JSON body', async () => {
+  it('create-webhook sends correct JSON body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -330,7 +330,7 @@ describe('Shopify Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_webhook', {
+    sendToolCall(sessionId, 'create-webhook', {
       topic: 'orders/create',
       address: 'https://example.com/hooks/orders',
       format: 'json',

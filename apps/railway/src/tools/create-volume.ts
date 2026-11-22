@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-create-volume — Create a persistent volume for a service.
+ * create-volume — Create a persistent volume for a service.
  */
 export function registerCreateVolumeTool(app: AgentApp): void {
-  app.tool('railway-create-volume', {
+  app.tool('create-volume', {
     description: 'Create a persistent volume for a service (useful for databases).',
     parameters: {
       type: 'object',

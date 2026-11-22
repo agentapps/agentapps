@@ -1,12 +1,12 @@
 /**
- * list_experiments — list experiments (A/B tests) in PostHog.
+ * list-experiments — list experiments (A/B tests) in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListExperimentsTool(app: AgentApp): void {
-  app.tool('list_experiments', {
+  app.tool('list-experiments', {
     description: 'List all experiments (A/B tests) configured in the PostHog project.',
     parameters: {
       type: 'object',

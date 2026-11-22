@@ -1,12 +1,12 @@
 /**
- * get_dashboard — retrieve a single Datadog dashboard by ID.
+ * get-dashboard — retrieve a single Datadog dashboard by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerGetDashboardTool(app: AgentApp): void {
-  app.tool('get_dashboard', {
+  app.tool('get-dashboard', {
     description: 'Get detailed information about a specific Datadog dashboard by its ID.',
     parameters: {
       type: 'object',

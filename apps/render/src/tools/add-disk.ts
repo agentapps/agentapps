@@ -9,10 +9,10 @@ interface RenderDisk {
 }
 
 /**
- * render-add-disk -- POST /services/{serviceId}/disks.
+ * add-disk -- POST /services/{serviceId}/disks.
  */
 export function registerAddDiskTool(app: AgentApp): void {
-  app.tool('render-add-disk', {
+  app.tool('add-disk', {
     description:
       'Add a persistent disk to a Render service (useful for databases and stateful apps). Returns { diskId, name, mountPath, sizeGB }. Params: serviceId (required), name (required), mountPath (required -- e.g., "/data"), sizeGB (required -- minimum 1).',
     parameters: {

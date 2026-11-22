@@ -1,5 +1,5 @@
 /**
- * send_notification — send a smart push notification to iOS devices.
+ * send-notification — send a smart push notification to iOS devices.
  *
  * Image support (iOS UNNotificationAttachment constraints):
  *   - Supported formats: JPEG, PNG, GIF.
@@ -20,7 +20,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, pushcutRequest, resolveApiKey } from '../types.js';
 
 export function registerSendNotificationTool(app: AgentApp): void {
-  app.tool('send_notification', {
+  app.tool('send-notification', {
     description:
       'Send a smart push notification to your iOS devices via Pushcut. ' +
       'You must specify the notification name (as configured in the Pushcut app). ' +

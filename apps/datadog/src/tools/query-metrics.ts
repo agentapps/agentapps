@@ -1,12 +1,12 @@
 /**
- * query_metrics — query Datadog metrics.
+ * query-metrics — query Datadog metrics.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerQueryMetricsTool(app: AgentApp): void {
-  app.tool('query_metrics', {
+  app.tool('query-metrics', {
     description:
       'Query time-series metrics from Datadog. Requires a metric query string and a time range (epoch seconds).',
     parameters: {

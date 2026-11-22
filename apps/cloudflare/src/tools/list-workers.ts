@@ -1,12 +1,12 @@
 /**
- * list_workers — list Workers scripts for a Cloudflare account.
+ * list-workers — list Workers scripts for a Cloudflare account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListWorkersTool(app: AgentApp): void {
-  app.tool('list_workers', {
+  app.tool('list-workers', {
     description: 'List all Workers scripts in a Cloudflare account.',
     parameters: {
       type: 'object',

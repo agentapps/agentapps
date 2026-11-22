@@ -1,12 +1,12 @@
 /**
- * list_customers — list Shopify customers.
+ * list-customers — list Shopify customers.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListCustomersTool(app: AgentApp): void {
-  app.tool('list_customers', {
+  app.tool('list-customers', {
     description: 'List customers from your Shopify store.',
     parameters: {
       type: 'object',

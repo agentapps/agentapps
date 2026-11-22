@@ -1,12 +1,12 @@
 /**
- * list_comments — list comments on an Airtable record.
+ * list-comments — list comments on an Airtable record.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerListCommentsTool(app: AgentApp): void {
-  app.tool('list_comments', {
+  app.tool('list-comments', {
     description:
       'List comments on a specific record in an Airtable table. Supports cursor-based pagination via offset.',
     parameters: {

@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-workspaces — List all Railway workspaces available to the current user.
+ * list-workspaces — List all Railway workspaces available to the current user.
  */
 export function registerListWorkspacesTool(app: AgentApp): void {
-  app.tool('railway-list-workspaces', {
+  app.tool('list-workspaces', {
     description: 'List all Railway workspaces available to the current user.',
     parameters: {
       type: 'object',

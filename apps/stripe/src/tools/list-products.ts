@@ -1,12 +1,12 @@
 /**
- * list_products — list Stripe products.
+ * list-products — list Stripe products.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListProductsTool(app: AgentApp): void {
-  app.tool('list_products', {
+  app.tool('list-products', {
     description:
       'List products from your Stripe account. Supports filtering by active status and pagination.',
     parameters: {

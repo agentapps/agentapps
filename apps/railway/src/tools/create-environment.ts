@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-create-environment — Create a new environment in a Railway project.
+ * create-environment — Create a new environment in a Railway project.
  */
 export function registerCreateEnvironmentTool(app: AgentApp): void {
-  app.tool('railway-create-environment', {
+  app.tool('create-environment', {
     description: 'Create a new environment in a Railway project (e.g., staging, production).',
     parameters: {
       type: 'object',

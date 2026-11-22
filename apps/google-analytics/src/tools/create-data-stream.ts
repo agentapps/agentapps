@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-create-data-stream — Create a web/iOS/Android data stream.
+ * create-data-stream — Create a web/iOS/Android data stream.
  */
 export function registerCreateDataStreamTool(app: AgentApp): void {
-  app.tool('analytics-create-data-stream', {
+  app.tool('create-data-stream', {
     description:
       'Create a web/iOS/Android data stream under a property. Returns { stream: { streamId, displayName, type, webStreamData? } }.',
     parameters: {

@@ -1,14 +1,14 @@
 /**
- * delete_env_var — delete an environment variable from a Vercel project.
+ * delete-env-var — delete an environment variable from a Vercel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerDeleteEnvVarTool(app: AgentApp): void {
-  app.tool('delete_env_var', {
+  app.tool('delete-env-var', {
     description:
-      'Delete an environment variable from a Vercel project by its ID. Use list_env_vars to find the env var ID first.',
+      'Delete an environment variable from a Vercel project by its ID. Use list-env-vars to find the env var ID first.',
     parameters: {
       type: 'object',
       properties: {

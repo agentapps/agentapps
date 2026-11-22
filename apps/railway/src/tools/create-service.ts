@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-create-service — Create a new service in a Railway project.
+ * create-service — Create a new service in a Railway project.
  */
 export function registerCreateServiceTool(app: AgentApp): void {
-  app.tool('railway-create-service', {
+  app.tool('create-service', {
     description: 'Create a new service in a Railway project.',
     parameters: {
       type: 'object',

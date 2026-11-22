@@ -1,12 +1,12 @@
 /**
- * cancel_subscription — cancel a Stripe subscription.
+ * cancel-subscription — cancel a Stripe subscription.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCancelSubscriptionTool(app: AgentApp): void {
-  app.tool('cancel_subscription', {
+  app.tool('cancel-subscription', {
     description:
       'Cancel a Stripe subscription. By default cancels at the end of the current billing period.',
     parameters: {

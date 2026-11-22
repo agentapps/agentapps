@@ -122,7 +122,7 @@ Each connection has its own API key, so each agent is a Principal with its own P
 You decide what each agent may do. A rule allows a tool, denies it, or makes the call wait for your approval:
 
 ```bash
-agentapps policy set cursor app.linear linear-create-issue ask
+agentapps policy set cursor app.linear create-issue ask
 agentapps policy set claude-code app.todo-list delete-node deny
 ```
 

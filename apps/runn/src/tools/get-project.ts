@@ -6,7 +6,7 @@ import { validateId } from './_runn-helpers.js';
 import { resolveFields } from './utils.js';
 
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('runn-get-project', {
+  app.tool('get-project', {
     description:
       'Get a single Runn project by id. Returns curated detail { id, name, clientId, teamId, isArchived, isConfirmed, pricingModel, rateType, budget, expensesBudget, tags, references, ... }. Params: projectId (required), fields?, includeRaw.',
     parameters: {

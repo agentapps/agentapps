@@ -6,7 +6,7 @@ import { cleanOptionalString, validateNonEmptyString } from './_runn-helpers.js'
 import { firstOf, resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreateClientTool(app: AgentApp): void {
-  app.tool('runn-create-client', {
+  app.tool('create-client', {
     description:
       'Create a Runn client. Returns the curated created client. Not retryable (no idempotency key). Params: name (required), website?, fields?, includeRaw.',
     parameters: {

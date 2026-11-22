@@ -1,12 +1,12 @@
 /**
- * get_contact — retrieve a single Holded contact by ID.
+ * get-contact — retrieve a single Holded contact by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerGetContactTool(app: AgentApp): void {
-  app.tool('get_contact', {
+  app.tool('get-contact', {
     description: 'Get detailed information about a specific Holded contact.',
     parameters: {
       type: 'object',

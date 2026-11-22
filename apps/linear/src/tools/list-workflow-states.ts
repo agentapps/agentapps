@@ -5,7 +5,7 @@ import { extractWorkflowState, validateUuid } from './_linear-helpers.js';
 import { resolveFieldsList, sanitizeLimit, wrapLinearCall } from './utils.js';
 
 export function registerListWorkflowStatesTool(app: AgentApp): void {
-  app.tool('linear-list-workflow-states', {
+  app.tool('list-workflow-states', {
     description:
       'List workflow states for a team. Returns curated rows { id, name, type, color, position, description }. Params: teamId, limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

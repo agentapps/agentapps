@@ -1,12 +1,12 @@
 /**
- * get_balance_sheet — retrieve the Balance Sheet report from QuickBooks Online.
+ * get-balance-sheet — retrieve the Balance Sheet report from QuickBooks Online.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerGetBalanceSheetTool(app: AgentApp): void {
-  app.tool('get_balance_sheet', {
+  app.tool('get-balance-sheet', {
     description: 'Get the Balance Sheet report for a date range from QuickBooks Online.',
     parameters: {
       type: 'object',

@@ -13,7 +13,7 @@ function actualsEndpoint(personId?: number, projectId?: number): string {
 }
 
 export function registerListActualsTool(app: AgentApp): void {
-  app.tool('runn-list-actuals', {
+  app.tool('list-actuals', {
     description:
       'List Runn actuals (logged timesheet hours by day). Returns { items: [{ id, date, personId, projectId, roleId, billableMinutes, nonbillableMinutes, ... }], total, hasMore, nextCursor }. Filter by personId OR projectId (not both). Params: personId?, projectId?, limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

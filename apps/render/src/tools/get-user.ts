@@ -8,10 +8,10 @@ interface RenderUser {
 }
 
 /**
- * render-get-user -- GET /user.
+ * get-user -- GET /user.
  */
 export function registerGetUserTool(app: AgentApp): void {
-  app.tool('render-get-user', {
+  app.tool('get-user', {
     description: 'Get the authenticated Render user info. Returns { id, name, email }.',
     parameters: {
       type: 'object',

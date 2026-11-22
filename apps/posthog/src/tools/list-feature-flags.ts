@@ -1,12 +1,12 @@
 /**
- * list_feature_flags — list feature flags configured in PostHog.
+ * list-feature-flags — list feature flags configured in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListFeatureFlagsTool(app: AgentApp): void {
-  app.tool('list_feature_flags', {
+  app.tool('list-feature-flags', {
     description:
       'List all feature flags configured in the PostHog project, including their status and rollout settings.',
     parameters: {

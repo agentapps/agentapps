@@ -136,24 +136,24 @@ describe('Holded Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_contact',
-      'create_expense',
-      'create_invoice',
-      'create_product',
-      'delete_contact',
-      'delete_invoice',
-      'get_contact',
-      'get_invoice',
-      'get_product',
-      'list_contacts',
-      'list_expenses',
-      'list_invoices',
-      'list_products',
-      'list_purchase_orders',
-      'list_treasury_accounts',
-      'update_contact',
-      'update_invoice',
-      'update_product',
+      'create-contact',
+      'create-expense',
+      'create-invoice',
+      'create-product',
+      'delete-contact',
+      'delete-invoice',
+      'get-contact',
+      'get-invoice',
+      'get-product',
+      'list-contacts',
+      'list-expenses',
+      'list-invoices',
+      'list-products',
+      'list-purchase-orders',
+      'list-treasury-accounts',
+      'update-contact',
+      'update-invoice',
+      'update-product',
     ]);
   });
 
@@ -166,7 +166,7 @@ describe('Holded Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_invoices returns data', async () => {
+  it('list-invoices returns data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -182,7 +182,7 @@ describe('Holded Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_invoices', {});
+    sendToolCall(sessionId, 'list-invoices', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -192,7 +192,7 @@ describe('Holded Agent App', () => {
     expect(data[0].contactName).toBe('Acme Corp');
   });
 
-  it('get_contact returns contact data', async () => {
+  it('get-contact returns contact data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -210,7 +210,7 @@ describe('Holded Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_contact', { contactId: 'contact_abc' });
+    sendToolCall(sessionId, 'get-contact', { contactId: 'contact_abc' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -221,7 +221,7 @@ describe('Holded Agent App', () => {
     expect(data.vatnumber).toBe('B12345678');
   });
 
-  it('create_contact sends correct JSON body', async () => {
+  it('create-contact sends correct JSON body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -236,7 +236,7 @@ describe('Holded Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_contact', {
+    sendToolCall(sessionId, 'create-contact', {
       name: 'Nueva Empresa SA',
       email: 'nueva@empresa.es',
       vatnumber: 'A98765432',
@@ -265,7 +265,7 @@ describe('Holded Agent App', () => {
     expect(body.vatnumber).toBe('A98765432');
   });
 
-  it('delete_invoice calls DELETE on the correct endpoint', async () => {
+  it('delete-invoice calls DELETE on the correct endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ status: 1 }),
@@ -275,7 +275,7 @@ describe('Holded Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'delete_invoice', { invoiceId: 'inv_del_001' });
+    sendToolCall(sessionId, 'delete-invoice', { invoiceId: 'inv_del_001' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -306,7 +306,7 @@ describe('Holded Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_invoices', {});
+    sendToolCall(sessionId, 'list-invoices', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

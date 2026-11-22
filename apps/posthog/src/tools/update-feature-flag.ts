@@ -1,12 +1,12 @@
 /**
- * update_feature_flag — update an existing feature flag in PostHog.
+ * update-feature-flag — update an existing feature flag in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerUpdateFeatureFlagTool(app: AgentApp): void {
-  app.tool('update_feature_flag', {
+  app.tool('update-feature-flag', {
     description:
       'Update an existing feature flag in PostHog by its ID. Supports partial updates (PATCH).',
     parameters: {

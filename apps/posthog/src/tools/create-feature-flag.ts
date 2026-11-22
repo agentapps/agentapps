@@ -1,12 +1,12 @@
 /**
- * create_feature_flag — create a new feature flag in PostHog.
+ * create-feature-flag — create a new feature flag in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerCreateFeatureFlagTool(app: AgentApp): void {
-  app.tool('create_feature_flag', {
+  app.tool('create-feature-flag', {
     description:
       'Create a new feature flag in PostHog with a key, name, and optional rollout filters.',
     parameters: {

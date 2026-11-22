@@ -6,10 +6,10 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-get-prediction — check the status and result of a prediction.
+ * get-prediction — check the status and result of a prediction.
  */
 export function registerGetPredictionTool(app: AgentApp): void {
-  app.tool('higgsfield-get-prediction', {
+  app.tool('get-prediction', {
     description:
       'Get the status and result of a prediction by ID. Params: prediction_id (required), wait? (poll for completion if still processing, default false).',
     parameters: {

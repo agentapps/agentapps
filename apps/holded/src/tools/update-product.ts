@@ -1,12 +1,12 @@
 /**
- * update_product — update an existing Holded product.
+ * update-product — update an existing Holded product.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerUpdateProductTool(app: AgentApp): void {
-  app.tool('update_product', {
+  app.tool('update-product', {
     description: 'Update an existing product in Holded. Only provided fields are changed.',
     parameters: {
       type: 'object',

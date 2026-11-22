@@ -1,12 +1,12 @@
 /**
- * list_webhooks — list Shopify webhooks.
+ * list-webhooks — list Shopify webhooks.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListWebhooksTool(app: AgentApp): void {
-  app.tool('list_webhooks', {
+  app.tool('list-webhooks', {
     description: 'List webhook subscriptions configured in your Shopify store.',
     parameters: {
       type: 'object',

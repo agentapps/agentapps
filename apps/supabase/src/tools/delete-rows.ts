@@ -1,12 +1,12 @@
 /**
- * delete_rows — delete rows from a Supabase table matching a filter.
+ * delete-rows — delete rows from a Supabase table matching a filter.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerDeleteRowsTool(app: AgentApp): void {
-  app.tool('delete_rows', {
+  app.tool('delete-rows', {
     description:
       'Delete rows from a Supabase table that match the given filter. A filter is required to prevent accidental deletion of all rows. Returns the deleted rows.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_chat_member — get information about a member of a chat.
+ * get-chat-member — get information about a member of a chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerGetChatMemberTool(app: AgentApp): void {
-  app.tool('get_chat_member', {
+  app.tool('get-chat-member', {
     description:
       'Get information about a member of a Telegram chat — status, permissions, and user details.',
     parameters: {

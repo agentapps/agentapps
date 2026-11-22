@@ -1,12 +1,12 @@
 /**
- * get_revenue — get revenue LTV data from Amplitude.
+ * get-revenue — get revenue LTV data from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetRevenueTool(app: AgentApp): void {
-  app.tool('get_revenue', {
+  app.tool('get-revenue', {
     description:
       'Get revenue lifetime value (LTV) data from Amplitude. Returns revenue metrics including ARPU, ARPPU, and total revenue within a date range.',
     parameters: {

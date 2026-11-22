@@ -6,10 +6,10 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-soul-generate — character-consistent image generation using Soul.
+ * generate-soul-image — character-consistent image generation using Soul.
  */
 export function registerSoulGenerateTool(app: AgentApp): void {
-  app.tool('higgsfield-soul-generate', {
+  app.tool('generate-soul-image', {
     description:
       'Generate images with consistent character appearance using Soul. Great for creating multiple images of the same character. Params: prompt (required), reference_image (required — URL of reference image), style?, resolution? ("1K"|"2K"|"4K", default "2K"), wait? (default false).',
     parameters: {
@@ -77,7 +77,7 @@ export function registerSoulGenerateTool(app: AgentApp): void {
         status: result.status,
         status_url: result.status_url,
         cancel_url: result.cancel_url,
-        message: 'Request submitted. Use higgsfield-get-prediction to check status.',
+        message: 'Request submitted. Use get-prediction to check status.',
       };
     },
   });

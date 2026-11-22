@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-delete-service — Delete a service from a Railway project.
+ * delete-service — Delete a service from a Railway project.
  */
 export function registerDeleteServiceTool(app: AgentApp): void {
-  app.tool('railway-delete-service', {
+  app.tool('delete-service', {
     description: 'Delete a service from a Railway project.',
     parameters: {
       type: 'object',

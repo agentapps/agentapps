@@ -1,12 +1,12 @@
 /**
- * list_teams — list teams the authenticated user belongs to.
+ * list-teams — list teams the authenticated user belongs to.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListTeamsTool(app: AgentApp): void {
-  app.tool('list_teams', {
+  app.tool('list-teams', {
     description: 'List all teams the authenticated Vercel user belongs to.',
     parameters: {
       type: 'object',

@@ -24,7 +24,7 @@ const notesDb = new Map<string, { title: string; content: string; createdAt: str
 // Create the app
 // ---------------------------------------------------------------------------
 
-const app = createApp({ id: 'app.research', version: '1.0.2' });
+const app = createApp({ id: 'app.research', version: '2.0.0' });
 
 // ---------------------------------------------------------------------------
 // Tool: search
@@ -172,10 +172,10 @@ app.tool('summarize', {
 });
 
 // ---------------------------------------------------------------------------
-// Tool: save_note
+// Tool: save-note
 // ---------------------------------------------------------------------------
 
-app.tool('save_note', {
+app.tool('save-note', {
   description: 'Save a note to the research database. Returns the note ID.',
   parameters: {
     type: 'object',
@@ -231,10 +231,10 @@ app.tool('save_note', {
 });
 
 // ---------------------------------------------------------------------------
-// Tool: list_notes
+// Tool: list-notes
 // ---------------------------------------------------------------------------
 
-app.tool('list_notes', {
+app.tool('list-notes', {
   description: 'List all saved research notes.',
   parameters: {
     type: 'object',

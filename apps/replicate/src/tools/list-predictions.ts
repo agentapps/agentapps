@@ -1,12 +1,12 @@
 /**
- * list_predictions — list recent predictions with their status.
+ * list-predictions — list recent predictions with their status.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, replicateRequest } from '../types.js';
 
 export function registerListPredictionsTool(app: AgentApp): void {
-  app.tool('list_predictions', {
+  app.tool('list-predictions', {
     description:
       'List recent predictions with their status. Useful to track ongoing or past generations.',
     parameters: {

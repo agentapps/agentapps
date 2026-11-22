@@ -6,7 +6,7 @@ import {
 } from '../types.js';
 
 export function registerListCalendarsTool(app: AgentApp): void {
-  app.tool('list_calendars', {
+  app.tool('list-calendars', {
     description: 'List Google Calendar calendars for the authenticated user',
     parameters: {
       type: 'object',

@@ -6,7 +6,7 @@ import { validateId } from './_runn-helpers.js';
 import { resolveFields } from './utils.js';
 
 export function registerGetPersonTool(app: AgentApp): void {
-  app.tool('runn-get-person', {
+  app.tool('get-person', {
     description:
       'Get a single Runn person by id. Returns curated detail { id, firstName, lastName, email, isArchived, teamId, tags, references, holidaysGroupId, managers, ... }. Params: personId (required), fields?, includeRaw.',
     parameters: {

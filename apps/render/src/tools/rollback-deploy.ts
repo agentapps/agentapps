@@ -7,10 +7,10 @@ interface RenderDeploy {
 }
 
 /**
- * render-rollback-deploy -- POST /services/{serviceId}/deploys/{deployId}/rollback.
+ * rollback-deploy -- POST /services/{serviceId}/deploys/{deployId}/rollback.
  */
 export function registerRollbackDeployTool(app: AgentApp): void {
-  app.tool('render-rollback-deploy', {
+  app.tool('rollback-deploy', {
     description:
       'Roll back a Render service to a specific previous deploy. Returns { newDeployId, status }. Params: serviceId (required), deployId (required -- the deploy ID to roll back to).',
     parameters: {

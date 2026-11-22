@@ -5,7 +5,7 @@ import { ROLE_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListRolesTool(app: AgentApp): void {
-  app.tool('runn-list-roles', {
+  app.tool('list-roles', {
     description:
       'List Runn roles (job roles people and placeholders are assigned as). Returns { items: [{ id, name, isArchived, defaultHourCost, standardRate, references, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

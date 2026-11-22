@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.airtable',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Airtable',
   description:
     'Airtable base management — list bases, query records, create/update/delete rows, and manage tables.',

@@ -1,12 +1,12 @@
 /**
- * list_buckets — list all storage buckets in Supabase.
+ * list-buckets — list all storage buckets in Supabase.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerListBucketsTool(app: AgentApp): void {
-  app.tool('list_buckets', {
+  app.tool('list-buckets', {
     description:
       'List all storage buckets in your Supabase project. Returns bucket metadata including name, id, and public status.',
     parameters: {

@@ -10,10 +10,10 @@ interface RenderProject {
 }
 
 /**
- * render-get-project -- GET /projects/{projectId}.
+ * get-project -- GET /projects/{projectId}.
  */
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('render-get-project', {
+  app.tool('get-project', {
     description:
       'Get detailed information about a specific Render project. Returns { id, name, ownerId, createdAt, updatedAt }. Params: projectId (required).',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * list_kv_namespaces — list KV namespaces for a Cloudflare account.
+ * list-kv-namespaces — list KV namespaces for a Cloudflare account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListKvNamespacesTool(app: AgentApp): void {
-  app.tool('list_kv_namespaces', {
+  app.tool('list-kv-namespaces', {
     description: 'List all Workers KV namespaces in a Cloudflare account.',
     parameters: {
       type: 'object',

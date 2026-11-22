@@ -18,6 +18,7 @@ import {
   monoLogoColours,
   protocolSupportsAccess,
   readmeSection,
+  toolNameProblem,
   validate,
 } from '../src/validate.js';
 
@@ -165,6 +166,27 @@ describe('check-app: tools, as the host sees them', () => {
     expect((await check()).errors).toContain(
       "Tool 'hello': sensitive must be false (a read-only tool changes nothing, so it never waits for approval)",
     );
+  });
+
+  it('[DEVX-AC-5] tool names are kebab-case and do not carry the app name', () => {
+    expect(toolNameProblem('list_issues')).toMatch(/kebab-case/);
+    expect(toolNameProblem('listIssues')).toMatch(/kebab-case/);
+    expect(toolNameProblem('-health-check')).toMatch(/kebab-case/);
+    expect(toolNameProblem('linear-list-issues', 'app.linear')).toMatch(/'linear-' prefix/);
+    expect(toolNameProblem('analytics-run-report', 'app.google.analytics')).toMatch(
+      /'analytics-' prefix/,
+    );
+    expect(toolNameProblem('google-analytics-run-report', 'app.google.analytics')).toMatch(
+      /prefix/,
+    );
+    expect(toolNameProblem('list-issues', 'app.linear')).toBeUndefined();
+    expect(toolNameProblem('git-status', 'app.github')).toBeUndefined();
+  });
+
+  it('[DEVX-AC-5] check-app reports a tool whose name breaks the rule', async () => {
+    createProject({ 'src/app.ts': appTs(tool('list_things', READ_ONLY)) });
+    const errors = (await check()).errors;
+    expect(errors.some((e) => e.includes("'list_things'") && e.includes('kebab-case'))).toBe(true);
   });
 
   it('[DEVX-AC-4] accepts a write tool that is not sensitive: it changes only its own data', async () => {

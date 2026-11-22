@@ -1,12 +1,12 @@
 /**
- * list_domains — list domains in the Vercel account.
+ * list-domains — list domains in the Vercel account.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListDomainsTool(app: AgentApp): void {
-  app.tool('list_domains', {
+  app.tool('list-domains', {
     description: 'List domains registered in your Vercel account.',
     parameters: {
       type: 'object',

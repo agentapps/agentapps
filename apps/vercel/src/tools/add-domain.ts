@@ -1,12 +1,12 @@
 /**
- * add_domain — add a domain to a Vercel project.
+ * add-domain — add a domain to a Vercel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerAddDomainTool(app: AgentApp): void {
-  app.tool('add_domain', {
+  app.tool('add-domain', {
     description:
       'Add a domain to a Vercel project. The domain must be verified in your Vercel account or will be added for verification.',
     parameters: {

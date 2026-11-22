@@ -1,12 +1,12 @@
 /**
- * add_comment — add a comment to an Airtable record.
+ * add-comment — add a comment to an Airtable record.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerAddCommentTool(app: AgentApp): void {
-  app.tool('add_comment', {
+  app.tool('add-comment', {
     description:
       'Add a comment to a specific record in an Airtable table. Returns the created comment.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_segmentation — get segmentation data from Mixpanel.
+ * get-segmentation — get segmentation data from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetSegmentationTool(app: AgentApp): void {
-  app.tool('get_segmentation', {
+  app.tool('get-segmentation', {
     description:
       'Get segmentation (event breakdown) data from Mixpanel. Returns event counts segmented by a property within a date range.',
     parameters: {

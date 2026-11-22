@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-suspend-service -- POST /services/{serviceId}/suspend.
+ * suspend-service -- POST /services/{serviceId}/suspend.
  */
 export function registerSuspendServiceTool(app: AgentApp): void {
-  app.tool('render-suspend-service', {
+  app.tool('suspend-service', {
     description:
       'Suspend a running Render service (stops billing for compute). Returns { serviceId, suspended }. Params: serviceId (required).',
     parameters: {
@@ -18,7 +18,7 @@ export function registerSuspendServiceTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
-    // Takes the service offline, but render-resume-service brings it back.
+    // Takes the service offline, but resume-service brings it back.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,

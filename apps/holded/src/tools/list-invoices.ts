@@ -1,12 +1,12 @@
 /**
- * list_invoices — list Holded invoices.
+ * list-invoices — list Holded invoices.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListInvoicesTool(app: AgentApp): void {
-  app.tool('list_invoices', {
+  app.tool('list-invoices', {
     description: 'List invoices from your Holded account. Returns all sales invoices.',
     parameters: {
       type: 'object',

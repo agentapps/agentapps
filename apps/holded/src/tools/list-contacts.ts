@@ -1,12 +1,12 @@
 /**
- * list_contacts — list Holded contacts.
+ * list-contacts — list Holded contacts.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListContactsTool(app: AgentApp): void {
-  app.tool('list_contacts', {
+  app.tool('list-contacts', {
     description:
       'List contacts from your Holded account. Returns customers, suppliers, and other contacts.',
     parameters: {

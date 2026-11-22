@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.analytics',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Google Analytics',
   description:
     'Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams',

@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-get-deployment — Get the status of a specific deployment.
+ * get-deployment — Get the status of a specific deployment.
  */
 export function registerGetDeploymentTool(app: AgentApp): void {
-  app.tool('railway-get-deployment', {
+  app.tool('get-deployment', {
     description: 'Get the status of a specific deployment.',
     parameters: {
       type: 'object',

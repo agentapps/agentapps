@@ -1,12 +1,12 @@
 /**
- * list_aliases — list aliases (custom domains assigned to deployments).
+ * list-aliases — list aliases (custom domains assigned to deployments).
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListAliasesTool(app: AgentApp): void {
-  app.tool('list_aliases', {
+  app.tool('list-aliases', {
     description:
       'List aliases in your Vercel account. Aliases are custom domains or generated URLs assigned to deployments.',
     parameters: {

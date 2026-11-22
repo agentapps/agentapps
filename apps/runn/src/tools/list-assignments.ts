@@ -17,7 +17,7 @@ function assignmentsEndpoint(personId?: number, projectId?: number): string {
 }
 
 export function registerListAssignmentsTool(app: AgentApp): void {
-  app.tool('runn-list-assignments', {
+  app.tool('list-assignments', {
     description:
       'List Runn assignments (a person/placeholder allocated to a project at a role over a date range). Returns { items: [{ id, personId, projectId, roleId, startDate, endDate, minutesPerDay, isBillable, isPlaceholder, ... }], total, hasMore, nextCursor }. Filter by personId OR projectId (not both). Params: personId?, projectId?, limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

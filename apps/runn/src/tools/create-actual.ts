@@ -6,7 +6,7 @@ import { cleanOptionalString, validateDate, validateId, validateMinutes } from '
 import { firstOf, resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreateActualTool(app: AgentApp): void {
-  app.tool('runn-create-actual', {
+  app.tool('create-actual', {
     description:
       'Log a Runn actual (real hours worked on a day). The minutes overwrite any existing actual for the same day/person/project/role/workstream. Returns the curated actual. Params: date (YYYY-MM-DD), billableMinutes, nonbillableMinutes, personId, projectId, roleId (all required), billableNote?, nonbillableNote?, phaseId?, workstreamId?, fields?, includeRaw.',
     parameters: {

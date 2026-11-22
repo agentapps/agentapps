@@ -15,7 +15,7 @@ interface FreeBusyResponse {
 }
 
 export function registerGetFreebusyTool(app: AgentApp): void {
-  app.tool('get_freebusy', {
+  app.tool('get-freebusy', {
     description: 'Query free/busy information for one or more calendars',
     parameters: {
       type: 'object',

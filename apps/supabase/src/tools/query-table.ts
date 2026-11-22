@@ -1,12 +1,12 @@
 /**
- * query_table — query rows from a Supabase table with filtering, ordering, and pagination.
+ * query-table — query rows from a Supabase table with filtering, ordering, and pagination.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerQueryTableTool(app: AgentApp): void {
-  app.tool('query_table', {
+  app.tool('query-table', {
     description:
       'Query rows from a Supabase table. Supports PostgREST filtering (e.g. "age=gt.18"), column selection, ordering, and pagination.',
     parameters: {

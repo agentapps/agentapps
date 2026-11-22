@@ -7,13 +7,13 @@ interface RenderEnvVar {
 }
 
 /**
- * render-list-env-vars -- GET /services/{serviceId}/env-vars.
+ * list-env-vars -- GET /services/{serviceId}/env-vars.
  *
  * Sensitive values (containing secret/password/token/key/api in the key name)
  * are masked in the response to avoid leaking credentials.
  */
 export function registerListEnvVarsTool(app: AgentApp): void {
-  app.tool('render-list-env-vars', {
+  app.tool('list-env-vars', {
     description:
       'List environment variables for a Render service. Sensitive values are masked. Returns { envVars: [{ key, value }], count }. Params: serviceId (required).',
     parameters: {

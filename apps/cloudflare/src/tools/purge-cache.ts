@@ -1,12 +1,12 @@
 /**
- * purge_cache — purge cached content for a Cloudflare zone.
+ * purge-cache — purge cached content for a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerPurgeCacheTool(app: AgentApp): void {
-  app.tool('purge_cache', {
+  app.tool('purge-cache', {
     description:
       'Purge cached content for a Cloudflare zone. Can purge everything or specific files by URL.',
     parameters: {

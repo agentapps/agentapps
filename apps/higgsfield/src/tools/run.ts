@@ -6,13 +6,13 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-run — generic model runner.
+ * run — generic model runner.
  *
  * Submits a request to any Higgsfield model endpoint. Optionally polls
  * for completion when `wait` is true.
  */
 export function registerRunTool(app: AgentApp): void {
-  app.tool('higgsfield-run', {
+  app.tool('run', {
     description:
       'Run any model on Higgsfield. Supports text-to-image, image-to-video, and other AI generation models. Params: model (required — endpoint identifier, e.g. "bytedance/seedream/v4/text-to-image"), input (required — model parameters), wait? (poll for completion, default false).',
     parameters: {
@@ -59,7 +59,7 @@ export function registerRunTool(app: AgentApp): void {
         status: result.status,
         status_url: result.status_url,
         cancel_url: result.cancel_url,
-        message: 'Request submitted. Use higgsfield-get-prediction to check status.',
+        message: 'Request submitted. Use get-prediction to check status.',
       };
     },
   });

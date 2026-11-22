@@ -1,12 +1,12 @@
 /**
- * get_funnel — get funnel data from Mixpanel.
+ * get-funnel — get funnel data from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetFunnelTool(app: AgentApp): void {
-  app.tool('get_funnel', {
+  app.tool('get-funnel', {
     description:
       'Get funnel conversion data from Mixpanel for a specific funnel. Returns step-by-step conversion rates within a date range.',
     parameters: {

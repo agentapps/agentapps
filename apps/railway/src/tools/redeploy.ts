@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-redeploy — Trigger a redeploy of an existing deployment.
+ * redeploy — Trigger a redeploy of an existing deployment.
  */
 export function registerRedeployTool(app: AgentApp): void {
-  app.tool('railway-redeploy', {
+  app.tool('redeploy', {
     description: 'Trigger a redeploy of an existing deployment.',
     parameters: {
       type: 'object',

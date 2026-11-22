@@ -2,12 +2,12 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-delete-service -- DELETE /services/{serviceId}.
+ * delete-service -- DELETE /services/{serviceId}.
  *
  * Permanently deletes the service. IRREVERSIBLE + destructive.
  */
 export function registerDeleteServiceTool(app: AgentApp): void {
-  app.tool('render-delete-service', {
+  app.tool('delete-service', {
     description:
       'Delete a Render service. This action is irreversible! Returns { serviceId, deleted }. Params: serviceId (required).',
     parameters: {

@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryAlertRule, sentryRequest } from '../types.js';
 
 export function registerListAlertsTool(app: AgentApp): void {
-  app.tool('list_alerts', {
+  app.tool('list-alerts', {
     description: 'List alert rules for a Sentry project.',
     parameters: {
       type: 'object',

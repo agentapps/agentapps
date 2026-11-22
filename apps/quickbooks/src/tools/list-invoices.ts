@@ -1,12 +1,12 @@
 /**
- * list_invoices — list QuickBooks Online invoices via query.
+ * list-invoices — list QuickBooks Online invoices via query.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerListInvoicesTool(app: AgentApp): void {
-  app.tool('list_invoices', {
+  app.tool('list-invoices', {
     description:
       'List invoices from your QuickBooks Online account. Returns up to maxResults invoices.',
     parameters: {

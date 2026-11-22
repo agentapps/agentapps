@@ -1,12 +1,12 @@
 /**
- * send_whatsapp — send a WhatsApp message via Twilio.
+ * send-whatsapp — send a WhatsApp message via Twilio.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerSendWhatsappTool(app: AgentApp): void {
-  app.tool('send_whatsapp', {
+  app.tool('send-whatsapp', {
     description:
       'Send a WhatsApp message via Twilio. The sender must be a Twilio WhatsApp-enabled number or sandbox number. Returns the message object with sid and status.',
     parameters: {

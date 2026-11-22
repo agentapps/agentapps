@@ -23,10 +23,10 @@ interface RenderService {
 }
 
 /**
- * render-get-service -- GET /services/{serviceId}.
+ * get-service -- GET /services/{serviceId}.
  */
 export function registerGetServiceTool(app: AgentApp): void {
-  app.tool('render-get-service', {
+  app.tool('get-service', {
     description:
       'Get detailed information about a specific Render service. Returns { id, name, type, status, slug, ownerId, createdAt, updatedAt, serviceDetails? }. Params: serviceId (required).',
     parameters: {

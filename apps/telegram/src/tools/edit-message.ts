@@ -1,12 +1,12 @@
 /**
- * edit_message — edit the text of a message sent by the bot.
+ * edit-message — edit the text of a message sent by the bot.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerEditMessageTool(app: AgentApp): void {
-  app.tool('edit_message', {
+  app.tool('edit-message', {
     description:
       'Edit the text of a message previously sent by the bot. Supports HTML, Markdown, and MarkdownV2 formatting.',
     parameters: {

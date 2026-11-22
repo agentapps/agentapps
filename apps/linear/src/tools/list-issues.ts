@@ -10,7 +10,7 @@ const PRIORITY_ENUM = ['urgent', 'high', 'medium', 'low', 'none'] as const;
 type PriorityFilter = (typeof PRIORITY_ENUM)[number];
 
 export function registerListIssuesTool(app: AgentApp): void {
-  app.tool('linear-list-issues', {
+  app.tool('list-issues', {
     description:
       'List Linear issues with optional filters. Returns curated rows { id, identifier, title, url, status, priority, assignee, team, createdAt, updatedAt }. Params: teamId?, status?, assigneeId?, priority?, limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

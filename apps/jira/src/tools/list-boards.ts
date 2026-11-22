@@ -1,12 +1,12 @@
 /**
- * list_boards — list Jira agile boards.
+ * list-boards — list Jira agile boards.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerListBoardsTool(app: AgentApp): void {
-  app.tool('list_boards', {
+  app.tool('list-boards', {
     description:
       'List agile boards in your Jira instance (Scrum and Kanban). Supports pagination and filtering by project or name.',
     parameters: {

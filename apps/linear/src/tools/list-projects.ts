@@ -5,7 +5,7 @@ import { extractProjectShape, validateUuid } from './_linear-helpers.js';
 import { resolveFieldsList, sanitizeLimit, wrapLinearCall } from './utils.js';
 
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('linear-list-projects', {
+  app.tool('list-projects', {
     description:
       'List Linear projects. Returns curated rows { id, name, url, state, icon, color, progress, startDate, targetDate, createdAt, updatedAt }. Params: teamId?, limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

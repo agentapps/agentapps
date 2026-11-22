@@ -1,12 +1,12 @@
 /**
- * delete_message — delete a message from a Telegram chat.
+ * delete-message — delete a message from a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerDeleteMessageTool(app: AgentApp): void {
-  app.tool('delete_message', {
+  app.tool('delete-message', {
     description:
       'Delete a message from a Telegram chat. The bot must have the appropriate permissions. Messages can only be deleted within 48 hours of sending.',
     parameters: {

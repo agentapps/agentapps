@@ -1,12 +1,12 @@
 /**
- * create_webhook — create a Shopify webhook subscription.
+ * create-webhook — create a Shopify webhook subscription.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerCreateWebhookTool(app: AgentApp): void {
-  app.tool('create_webhook', {
+  app.tool('create-webhook', {
     description:
       'Create a webhook subscription in your Shopify store. Shopify will send HTTP POST requests to the specified address when the given event occurs.',
     parameters: {

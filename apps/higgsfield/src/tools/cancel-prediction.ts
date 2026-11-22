@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { higgsFieldRequest, resolveCredentials } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-cancel-prediction — cancel a queued or processing prediction.
+ * cancel-prediction — cancel a queued or processing prediction.
  */
 export function registerCancelPredictionTool(app: AgentApp): void {
-  app.tool('higgsfield-cancel-prediction', {
+  app.tool('cancel-prediction', {
     description:
       'Cancel a queued or processing prediction. IRREVERSIBLE. Params: prediction_id (required).',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * list_payouts — list Stripe payouts.
+ * list-payouts — list Stripe payouts.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListPayoutsTool(app: AgentApp): void {
-  app.tool('list_payouts', {
+  app.tool('list-payouts', {
     description:
       'List payouts from your Stripe account. Supports filtering by status and pagination.',
     parameters: {

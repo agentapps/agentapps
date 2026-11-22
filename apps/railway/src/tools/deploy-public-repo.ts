@@ -2,12 +2,12 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-deploy-public-repo — Deploy a public GitHub repository to Railway.
+ * deploy-public-repo — Deploy a public GitHub repository to Railway.
  */
 export function registerDeployPublicRepoTool(app: AgentApp): void {
-  app.tool('railway-deploy-public-repo', {
+  app.tool('deploy-public-repo', {
     description:
-      'Deploy a public GitHub repository to Railway. Creates a new service from the repo. Only works with PUBLIC repositories. For private repos, use railway-connect-repo instead.',
+      'Deploy a public GitHub repository to Railway. Creates a new service from the repo. Only works with PUBLIC repositories. For private repos, use connect-repo instead.',
     parameters: {
       type: 'object',
       properties: {
@@ -67,7 +67,7 @@ export function registerDeployPublicRepoTool(app: AgentApp): void {
         const errorMessage = error instanceof Error ? error.message : String(error);
         if (errorMessage.includes('public') || errorMessage.includes('Only public')) {
           throw new Error(
-            `This mutation only works with public repositories. For private repos, first create a service with railway-create-service, then use railway-connect-repo to connect your private GitHub repository.`,
+            `This mutation only works with public repositories. For private repos, first create a service with create-service, then use connect-repo to connect your private GitHub repository.`,
           );
         }
         throw error;

@@ -136,19 +136,19 @@ describe('Twilio Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'get_account',
-      'get_call',
-      'get_message',
-      'get_recording',
-      'list_available_numbers',
-      'list_calls',
-      'list_messages',
-      'list_phone_numbers',
-      'list_recordings',
-      'lookup_phone',
-      'make_call',
-      'send_sms',
-      'send_whatsapp',
+      'get-account',
+      'get-call',
+      'get-message',
+      'get-recording',
+      'list-available-numbers',
+      'list-calls',
+      'list-messages',
+      'list-phone-numbers',
+      'list-recordings',
+      'lookup-phone',
+      'make-call',
+      'send-sms',
+      'send-whatsapp',
     ]);
   });
 
@@ -175,7 +175,7 @@ describe('Twilio Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('send_sms sends correct form-urlencoded body', async () => {
+  it('send-sms sends correct form-urlencoded body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -193,7 +193,7 @@ describe('Twilio Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_sms', {
+    sendToolCall(sessionId, 'send-sms', {
       to: '+14155551234',
       from: '+14155559876',
       body: 'Hello from Twilio!',
@@ -222,7 +222,7 @@ describe('Twilio Agent App', () => {
     expect(body).toContain('Body=Hello+from+Twilio%21');
   });
 
-  it('list_messages returns messages', async () => {
+  it('list-messages returns messages', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -242,7 +242,7 @@ describe('Twilio Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_messages', {});
+    sendToolCall(sessionId, 'list-messages', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -252,7 +252,7 @@ describe('Twilio Agent App', () => {
     expect(data.pageSize).toBe(20);
   });
 
-  it('get_account returns account info', async () => {
+  it('get-account returns account info', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -270,7 +270,7 @@ describe('Twilio Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_account', {});
+    sendToolCall(sessionId, 'get-account', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -282,7 +282,7 @@ describe('Twilio Agent App', () => {
     expect(data.type).toBe('Full');
   });
 
-  it('list_calls returns calls with filters', async () => {
+  it('list-calls returns calls with filters', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -314,7 +314,7 @@ describe('Twilio Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_calls', { status: 'completed', pageSize: 20 });
+    sendToolCall(sessionId, 'list-calls', { status: 'completed', pageSize: 20 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -351,7 +351,7 @@ describe('Twilio Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_account', {});
+    sendToolCall(sessionId, 'get-account', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

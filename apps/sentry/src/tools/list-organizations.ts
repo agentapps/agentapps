@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryOrganization, sentryRequest } from '../types.js';
 
 export function registerListOrganizationsTool(app: AgentApp): void {
-  app.tool('list_organizations', {
+  app.tool('list-organizations', {
     description: 'List all Sentry organizations the authenticated user has access to.',
     parameters: { type: 'object', properties: {} },
     annotations: {

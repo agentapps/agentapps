@@ -1,12 +1,12 @@
 /**
- * list_deployments — list Vercel deployments with optional filtering.
+ * list-deployments — list Vercel deployments with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListDeploymentsTool(app: AgentApp): void {
-  app.tool('list_deployments', {
+  app.tool('list-deployments', {
     description:
       'List deployments from your Vercel account. Supports filtering by project, state, and target environment.',
     parameters: {

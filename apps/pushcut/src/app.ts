@@ -10,7 +10,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.pushcut',
-  version: '1.0.2',
+  version: '2.0.0',
   name: 'Pushcut',
   description:
     'Send smart notifications, execute Shortcuts and HomeKit scenes on your iOS devices via the Pushcut API.',

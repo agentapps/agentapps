@@ -1,12 +1,12 @@
 /**
- * list_page_rules — list page rules for a Cloudflare zone.
+ * list-page-rules — list page rules for a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerListPageRulesTool(app: AgentApp): void {
-  app.tool('list_page_rules', {
+  app.tool('list-page-rules', {
     description:
       'List all page rules for a Cloudflare zone. Page rules control zone-level settings by URL pattern.',
     parameters: {

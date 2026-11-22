@@ -1,12 +1,12 @@
 /**
- * get_chart — get a single chart by ID from Amplitude.
+ * get-chart — get a single chart by ID from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_DASHBOARD_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetChartTool(app: AgentApp): void {
-  app.tool('get_chart', {
+  app.tool('get-chart', {
     description:
       'Get details of a specific chart by ID from Amplitude. Returns the chart definition, configuration, and metadata.',
     parameters: {

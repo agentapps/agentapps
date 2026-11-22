@@ -48,7 +48,6 @@ import { registerGetUserTool } from './get-user.js';
 import { registerGetUserIdentityTool } from './get-user-identity.js';
 import { registerGetUserPresenceTool } from './get-user-presence.js';
 import { registerGetUserProfileTool } from './get-user-profile.js';
-import { registerHealthCheckTool } from './health-check.js';
 import { registerInviteSharedTool } from './invite-shared.js';
 import { registerInviteToChannelTool } from './invite-to-channel.js';
 import { registerJoinChannelTool } from './join-channel.js';
@@ -160,7 +159,6 @@ export function registerTools(app: AgentApp): void {
   registerGetUserPresenceTool(app);
   registerGetUserProfileTool(app);
   registerGetUserTool(app);
-  registerHealthCheckTool(app);
   registerInviteSharedTool(app);
   registerInviteToChannelTool(app);
   registerJoinChannelTool(app);

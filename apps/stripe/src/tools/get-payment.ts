@@ -1,12 +1,12 @@
 /**
- * get_payment — retrieve a single Stripe payment intent by ID.
+ * get-payment — retrieve a single Stripe payment intent by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerGetPaymentTool(app: AgentApp): void {
-  app.tool('get_payment', {
+  app.tool('get-payment', {
     description: 'Get detailed information about a specific Stripe payment intent.',
     parameters: {
       type: 'object',

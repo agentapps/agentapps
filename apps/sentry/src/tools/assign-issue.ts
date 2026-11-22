@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryIssue, sentryRequest } from '../types.js';
 
 export function registerAssignIssueTool(app: AgentApp): void {
-  app.tool('assign_issue', {
+  app.tool('assign-issue', {
     description: 'Assign a Sentry issue to a user or team.',
     parameters: {
       type: 'object',

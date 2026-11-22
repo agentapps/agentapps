@@ -1,12 +1,12 @@
 /**
- * list_records — list records from an Airtable table with optional filtering and sorting.
+ * list-records — list records from an Airtable table with optional filtering and sorting.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerListRecordsTool(app: AgentApp): void {
-  app.tool('list_records', {
+  app.tool('list-records', {
     description:
       'List records from an Airtable table. Supports filtering with Airtable formulas, field selection, sorting, and pagination.',
     parameters: {

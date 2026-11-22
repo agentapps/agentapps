@@ -9,7 +9,7 @@ interface GoogleCalendar {
 }
 
 export function registerCreateCalendarTool(app: AgentApp): void {
-  app.tool('create_calendar', {
+  app.tool('create-calendar', {
     description: 'Create a new Google Calendar',
     parameters: {
       type: 'object',

@@ -216,26 +216,26 @@ describe('Runn Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'runn-create-actual',
-      'runn-create-assignment',
-      'runn-create-client',
-      'runn-create-person',
-      'runn-create-placeholder',
-      'runn-create-project',
-      'runn-delete-assignment',
-      'runn-get-person',
-      'runn-get-project',
-      'runn-list-actuals',
-      'runn-list-assignments',
-      'runn-list-clients',
-      'runn-list-people',
-      'runn-list-placeholders',
-      'runn-list-projects',
-      'runn-list-roles',
-      'runn-list-skills',
-      'runn-list-teams',
-      'runn-project-totals',
-      'runn-update-project',
+      'create-actual',
+      'create-assignment',
+      'create-client',
+      'create-person',
+      'create-placeholder',
+      'create-project',
+      'delete-assignment',
+      'get-person',
+      'get-project',
+      'get-project-totals',
+      'list-actuals',
+      'list-assignments',
+      'list-clients',
+      'list-people',
+      'list-placeholders',
+      'list-projects',
+      'list-roles',
+      'list-skills',
+      'list-teams',
+      'update-project',
     ]);
   });
 
@@ -254,13 +254,13 @@ describe('Runn Agent App', () => {
     expect(headers.Authorization).toBe('Bearer LIVE_test');
   });
 
-  it('runn-list-projects sends Bearer token + Accept-Version', async () => {
+  it('list-projects sends Bearer token + Accept-Version', async () => {
     queue(json({ values: [{ id: 7, name: 'Apollo' }], nextCursor: null }));
 
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'runn-list-projects', {});
+    sendToolCall(sessionId, 'list-projects', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -273,7 +273,7 @@ describe('Runn Agent App', () => {
     expect(headers['Accept-Version']).toBe('1.0.0');
   });
 
-  it('runn-list-projects returns paginated values', async () => {
+  it('list-projects returns paginated values', async () => {
     queue(
       json({
         values: [
@@ -287,7 +287,7 @@ describe('Runn Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'runn-list-projects', {});
+    sendToolCall(sessionId, 'list-projects', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -300,19 +300,19 @@ describe('Runn Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'runn-list-projects', {});
+    sendToolCall(sessionId, 'list-projects', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
   });
 
-  it('runn-create-project sends POST with body', async () => {
+  it('create-project sends POST with body', async () => {
     queue(json([{ id: 9, name: 'New Project' }]));
 
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'runn-create-project', {
+    sendToolCall(sessionId, 'create-project', {
       name: 'New Project',
       clientId: 1,
     });

@@ -136,10 +136,10 @@ describe('ElevenLabs Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'get_subscription',
-      'get_voice',
-      'list_voices',
-      'text_to_speech',
+      'generate-speech',
+      'get-subscription',
+      'get-voice',
+      'list-voices',
     ]);
   });
 
@@ -152,7 +152,7 @@ describe('ElevenLabs Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('text_to_speech returns base64 audio', async () => {
+  it('generate-speech returns base64 audio', async () => {
     const fakeAudio = new Uint8Array([0x49, 0x44, 0x33]).buffer; // fake MP3 header
     vi.stubGlobal(
       'fetch',
@@ -165,7 +165,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'text_to_speech', { text: 'Hola mundo' });
+    sendToolCall(sessionId, 'generate-speech', { text: 'Hola mundo' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -179,7 +179,7 @@ describe('ElevenLabs Agent App', () => {
     expect(data.audioSizeBytes).toBe(3);
   });
 
-  it('text_to_speech calls correct endpoint with voice settings', async () => {
+  it('generate-speech calls correct endpoint with voice settings', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       arrayBuffer: () => Promise.resolve(new Uint8Array([1, 2, 3]).buffer),
@@ -189,7 +189,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'text_to_speech', {
+    sendToolCall(sessionId, 'generate-speech', {
       text: 'Test',
       voiceId: 'abc123',
       modelId: 'eleven_multilingual_v2',
@@ -210,7 +210,7 @@ describe('ElevenLabs Agent App', () => {
     expect(body.voice_settings.stability).toBe(0.8);
   });
 
-  it('list_voices returns filtered voices', async () => {
+  it('list-voices returns filtered voices', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -250,7 +250,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_voices', { category: 'premade' });
+    sendToolCall(sessionId, 'list-voices', { category: 'premade' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -261,7 +261,7 @@ describe('ElevenLabs Agent App', () => {
     expect(data[1].name).toBe('Maria');
   });
 
-  it('get_voice returns voice details', async () => {
+  it('get-voice returns voice details', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -278,7 +278,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_voice', { voiceId: 'abc123' });
+    sendToolCall(sessionId, 'get-voice', { voiceId: 'abc123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -288,7 +288,7 @@ describe('ElevenLabs Agent App', () => {
     expect(data.name).toBe('Test Voice');
   });
 
-  it('get_subscription returns usage info', async () => {
+  it('get-subscription returns usage info', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -308,7 +308,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_subscription', {});
+    sendToolCall(sessionId, 'get-subscription', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -319,7 +319,7 @@ describe('ElevenLabs Agent App', () => {
     expect(data.characters_remaining).toBe(25000);
   });
 
-  it('text_to_speech fails on API error', async () => {
+  it('generate-speech fails on API error', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -332,7 +332,7 @@ describe('ElevenLabs Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'text_to_speech', { text: 'test' });
+    sendToolCall(sessionId, 'generate-speech', { text: 'test' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

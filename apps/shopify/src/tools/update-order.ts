@@ -1,12 +1,12 @@
 /**
- * update_order — update an existing Shopify order.
+ * update-order — update an existing Shopify order.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerUpdateOrderTool(app: AgentApp): void {
-  app.tool('update_order', {
+  app.tool('update-order', {
     description:
       'Update an existing order in your Shopify store. Supports updating note, tags, and email.',
     parameters: {

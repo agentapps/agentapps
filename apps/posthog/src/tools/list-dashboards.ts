@@ -1,12 +1,12 @@
 /**
- * list_dashboards — list dashboards in PostHog.
+ * list-dashboards — list dashboards in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListDashboardsTool(app: AgentApp): void {
-  app.tool('list_dashboards', {
+  app.tool('list-dashboards', {
     description: 'List all dashboards in the PostHog project.',
     parameters: {
       type: 'object',

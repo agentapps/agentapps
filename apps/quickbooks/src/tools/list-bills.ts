@@ -1,12 +1,12 @@
 /**
- * list_bills — list QuickBooks Online bills via query.
+ * list-bills — list QuickBooks Online bills via query.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerListBillsTool(app: AgentApp): void {
-  app.tool('list_bills', {
+  app.tool('list-bills', {
     description: 'List bills from your QuickBooks Online account. Returns up to maxResults bills.',
     parameters: {
       type: 'object',

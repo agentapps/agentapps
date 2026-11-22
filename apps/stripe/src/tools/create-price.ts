@@ -1,12 +1,12 @@
 /**
- * create_price — create a new Stripe price.
+ * create-price — create a new Stripe price.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreatePriceTool(app: AgentApp): void {
-  app.tool('create_price', {
+  app.tool('create-price', {
     description:
       'Create a new price in Stripe for an existing product. Supports one-time and recurring pricing.',
     parameters: {

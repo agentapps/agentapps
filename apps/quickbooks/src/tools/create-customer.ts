@@ -1,12 +1,12 @@
 /**
- * create_customer — create a new QuickBooks Online customer.
+ * create-customer — create a new QuickBooks Online customer.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerCreateCustomerTool(app: AgentApp): void {
-  app.tool('create_customer', {
+  app.tool('create-customer', {
     description: 'Create a new customer in QuickBooks Online. Returns the created customer object.',
     parameters: {
       type: 'object',

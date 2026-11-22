@@ -1,12 +1,12 @@
 /**
- * list_incidents — list Datadog incidents.
+ * list-incidents — list Datadog incidents.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerListIncidentsTool(app: AgentApp): void {
-  app.tool('list_incidents', {
+  app.tool('list-incidents', {
     description: 'List incidents from Datadog. Supports pagination via page size and offset.',
     parameters: {
       type: 'object',

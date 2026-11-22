@@ -136,19 +136,19 @@ describe('Cloudflare Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_dns_record',
-      'delete_dns_record',
-      'get_worker',
-      'get_zone',
-      'get_zone_analytics',
-      'list_dns_records',
-      'list_firewall_rules',
-      'list_kv_namespaces',
-      'list_page_rules',
-      'list_workers',
-      'list_zones',
-      'purge_cache',
-      'update_dns_record',
+      'create-dns-record',
+      'delete-dns-record',
+      'get-worker',
+      'get-zone',
+      'get-zone-analytics',
+      'list-dns-records',
+      'list-firewall-rules',
+      'list-kv-namespaces',
+      'list-page-rules',
+      'list-workers',
+      'list-zones',
+      'purge-cache',
+      'update-dns-record',
     ]);
   });
 
@@ -161,7 +161,7 @@ describe('Cloudflare Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_zones returns zone data', async () => {
+  it('list-zones returns zone data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -181,7 +181,7 @@ describe('Cloudflare Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_zones', {});
+    sendToolCall(sessionId, 'list-zones', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -192,7 +192,7 @@ describe('Cloudflare Agent App', () => {
     expect(data[1].name).toBe('test.dev');
   });
 
-  it('create_dns_record sends correct JSON body', async () => {
+  it('create-dns-record sends correct JSON body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -214,7 +214,7 @@ describe('Cloudflare Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_dns_record', {
+    sendToolCall(sessionId, 'create-dns-record', {
       zoneId: 'zone_abc',
       type: 'A',
       name: 'sub.example.com',
@@ -248,7 +248,7 @@ describe('Cloudflare Agent App', () => {
     expect(body.proxied).toBe(true);
   });
 
-  it('purge_cache sends purge_everything flag', async () => {
+  it('purge-cache sends purge_everything flag', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -263,7 +263,7 @@ describe('Cloudflare Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'purge_cache', {
+    sendToolCall(sessionId, 'purge-cache', {
       zoneId: 'zone_abc',
       purgeEverything: true,
     });
@@ -283,7 +283,7 @@ describe('Cloudflare Agent App', () => {
     expect(body.purge_everything).toBe(true);
   });
 
-  it('get_zone_analytics passes since/until query params', async () => {
+  it('get-zone-analytics passes since/until query params', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -301,7 +301,7 @@ describe('Cloudflare Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_zone_analytics', {
+    sendToolCall(sessionId, 'get-zone-analytics', {
       zoneId: 'zone_abc',
       since: '2024-01-01T00:00:00Z',
       until: '2024-01-02T00:00:00Z',
@@ -350,7 +350,7 @@ describe('Cloudflare Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_zones', {});
+    sendToolCall(sessionId, 'list-zones', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/cli",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Agent Apps CLI — run and exercise Agent Apps locally from a workspace",
   "license": "MIT",
   "type": "module",

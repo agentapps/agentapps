@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-list-data-streams — List data streams for a property.
+ * list-data-streams — List data streams for a property.
  */
 export function registerListDataStreamsTool(app: AgentApp): void {
-  app.tool('analytics-list-data-streams', {
+  app.tool('list-data-streams', {
     description:
       'List data streams (web/iOS/Android) for a property. Returns { streams: [{ streamId, displayName, type, webStreamData, androidAppStreamData, iosAppStreamData }], count }.',
     parameters: {

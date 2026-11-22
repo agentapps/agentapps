@@ -1,14 +1,14 @@
 /**
- * get_transitions — get available transitions for a Jira issue.
+ * get-transitions — get available transitions for a Jira issue.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerGetTransitionsTool(app: AgentApp): void {
-  app.tool('get_transitions', {
+  app.tool('get-transitions', {
     description:
-      'Get the available workflow transitions for a Jira issue. Returns transition IDs and names that can be used with transition_issue.',
+      'Get the available workflow transitions for a Jira issue. Returns transition IDs and names that can be used with transition-issue.',
     parameters: {
       type: 'object',
       properties: {

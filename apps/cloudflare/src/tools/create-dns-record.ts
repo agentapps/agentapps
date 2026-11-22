@@ -1,12 +1,12 @@
 /**
- * create_dns_record — create a new DNS record in a Cloudflare zone.
+ * create-dns-record — create a new DNS record in a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerCreateDnsRecordTool(app: AgentApp): void {
-  app.tool('create_dns_record', {
+  app.tool('create-dns-record', {
     description: 'Create a new DNS record in a Cloudflare zone. Returns the created record.',
     parameters: {
       type: 'object',

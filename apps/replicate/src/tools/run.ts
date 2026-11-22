@@ -2,7 +2,7 @@
  * run — start an async prediction on Replicate.
  *
  * Always asynchronous: returns immediately with a prediction ID.
- * Use get_prediction to poll until done.
+ * Use get-prediction to poll until done.
  *
  * Tip: image-generation models default to WebP output. If the image
  * will be used in iOS notifications (Pushcut), pass output_format
@@ -16,8 +16,8 @@ export function registerRunTool(app: AgentApp): void {
   app.tool('run', {
     description:
       'Run any model on Replicate. ALWAYS asynchronous — returns immediately with a prediction ID and status "starting". ' +
-      'Then use get_prediction to poll until done. ' +
-      'Use list_models first to discover the model ID and its exact input parameters.',
+      'Then use get-prediction to poll until done. ' +
+      'Use list-models first to discover the model ID and its exact input parameters.',
     parameters: {
       type: 'object',
       properties: {
@@ -25,12 +25,12 @@ export function registerRunTool(app: AgentApp): void {
           type: 'string',
           description:
             'Model in "owner/name" format (e.g. "google/veo-3.1", "black-forest-labs/flux-kontext-pro"). ' +
-            'Use list_models to find available models.',
+            'Use list-models to find available models.',
         },
         input: {
           type: 'object',
           description:
-            'Input parameters for the model. Use list_models with the model field to get the exact schema. ' +
+            'Input parameters for the model. Use list-models with the model field to get the exact schema. ' +
             'For image models, include output_format "png" or "jpg" if the image will be used on iOS (default is "webp" which iOS does not support).',
         },
       },

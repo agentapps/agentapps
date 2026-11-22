@@ -1,12 +1,12 @@
 /**
- * get_product — retrieve a single Holded product by ID.
+ * get-product — retrieve a single Holded product by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerGetProductTool(app: AgentApp): void {
-  app.tool('get_product', {
+  app.tool('get-product', {
     description: 'Get detailed information about a specific Holded product.',
     parameters: {
       type: 'object',

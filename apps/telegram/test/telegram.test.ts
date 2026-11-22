@@ -136,20 +136,20 @@ describe('Telegram Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'answer_callback_query',
-      'delete_message',
-      'edit_message',
-      'forward_message',
-      'get_chat',
-      'get_chat_member',
-      'get_chat_members_count',
-      'get_me',
-      'pin_message',
-      'send_document',
-      'send_location',
-      'send_message',
-      'send_photo',
-      'set_chat_title',
+      'answer-callback-query',
+      'delete-message',
+      'edit-message',
+      'forward-message',
+      'get-chat',
+      'get-chat-member',
+      'get-chat-members-count',
+      'get-me',
+      'pin-message',
+      'send-document',
+      'send-location',
+      'send-message',
+      'send-photo',
+      'set-chat-title',
     ]);
   });
 
@@ -174,7 +174,7 @@ describe('Telegram Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('send_message sends correct payload', async () => {
+  it('send-message sends correct payload', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -192,7 +192,7 @@ describe('Telegram Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_message', {
+    sendToolCall(sessionId, 'send-message', {
       chatId: '123',
       text: 'Hello!',
     });
@@ -217,7 +217,7 @@ describe('Telegram Agent App', () => {
     expect(body.text).toBe('Hello!');
   });
 
-  it('get_me returns bot info', async () => {
+  it('get-me returns bot info', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -238,7 +238,7 @@ describe('Telegram Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_me', {});
+    sendToolCall(sessionId, 'get-me', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -248,7 +248,7 @@ describe('Telegram Agent App', () => {
     expect(data.username).toBe('test_bot');
   });
 
-  it('get_chat returns chat data', async () => {
+  it('get-chat returns chat data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -268,7 +268,7 @@ describe('Telegram Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_chat', { chatId: '-100123456' });
+    sendToolCall(sessionId, 'get-chat', { chatId: '-100123456' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -278,7 +278,7 @@ describe('Telegram Agent App', () => {
     expect(data.type).toBe('supergroup');
   });
 
-  it('send_photo sends correct payload', async () => {
+  it('send-photo sends correct payload', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -296,7 +296,7 @@ describe('Telegram Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_photo', {
+    sendToolCall(sessionId, 'send-photo', {
       chatId: '123',
       photo: 'https://example.com/image.jpg',
       caption: 'A nice photo',
@@ -340,7 +340,7 @@ describe('Telegram Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_me', {});
+    sendToolCall(sessionId, 'get-me', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

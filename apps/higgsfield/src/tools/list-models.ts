@@ -9,12 +9,12 @@ interface ModelInfo {
 }
 
 /**
- * higgsfield-list-models — list available models and their capabilities.
+ * list-models — list available models and their capabilities.
  *
  * Returns a curated list of known models from Higgsfield. No API call needed.
  */
 export function registerListModelsTool(app: AgentApp): void {
-  app.tool('higgsfield-list-models', {
+  app.tool('list-models', {
     description:
       'List available models and their capabilities. Params: type? ("all"|"text-to-image"|"image-to-video"|"text-to-video"|"image-to-image", default "all").',
     parameters: {

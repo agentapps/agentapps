@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-list-properties — List GA4 properties under an account.
+ * list-properties — List GA4 properties under an account.
  */
 export function registerListPropertiesTool(app: AgentApp): void {
-  app.tool('analytics-list-properties', {
+  app.tool('list-properties', {
     description:
       'List GA4 properties under an account. Returns { properties: [{ propertyId, displayName, propertyType, currencyCode, timeZone, industryCategory }], count }.',
     parameters: {

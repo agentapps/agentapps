@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-delete-project — Delete a Railway project. Irreversible!
+ * delete-project — Delete a Railway project. Irreversible!
  */
 export function registerDeleteProjectTool(app: AgentApp): void {
-  app.tool('railway-delete-project', {
+  app.tool('delete-project', {
     description: 'Delete a Railway project. This action is irreversible!',
     parameters: {
       type: 'object',

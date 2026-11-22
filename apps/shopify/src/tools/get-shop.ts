@@ -1,12 +1,12 @@
 /**
- * get_shop — retrieve Shopify shop information.
+ * get-shop — retrieve Shopify shop information.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerGetShopTool(app: AgentApp): void {
-  app.tool('get_shop', {
+  app.tool('get-shop', {
     description:
       'Get information about the connected Shopify store, including name, domain, plan, and settings.',
     parameters: {

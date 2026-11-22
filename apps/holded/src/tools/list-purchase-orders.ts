@@ -1,12 +1,12 @@
 /**
- * list_purchase_orders — list Holded purchase orders.
+ * list-purchase-orders — list Holded purchase orders.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListPurchaseOrdersTool(app: AgentApp): void {
-  app.tool('list_purchase_orders', {
+  app.tool('list-purchase-orders', {
     description:
       'List purchase orders from your Holded account. Returns all purchase order documents.',
     parameters: {

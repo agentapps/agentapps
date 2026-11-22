@@ -5,7 +5,7 @@ import { TEAM_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListTeamsTool(app: AgentApp): void {
-  app.tool('runn-list-teams', {
+  app.tool('list-teams', {
     description:
       'List Runn teams. Returns { items: [{ id, name, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

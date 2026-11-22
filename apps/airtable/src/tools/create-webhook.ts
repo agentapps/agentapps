@@ -1,12 +1,12 @@
 /**
- * create_webhook — create a webhook for an Airtable base.
+ * create-webhook — create a webhook for an Airtable base.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerCreateWebhookTool(app: AgentApp): void {
-  app.tool('create_webhook', {
+  app.tool('create-webhook', {
     description:
       'Create a webhook for an Airtable base to receive notifications when data changes. Returns the webhook ID and MAC secret.',
     parameters: {

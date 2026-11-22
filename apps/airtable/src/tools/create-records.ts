@@ -1,12 +1,12 @@
 /**
- * create_records — create new records in an Airtable table.
+ * create-records — create new records in an Airtable table.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerCreateRecordsTool(app: AgentApp): void {
-  app.tool('create_records', {
+  app.tool('create-records', {
     description:
       'Create one or more new records in an Airtable table. Returns the created records with their IDs.',
     parameters: {

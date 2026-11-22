@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-delete-custom-domain -- DELETE /services/{serviceId}/custom-domains/{domainId}.
+ * delete-custom-domain -- DELETE /services/{serviceId}/custom-domains/{domainId}.
  */
 export function registerDeleteCustomDomainTool(app: AgentApp): void {
-  app.tool('render-delete-custom-domain', {
+  app.tool('delete-custom-domain', {
     description:
       'Remove a custom domain from a Render service. Returns { domainId, deleted }. Params: serviceId (required), domainId (required).',
     parameters: {

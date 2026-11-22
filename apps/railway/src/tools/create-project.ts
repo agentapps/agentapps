@@ -2,12 +2,12 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-create-project — Create a new Railway project.
+ * create-project — Create a new Railway project.
  */
 export function registerCreateProjectTool(app: AgentApp): void {
-  app.tool('railway-create-project', {
+  app.tool('create-project', {
     description:
-      'Create a new Railway project. Requires a workspaceId - use railway-list-workspaces to get available workspaces.',
+      'Create a new Railway project. Requires a workspaceId - use list-workspaces to get available workspaces.',
     parameters: {
       type: 'object',
       properties: {
@@ -17,8 +17,7 @@ export function registerCreateProjectTool(app: AgentApp): void {
         },
         workspaceId: {
           type: 'string',
-          description:
-            'Workspace ID to create the project in (use railway-list-workspaces to get IDs)',
+          description: 'Workspace ID to create the project in (use list-workspaces to get IDs)',
         },
         description: {
           type: 'string',

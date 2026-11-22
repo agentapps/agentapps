@@ -1,12 +1,12 @@
 /**
- * list_expenses — list Holded expenses.
+ * list-expenses — list Holded expenses.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerListExpensesTool(app: AgentApp): void {
-  app.tool('list_expenses', {
+  app.tool('list-expenses', {
     description: 'List expenses from your Holded account. Returns all expense documents.',
     parameters: {
       type: 'object',

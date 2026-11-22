@@ -1,12 +1,12 @@
 /**
- * get_subscription — check ElevenLabs usage and limits.
+ * get-subscription — check ElevenLabs usage and limits.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, elevenLabsRequest } from '../types.js';
 
 export function registerGetSubscriptionTool(app: AgentApp): void {
-  app.tool('get_subscription', {
+  app.tool('get-subscription', {
     description:
       'Get information about your ElevenLabs subscription: character usage, limits, and tier.',
     parameters: {

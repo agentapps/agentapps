@@ -3,7 +3,7 @@ import { getLinearClient } from '../lib/index.js';
 import { validateIssueId } from './_linear-helpers.js';
 
 export function registerArchiveIssueTool(app: AgentApp): void {
-  app.tool('linear-archive-issue', {
+  app.tool('archive-issue', {
     description:
       'Archive a Linear issue (soft delete). Reversible via un-archive. Returns { success, issueId }.',
     parameters: {

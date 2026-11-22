@@ -1,12 +1,12 @@
 /**
- * update_issue — update an existing Jira issue.
+ * update-issue — update an existing Jira issue.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerUpdateIssueTool(app: AgentApp): void {
-  app.tool('update_issue', {
+  app.tool('update-issue', {
     description:
       'Update fields on an existing Jira issue. Only the provided fields will be changed.',
     parameters: {

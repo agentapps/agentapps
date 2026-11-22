@@ -1,12 +1,12 @@
 /**
- * get_sprint — get details of a specific sprint.
+ * get-sprint — get details of a specific sprint.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerGetSprintTool(app: AgentApp): void {
-  app.tool('get_sprint', {
+  app.tool('get-sprint', {
     description:
       'Get detailed information about a specific sprint by its ID, including name, state, and dates.',
     parameters: {

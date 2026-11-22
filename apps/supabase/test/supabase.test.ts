@@ -141,18 +141,18 @@ describe('Supabase Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_bucket',
-      'delete_rows',
-      'get_public_url',
-      'get_row',
-      'insert_rows',
-      'list_buckets',
-      'list_files',
-      'list_tables',
-      'list_users',
-      'query_table',
+      'create-bucket',
+      'delete-rows',
+      'get-public-url',
+      'get-row',
+      'insert-rows',
+      'list-buckets',
+      'list-files',
+      'list-tables',
+      'list-users',
+      'query-table',
       'rpc',
-      'update_rows',
+      'update-rows',
     ]);
   });
 
@@ -165,7 +165,7 @@ describe('Supabase Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('query_table sends correct URL with filters', async () => {
+  it('query-table sends correct URL with filters', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       text: () =>
@@ -182,7 +182,7 @@ describe('Supabase Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'query_table', {
+    sendToolCall(sessionId, 'query-table', {
       table: 'users',
       select: 'id,name,age',
       filter: 'age=gt.18',
@@ -217,7 +217,7 @@ describe('Supabase Agent App', () => {
     expect(headers.apikey).toBe('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.fake-key');
   });
 
-  it('insert_rows sends POST with correct body', async () => {
+  it('insert-rows sends POST with correct body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       text: () =>
@@ -229,7 +229,7 @@ describe('Supabase Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'insert_rows', {
+    sendToolCall(sessionId, 'insert-rows', {
       table: 'users',
       rows: [{ name: 'Charlie', email: 'charlie@test.com' }],
     });
@@ -253,7 +253,7 @@ describe('Supabase Agent App', () => {
     expect(headers['Content-Type']).toBe('application/json');
   });
 
-  it('list_buckets returns bucket data', async () => {
+  it('list-buckets returns bucket data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -272,7 +272,7 @@ describe('Supabase Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_buckets', {});
+    sendToolCall(sessionId, 'list-buckets', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -336,7 +336,7 @@ describe('Supabase Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_tables', {});
+    sendToolCall(sessionId, 'list-tables', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -1,12 +1,12 @@
 /**
- * get_voice — get detailed information about a specific voice.
+ * get-voice — get detailed information about a specific voice.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, elevenLabsRequest } from '../types.js';
 
 export function registerGetVoiceTool(app: AgentApp): void {
-  app.tool('get_voice', {
+  app.tool('get-voice', {
     description:
       'Get detailed information about a specific ElevenLabs voice including settings and samples.',
     parameters: {

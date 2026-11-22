@@ -15,9 +15,9 @@ function parseValue(value: unknown): unknown {
 }
 
 export function registerSetCapabilityTool(app: AgentApp): void {
-  app.tool('homey-set-capability', {
+  app.tool('set-capability', {
     description:
-      'Set a device capability value (e.g., turn on/off, set brightness, temperature). Use homey-list-devices to find device IDs and capabilities.',
+      'Set a device capability value (e.g., turn on/off, set brightness, temperature). Use list-devices to find device IDs and capabilities.',
     parameters: {
       type: 'object',
       properties: {

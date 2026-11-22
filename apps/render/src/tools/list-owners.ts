@@ -9,10 +9,10 @@ interface RenderOwner {
 }
 
 /**
- * render-list-owners -- GET /owners.
+ * list-owners -- GET /owners.
  */
 export function registerListOwnersTool(app: AgentApp): void {
-  app.tool('render-list-owners', {
+  app.tool('list-owners', {
     description:
       'List all workspaces/owners (personal and team accounts) accessible to the authenticated user. Returns { owners: [{ id, name, email, type }] }.',
     parameters: {

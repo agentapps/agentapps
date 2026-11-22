@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { ensureAuthenticated, type GoogleCalendarEvent, googleCalendarFetch } from '../types.js';
 
 export function registerUpdateEventTool(app: AgentApp): void {
-  app.tool('update_event', {
+  app.tool('update-event', {
     description: 'Update an existing Google Calendar event',
     parameters: {
       type: 'object',

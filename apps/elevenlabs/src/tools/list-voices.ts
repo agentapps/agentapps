@@ -1,12 +1,12 @@
 /**
- * list_voices — list available ElevenLabs voices with optional filtering.
+ * list-voices — list available ElevenLabs voices with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, elevenLabsRequest } from '../types.js';
 
 export function registerListVoicesTool(app: AgentApp): void {
-  app.tool('list_voices', {
+  app.tool('list-voices', {
     description:
       'List available voices from your ElevenLabs account. ' +
       'Supports filtering by name and category.',

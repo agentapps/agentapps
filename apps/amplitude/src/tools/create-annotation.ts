@@ -1,12 +1,12 @@
 /**
- * create_annotation — create a chart annotation in Amplitude.
+ * create-annotation — create a chart annotation in Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_DASHBOARD_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerCreateAnnotationTool(app: AgentApp): void {
-  app.tool('create_annotation', {
+  app.tool('create-annotation', {
     description:
       'Create a chart annotation in Amplitude. Adds a labeled marker on a specific date visible across dashboards and charts.',
     parameters: {

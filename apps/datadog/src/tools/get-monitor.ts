@@ -1,12 +1,12 @@
 /**
- * get_monitor — retrieve a single Datadog monitor by ID.
+ * get-monitor — retrieve a single Datadog monitor by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerGetMonitorTool(app: AgentApp): void {
-  app.tool('get_monitor', {
+  app.tool('get-monitor', {
     description: 'Get detailed information about a specific Datadog monitor by its ID.',
     parameters: {
       type: 'object',

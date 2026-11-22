@@ -1,12 +1,12 @@
 /**
- * create_product — create a new Holded product.
+ * create-product — create a new Holded product.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerCreateProductTool(app: AgentApp): void {
-  app.tool('create_product', {
+  app.tool('create-product', {
     description: 'Create a new product in Holded. Returns the created product object.',
     parameters: {
       type: 'object',

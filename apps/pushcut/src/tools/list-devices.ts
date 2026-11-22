@@ -1,12 +1,12 @@
 /**
- * list_devices — list all active iOS devices registered in Pushcut.
+ * list-devices — list all active iOS devices registered in Pushcut.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, pushcutRequest, resolveApiKey } from '../types.js';
 
 export function registerListDevicesTool(app: AgentApp): void {
-  app.tool('list_devices', {
+  app.tool('list-devices', {
     description: 'List all active iOS devices registered in your Pushcut account.',
     parameters: {
       type: 'object',

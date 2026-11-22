@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerListNotificationsTool(app: AgentApp): void {
-  app.tool('homey-list-notifications', {
+  app.tool('list-notifications', {
     description: 'List notifications from Homey (alerts, warnings, system messages).',
     parameters: {
       type: 'object',

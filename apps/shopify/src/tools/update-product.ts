@@ -1,12 +1,12 @@
 /**
- * update_product — update an existing Shopify product.
+ * update-product — update an existing Shopify product.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerUpdateProductTool(app: AgentApp): void {
-  app.tool('update_product', {
+  app.tool('update-product', {
     description:
       'Update an existing product in your Shopify store. Supports updating title, description, vendor, type, and tags.',
     parameters: {

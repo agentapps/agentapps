@@ -302,19 +302,19 @@ describe('Google Analytics Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'analytics-batch-run-reports',
-      'analytics-create-data-stream',
-      'analytics-create-property',
-      'analytics-delete-property',
-      'analytics-get-data-stream',
-      'analytics-get-metadata',
-      'analytics-get-property',
-      'analytics-list-accounts',
-      'analytics-list-data-streams',
-      'analytics-list-properties',
-      'analytics-run-realtime-report',
-      'analytics-run-report',
-      'analytics-update-property',
+      'batch-run-reports',
+      'create-data-stream',
+      'create-property',
+      'delete-property',
+      'get-data-stream',
+      'get-metadata',
+      'get-property',
+      'list-accounts',
+      'list-data-streams',
+      'list-properties',
+      'run-realtime-report',
+      'run-report',
+      'update-property',
     ]);
   });
 
@@ -330,11 +330,11 @@ describe('Google Analytics Agent App', () => {
     expect(mockAccountsList).toHaveBeenCalled();
   });
 
-  it('analytics-list-accounts returns accounts', async () => {
+  it('list-accounts returns accounts', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-list-accounts', {});
+    sendToolCall(sessionId, 'list-accounts', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -347,11 +347,11 @@ describe('Google Analytics Agent App', () => {
     expect(accounts[0].displayName).toBe('Test Account');
   });
 
-  it('analytics-list-properties returns properties for an account', async () => {
+  it('list-properties returns properties for an account', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-list-properties', { accountId: '111' });
+    sendToolCall(sessionId, 'list-properties', { accountId: '111' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -363,11 +363,11 @@ describe('Google Analytics Agent App', () => {
     expect(props[0].displayName).toBe('Test Property');
   });
 
-  it('analytics-get-property returns property details', async () => {
+  it('get-property returns property details', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-get-property', { propertyId: '222' });
+    sendToolCall(sessionId, 'get-property', { propertyId: '222' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -379,11 +379,11 @@ describe('Google Analytics Agent App', () => {
     expect(prop.currencyCode).toBe('USD');
   });
 
-  it('analytics-run-report returns curated report data', async () => {
+  it('run-report returns curated report data', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-run-report', {
+    sendToolCall(sessionId, 'run-report', {
       propertyId: '222',
       metrics: ['activeUsers'],
       dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],
@@ -402,11 +402,11 @@ describe('Google Analytics Agent App', () => {
     expect(rows[0].metricValues).toEqual(['1234']);
   });
 
-  it('analytics-run-report normalizes property id and metrics', async () => {
+  it('run-report normalizes property id and metrics', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-run-report', {
+    sendToolCall(sessionId, 'run-report', {
       propertyId: 'properties/222',
       metrics: ['sessions'],
       dateRanges: [{ startDate: '2024-01-01', endDate: '2024-01-31' }],
@@ -426,11 +426,11 @@ describe('Google Analytics Agent App', () => {
     );
   });
 
-  it('analytics-run-realtime-report returns realtime data', async () => {
+  it('run-realtime-report returns realtime data', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-run-realtime-report', {
+    sendToolCall(sessionId, 'run-realtime-report', {
       propertyId: '222',
       metrics: ['activeUsers'],
       dimensions: ['country'],
@@ -445,11 +445,11 @@ describe('Google Analytics Agent App', () => {
     expect(rows[0].metricValues).toEqual(['42']);
   });
 
-  it('analytics-batch-run-reports returns multiple reports', async () => {
+  it('batch-run-reports returns multiple reports', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-batch-run-reports', {
+    sendToolCall(sessionId, 'batch-run-reports', {
       propertyId: '222',
       requests: [
         {
@@ -469,11 +469,11 @@ describe('Google Analytics Agent App', () => {
     expect(reports[0].rowCount).toBe(1);
   });
 
-  it('analytics-get-metadata returns dimensions and metrics', async () => {
+  it('get-metadata returns dimensions and metrics', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-get-metadata', { propertyId: '222' });
+    sendToolCall(sessionId, 'get-metadata', { propertyId: '222' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -491,7 +491,7 @@ describe('Google Analytics Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-run-report', {
+    sendToolCall(sessionId, 'run-report', {
       propertyId: '222',
       metrics: ['activeUsers'],
       dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],
@@ -512,7 +512,7 @@ describe('Google Analytics Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-list-accounts', {});
+    sendToolCall(sessionId, 'list-accounts', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
@@ -524,7 +524,7 @@ describe('Google Analytics Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'analytics-run-report', {
+    sendToolCall(sessionId, 'run-report', {
       propertyId: 'properties/abc',
       metrics: ['activeUsers'],
       dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],

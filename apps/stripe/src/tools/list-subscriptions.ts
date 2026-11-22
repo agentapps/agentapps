@@ -1,12 +1,12 @@
 /**
- * list_subscriptions — list Stripe subscriptions.
+ * list-subscriptions — list Stripe subscriptions.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListSubscriptionsTool(app: AgentApp): void {
-  app.tool('list_subscriptions', {
+  app.tool('list-subscriptions', {
     description:
       'List subscriptions from your Stripe account. Supports filtering by customer and status.',
     parameters: {

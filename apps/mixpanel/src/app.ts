@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.mixpanel',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Mixpanel',
   description:
     'Mixpanel analytics — track events, query funnels, retention, user profiles, and export data.',

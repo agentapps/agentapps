@@ -1,12 +1,12 @@
 /**
- * search_users — search for users in Amplitude.
+ * search-users — search for users in Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerSearchUsersTool(app: AgentApp): void {
-  app.tool('search_users', {
+  app.tool('search-users', {
     description:
       'Search for users in Amplitude by user ID, device ID, or other identifiers. Returns matching user records with their IDs and metadata.',
     parameters: {

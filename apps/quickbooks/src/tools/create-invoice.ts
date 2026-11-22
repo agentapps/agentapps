@@ -1,12 +1,12 @@
 /**
- * create_invoice — create a new QuickBooks Online invoice.
+ * create-invoice — create a new QuickBooks Online invoice.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerCreateInvoiceTool(app: AgentApp): void {
-  app.tool('create_invoice', {
+  app.tool('create-invoice', {
     description:
       'Create a new invoice in QuickBooks Online. Requires a customer reference and at least one line item.',
     parameters: {

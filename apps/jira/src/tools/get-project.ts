@@ -1,12 +1,12 @@
 /**
- * get_project — get detailed information about a Jira project.
+ * get-project — get detailed information about a Jira project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('get_project', {
+  app.tool('get-project', {
     description:
       'Get detailed information about a specific Jira project by its key or ID (e.g. "PROJ").',
     parameters: {

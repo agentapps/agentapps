@@ -1,12 +1,12 @@
 /**
- * create_vendor — create a new QuickBooks Online vendor.
+ * create-vendor — create a new QuickBooks Online vendor.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerCreateVendorTool(app: AgentApp): void {
-  app.tool('create_vendor', {
+  app.tool('create-vendor', {
     description: 'Create a new vendor in QuickBooks Online. Returns the created vendor object.',
     parameters: {
       type: 'object',

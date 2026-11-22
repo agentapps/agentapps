@@ -136,21 +136,21 @@ describe('Sentry Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'assign_issue',
-      'create_release',
-      'get_event',
-      'get_issue',
-      'get_project',
-      'get_release',
-      'ignore_issue',
-      'list_alerts',
-      'list_events',
-      'list_issues',
-      'list_organizations',
-      'list_projects',
-      'list_releases',
-      'list_teams',
-      'resolve_issue',
+      'assign-issue',
+      'create-release',
+      'get-event',
+      'get-issue',
+      'get-project',
+      'get-release',
+      'ignore-issue',
+      'list-alerts',
+      'list-events',
+      'list-issues',
+      'list-organizations',
+      'list-projects',
+      'list-releases',
+      'list-teams',
+      'resolve-issue',
     ]);
   });
 
@@ -163,7 +163,7 @@ describe('Sentry Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_organizations returns mapped data', async () => {
+  it('list-organizations returns mapped data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -178,7 +178,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'list_organizations', {});
+    sendToolCall(sessionId, 'list-organizations', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -189,7 +189,7 @@ describe('Sentry Agent App', () => {
     expect(data[1].name).toBe('Test Org');
   });
 
-  it('list_projects returns projects for organization', async () => {
+  it('list-projects returns projects for organization', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -211,7 +211,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'list_projects', { organization: 'acme' });
+    sendToolCall(sessionId, 'list-projects', { organization: 'acme' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -222,7 +222,7 @@ describe('Sentry Agent App', () => {
     expect(data[0].platform).toBe('javascript');
   });
 
-  it('list_issues returns issues with filters', async () => {
+  it('list-issues returns issues with filters', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -251,7 +251,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'list_issues', { project: 'web-app' });
+    sendToolCall(sessionId, 'list-issues', { project: 'web-app' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -262,7 +262,7 @@ describe('Sentry Agent App', () => {
     expect(data[0].title).toBe('TypeError: null is not an object');
   });
 
-  it('get_issue returns detailed issue information', async () => {
+  it('get-issue returns detailed issue information', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -294,7 +294,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'get_issue', { issueId: 'i1' });
+    sendToolCall(sessionId, 'get-issue', { issueId: 'i1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -304,7 +304,7 @@ describe('Sentry Agent App', () => {
     expect(data.permalink).toBe('https://sentry.io/issues/i1/');
   });
 
-  it('get_event extracts stack trace', async () => {
+  it('get-event extracts stack trace', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -360,7 +360,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'get_event', {
+    sendToolCall(sessionId, 'get-event', {
       organization: 'test-org',
       project: 'web-app',
       eventId: 'evt1',
@@ -384,7 +384,7 @@ describe('Sentry Agent App', () => {
     expect(breadcrumbs).toHaveLength(1);
   });
 
-  it('resolve_issue marks issue as resolved', async () => {
+  it('resolve-issue marks issue as resolved', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: 'i1', status: 'resolved' }),
@@ -393,7 +393,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'resolve_issue', { issueId: 'i1' });
+    sendToolCall(sessionId, 'resolve-issue', { issueId: 'i1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -409,7 +409,7 @@ describe('Sentry Agent App', () => {
     expect(body.status).toBe('resolved');
   });
 
-  it('ignore_issue marks issue as ignored', async () => {
+  it('ignore-issue marks issue as ignored', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: 'i1', status: 'ignored' }),
@@ -418,7 +418,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'ignore_issue', { issueId: 'i1' });
+    sendToolCall(sessionId, 'ignore-issue', { issueId: 'i1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -432,7 +432,7 @@ describe('Sentry Agent App', () => {
     expect(body.status).toBe('ignored');
   });
 
-  it('assign_issue sends assignedTo in PUT body', async () => {
+  it('assign-issue sends assignedTo in PUT body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ id: 'i1', assignedTo: { email: 'dev@example.com' } }),
@@ -441,7 +441,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'assign_issue', { issueId: 'i1', assignedTo: 'dev@example.com' });
+    sendToolCall(sessionId, 'assign-issue', { issueId: 'i1', assignedTo: 'dev@example.com' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -468,7 +468,7 @@ describe('Sentry Agent App', () => {
 
     const sessionId = await initAndOpen();
     received.length = 0;
-    sendToolCall(sessionId, 'list_organizations', {});
+    sendToolCall(sessionId, 'list-organizations', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

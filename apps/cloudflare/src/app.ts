@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.cloudflare',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Cloudflare',
   description:
     'Cloudflare platform management — manage DNS records, zones, Workers, KV namespaces, page rules, firewall rules, analytics, and cache purging.',

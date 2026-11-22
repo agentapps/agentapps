@@ -1,12 +1,12 @@
 /**
- * create_contact — create a new Holded contact.
+ * create-contact — create a new Holded contact.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerCreateContactTool(app: AgentApp): void {
-  app.tool('create_contact', {
+  app.tool('create-contact', {
     description: 'Create a new contact in Holded. Returns the created contact object.',
     parameters: {
       type: 'object',

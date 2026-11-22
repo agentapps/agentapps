@@ -1,12 +1,12 @@
 /**
- * get_top_events — get the top events by volume from Mixpanel.
+ * get-top-events — get the top events by volume from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetTopEventsTool(app: AgentApp): void {
-  app.tool('get_top_events', {
+  app.tool('get-top-events', {
     description:
       'Get the top events by volume from Mixpanel. Returns the most common events in your project.',
     parameters: {

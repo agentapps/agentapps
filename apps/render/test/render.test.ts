@@ -160,37 +160,37 @@ describe('Render Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'render-add-custom-domain',
-      'render-add-disk',
-      'render-cancel-deploy',
-      'render-create-environment',
-      'render-create-project',
-      'render-create-service',
-      'render-delete-custom-domain',
-      'render-delete-env-var',
-      'render-delete-project',
-      'render-delete-service',
-      'render-get-deploy',
-      'render-get-logs',
-      'render-get-project',
-      'render-get-service',
-      'render-get-user',
-      'render-list-custom-domains',
-      'render-list-deploys',
-      'render-list-disks',
-      'render-list-env-vars',
-      'render-list-environments',
-      'render-list-owners',
-      'render-list-projects',
-      'render-list-services',
-      'render-restart-service',
-      'render-resume-service',
-      'render-rollback-deploy',
-      'render-set-env-vars',
-      'render-suspend-service',
-      'render-trigger-deploy',
-      'render-update-env-var',
-      'render-verify-custom-domain',
+      'add-custom-domain',
+      'add-disk',
+      'cancel-deploy',
+      'create-environment',
+      'create-project',
+      'create-service',
+      'delete-custom-domain',
+      'delete-env-var',
+      'delete-project',
+      'delete-service',
+      'get-deploy',
+      'get-logs',
+      'get-project',
+      'get-service',
+      'get-user',
+      'list-custom-domains',
+      'list-deploys',
+      'list-disks',
+      'list-env-vars',
+      'list-environments',
+      'list-owners',
+      'list-projects',
+      'list-services',
+      'restart-service',
+      'resume-service',
+      'rollback-deploy',
+      'set-env-vars',
+      'suspend-service',
+      'trigger-deploy',
+      'update-env-var',
+      'verify-custom-domain',
     ]);
   });
 
@@ -217,7 +217,7 @@ describe('Render Agent App', () => {
     expect(health.status).toBe('degraded');
   });
 
-  it('render-get-user returns user info', async () => {
+  it('get-user returns user info', async () => {
     vi.stubGlobal(
       'fetch',
       vi
@@ -228,7 +228,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-get-user', {});
+    sendToolCall(sessionId, 'get-user', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -239,7 +239,7 @@ describe('Render Agent App', () => {
     expect(data.email).toBe('jane@example.com');
   });
 
-  it('render-list-services returns services list', async () => {
+  it('list-services returns services list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -280,7 +280,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-list-services', {});
+    sendToolCall(sessionId, 'list-services', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -294,7 +294,7 @@ describe('Render Agent App', () => {
     expect(data.services[1].type).toBe('background_worker');
   });
 
-  it('render-list-deploys returns deploy list', async () => {
+  it('list-deploys returns deploy list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -325,7 +325,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-list-deploys', { serviceId: 'srv-abc' });
+    sendToolCall(sessionId, 'list-deploys', { serviceId: 'srv-abc' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -340,7 +340,7 @@ describe('Render Agent App', () => {
     expect(data.deploys[1].commit).toBeNull();
   });
 
-  it('render-trigger-deploy triggers a new deploy', async () => {
+  it('trigger-deploy triggers a new deploy', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -355,7 +355,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-trigger-deploy', {
+    sendToolCall(sessionId, 'trigger-deploy', {
       serviceId: 'srv-abc',
       clearCache: 'clear',
     });
@@ -381,7 +381,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-get-user', {});
+    sendToolCall(sessionId, 'get-user', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
@@ -395,7 +395,7 @@ describe('Render Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'render-get-service', { serviceId: 'nonexistent' });
+    sendToolCall(sessionId, 'get-service', { serviceId: 'nonexistent' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -206,10 +206,10 @@ describe('Replicate Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'cancel_prediction',
-      'get_prediction',
-      'list_models',
-      'list_predictions',
+      'cancel-prediction',
+      'get-prediction',
+      'list-models',
+      'list-predictions',
       'run',
     ]);
   });
@@ -223,7 +223,7 @@ describe('Replicate Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_models searches by query', async () => {
+  it('list-models searches by query', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -235,7 +235,7 @@ describe('Replicate Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_models', { query: 'flux' });
+    sendToolCall(sessionId, 'list-models', { query: 'flux' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -246,7 +246,7 @@ describe('Replicate Agent App', () => {
     expect(data[1].id).toBe('stability-ai/sdxl');
   });
 
-  it('list_models gets model schema', async () => {
+  it('list-models gets model schema', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -258,7 +258,7 @@ describe('Replicate Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_models', { model: 'black-forest-labs/flux-kontext-pro' });
+    sendToolCall(sessionId, 'list-models', { model: 'black-forest-labs/flux-kontext-pro' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -298,7 +298,7 @@ describe('Replicate Agent App', () => {
     expect(body.input.prompt).toBe('a cat wearing sunglasses');
   });
 
-  it('get_prediction returns prediction status', async () => {
+  it('get-prediction returns prediction status', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -313,7 +313,7 @@ describe('Replicate Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_prediction', { predictionId: 'pred_test123' });
+    sendToolCall(sessionId, 'get-prediction', { predictionId: 'pred_test123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -347,7 +347,7 @@ describe('Replicate Agent App', () => {
     expect(error.message as string).toContain('401');
   });
 
-  it('cancel_prediction sends POST to cancel endpoint', async () => {
+  it('cancel-prediction sends POST to cancel endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockPredictionResponse('canceled')),
@@ -357,7 +357,7 @@ describe('Replicate Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'cancel_prediction', { predictionId: 'pred_test123' });
+    sendToolCall(sessionId, 'cancel-prediction', { predictionId: 'pred_test123' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -371,7 +371,7 @@ describe('Replicate Agent App', () => {
     expect(fetchCall[1].method).toBe('POST');
   });
 
-  it('list_predictions returns recent predictions', async () => {
+  it('list-predictions returns recent predictions', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -405,7 +405,7 @@ describe('Replicate Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_predictions', {});
+    sendToolCall(sessionId, 'list-predictions', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);

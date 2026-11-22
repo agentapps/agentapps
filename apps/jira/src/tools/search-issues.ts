@@ -1,12 +1,12 @@
 /**
- * search_issues — search Jira issues using JQL.
+ * search-issues — search Jira issues using JQL.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerSearchIssuesTool(app: AgentApp): void {
-  app.tool('search_issues', {
+  app.tool('search-issues', {
     description:
       'Search for Jira issues using JQL (Jira Query Language). Supports pagination and field selection.',
     parameters: {

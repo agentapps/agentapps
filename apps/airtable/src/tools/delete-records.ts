@@ -1,12 +1,12 @@
 /**
- * delete_records — delete records from an Airtable table.
+ * delete-records — delete records from an Airtable table.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { airtableRequest } from '../lib/airtable-client.js';
 
 export function registerDeleteRecordsTool(app: AgentApp): void {
-  app.tool('delete_records', {
+  app.tool('delete-records', {
     description:
       'Delete one or more records from an Airtable table by their IDs (up to 10 at a time).',
     parameters: {

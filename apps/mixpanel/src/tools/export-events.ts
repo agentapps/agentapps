@@ -1,12 +1,12 @@
 /**
- * export_events — export raw event data from Mixpanel.
+ * export-events — export raw event data from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_EXPORT_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerExportEventsTool(app: AgentApp): void {
-  app.tool('export_events', {
+  app.tool('export-events', {
     description:
       'Export raw event data from Mixpanel within a date range. Returns individual events with all properties. Use for detailed event-level analysis.',
     parameters: {

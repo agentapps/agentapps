@@ -244,17 +244,17 @@ describe('Google Calendar', () => {
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual([
       'authenticate',
-      'create_calendar',
-      'create_event',
-      'delete_event',
-      'get_event',
-      'get_freebusy',
-      'list_calendars',
-      'list_events',
-      'move_event',
-      'open_calendar',
-      'quick_add_event',
-      'update_event',
+      'create-calendar',
+      'create-event',
+      'delete-event',
+      'get-event',
+      'get-freebusy',
+      'list-calendars',
+      'list-events',
+      'move-event',
+      'open-calendar',
+      'quick-add-event',
+      'update-event',
     ]);
   });
 
@@ -284,7 +284,7 @@ describe('Google Calendar', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_events triggers OAuth and calls Google Calendar API', async () => {
+  it('list-events triggers OAuth and calls Google Calendar API', async () => {
     const sessionId = await initAndOpen();
 
     setResponse(
@@ -305,7 +305,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'list_events', { maxResults: 10 });
+    sendToolCall(sessionId, 'list-events', { maxResults: 10 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -322,7 +322,7 @@ describe('Google Calendar', () => {
     expect(Number(installationSecrets.expiresAt)).toBeGreaterThan(Date.now());
   });
 
-  it('get_event retrieves a single event by ID', async () => {
+  it('get-event retrieves a single event by ID', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -344,7 +344,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'get_event', { eventId: 'evt-1' });
+    sendToolCall(sessionId, 'get-event', { eventId: 'evt-1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -353,7 +353,7 @@ describe('Google Calendar', () => {
     expect(event.summary).toBe('One-on-one');
   });
 
-  it('create_event calls Google Calendar API and emits calendar_updated', async () => {
+  it('create-event calls Google Calendar API and emits calendar_updated', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -377,7 +377,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'create_event', {
+    sendToolCall(sessionId, 'create-event', {
       summary: 'Demo meeting',
       startTime: '2026-06-23T14:00:00Z',
       endTime: '2026-06-23T15:00:00Z',
@@ -398,7 +398,7 @@ describe('Google Calendar', () => {
     expect((eventMsg.payload as Record<string, unknown>).action).toBe('created');
   });
 
-  it('update_event calls Google Calendar API and emits calendar_updated', async () => {
+  it('update-event calls Google Calendar API and emits calendar_updated', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -430,7 +430,7 @@ describe('Google Calendar', () => {
       ),
     ]);
 
-    sendToolCall(sessionId, 'update_event', { eventId: 'evt-1', summary: 'Updated title' });
+    sendToolCall(sessionId, 'update-event', { eventId: 'evt-1', summary: 'Updated title' });
 
     const result = await waitForType('tool_result');
     if (!result.success) {
@@ -459,7 +459,7 @@ describe('Google Calendar', () => {
     expect((eventMsg.payload as Record<string, unknown>).action).toBe('updated');
   });
 
-  it('delete_event calls Google Calendar API and emits calendar_updated', async () => {
+  it('delete-event calls Google Calendar API and emits calendar_updated', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -474,7 +474,7 @@ describe('Google Calendar', () => {
       new Response(null, { status: 204 }),
     );
 
-    sendToolCall(sessionId, 'delete_event', { eventId: 'evt-1' });
+    sendToolCall(sessionId, 'delete-event', { eventId: 'evt-1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -491,7 +491,7 @@ describe('Google Calendar', () => {
     expect((eventMsg.payload as Record<string, unknown>).action).toBe('deleted');
   });
 
-  it('list_calendars returns available calendars', async () => {
+  it('list-calendars returns available calendars', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -512,7 +512,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'list_calendars', {});
+    sendToolCall(sessionId, 'list-calendars', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -539,7 +539,7 @@ describe('Google Calendar', () => {
     expect(installationSecrets.REFRESH_TOKEN).toBe('refresh-456');
   });
 
-  it('open_calendar opens the browser', async () => {
+  it('open-calendar opens the browser', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -547,7 +547,7 @@ describe('Google Calendar', () => {
       expiresAt: String(Date.now() + 3600 * 1000),
     };
 
-    sendToolCall(sessionId, 'open_calendar', {});
+    sendToolCall(sessionId, 'open-calendar', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -556,7 +556,7 @@ describe('Google Calendar', () => {
     expect(res.opened).toBe(true);
   });
 
-  it('create_event refreshes an expired access token before calling API', async () => {
+  it('create-event refreshes an expired access token before calling API', async () => {
     const sessionId = await initAndOpen();
 
     // Pre-populate expired user tokens. The app asks the host to refresh
@@ -582,7 +582,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'create_event', {
+    sendToolCall(sessionId, 'create-event', {
       summary: 'Demo meeting',
       startTime: '2026-06-23T14:00:00Z',
       endTime: '2026-06-23T15:00:00Z',
@@ -598,7 +598,7 @@ describe('Google Calendar', () => {
     expect(Date.parse(installationSecrets.expiresAt)).toBeGreaterThan(Date.now());
   });
 
-  it('create_calendar creates a new calendar', async () => {
+  it('create-calendar creates a new calendar', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -619,7 +619,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'create_calendar', {
+    sendToolCall(sessionId, 'create-calendar', {
       summary: 'Work Projects',
       description: 'Calendar for work projects',
       timeZone: 'America/New_York',
@@ -635,7 +635,7 @@ describe('Google Calendar', () => {
     expect(calendar.timeZone).toBe('America/New_York');
   });
 
-  it('get_freebusy queries free/busy information', async () => {
+  it('get-freebusy queries free/busy information', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -663,7 +663,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'get_freebusy', {
+    sendToolCall(sessionId, 'get-freebusy', {
       timeMin: '2026-06-23T00:00:00Z',
       timeMax: '2026-06-24T00:00:00Z',
       items: [{ id: 'primary' }],
@@ -679,7 +679,7 @@ describe('Google Calendar', () => {
     expect(calendars.primary.busy).toHaveLength(2);
   });
 
-  it('quick_add_event creates an event from text and emits calendar_updated', async () => {
+  it('quick-add-event creates an event from text and emits calendar_updated', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -704,7 +704,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'quick_add_event', {
+    sendToolCall(sessionId, 'quick-add-event', {
       text: 'Lunch with Alice tomorrow at noon',
     });
 
@@ -724,7 +724,7 @@ describe('Google Calendar', () => {
     expect((eventMsg.payload as Record<string, unknown>).action).toBe('created');
   });
 
-  it('move_event moves an event to another calendar and emits calendar_updated', async () => {
+  it('move-event moves an event to another calendar and emits calendar_updated', async () => {
     const sessionId = await initAndOpen();
     installationSecrets = {
       ACCESS_TOKEN: 'access-123',
@@ -749,7 +749,7 @@ describe('Google Calendar', () => {
       ),
     );
 
-    sendToolCall(sessionId, 'move_event', {
+    sendToolCall(sessionId, 'move-event', {
       eventId: 'evt-1',
       destination: 'work-calendar-id',
     });

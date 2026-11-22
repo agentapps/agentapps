@@ -1,12 +1,12 @@
 /**
- * update_rows — update rows in a Supabase table matching a filter.
+ * update-rows — update rows in a Supabase table matching a filter.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerUpdateRowsTool(app: AgentApp): void {
-  app.tool('update_rows', {
+  app.tool('update-rows', {
     description:
       'Update rows in a Supabase table that match the given filter. Returns the updated rows.',
     parameters: {

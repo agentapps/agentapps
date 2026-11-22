@@ -5,7 +5,7 @@ import { CLIENT_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListClientsTool(app: AgentApp): void {
-  app.tool('runn-list-clients', {
+  app.tool('list-clients', {
     description:
       'List Runn clients. Returns { items: [{ id, name, website, isArchived, references, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

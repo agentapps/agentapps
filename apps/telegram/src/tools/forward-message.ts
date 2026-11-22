@@ -1,12 +1,12 @@
 /**
- * forward_message — forward a message from one chat to another.
+ * forward-message — forward a message from one chat to another.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerForwardMessageTool(app: AgentApp): void {
-  app.tool('forward_message', {
+  app.tool('forward-message', {
     description: 'Forward a message from one Telegram chat to another.',
     parameters: {
       type: 'object',

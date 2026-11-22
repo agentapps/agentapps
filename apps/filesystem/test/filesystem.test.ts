@@ -55,7 +55,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.1' },
+    host: { name: 'test', version: '2.0.0' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -108,7 +108,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.filesystem',
-    appVersion: '1.0.1',
+    appVersion: '2.0.0',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -160,13 +160,13 @@ describe('Filesystem Agent App', () => {
       'grep',
       'hash',
       'list',
-      'list_roots',
+      'list-roots',
       'mkdir',
       'move',
       'patch',
       'read',
-      'read_batch',
-      'read_media',
+      'read-batch',
+      'read-media',
       'stat',
       'tree',
       'write',
@@ -372,11 +372,11 @@ describe('Filesystem Agent App', () => {
     expect(data.deleted).toBe(true);
   });
 
-  it('list_roots returns workspace roots', async () => {
+  it('list-roots returns workspace roots', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_roots', {});
+    sendToolCall(sessionId, 'list-roots', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);

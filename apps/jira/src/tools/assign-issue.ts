@@ -1,12 +1,12 @@
 /**
- * assign_issue — assign a Jira issue to a user.
+ * assign-issue — assign a Jira issue to a user.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerAssignIssueTool(app: AgentApp): void {
-  app.tool('assign_issue', {
+  app.tool('assign-issue', {
     description:
       'Assign a Jira issue to a user by account ID. Pass null as accountId to unassign the issue.',
     parameters: {
@@ -19,7 +19,7 @@ export function registerAssignIssueTool(app: AgentApp): void {
         accountId: {
           type: 'string',
           description:
-            'The account ID of the user to assign. Use search_users to find account IDs. Pass "-1" for automatic assignee, or null to unassign.',
+            'The account ID of the user to assign. Use search-users to find account IDs. Pass "-1" for automatic assignee, or null to unassign.',
         },
       },
       required: ['issueKey', 'accountId'],

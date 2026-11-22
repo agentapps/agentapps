@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.supabase',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Supabase',
   description:
     'Supabase database and storage — query tables, manage rows, run SQL, list buckets, and upload/download files.',

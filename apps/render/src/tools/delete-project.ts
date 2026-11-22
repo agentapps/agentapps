@@ -2,12 +2,12 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-delete-project -- DELETE /projects/{projectId}.
+ * delete-project -- DELETE /projects/{projectId}.
  *
  * Permanently deletes the project. IRREVERSIBLE + destructive.
  */
 export function registerDeleteProjectTool(app: AgentApp): void {
-  app.tool('render-delete-project', {
+  app.tool('delete-project', {
     description:
       'Delete a Render project. This action is irreversible! Returns { projectId, deleted }. Params: projectId (required).',
     parameters: {

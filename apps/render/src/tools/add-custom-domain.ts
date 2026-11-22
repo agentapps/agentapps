@@ -8,10 +8,10 @@ interface RenderCustomDomain {
 }
 
 /**
- * render-add-custom-domain -- POST /services/{serviceId}/custom-domains.
+ * add-custom-domain -- POST /services/{serviceId}/custom-domains.
  */
 export function registerAddCustomDomainTool(app: AgentApp): void {
-  app.tool('render-add-custom-domain', {
+  app.tool('add-custom-domain', {
     description:
       'Add a custom domain to a Render service. Returns { domainId, name, verificationStatus }. Params: serviceId (required), domain (required -- e.g., "app.example.com").',
     parameters: {

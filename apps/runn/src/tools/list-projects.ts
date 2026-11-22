@@ -6,7 +6,7 @@ import { validateId } from './_runn-helpers.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('runn-list-projects', {
+  app.tool('list-projects', {
     description:
       'List Runn projects. Returns { items: [{ id, name, clientId, isArchived, isConfirmed, createdAt, updatedAt }], total, hasMore, nextCursor }. Params: clientId?, isArchived?, limit (1-200, def 50), cursor?, fields?, includeRaw.',
     parameters: {

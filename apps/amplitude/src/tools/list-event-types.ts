@@ -1,12 +1,12 @@
 /**
- * list_event_types — list all event types from Amplitude's taxonomy.
+ * list-event-types — list all event types from Amplitude's taxonomy.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerListEventTypesTool(app: AgentApp): void {
-  app.tool('list_event_types', {
+  app.tool('list-event-types', {
     description:
       'List all event types defined in your Amplitude project taxonomy. Returns event type names, descriptions, and categories.',
     parameters: {

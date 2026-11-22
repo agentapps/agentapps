@@ -1,12 +1,12 @@
 /**
- * get_retention — get retention data from Mixpanel.
+ * get-retention — get retention data from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetRetentionTool(app: AgentApp): void {
-  app.tool('get_retention', {
+  app.tool('get-retention', {
     description:
       'Get retention data from Mixpanel. Returns cohort retention rates within a date range.',
     parameters: {

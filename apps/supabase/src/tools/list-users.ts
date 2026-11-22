@@ -1,12 +1,12 @@
 /**
- * list_users — list auth users in a Supabase project (requires service_role key).
+ * list-users — list auth users in a Supabase project (requires service_role key).
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerListUsersTool(app: AgentApp): void {
-  app.tool('list_users', {
+  app.tool('list-users', {
     description:
       'List authentication users in your Supabase project. Requires a service_role key. Supports pagination via page and per_page parameters.',
     parameters: {

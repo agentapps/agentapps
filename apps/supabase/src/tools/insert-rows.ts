@@ -1,12 +1,12 @@
 /**
- * insert_rows — insert one or more rows into a Supabase table.
+ * insert-rows — insert one or more rows into a Supabase table.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerInsertRowsTool(app: AgentApp): void {
-  app.tool('insert_rows', {
+  app.tool('insert-rows', {
     description:
       'Insert one or more rows into a Supabase table. Pass an array of row objects. Returns the inserted rows.',
     parameters: {

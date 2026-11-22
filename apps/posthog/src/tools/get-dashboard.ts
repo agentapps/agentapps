@@ -1,12 +1,12 @@
 /**
- * get_dashboard — retrieve a single PostHog dashboard by ID.
+ * get-dashboard — retrieve a single PostHog dashboard by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerGetDashboardTool(app: AgentApp): void {
-  app.tool('get_dashboard', {
+  app.tool('get-dashboard', {
     description: 'Get detailed information about a specific PostHog dashboard by its ID.',
     parameters: {
       type: 'object',

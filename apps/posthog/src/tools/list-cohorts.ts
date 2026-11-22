@@ -1,12 +1,12 @@
 /**
- * list_cohorts — list cohorts defined in PostHog.
+ * list-cohorts — list cohorts defined in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerListCohortsTool(app: AgentApp): void {
-  app.tool('list_cohorts', {
+  app.tool('list-cohorts', {
     description: 'List all cohorts (user segments) defined in the PostHog project.',
     parameters: {
       type: 'object',

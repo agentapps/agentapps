@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryProject, sentryRequest } from '../types.js';
 
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('get_project', {
+  app.tool('get-project', {
     description: 'Get detailed information about a specific Sentry project.',
     parameters: {
       type: 'object',

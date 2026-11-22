@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryEvent, sentryRequest } from '../types.js';
 
 export function registerGetEventTool(app: AgentApp): void {
-  app.tool('get_event', {
+  app.tool('get-event', {
     description: 'Get detailed information about a specific event including full stack trace.',
     parameters: {
       type: 'object',

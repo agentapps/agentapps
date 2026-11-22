@@ -92,7 +92,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.posthog',
-    appVersion: '2.1.1',
+    appVersion: '3.0.0',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -136,24 +136,24 @@ describe('PostHog Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_action',
-      'create_annotation',
-      'create_feature_flag',
-      'get_dashboard',
-      'get_event',
-      'get_experiment',
-      'get_feature_flag',
-      'get_person',
-      'list_actions',
-      'list_cohorts',
-      'list_dashboards',
-      'list_events',
-      'list_experiments',
-      'list_feature_flags',
-      'list_insights',
-      'list_persons',
-      'list_session_recordings',
-      'update_feature_flag',
+      'create-action',
+      'create-annotation',
+      'create-feature-flag',
+      'get-dashboard',
+      'get-event',
+      'get-experiment',
+      'get-feature-flag',
+      'get-person',
+      'list-actions',
+      'list-cohorts',
+      'list-dashboards',
+      'list-events',
+      'list-experiments',
+      'list-feature-flags',
+      'list-insights',
+      'list-persons',
+      'list-session-recordings',
+      'update-feature-flag',
     ]);
   });
 
@@ -166,7 +166,7 @@ describe('PostHog Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_events returns event data', async () => {
+  it('list-events returns event data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -184,7 +184,7 @@ describe('PostHog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_events', { limit: 5 });
+    sendToolCall(sessionId, 'list-events', { limit: 5 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -196,7 +196,7 @@ describe('PostHog Agent App', () => {
     expect(results[1].event).toBe('sign_up');
   });
 
-  it('list_feature_flags returns flag list', async () => {
+  it('list-feature-flags returns flag list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -214,7 +214,7 @@ describe('PostHog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_feature_flags', {});
+    sendToolCall(sessionId, 'list-feature-flags', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -226,7 +226,7 @@ describe('PostHog Agent App', () => {
     expect(results[1].active).toBe(false);
   });
 
-  it('create_annotation sends POST with correct body', async () => {
+  it('create-annotation sends POST with correct body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -242,7 +242,7 @@ describe('PostHog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_annotation', {
+    sendToolCall(sessionId, 'create-annotation', {
       content: 'v2.3.0 deployed',
       date_marker: '2024-07-25T14:30:00Z',
       scope: 'organization',
@@ -264,7 +264,7 @@ describe('PostHog Agent App', () => {
     expect(body.scope).toBe('organization');
   });
 
-  it('create_feature_flag sends POST with correct body', async () => {
+  it('create-feature-flag sends POST with correct body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -281,7 +281,7 @@ describe('PostHog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_feature_flag', {
+    sendToolCall(sessionId, 'create-feature-flag', {
       key: 'new-checkout',
       name: 'New Checkout Flow',
       filters: { groups: [{ rollout_percentage: 25 }] },
@@ -320,7 +320,7 @@ describe('PostHog Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_events', {});
+    sendToolCall(sessionId, 'list-events', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-environments — List all environments in a Railway project.
+ * list-environments — List all environments in a Railway project.
  */
 export function registerListEnvironmentsTool(app: AgentApp): void {
-  app.tool('railway-list-environments', {
+  app.tool('list-environments', {
     description: 'List all environments in a Railway project.',
     parameters: {
       type: 'object',

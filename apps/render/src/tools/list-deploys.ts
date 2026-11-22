@@ -13,10 +13,10 @@ interface RenderDeploy {
 }
 
 /**
- * render-list-deploys -- GET /services/{serviceId}/deploys.
+ * list-deploys -- GET /services/{serviceId}/deploys.
  */
 export function registerListDeploysTool(app: AgentApp): void {
-  app.tool('render-list-deploys', {
+  app.tool('list-deploys', {
     description:
       'List recent deploys for a Render service. Returns { deploys: [{ id, status, createdAt, commit? }] }. Params: serviceId (required), limit? (1-100, default 10).',
     parameters: {

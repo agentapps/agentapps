@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-get-metadata — Get all dimensions and metrics for a property.
+ * get-metadata — Get all dimensions and metrics for a property.
  */
 export function registerGetMetadataTool(app: AgentApp): void {
-  app.tool('analytics-get-metadata', {
+  app.tool('get-metadata', {
     description:
       'Get all dimensions and metrics available for a property, including custom ones. Returns { dimensions: [{ apiName, uiName, description, customDefinition }], metrics: [{ apiName, uiName, description, type, customDefinition }] }.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_zone_analytics — retrieve analytics dashboard data for a Cloudflare zone.
+ * get-zone-analytics — retrieve analytics dashboard data for a Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerGetZoneAnalyticsTool(app: AgentApp): void {
-  app.tool('get_zone_analytics', {
+  app.tool('get-zone-analytics', {
     description:
       'Get analytics dashboard data for a Cloudflare zone, including requests, bandwidth, threats, and page views over a time range.',
     parameters: {

@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryProject, sentryRequest } from '../types.js';
 
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('list_projects', {
+  app.tool('list-projects', {
     description: 'List all projects in a Sentry organization.',
     parameters: {
       type: 'object',

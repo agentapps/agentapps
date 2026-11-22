@@ -1,12 +1,12 @@
 /**
- * create_action — create a new action in PostHog.
+ * create-action — create a new action in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerCreateActionTool(app: AgentApp): void {
-  app.tool('create_action', {
+  app.tool('create-action', {
     description:
       'Create a new action in PostHog. Actions group one or more event-matching steps under a single name.',
     parameters: {

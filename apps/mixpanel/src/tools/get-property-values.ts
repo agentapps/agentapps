@@ -1,12 +1,12 @@
 /**
- * get_property_values — get values for an event property from Mixpanel.
+ * get-property-values — get values for an event property from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetPropertyValuesTool(app: AgentApp): void {
-  app.tool('get_property_values', {
+  app.tool('get-property-values', {
     description:
       'Get the top values for a specific property of a Mixpanel event. Returns an array of property values.',
     parameters: {

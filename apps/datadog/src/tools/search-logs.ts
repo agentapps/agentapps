@@ -1,12 +1,12 @@
 /**
- * search_logs — search Datadog logs.
+ * search-logs — search Datadog logs.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerSearchLogsTool(app: AgentApp): void {
-  app.tool('search_logs', {
+  app.tool('search-logs', {
     description:
       'Search log events in Datadog. Supports query filtering, time range, pagination, and sorting.',
     parameters: {

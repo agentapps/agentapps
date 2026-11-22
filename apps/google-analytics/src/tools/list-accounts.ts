@@ -7,10 +7,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-list-accounts — List GA4 accounts accessible to the user.
+ * list-accounts — List GA4 accounts accessible to the user.
  */
 export function registerListAccountsTool(app: AgentApp): void {
-  app.tool('analytics-list-accounts', {
+  app.tool('list-accounts', {
     description:
       'List GA4 accounts accessible to the user. Returns { accounts: [{ accountId, name, displayName, regionCode, createTime }], count }.',
     parameters: {

@@ -7,7 +7,8 @@
  * source, and then finding no tool is an error.
  *
  * Errors (non-zero exit): manifest schema; the app cannot be loaded; no tools; a tool
- * without all five annotations as booleans; a read-only tool marked `sensitive`; a
+ * without all five annotations as booleans; a read-only tool marked `sensitive`; a tool name that is not kebab-case or that starts with the
+ * app's own name; a
  * read-only tool marked destructive; agentapp.json differs from `app.toManifest()`; a mono
  * logo with a colour (`fill`/`stroke` other than none/currentColor/inherit, or `<style>`);
  * a PNG logo under 1024x1024; a missing logo without a TODO in the README's Logos
@@ -174,10 +175,33 @@ function checkManifest(
   return manifest;
 }
 
+/**
+ * What is wrong with a tool's name, if anything. Names are kebab-case, and do not start
+ * with the app's own name: the Host already puts the Installation's alias in front.
+ *
+ * @spec DEVX-REQ-5
+ */
+export function toolNameProblem(name: string, appId?: string): string | undefined {
+  if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
+    return 'tool names are kebab-case: lowercase letters and digits joined by single hyphens, starting with a letter (list-issues, not list_issues or listIssues)';
+  }
+  if (!appId) return undefined;
+  const segments = appId.replace(/^app\./, '').split('.');
+  const prefixes = new Set([segments[segments.length - 1], segments.join('-')]);
+  for (const prefix of prefixes) {
+    if (name.startsWith(`${prefix}-`)) {
+      return `drop the '${prefix}-' prefix: an agent already sees the tool as <alias>__<tool>, so the app's name would appear twice`;
+    }
+  }
+  return undefined;
+}
+
 /** Checks the tools the app registers (description, parameters, annotations); returns the sensitive ones. */
-function checkTools(tools: ToolDefinition[], errors: string[]): string[] {
+function checkTools(tools: ToolDefinition[], errors: string[], appId?: string): string[] {
   const sensitive: string[] = [];
   for (const tool of tools) {
+    const nameProblem = toolNameProblem(tool.name, appId);
+    if (nameProblem) errors.push(`Tool '${tool.name}': ${nameProblem}`);
     if (typeof tool.description !== 'string' || !tool.description.trim()) {
       errors.push(`Tool '${tool.name}' has no description`);
     }
@@ -352,7 +376,11 @@ export async function validate(options: ValidationOptions = {}): Promise<Validat
     if (inspection.tools.length === 0) {
       errors.push('The app registers no tools');
     }
-    sensitiveTools = checkTools(inspection.tools, errors);
+    sensitiveTools = checkTools(
+      inspection.tools,
+      errors,
+      typeof manifest?.id === 'string' ? manifest.id : undefined,
+    );
     if (manifest && inspection.generatedManifest !== undefined) {
       if (!sameManifest(manifest, inspection.generatedManifest)) {
         errors.push(

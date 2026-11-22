@@ -1,12 +1,12 @@
 /**
- * get_subscription — retrieve a single Stripe subscription by ID.
+ * get-subscription — retrieve a single Stripe subscription by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerGetSubscriptionTool(app: AgentApp): void {
-  app.tool('get_subscription', {
+  app.tool('get-subscription', {
     description: 'Get detailed information about a specific Stripe subscription.',
     parameters: {
       type: 'object',

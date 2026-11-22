@@ -8,10 +8,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-delete-property — Soft-delete a GA4 property.
+ * delete-property — Soft-delete a GA4 property.
  */
 export function registerDeletePropertyTool(app: AgentApp): void {
-  app.tool('analytics-delete-property', {
+  app.tool('delete-property', {
     description:
       'Soft-delete a GA4 property (recoverable for ~7 days from Google Analytics UI). Returns { property: { propertyId, deleteTime, ... } }.',
     parameters: {

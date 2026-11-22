@@ -1,12 +1,12 @@
 /**
- * get_chat_members_count — get the number of members in a Telegram chat.
+ * get-chat-members-count — get the number of members in a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerGetChatMembersCountTool(app: AgentApp): void {
-  app.tool('get_chat_members_count', {
+  app.tool('get-chat-members-count', {
     description: 'Get the number of members in a Telegram chat.',
     parameters: {
       type: 'object',

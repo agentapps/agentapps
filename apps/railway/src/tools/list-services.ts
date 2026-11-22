@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-list-services — List all services in a Railway project.
+ * list-services — List all services in a Railway project.
  */
 export function registerListServicesTool(app: AgentApp): void {
-  app.tool('railway-list-services', {
+  app.tool('list-services', {
     description: 'List all services in a Railway project.',
     parameters: {
       type: 'object',

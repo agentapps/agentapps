@@ -1,12 +1,12 @@
 /**
- * create_issue — create a new Jira issue.
+ * create-issue — create a new Jira issue.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerCreateIssueTool(app: AgentApp): void {
-  app.tool('create_issue', {
+  app.tool('create-issue', {
     description:
       'Create a new issue in Jira. Returns the created issue object with its key and ID.',
     parameters: {

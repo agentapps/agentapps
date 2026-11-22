@@ -1,12 +1,12 @@
 /**
- * get_experiment — retrieve a single PostHog experiment by ID.
+ * get-experiment — retrieve a single PostHog experiment by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerGetExperimentTool(app: AgentApp): void {
-  app.tool('get_experiment', {
+  app.tool('get-experiment', {
     description:
       'Get detailed information about a specific PostHog experiment (A/B test) by its ID.',
     parameters: {

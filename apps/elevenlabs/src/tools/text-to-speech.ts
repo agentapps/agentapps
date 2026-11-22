@@ -1,5 +1,5 @@
 /**
- * text_to_speech — generate speech from text using ElevenLabs.
+ * generate-speech — generate speech from text using ElevenLabs.
  *
  * Returns the audio as base64-encoded data so the caller can save,
  * play, or forward it without requiring filesystem access.
@@ -9,10 +9,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, elevenLabsRequest, OUTPUT_FORMATS, TTS_MODELS } from '../types.js';
 
 export function registerTextToSpeechTool(app: AgentApp): void {
-  app.tool('text_to_speech', {
+  app.tool('generate-speech', {
     description:
       'Generate speech from text using ElevenLabs. Returns base64-encoded audio data. ' +
-      'Use list_voices to discover available voices. Default model: eleven_flash_v2_5.',
+      'Use list-voices to discover available voices. Default model: eleven_flash_v2_5.',
     parameters: {
       type: 'object',
       properties: {
@@ -23,7 +23,7 @@ export function registerTextToSpeechTool(app: AgentApp): void {
         voiceId: {
           type: 'string',
           description:
-            'Voice ID to use. Run list_voices to see available voices. ' +
+            'Voice ID to use. Run list-voices to see available voices. ' +
             'If omitted, uses the ElevenLabs default voice.',
         },
         modelId: {

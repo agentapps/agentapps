@@ -96,7 +96,7 @@ async function main() {
   host.send({
     ...createEnvelope('tool_call'),
     sessionId,
-    tool: 'list_models',
+    tool: 'list-models',
     arguments: { query },
     context: { userId: 'developer', installationId: 'dev_local' },
   } as MessageBase);

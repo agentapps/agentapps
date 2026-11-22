@@ -1,12 +1,12 @@
 /**
- * create_monitor — create a new Datadog monitor.
+ * create-monitor — create a new Datadog monitor.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerCreateMonitorTool(app: AgentApp): void {
-  app.tool('create_monitor', {
+  app.tool('create-monitor', {
     description:
       'Create a new Datadog monitor. Specify the monitor type, query, name, and optional notification message.',
     parameters: {

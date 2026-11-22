@@ -1,12 +1,12 @@
 /**
- * list_projects — list Vercel projects with optional search.
+ * list-projects — list Vercel projects with optional search.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListProjectsTool(app: AgentApp): void {
-  app.tool('list_projects', {
+  app.tool('list-projects', {
     description:
       'List projects from your Vercel account. Supports filtering by search term and pagination via limit.',
     parameters: {

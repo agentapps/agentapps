@@ -5,6 +5,25 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.5] — 2026-11-22
+
+Tool names follow one rule across the catalog. **This renames tools in 31 apps**: update any Policy rule or prompt that names one.
+
+### Changed
+
+- **Tool names are kebab-case, verb first, without the app's name.** An agent sees `linear__list-issues` where it saw `linear__linear-list-issues`, and `delete-event` where it saw `delete_event`. 400 tools are renamed:
+  - the app's name is gone from the tools of Linear, Render, Railway, Runn, Homey, Higgsfield and Google Analytics (`linear-list-issues` → `list-issues`, `analytics-run-report` → `run-report`);
+  - underscores became hyphens in 22 apps: Airtable, Amplitude, Cloudflare, Datadog, ElevenLabs, Filesystem, Google Calendar, Holded, Jira, Mixpanel, PostHog, Pushcut, QuickBooks, Replicate, Sentry, Shopify, Stripe, Supabase, Telegram, Twilio, Vercel and the stdio demo;
+  - six names now start with a verb: Higgsfield's `generate-image`, `animate-image`, `generate-video` and `generate-soul-image`, ElevenLabs' `generate-speech` and Runn's `get-project-totals`.
+- Each of those apps has a new major version. A Policy rule keeps the name it was written with: a rule on `linear-delete-issue` no longer matches anything, so write it again as `delete-issue`. `agentapps policy show <name>` lists your rules.
+- `check-app` rejects a tool name that breaks the rule, and the scaffold and the create-agent-app skill state it.
+
+### Removed
+
+- Slack's `health-check` tool, a probe left from an earlier platform that agents could see. The app's health check now does what it did: it asks Slack whether the token still works.
+
+---
+
 ## [0.2.4] — 2026-11-22
 
 Every tool in the catalog now says how dangerous it is, and the default Policy acts on it. Update with `npm install -g @agentapps/cli`, then `agentapps station restart`.

@@ -13,7 +13,7 @@ import { firstOf, resolveFields, sanitiseBody } from './utils.js';
 const EMPLOYMENT_TYPE_ENUM = ['employee', 'contractor'] as const;
 
 export function registerCreatePersonTool(app: AgentApp): void {
-  app.tool('runn-create-person', {
+  app.tool('create-person', {
     description:
       'Create a Runn person. A first contract (role) is created with them. Returns the curated created person. Not retryable (no idempotency key). Params: firstName, lastName, roleId (all required), email?, teamId?, startDate? (YYYY-MM-DD), employmentType? (employee|contractor), costPerHour?, fields?, includeRaw.',
     parameters: {

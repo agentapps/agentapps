@@ -3,12 +3,13 @@
  * 90+ tools for channels, messages, threads, reactions, files, users, search, and presence.
  */
 import { createApp } from '@agentapps/sdk';
+import { validateCredentials } from './lib/index.js';
 import { classifySlackApiError } from './tools/_slack-error.js';
 import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.slack',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Slack',
   description: 'Full Slack workspace integration via Web API with OAuth 2.0',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
@@ -126,6 +127,9 @@ app.health(async (ctx) => {
         ],
       };
     }
+
+    // Ask Slack whether the token still works (auth.test); a failure is classified below.
+    await validateCredentials(ctx);
 
     return { status: 'ready' as const, message: 'Slack connected' };
   } catch (error) {

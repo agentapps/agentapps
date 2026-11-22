@@ -5,7 +5,7 @@ import { extractTeam } from './_linear-helpers.js';
 import { resolveFieldsList, sanitizeLimit, wrapLinearCall } from './utils.js';
 
 export function registerListTeamsTool(app: AgentApp): void {
-  app.tool('linear-list-teams', {
+  app.tool('list-teams', {
     description:
       'List Linear teams. Returns curated rows { id, name, key, icon, color, description, private }. Params: limit (1-100, def 50), startCursor, fields?, includeRaw.',
     parameters: {

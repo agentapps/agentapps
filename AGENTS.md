@@ -46,6 +46,12 @@ Every app must pass `safeParseAppManifest()` from `@agentapps/protocol`. Require
 
 Check an app with `node packages/create/dist/cli.js check-app apps/<id>` (after `pnpm build`).
 
+## Tool Names
+
+Kebab-case, verb first, and without the app's name: `list-issues`, `create-page`, `delete-event`. Never `list_issues`, `listIssues` or `linear-list-issues`. An agent sees a tool as `<alias>__<tool>` (`linear__list-issues`), so a prefix would repeat the app's name. `check-app` rejects a name that breaks the rule.
+
+Renaming a tool breaks every Policy rule and prompt that names it: it is a major version of the app.
+
 ## Tool Annotations
 
 Annotations are **declarative only**. There is no inference heuristic — `readOnlyHint`, `destructiveHint`, etc. must be explicitly set by the app author in the tool definition. Do not infer annotations from tool names.

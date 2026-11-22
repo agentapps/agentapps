@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.jira',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Jira',
   description:
     'Jira project management — search issues, create/update tickets, manage transitions, and track sprints.',

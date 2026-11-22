@@ -1,12 +1,12 @@
 /**
- * get_customer — retrieve a single Shopify customer by ID.
+ * get-customer — retrieve a single Shopify customer by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerGetCustomerTool(app: AgentApp): void {
-  app.tool('get_customer', {
+  app.tool('get-customer', {
     description: 'Get detailed information about a specific Shopify customer by their ID.',
     parameters: {
       type: 'object',

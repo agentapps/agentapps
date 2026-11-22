@@ -1,12 +1,12 @@
 /**
- * create_discount — create a price rule (discount) in Shopify.
+ * create-discount — create a price rule (discount) in Shopify.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerCreateDiscountTool(app: AgentApp): void {
-  app.tool('create_discount', {
+  app.tool('create-discount', {
     description:
       'Create a discount (price rule) in your Shopify store. Supports percentage and fixed amount discounts.',
     parameters: {

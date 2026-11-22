@@ -1,12 +1,12 @@
 /**
- * list_payments — list Stripe payment intents.
+ * list-payments — list Stripe payment intents.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListPaymentsTool(app: AgentApp): void {
-  app.tool('list_payments', {
+  app.tool('list-payments', {
     description:
       'List payment intents from your Stripe account. Supports filtering by customer and status.',
     parameters: {

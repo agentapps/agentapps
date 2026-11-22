@@ -1,12 +1,12 @@
 /**
- * list_env_vars — list environment variables for a Vercel project.
+ * list-env-vars — list environment variables for a Vercel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerListEnvVarsTool(app: AgentApp): void {
-  app.tool('list_env_vars', {
+  app.tool('list-env-vars', {
     description: 'List all environment variables for a specific Vercel project.',
     parameters: {
       type: 'object',

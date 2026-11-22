@@ -1,12 +1,12 @@
 /**
- * list_products — list Shopify products with optional filtering.
+ * list-products — list Shopify products with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListProductsTool(app: AgentApp): void {
-  app.tool('list_products', {
+  app.tool('list-products', {
     description:
       'List products from your Shopify store. Supports filtering by title and collection.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * answer_callback_query — respond to a callback query from an inline keyboard.
+ * answer-callback-query — respond to a callback query from an inline keyboard.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerAnswerCallbackQueryTool(app: AgentApp): void {
-  app.tool('answer_callback_query', {
+  app.tool('answer-callback-query', {
     description:
       'Send an answer to a callback query sent from an inline keyboard. The answer will be displayed as a notification at the top of the chat screen or as an alert.',
     parameters: {

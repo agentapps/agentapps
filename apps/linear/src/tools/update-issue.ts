@@ -13,7 +13,7 @@ const PRIORITY_ENUM = ['urgent', 'high', 'medium', 'low', 'none'] as const;
 type Priority = (typeof PRIORITY_ENUM)[number];
 
 export function registerUpdateIssueTool(app: AgentApp): void {
-  app.tool('linear-update-issue', {
+  app.tool('update-issue', {
     description:
       'Update a Linear issue. Returns curated updated issue. Idempotent per-field — safe to retry. Params: issueId, title?, description?, stateId?, assigneeId?, priority?, projectId?, labelIds?, estimate?, dueDate?, fields?, includeRaw.',
     parameters: {

@@ -1,12 +1,12 @@
 /**
- * get_event_names — list all tracked event names in a Mixpanel project.
+ * get-event-names — list all tracked event names in a Mixpanel project.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetEventNamesTool(app: AgentApp): void {
-  app.tool('get_event_names', {
+  app.tool('get-event-names', {
     description:
       'List all tracked event names in your Mixpanel project. Returns an array of event name strings.',
     parameters: {

@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.telegram',
-  version: '2.0.2',
+  version: '3.0.0',
   name: 'Telegram',
   description:
     'Telegram Bot API — send messages, manage chats, handle media, and interact with Telegram users and groups.',

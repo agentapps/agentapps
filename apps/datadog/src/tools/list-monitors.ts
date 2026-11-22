@@ -1,12 +1,12 @@
 /**
- * list_monitors — list Datadog monitors with optional filtering.
+ * list-monitors — list Datadog monitors with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerListMonitorsTool(app: AgentApp): void {
-  app.tool('list_monitors', {
+  app.tool('list-monitors', {
     description:
       'List monitors from your Datadog account. Supports filtering by name and tags, with pagination.',
     parameters: {

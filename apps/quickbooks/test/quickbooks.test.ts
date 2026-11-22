@@ -153,24 +153,24 @@ describe('QuickBooks Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'create_customer',
-      'create_estimate',
-      'create_invoice',
-      'create_vendor',
-      'get_account',
-      'get_balance_sheet',
-      'get_company_info',
-      'get_customer',
-      'get_invoice',
-      'get_payment',
-      'get_profit_and_loss',
-      'list_accounts',
-      'list_bills',
-      'list_customers',
-      'list_invoices',
-      'list_items',
-      'list_vendors',
-      'update_customer',
+      'create-customer',
+      'create-estimate',
+      'create-invoice',
+      'create-vendor',
+      'get-account',
+      'get-balance-sheet',
+      'get-company-info',
+      'get-customer',
+      'get-invoice',
+      'get-payment',
+      'get-profit-and-loss',
+      'list-accounts',
+      'list-bills',
+      'list-customers',
+      'list-invoices',
+      'list-items',
+      'list-vendors',
+      'update-customer',
     ]);
   });
 
@@ -197,7 +197,7 @@ describe('QuickBooks Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_customers returns data', async () => {
+  it('list-customers returns data', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -223,7 +223,7 @@ describe('QuickBooks Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_customers', { maxResults: 10 });
+    sendToolCall(sessionId, 'list-customers', { maxResults: 10 });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -233,7 +233,7 @@ describe('QuickBooks Agent App', () => {
     expect(queryResponse.Customer as Array<Record<string, unknown>>).toHaveLength(2);
   });
 
-  it('get_invoice returns invoice', async () => {
+  it('get-invoice returns invoice', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -254,7 +254,7 @@ describe('QuickBooks Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'get_invoice', { invoiceId: '101' });
+    sendToolCall(sessionId, 'get-invoice', { invoiceId: '101' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -266,7 +266,7 @@ describe('QuickBooks Agent App', () => {
     expect(invoice.TotalAmt).toBe(500.0);
   });
 
-  it('create_customer sends correct data', async () => {
+  it('create-customer sends correct data', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -283,7 +283,7 @@ describe('QuickBooks Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_customer', {
+    sendToolCall(sessionId, 'create-customer', {
       displayName: 'Jane Doe',
       email: 'jane@example.com',
       phone: '555-1234',
@@ -313,7 +313,7 @@ describe('QuickBooks Agent App', () => {
     expect(body.PrimaryPhone).toEqual({ FreeFormNumber: '555-1234' });
   });
 
-  it('create_vendor sends correct data', async () => {
+  it('create-vendor sends correct data', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -330,7 +330,7 @@ describe('QuickBooks Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_vendor', {
+    sendToolCall(sessionId, 'create-vendor', {
       displayName: 'Acme Supplies',
       email: 'vendor@acme.com',
       phone: '555-9876',
@@ -386,7 +386,7 @@ describe('QuickBooks Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_customers', {});
+    sendToolCall(sessionId, 'list-customers', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

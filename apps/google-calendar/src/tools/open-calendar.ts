@@ -1,7 +1,7 @@
 import type { AgentApp } from '@agentapps/sdk';
 
 export function registerOpenCalendarTool(app: AgentApp): void {
-  app.tool('open_calendar', {
+  app.tool('open-calendar', {
     description: 'Open Google Calendar in a browser',
     parameters: {
       type: 'object',

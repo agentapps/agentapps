@@ -1,12 +1,12 @@
 /**
- * list_orders — list Shopify orders with optional filtering.
+ * list-orders — list Shopify orders with optional filtering.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListOrdersTool(app: AgentApp): void {
-  app.tool('list_orders', {
+  app.tool('list-orders', {
     description:
       'List orders from your Shopify store. Supports filtering by status, financial status, and fulfillment status.',
     parameters: {

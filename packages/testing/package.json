@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/testing",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Test harness for Agent App developers: run apps in-process and assert on protocol traffic",
   "license": "MIT",
   "type": "module",

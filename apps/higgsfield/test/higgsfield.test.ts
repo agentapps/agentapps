@@ -93,7 +93,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.higgsfield',
-    appVersion: '2.0.2',
+    appVersion: '3.0.0',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -145,14 +145,14 @@ describe('Higgsfield Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'higgsfield-cancel-prediction',
-      'higgsfield-get-prediction',
-      'higgsfield-image-to-video',
-      'higgsfield-list-models',
-      'higgsfield-run',
-      'higgsfield-soul-generate',
-      'higgsfield-text-to-image',
-      'higgsfield-text-to-video',
+      'animate-image',
+      'cancel-prediction',
+      'generate-image',
+      'generate-soul-image',
+      'generate-video',
+      'get-prediction',
+      'list-models',
+      'run',
     ]);
   });
 
@@ -165,14 +165,14 @@ describe('Higgsfield Agent App', () => {
     // The Higgsfield health handler returns { status: 'ready' } when credentials
     // are present and valid. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('2.0.2');
+    expect(health.version).toBe('3.0.0');
   });
 
   it('list-models returns all models when no filter is applied', async () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-list-models', {});
+    sendToolCall(sessionId, 'list-models', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -187,7 +187,7 @@ describe('Higgsfield Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-list-models', { type: 'text-to-image' });
+    sendToolCall(sessionId, 'list-models', { type: 'text-to-image' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -199,7 +199,7 @@ describe('Higgsfield Agent App', () => {
     for (const m of models) expect(m.type).toBe('text-to-image');
   });
 
-  it('text-to-image submits request and returns request_id', async () => {
+  it('generate-image submits request and returns request_id', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -218,7 +218,7 @@ describe('Higgsfield Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-text-to-image', {
+    sendToolCall(sessionId, 'generate-image', {
       prompt: 'A sunset over the ocean',
       resolution: '4K',
       aspect_ratio: '16:9',
@@ -230,7 +230,7 @@ describe('Higgsfield Agent App', () => {
     const data = result.result as Record<string, unknown>;
     expect(data.request_id).toBe('req_abc123');
     expect(data.status).toBe('queued');
-    expect(data.message).toContain('higgsfield-get-prediction');
+    expect(data.message).toContain('get-prediction');
   });
 
   it('get-prediction returns status from API', async () => {
@@ -251,7 +251,7 @@ describe('Higgsfield Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-get-prediction', { prediction_id: 'req_xyz789' });
+    sendToolCall(sessionId, 'get-prediction', { prediction_id: 'req_xyz789' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -274,7 +274,7 @@ describe('Higgsfield Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-cancel-prediction', { prediction_id: 'req_cancel1' });
+    sendToolCall(sessionId, 'cancel-prediction', { prediction_id: 'req_cancel1' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -284,7 +284,7 @@ describe('Higgsfield Agent App', () => {
     expect(data.message).toContain('cancelled');
   });
 
-  it('text-to-image fails on API error', async () => {
+  it('generate-image fails on API error', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -298,7 +298,7 @@ describe('Higgsfield Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'higgsfield-text-to-image', { prompt: 'test' });
+    sendToolCall(sessionId, 'generate-image', { prompt: 'test' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

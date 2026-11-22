@@ -1,12 +1,12 @@
 /**
- * get_message — retrieve a single Twilio message by SID.
+ * get-message — retrieve a single Twilio message by SID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { twilioRequest } from '../lib/twilio-client.js';
 
 export function registerGetMessageTool(app: AgentApp): void {
-  app.tool('get_message', {
+  app.tool('get-message', {
     description: 'Get detailed information about a specific Twilio message by its SID.',
     parameters: {
       type: 'object',

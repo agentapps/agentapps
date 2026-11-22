@@ -1,12 +1,12 @@
 /**
- * create_invoice — create a new Holded invoice.
+ * create-invoice — create a new Holded invoice.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerCreateInvoiceTool(app: AgentApp): void {
-  app.tool('create_invoice', {
+  app.tool('create-invoice', {
     description:
       'Create a new invoice in Holded. Requires a contact ID and at least one line item.',
     parameters: {

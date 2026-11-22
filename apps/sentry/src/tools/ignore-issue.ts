@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { type SentryIssue, sentryRequest } from '../types.js';
 
 export function registerIgnoreIssueTool(app: AgentApp): void {
-  app.tool('ignore_issue', {
+  app.tool('ignore-issue', {
     description: 'Ignore a Sentry issue (stop notifications).',
     parameters: {
       type: 'object',

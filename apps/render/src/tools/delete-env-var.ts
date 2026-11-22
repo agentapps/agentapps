@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { renderRequest } from '../lib/render-client.js';
 
 /**
- * render-delete-env-var -- DELETE /services/{serviceId}/env-vars/{key}.
+ * delete-env-var -- DELETE /services/{serviceId}/env-vars/{key}.
  */
 export function registerDeleteEnvVarTool(app: AgentApp): void {
-  app.tool('render-delete-env-var', {
+  app.tool('delete-env-var', {
     description:
       'Delete an environment variable from a Render service. Returns { key, deleted }. Params: serviceId (required), key (required).',
     parameters: {

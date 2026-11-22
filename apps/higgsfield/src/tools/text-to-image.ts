@@ -6,10 +6,10 @@ import {
 } from '../lib/higgsfield-client.js';
 
 /**
- * higgsfield-text-to-image — generate images from text prompts using Seedream v4.
+ * generate-image — generate images from text prompts using Seedream v4.
  */
 export function registerTextToImageTool(app: AgentApp): void {
-  app.tool('higgsfield-text-to-image', {
+  app.tool('generate-image', {
     description:
       'Generate images from text prompts using Seedream v4. Params: prompt (required), resolution? ("1K"|"2K"|"4K", default "2K"), aspect_ratio? ("1:1"|"16:9"|"9:16"|"4:3"|"3:4"|"21:9"|"9:21", default "16:9"), style?, wait? (default false).',
     parameters: {
@@ -80,7 +80,7 @@ export function registerTextToImageTool(app: AgentApp): void {
         status: result.status,
         status_url: result.status_url,
         cancel_url: result.cancel_url,
-        message: 'Request submitted. Use higgsfield-get-prediction to check status.',
+        message: 'Request submitted. Use get-prediction to check status.',
       };
     },
   });

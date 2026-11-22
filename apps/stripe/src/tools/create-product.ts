@@ -1,12 +1,12 @@
 /**
- * create_product — create a new Stripe product.
+ * create-product — create a new Stripe product.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreateProductTool(app: AgentApp): void {
-  app.tool('create_product', {
+  app.tool('create-product', {
     description: 'Create a new product in Stripe. Returns the created product object.',
     parameters: {
       type: 'object',

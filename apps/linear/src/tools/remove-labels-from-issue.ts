@@ -4,7 +4,7 @@ import { validateIssueId, validateUuid } from './_linear-helpers.js';
 import { wrapLinearCall } from './utils.js';
 
 export function registerRemoveLabelsFromIssueTool(app: AgentApp): void {
-  app.tool('linear-remove-labels-from-issue', {
+  app.tool('remove-labels-from-issue', {
     description:
       'Remove labels from a Linear issue. Returns { issueId, removed, total, labelIds }.',
     parameters: {
@@ -19,7 +19,7 @@ export function registerRemoveLabelsFromIssueTool(app: AgentApp): void {
       },
       required: ['issueId', 'labelIds'],
     },
-    // Detaches labels (linear-add-labels-to-issue puts them back); the labels themselves are kept.
+    // Detaches labels (add-labels-to-issue puts them back); the labels themselves are kept.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,

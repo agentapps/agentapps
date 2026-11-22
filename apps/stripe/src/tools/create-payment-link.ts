@@ -1,12 +1,12 @@
 /**
- * create_payment_link — create a Stripe Payment Link.
+ * create-payment-link — create a Stripe Payment Link.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerCreatePaymentLinkTool(app: AgentApp): void {
-  app.tool('create_payment_link', {
+  app.tool('create-payment-link', {
     description:
       'Create a Stripe Payment Link for accepting payments. Returns a URL that can be shared with customers.',
     parameters: {

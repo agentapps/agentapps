@@ -161,13 +161,13 @@ async function main() {
   await waitFor('tool_result');
   log('');
 
-  // 9. Demo: save_note
-  log('▶️  Calling save_note(title: "AI Research", content: "...")...');
+  // 9. Demo: save-note
+  log('▶️  Calling save-note(title: "AI Research", content: "...")...');
   received.length = 0;
   host.send({
     ...createEnvelope('tool_call'),
     sessionId,
-    tool: 'save_note',
+    tool: 'save-note',
     arguments: {
       title: 'AI Research',
       content:
@@ -179,13 +179,13 @@ async function main() {
   await waitFor('tool_result');
   log('');
 
-  // 10. Demo: list_notes
-  log('▶️  Calling list_notes()...');
+  // 10. Demo: list-notes
+  log('▶️  Calling list-notes()...');
   received.length = 0;
   host.send({
     ...createEnvelope('tool_call'),
     sessionId,
-    tool: 'list_notes',
+    tool: 'list-notes',
     arguments: {},
     context: { userId: 'developer', installationId: 'demo_local' },
   } as MessageBase);

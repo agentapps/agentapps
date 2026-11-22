@@ -8,10 +8,10 @@ interface RenderEnvironment {
 }
 
 /**
- * render-list-environments -- GET /projects/{projectId}/environments.
+ * list-environments -- GET /projects/{projectId}/environments.
  */
 export function registerListEnvironmentsTool(app: AgentApp): void {
-  app.tool('render-list-environments', {
+  app.tool('list-environments', {
     description:
       'List all environments in a Render project. Returns { environments: [{ id, name, projectId }] }. Params: projectId (required).',
     parameters: {

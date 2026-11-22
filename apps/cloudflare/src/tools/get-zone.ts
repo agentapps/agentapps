@@ -1,12 +1,12 @@
 /**
- * get_zone — retrieve details about a specific Cloudflare zone.
+ * get-zone — retrieve details about a specific Cloudflare zone.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { cloudflareRequest } from '../lib/cloudflare-client.js';
 
 export function registerGetZoneTool(app: AgentApp): void {
-  app.tool('get_zone', {
+  app.tool('get-zone', {
     description: 'Get detailed information about a specific Cloudflare zone by its ID.',
     parameters: {
       type: 'object',

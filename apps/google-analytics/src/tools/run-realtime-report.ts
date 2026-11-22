@@ -12,10 +12,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-run-realtime-report — Run a GA4 realtime report (last 30 minutes).
+ * run-realtime-report — Run a GA4 realtime report (last 30 minutes).
  */
 export function registerRunRealtimeReportTool(app: AgentApp): void {
-  app.tool('analytics-run-realtime-report', {
+  app.tool('run-realtime-report', {
     description:
       'Run a GA4 realtime report (last 30 minutes of activity). Returns { dimensionHeaders, metricHeaders, rows, rowCount, propertyQuota? }.',
     parameters: {

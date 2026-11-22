@@ -1,12 +1,12 @@
 /**
- * update_inventory_level — set the inventory level for an item at a location.
+ * update-inventory-level — set the inventory level for an item at a location.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerUpdateInventoryLevelTool(app: AgentApp): void {
-  app.tool('update_inventory_level', {
+  app.tool('update-inventory-level', {
     description:
       'Set the available inventory quantity for an item at a specific location in your Shopify store.',
     parameters: {

@@ -3,7 +3,7 @@ import { getLinearClient } from '../lib/index.js';
 import { validateUuid } from './_linear-helpers.js';
 
 export function registerDeleteLabelTool(app: AgentApp): void {
-  app.tool('linear-delete-label', {
+  app.tool('delete-label', {
     description: 'Permanently delete a Linear label. Irreversible. Returns { success, labelId }.',
     parameters: {
       type: 'object',

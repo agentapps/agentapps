@@ -8,18 +8,18 @@ interface RenderLogEntry {
 }
 
 /**
- * render-get-logs -- GET /logs (custom query param format).
+ * get-logs -- GET /logs (custom query param format).
  */
 export function registerGetLogsTool(app: AgentApp): void {
-  app.tool('render-get-logs', {
+  app.tool('get-logs', {
     description:
-      'Get recent logs for one or more Render services. Requires the owner ID (use render-list-owners) and service IDs. Returns { logs: [{ timestamp, level?, message }], count }. Params: ownerId (required), serviceIds (required -- array of service IDs), limit? (default 100, max 500), text? (filter), level? (debug, info, warning, error).',
+      'Get recent logs for one or more Render services. Requires the owner ID (use list-owners) and service IDs. Returns { logs: [{ timestamp, level?, message }], count }. Params: ownerId (required), serviceIds (required -- array of service IDs), limit? (default 100, max 500), text? (filter), level? (debug, info, warning, error).',
     parameters: {
       type: 'object',
       properties: {
         ownerId: {
           type: 'string',
-          description: 'The owner/workspace ID (use render-list-owners to get IDs).',
+          description: 'The owner/workspace ID (use list-owners to get IDs).',
         },
         serviceIds: {
           type: 'array',

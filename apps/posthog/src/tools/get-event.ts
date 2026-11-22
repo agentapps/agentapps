@@ -1,12 +1,12 @@
 /**
- * get_event — retrieve a single PostHog event by ID.
+ * get-event — retrieve a single PostHog event by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerGetEventTool(app: AgentApp): void {
-  app.tool('get_event', {
+  app.tool('get-event', {
     description: 'Get detailed information about a specific PostHog event by its ID.',
     parameters: {
       type: 'object',

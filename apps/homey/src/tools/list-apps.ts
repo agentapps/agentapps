@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerListAppsTool(app: AgentApp): void {
-  app.tool('homey-list-apps', {
+  app.tool('list-apps', {
     description:
       'List all apps installed on Homey. Useful for diagnostics and checking which integrations are active.',
     parameters: {

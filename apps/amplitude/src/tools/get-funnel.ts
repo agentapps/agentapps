@@ -1,12 +1,12 @@
 /**
- * get_funnel — get funnel analysis data from Amplitude.
+ * get-funnel — get funnel analysis data from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetFunnelTool(app: AgentApp): void {
-  app.tool('get_funnel', {
+  app.tool('get-funnel', {
     description:
       'Get funnel conversion data from Amplitude. Returns step-by-step conversion rates for a sequence of events within a date range.',
     parameters: {

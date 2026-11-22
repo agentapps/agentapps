@@ -5,7 +5,7 @@ import { buildProjectShape, validateUuid } from './_linear-helpers.js';
 import { resolveFields, sanitiseBody } from './utils.js';
 
 export function registerCreateProjectTool(app: AgentApp): void {
-  app.tool('linear-create-project', {
+  app.tool('create-project', {
     description:
       'Create a Linear project. Returns curated project shape. Not retryable (no idempotency key). Params: name, teamIds, description?, leadId?, startDate?, targetDate?, fields?, includeRaw.',
     parameters: {

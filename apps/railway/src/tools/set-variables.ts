@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-set-variables — Set environment variables for a service.
+ * set-variables — Set environment variables for a service.
  */
 export function registerSetVariablesTool(app: AgentApp): void {
-  app.tool('railway-set-variables', {
+  app.tool('set-variables', {
     description: 'Set environment variables for a service.',
     parameters: {
       type: 'object',

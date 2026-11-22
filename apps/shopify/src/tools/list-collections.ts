@@ -1,12 +1,12 @@
 /**
- * list_collections — list Shopify custom and smart collections.
+ * list-collections — list Shopify custom and smart collections.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerListCollectionsTool(app: AgentApp): void {
-  app.tool('list_collections', {
+  app.tool('list-collections', {
     description:
       'List collections from your Shopify store. Returns both custom collections and smart collections.',
     parameters: {

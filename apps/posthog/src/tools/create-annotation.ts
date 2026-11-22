@@ -1,12 +1,12 @@
 /**
- * create_annotation — create an annotation in PostHog.
+ * create-annotation — create an annotation in PostHog.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerCreateAnnotationTool(app: AgentApp): void {
-  app.tool('create_annotation', {
+  app.tool('create-annotation', {
     description:
       'Create an annotation in PostHog to mark a point in time on charts (e.g. deployments, incidents).',
     parameters: {

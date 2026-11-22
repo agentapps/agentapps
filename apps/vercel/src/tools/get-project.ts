@@ -1,12 +1,12 @@
 /**
- * get_project — retrieve a single Vercel project by name or ID.
+ * get-project — retrieve a single Vercel project by name or ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { vercelRequest } from '../lib/vercel-client.js';
 
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('get_project', {
+  app.tool('get-project', {
     description: 'Get detailed information about a specific Vercel project by its name or ID.',
     parameters: {
       type: 'object',

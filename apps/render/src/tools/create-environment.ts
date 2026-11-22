@@ -8,10 +8,10 @@ interface RenderEnvironment {
 }
 
 /**
- * render-create-environment -- POST /projects/{projectId}/environments.
+ * create-environment -- POST /projects/{projectId}/environments.
  */
 export function registerCreateEnvironmentTool(app: AgentApp): void {
-  app.tool('render-create-environment', {
+  app.tool('create-environment', {
     description:
       'Create a new environment in a Render project. Returns { environmentId, name, projectId }. Params: projectId (required), name (required).',
     parameters: {

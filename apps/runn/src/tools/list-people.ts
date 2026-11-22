@@ -5,7 +5,7 @@ import { PERSON_COMPACT_FIELDS } from './_fields.js';
 import { resolveFieldsList, sanitizeLimit } from './utils.js';
 
 export function registerListPeopleTool(app: AgentApp): void {
-  app.tool('runn-list-people', {
+  app.tool('list-people', {
     description:
       "List Runn people. Returns { items: [{ id, firstName, lastName, email, isArchived, teamId, createdAt, updatedAt }], total, hasMore, nextCursor }. Note: a person's role lives in their contract, not on the person. Params: limit (1-200, def 50), cursor?, fields?, includeRaw.",
     parameters: {

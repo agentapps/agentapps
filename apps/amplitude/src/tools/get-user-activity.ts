@@ -1,12 +1,12 @@
 /**
- * get_user_activity — get user activity from Amplitude.
+ * get-user-activity — get user activity from Amplitude.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { AMPLITUDE_EXPORT_URL, amplitudeRequest } from '../lib/amplitude-client.js';
 
 export function registerGetUserActivityTool(app: AgentApp): void {
-  app.tool('get_user_activity', {
+  app.tool('get-user-activity', {
     description:
       'Get recent activity for a specific user in Amplitude. Returns a list of events performed by the user.',
     parameters: {

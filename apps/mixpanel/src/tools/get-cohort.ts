@@ -1,12 +1,12 @@
 /**
- * get_cohort — get details of a specific cohort from Mixpanel.
+ * get-cohort — get details of a specific cohort from Mixpanel.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { MIXPANEL_QUERY_URL, mixpanelRequest } from '../lib/mixpanel-client.js';
 
 export function registerGetCohortTool(app: AgentApp): void {
-  app.tool('get_cohort', {
+  app.tool('get-cohort', {
     description:
       'Get details of a specific cohort from Mixpanel by cohort ID. Returns cohort metadata and definition.',
     parameters: {

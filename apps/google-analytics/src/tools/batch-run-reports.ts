@@ -12,10 +12,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-batch-run-reports — Run up to 5 GA4 reports in one call.
+ * batch-run-reports — Run up to 5 GA4 reports in one call.
  */
 export function registerBatchRunReportsTool(app: AgentApp): void {
-  app.tool('analytics-batch-run-reports', {
+  app.tool('batch-run-reports', {
     description:
       'Run up to 5 GA4 reports against the same property in one call. Returns { reports: [<RunReportResponse>...] }. Useful for dashboards.',
     parameters: {
@@ -28,7 +28,7 @@ export function registerBatchRunReportsTool(app: AgentApp): void {
         requests: {
           type: 'array',
           description:
-            'Array of report requests (same shape as analytics-run-report parameters minus propertyId)',
+            'Array of report requests (same shape as run-report parameters minus propertyId)',
           items: { type: 'object' },
         },
       },

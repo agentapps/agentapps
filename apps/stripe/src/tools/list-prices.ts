@@ -1,12 +1,12 @@
 /**
- * list_prices — list Stripe prices.
+ * list-prices — list Stripe prices.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { stripeRequest } from '../lib/stripe-client.js';
 
 export function registerListPricesTool(app: AgentApp): void {
-  app.tool('list_prices', {
+  app.tool('list-prices', {
     description:
       'List prices from your Stripe account. Supports filtering by product and active status.',
     parameters: {

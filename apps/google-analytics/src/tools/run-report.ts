@@ -12,10 +12,10 @@ import {
 } from '../lib/index.js';
 
 /**
- * analytics-run-report — Run a GA4 report.
+ * run-report — Run a GA4 report.
  */
 export function registerRunReportTool(app: AgentApp): void {
-  app.tool('analytics-run-report', {
+  app.tool('run-report', {
     description:
       'Run a GA4 report. Returns { dimensionHeaders, metricHeaders, rows, rowCount, totals?, metadata, propertyQuota? }. Dates accept ISO ("2024-01-01") or relative ("7daysAgo", "yesterday", "today").',
     parameters: {

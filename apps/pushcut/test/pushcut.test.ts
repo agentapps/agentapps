@@ -151,9 +151,9 @@ describe('Pushcut Agent App', () => {
 
     expect(tools.map((t) => t.name).sort()).toEqual([
       'execute',
-      'list_devices',
-      'list_notifications',
-      'send_notification',
+      'list-devices',
+      'list-notifications',
+      'send-notification',
     ]);
   });
 
@@ -180,7 +180,7 @@ describe('Pushcut Agent App', () => {
     installationSecrets = null;
     const sessionId = await initAndOpen();
 
-    sendToolCall(sessionId, 'list_devices', {});
+    sendToolCall(sessionId, 'list-devices', {});
     const result = await waitForType('tool_result');
 
     expect(result.success).toBe(false);
@@ -189,14 +189,14 @@ describe('Pushcut Agent App', () => {
     expect(error.message).toContain('API_KEY');
   });
 
-  it('send_notification posts to correct endpoint', async () => {
+  it('send-notification posts to correct endpoint', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
     vi.stubGlobal('fetch', fetchMock);
 
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_notification', {
+    sendToolCall(sessionId, 'send-notification', {
       name: 'Alert',
       title: 'Build done',
       text: 'Your build completed successfully.',
@@ -216,14 +216,14 @@ describe('Pushcut Agent App', () => {
     expect(body.text).toBe('Your build completed successfully.');
   });
 
-  it('send_notification encodes notification name', async () => {
+  it('send-notification encodes notification name', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
     vi.stubGlobal('fetch', fetchMock);
 
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_notification', { name: 'My Alert' });
+    sendToolCall(sessionId, 'send-notification', { name: 'My Alert' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -287,7 +287,7 @@ describe('Pushcut Agent App', () => {
     expect(error.message as string).toContain('shortcut or homekit');
   });
 
-  it('list_devices returns device list', async () => {
+  it('list-devices returns device list', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -303,7 +303,7 @@ describe('Pushcut Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_devices', {});
+    sendToolCall(sessionId, 'list-devices', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -313,7 +313,7 @@ describe('Pushcut Agent App', () => {
     expect(data[0].name).toBe('iPhone de Pablo');
   });
 
-  it('list_notifications returns notification definitions', async () => {
+  it('list-notifications returns notification definitions', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -329,7 +329,7 @@ describe('Pushcut Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_notifications', {});
+    sendToolCall(sessionId, 'list-notifications', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -339,7 +339,7 @@ describe('Pushcut Agent App', () => {
     expect(data[0].title).toBe('Alert');
   });
 
-  it('send_notification fails on API error', async () => {
+  it('send-notification fails on API error', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -352,7 +352,7 @@ describe('Pushcut Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'send_notification', { name: 'Test' });
+    sendToolCall(sessionId, 'send-notification', { name: 'Test' });
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);

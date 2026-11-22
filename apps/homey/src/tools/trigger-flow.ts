@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, withTokenRefresh } from '../lib/index.js';
 
 export function registerTriggerFlowTool(app: AgentApp): void {
-  app.tool('homey-trigger-flow', {
+  app.tool('trigger-flow', {
     description: 'Trigger (run) a Homey flow by its ID.',
     parameters: {
       type: 'object',

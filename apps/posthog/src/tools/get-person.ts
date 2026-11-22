@@ -1,12 +1,12 @@
 /**
- * get_person — retrieve a single PostHog person by ID.
+ * get-person — retrieve a single PostHog person by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { posthogRequest } from '../lib/posthog-client.js';
 
 export function registerGetPersonTool(app: AgentApp): void {
-  app.tool('get_person', {
+  app.tool('get-person', {
     description: 'Get detailed information about a specific PostHog person by their ID.',
     parameters: {
       type: 'object',

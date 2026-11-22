@@ -145,16 +145,16 @@ describe('Airtable Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'add_comment',
-      'create_records',
-      'create_webhook',
-      'delete_records',
-      'get_record',
-      'list_bases',
-      'list_comments',
-      'list_records',
-      'list_tables',
-      'update_records',
+      'add-comment',
+      'create-records',
+      'create-webhook',
+      'delete-records',
+      'get-record',
+      'list-bases',
+      'list-comments',
+      'list-records',
+      'list-tables',
+      'update-records',
     ]);
   });
 
@@ -175,7 +175,7 @@ describe('Airtable Agent App', () => {
     expect(health.status).toBe('ready');
   });
 
-  it('list_records sends correct URL with baseId and table', async () => {
+  it('list-records sends correct URL with baseId and table', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -191,7 +191,7 @@ describe('Airtable Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_records', {
+    sendToolCall(sessionId, 'list-records', {
       baseId: 'appABC123',
       tableIdOrName: 'Tasks',
     });
@@ -215,7 +215,7 @@ describe('Airtable Agent App', () => {
     expect(url).toContain('maxRecords=100');
   });
 
-  it('create_records sends POST with records body', async () => {
+  it('create-records sends POST with records body', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -228,7 +228,7 @@ describe('Airtable Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'create_records', {
+    sendToolCall(sessionId, 'create-records', {
       baseId: 'appABC123',
       tableIdOrName: 'Tasks',
       records: [{ fields: { Name: 'Charlie', Status: 'Active' } }],
@@ -258,7 +258,7 @@ describe('Airtable Agent App', () => {
     expect(body.typecast).toBe(true);
   });
 
-  it('delete_records sends DELETE with record IDs in URL', async () => {
+  it('delete-records sends DELETE with record IDs in URL', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -274,7 +274,7 @@ describe('Airtable Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'delete_records', {
+    sendToolCall(sessionId, 'delete-records', {
       baseId: 'appABC123',
       tableIdOrName: 'Tasks',
       recordIds: ['rec001', 'rec002'],
@@ -319,7 +319,7 @@ describe('Airtable Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'list_bases', {});
+    sendToolCall(sessionId, 'list-bases', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(false);
@@ -328,7 +328,7 @@ describe('Airtable Agent App', () => {
     expect(error.message as string).toContain('401');
   });
 
-  it('add_comment sends POST with comment text', async () => {
+  it('add-comment sends POST with comment text', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
@@ -344,7 +344,7 @@ describe('Airtable Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'add_comment', {
+    sendToolCall(sessionId, 'add-comment', {
       baseId: 'appABC123',
       tableIdOrName: 'Tasks',
       recordId: 'rec001',

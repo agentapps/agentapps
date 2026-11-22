@@ -5,7 +5,7 @@ import { extractLabel, validateUuid } from './_linear-helpers.js';
 import { resolveFields, sanitiseBody, wrapLinearCall } from './utils.js';
 
 export function registerUpdateLabelTool(app: AgentApp): void {
-  app.tool('linear-update-label', {
+  app.tool('update-label', {
     description:
       'Update a Linear label. Returns curated updated label. Idempotent per-field. Params: labelId, name?, color?, description?, fields?, includeRaw.',
     parameters: {

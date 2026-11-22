@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-get-build-logs — Get build logs for a deployment.
+ * get-build-logs — Get build logs for a deployment.
  */
 export function registerGetBuildLogsTool(app: AgentApp): void {
-  app.tool('railway-get-build-logs', {
+  app.tool('get-build-logs', {
     description:
       'Get build logs for a deployment. Shows what happened during the build/compile phase.',
     parameters: {

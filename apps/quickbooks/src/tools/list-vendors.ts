@@ -1,12 +1,12 @@
 /**
- * list_vendors — list QuickBooks Online vendors via query.
+ * list-vendors — list QuickBooks Online vendors via query.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { quickbooksRequest } from '../lib/quickbooks-client.js';
 
 export function registerListVendorsTool(app: AgentApp): void {
-  app.tool('list_vendors', {
+  app.tool('list-vendors', {
     description:
       'List vendors from your QuickBooks Online account. Returns up to maxResults vendors.',
     parameters: {

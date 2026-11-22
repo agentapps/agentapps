@@ -161,7 +161,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.homey',
-    appVersion: '2.0.2',
+    appVersion: '3.0.0',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -218,19 +218,19 @@ describe('Homey Agent App', () => {
     const tools = toolsList.tools as Array<{ name: string }>;
 
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'homey-get-device',
-      'homey-get-energy',
-      'homey-get-system-info',
-      'homey-get-user',
-      'homey-get-variables',
-      'homey-list-apps',
-      'homey-list-devices',
-      'homey-list-flows',
-      'homey-list-notifications',
-      'homey-list-zones',
-      'homey-set-capability',
-      'homey-set-variable',
-      'homey-trigger-flow',
+      'get-device',
+      'get-energy',
+      'get-system-info',
+      'get-user',
+      'get-variables',
+      'list-apps',
+      'list-devices',
+      'list-flows',
+      'list-notifications',
+      'list-zones',
+      'set-capability',
+      'set-variable',
+      'trigger-flow',
     ]);
   });
 
@@ -243,7 +243,7 @@ describe('Homey Agent App', () => {
     // The Homey health handler returns { status: 'ready' } when OAuth secrets
     // are present and valid. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('2.0.2');
+    expect(health.version).toBe('3.0.0');
   });
 
   it('list-devices returns device list with zone names', async () => {
@@ -273,7 +273,7 @@ describe('Homey Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'homey-list-devices', {});
+    sendToolCall(sessionId, 'list-devices', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);
@@ -297,7 +297,7 @@ describe('Homey Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'homey-set-capability', {
+    sendToolCall(sessionId, 'set-capability', {
       device_id: 'dev1',
       capability: 'onoff',
       value: true,
@@ -325,7 +325,7 @@ describe('Homey Agent App', () => {
     const sessionId = await initAndOpen();
 
     received.length = 0;
-    sendToolCall(sessionId, 'homey-get-user', {});
+    sendToolCall(sessionId, 'get-user', {});
 
     const result = await waitForType('tool_result');
     expect(result.success).toBe(true);

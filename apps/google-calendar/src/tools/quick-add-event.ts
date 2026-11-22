@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { ensureAuthenticated, type GoogleCalendarEvent, googleCalendarFetch } from '../types.js';
 
 export function registerQuickAddEventTool(app: AgentApp): void {
-  app.tool('quick_add_event', {
+  app.tool('quick-add-event', {
     description:
       'Quick-add a Google Calendar event from a text string (e.g. "Lunch with Alice tomorrow at noon")',
     parameters: {

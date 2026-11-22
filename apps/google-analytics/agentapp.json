@@ -1,7 +1,7 @@
 {
   "id": "app.google.analytics",
   "name": "Google Analytics",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams",
   "tagline": "Run GA4 reports, query realtime data, and manage properties and data streams",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

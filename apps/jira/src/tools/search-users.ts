@@ -1,14 +1,14 @@
 /**
- * search_users — search for Jira users by name or email.
+ * search-users — search for Jira users by name or email.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { jiraRequest } from '../lib/jira-client.js';
 
 export function registerSearchUsersTool(app: AgentApp): void {
-  app.tool('search_users', {
+  app.tool('search-users', {
     description:
-      'Search for Jira users by display name or email address. Useful for finding account IDs to use with assign_issue or create_issue.',
+      'Search for Jira users by display name or email address. Useful for finding account IDs to use with assign-issue or create-issue.',
     parameters: {
       type: 'object',
       properties: {

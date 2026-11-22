@@ -1,12 +1,12 @@
 /**
- * list_files — list files in a Supabase storage bucket.
+ * list-files — list files in a Supabase storage bucket.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { supabaseRequest } from '../lib/supabase-client.js';
 
 export function registerListFilesTool(app: AgentApp): void {
-  app.tool('list_files', {
+  app.tool('list-files', {
     description:
       'List files in a Supabase storage bucket. Optionally filter by path prefix and paginate results.',
     parameters: {

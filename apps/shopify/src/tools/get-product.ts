@@ -1,12 +1,12 @@
 /**
- * get_product — retrieve a single Shopify product by ID.
+ * get-product — retrieve a single Shopify product by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { shopifyRequest } from '../lib/shopify-client.js';
 
 export function registerGetProductTool(app: AgentApp): void {
-  app.tool('get_product', {
+  app.tool('get-product', {
     description: 'Get detailed information about a specific Shopify product by its ID.',
     parameters: {
       type: 'object',

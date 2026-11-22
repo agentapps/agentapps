@@ -1,12 +1,12 @@
 /**
- * send_document — send a document to a Telegram chat.
+ * send-document — send a document to a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerSendDocumentTool(app: AgentApp): void {
-  app.tool('send_document', {
+  app.tool('send-document', {
     description:
       'Send a document to a Telegram chat. The document can be a URL or a file_id of an already uploaded file.',
     parameters: {

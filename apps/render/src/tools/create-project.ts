@@ -8,12 +8,12 @@ interface RenderProject {
 }
 
 /**
- * render-create-project -- POST /projects.
+ * create-project -- POST /projects.
  */
 export function registerCreateProjectTool(app: AgentApp): void {
-  app.tool('render-create-project', {
+  app.tool('create-project', {
     description:
-      'Create a new project in Render. Use render-list-owners to get the ownerId. Returns { projectId, name, ownerId }. Params: name (required), ownerId (required).',
+      'Create a new project in Render. Use list-owners to get the ownerId. Returns { projectId, name, ownerId }. Params: name (required), ownerId (required).',
     parameters: {
       type: 'object',
       properties: {
@@ -23,7 +23,7 @@ export function registerCreateProjectTool(app: AgentApp): void {
         },
         ownerId: {
           type: 'string',
-          description: 'Owner/workspace ID (use render-list-owners to get IDs).',
+          description: 'Owner/workspace ID (use list-owners to get IDs).',
         },
       },
       required: ['name', 'ownerId'],

@@ -1,12 +1,12 @@
 /**
- * mute_monitor — mute a Datadog monitor.
+ * mute-monitor — mute a Datadog monitor.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { datadogRequest } from '../lib/datadog-client.js';
 
 export function registerMuteMonitorTool(app: AgentApp): void {
-  app.tool('mute_monitor', {
+  app.tool('mute-monitor', {
     description:
       'Mute a Datadog monitor by ID. Optionally specify an end timestamp for the mute period.',
     parameters: {

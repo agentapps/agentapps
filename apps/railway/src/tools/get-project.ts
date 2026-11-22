@@ -2,10 +2,10 @@ import type { AgentApp } from '@agentapps/sdk';
 import { createClient } from './_helpers.js';
 
 /**
- * railway-get-project — Get detailed information about a Railway project.
+ * get-project — Get detailed information about a Railway project.
  */
 export function registerGetProjectTool(app: AgentApp): void {
-  app.tool('railway-get-project', {
+  app.tool('get-project', {
     description:
       'Get detailed information about a Railway project including services and environments.',
     parameters: {

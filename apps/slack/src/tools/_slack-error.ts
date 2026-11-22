@@ -2,7 +2,7 @@
  * Slack API error classifier.
  *
  * Maps `(WebAPIPlatformError code, HTTP status)` → `{ IssueCode, IssueAction }`
- * for use in `-health-check` and as the canonical error renderer for tool
+ * for use in the app's health check and as the canonical error renderer for tool
  * handlers. Prepends `[CODE]` to `error.message` so the LLM (which only sees
  * `error.message` thanks to the SDK serializer) can branch its retry/reauth
  * logic without parsing free-form English. See

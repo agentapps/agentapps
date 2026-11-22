@@ -1,12 +1,12 @@
 /**
- * get_invoice — retrieve a single Holded invoice by ID.
+ * get-invoice — retrieve a single Holded invoice by ID.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { holdedRequest } from '../lib/holded-client.js';
 
 export function registerGetInvoiceTool(app: AgentApp): void {
-  app.tool('get_invoice', {
+  app.tool('get-invoice', {
     description: 'Get detailed information about a specific Holded invoice.',
     parameters: {
       type: 'object',

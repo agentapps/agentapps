@@ -2,7 +2,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { getHomeyApi, getSecrets, getZones, withTokenRefresh } from '../lib/index.js';
 
 export function registerGetDeviceTool(app: AgentApp): void {
-  app.tool('homey-get-device', {
+  app.tool('get-device', {
     description: 'Get detailed information and current state of a specific Homey device by ID.',
     parameters: {
       type: 'object',

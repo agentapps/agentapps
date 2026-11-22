@@ -1,12 +1,12 @@
 /**
- * get_chat — get information about a Telegram chat.
+ * get-chat — get information about a Telegram chat.
  */
 
 import type { AgentApp } from '@agentapps/sdk';
 import { telegramRequest } from '../lib/telegram-client.js';
 
 export function registerGetChatTool(app: AgentApp): void {
-  app.tool('get_chat', {
+  app.tool('get-chat', {
     description:
       'Get up-to-date information about a Telegram chat (group, supergroup, or channel).',
     parameters: {

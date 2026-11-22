@@ -1,5 +1,5 @@
 /**
- * list_models — discover models on Replicate and get their input schemas.
+ * list-models — discover models on Replicate and get their input schemas.
  *
  * Three modes:
  *   (1) collection: list models in a category (e.g. "video-generation")
@@ -11,7 +11,7 @@ import type { AgentApp } from '@agentapps/sdk';
 import { assertOk, type ReplicateModelSummary, replicateRequest } from '../types.js';
 
 export function registerListModelsTool(app: AgentApp): void {
-  app.tool('list_models', {
+  app.tool('list-models', {
     description:
       'Discover models available on Replicate and their exact input parameters. ' +
       'Three modes: ' +

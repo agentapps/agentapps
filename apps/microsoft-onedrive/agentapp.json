@@ -1,7 +1,7 @@
 {
   "id": "app.microsoft.onedrive",
   "name": "OneDrive",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Microsoft OneDrive file management — browse, upload, download, organize, and share files via Microsoft Graph API.",
   "tagline": "Browse, upload, organize, and share OneDrive files via Microsoft Graph",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -22,10 +22,13 @@ export function registerUpdateCommentTool(app: AgentApp): void {
       },
       required: ['fileId', 'commentId', 'content'],
     },
+    // Setting the content again undoes it; destructiveHint is for changes the app cannot undo.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

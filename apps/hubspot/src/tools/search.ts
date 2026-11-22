@@ -69,9 +69,12 @@ export function registerSearchTool(app: AgentApp): void {
       required: ['query', 'objectType'],
     },
     annotations: {
+      // The POST is the CRM search endpoint: it only reads.
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const {

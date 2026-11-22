@@ -51,6 +51,7 @@ export function registerSearchPagesTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

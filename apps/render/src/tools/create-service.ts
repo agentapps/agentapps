@@ -65,10 +65,13 @@ export function registerCreateServiceTool(app: AgentApp): void {
       },
       required: ['name', 'ownerId', 'type', 'repoURL'],
     },
+    // Can start real spend: `plan` accepts paid instance plans, billed from creation.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as {

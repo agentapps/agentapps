@@ -19,7 +19,14 @@ export function registerApproveSharedInviteTool(app: AgentApp): void {
       },
       required: ['inviteId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // An approval cannot be withdrawn through this app.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { inviteId, targetTeam } = args as unknown as ApproveSharedInviteArgs;
       if (typeof inviteId !== 'string' || inviteId.trim().length === 0) {

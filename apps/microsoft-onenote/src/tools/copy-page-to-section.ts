@@ -32,6 +32,7 @@ export function registerCopyPageToSectionTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

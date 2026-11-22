@@ -18,7 +18,13 @@ export function registerGetProjectTool(app: AgentApp): void {
       },
       required: ['projectId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const projectId = args.projectId as string;
       return await vercelRequest('GET', `/v9/projects/${projectId}`, null, ctx);

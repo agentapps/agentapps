@@ -19,11 +19,13 @@ export function registerMoveMessageTool(app: AgentApp): void {
       },
       required: ['messageId', 'destinationFolderId'],
     },
+    // Moving the message back undoes it.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

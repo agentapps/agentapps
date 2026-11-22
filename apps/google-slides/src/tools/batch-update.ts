@@ -34,10 +34,14 @@ export function registerBatchUpdateTool(app: AgentApp): void {
       },
       required: ['presentationId', 'requests'],
     },
+    // Passes any Slides API request through, including deleteObject and replaceAllText: annotated
+    // for the most dangerous thing it can do.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

@@ -28,7 +28,13 @@ export function registerListFoldersTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.installationSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY user secret.');

@@ -2,7 +2,14 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerDispatchEventTool(app: AgentApp) {
   app.tool('dispatch-event', {
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // The event starts workflows, which can deploy or publish; the app cannot undo them.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Send a `repository_dispatch` event to trigger workflows.',
     parameters: {
       type: 'object',

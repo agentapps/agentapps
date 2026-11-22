@@ -24,7 +24,15 @@ export function registerStopRecordingTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Stores the video in the app's own Objects and removes its own staging file from the OS
+    // temp directory. A second call finds no recording and does nothing.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       if (!getIsRecording() || !getContext()) {
         return 'No active recording to stop.';

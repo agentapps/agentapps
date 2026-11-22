@@ -16,6 +16,8 @@ export function registerListWorkspacesTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const workspaces = await asanaRequest<unknown[]>(ctx, 'workspaces');

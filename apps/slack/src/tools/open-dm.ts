@@ -27,7 +27,13 @@ export function registerOpenDmTool(app: AgentApp): void {
       },
       required: ['users'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { users, returnIm } = args as unknown as OpenDmArgs;
       if (!Array.isArray(users) || users.length === 0) {

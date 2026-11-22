@@ -16,7 +16,14 @@ export function registerUpdateContactTool(app: AgentApp): void {
       },
       required: ['id'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).id?.trim()) throw new Error('id is required');
       if (

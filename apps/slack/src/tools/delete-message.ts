@@ -32,7 +32,13 @@ export function registerDeleteMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'ts'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, ts, asUser } = args as unknown as DeleteMessageArgs;
       validateChannelId(channel, 'channel');

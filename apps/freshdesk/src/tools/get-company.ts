@@ -22,8 +22,10 @@ export function registerGetCompanyTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const companyId = args.companyId as number;

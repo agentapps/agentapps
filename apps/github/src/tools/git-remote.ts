@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitRemoteTool(app: AgentApp) {
   app.tool('git-remote', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `remove` deletes a remote with its URL and remote-tracking branches.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'List, add, remove, or update git remotes. `list` returns name + fetch/push URLs.',
     parameters: {
       type: 'object',

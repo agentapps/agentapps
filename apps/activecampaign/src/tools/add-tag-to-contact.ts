@@ -13,7 +13,14 @@ export function registerAddTagToContactTool(app: AgentApp): void {
       },
       required: ['contactId', 'tagId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // Tagging is a label on the contact, not a destruction; a tag can trigger automations in ActiveCampaign.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).contactId?.trim()) throw new Error('contactId is required');
       if (!(args as any).tagId?.trim()) throw new Error('tagId is required');

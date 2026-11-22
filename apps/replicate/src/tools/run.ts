@@ -36,7 +36,14 @@ export function registerRunTool(app: AgentApp): void {
       },
       required: ['model', 'input'],
     },
-    annotations: { readOnlyHint: false },
+    // Starts a billed prediction: money spent cannot be taken back.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiToken = await ctx.systemSecret('API_TOKEN');
       if (!apiToken) {

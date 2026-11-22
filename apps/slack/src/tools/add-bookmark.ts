@@ -24,7 +24,13 @@ export function registerAddBookmarkTool(app: AgentApp): void {
       },
       required: ['channel', 'title', 'link'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, title, link, emoji } = args as unknown as AddBookmarkArgs;
       validateChannelId(channel, 'channel');

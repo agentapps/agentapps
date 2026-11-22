@@ -15,7 +15,13 @@ export function registerCreateCollectionTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.createCollection({ name: args.name as string });

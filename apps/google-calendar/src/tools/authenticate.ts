@@ -12,6 +12,14 @@ export function registerAuthenticateTool(app: AgentApp): void {
         },
       },
     },
+    // Stores the tokens of the account that signs in; signing in again replaces them.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const provider = (args.provider as string) ?? 'google';
 

@@ -36,7 +36,16 @@ export function registerSetPageIconTool(app: AgentApp): void {
       },
       required: ['pageId', 'iconType', 'icon'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'stable' },
+    // Sets one field to a value; setting it again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { pageId, iconType, icon, fields, includeRaw } = args as {

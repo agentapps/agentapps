@@ -58,7 +58,14 @@ export function registerSendMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'text'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, text, blocks, threadTs, unfurlLinks, unfurlMedia } =
         args as unknown as SendMessageArgs;

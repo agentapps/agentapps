@@ -44,7 +44,13 @@ export function registerCreateAssignmentTool(app: AgentApp): void {
       },
       required: ['personId', 'projectId', 'roleId', 'startDate', 'endDate', 'minutesPerDay'],
     },
-    annotations: { readOnlyHint: false, openWorldHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         personId: number;

@@ -23,7 +23,13 @@ export function registerGetProfitAndLossTool(app: AgentApp): void {
       },
       required: ['startDate', 'endDate'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const startDate = args.startDate as string;
       const endDate = args.endDate as string;

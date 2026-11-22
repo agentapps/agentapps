@@ -3,7 +3,14 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerAddLabelsToIssueTool(app: AgentApp) {
   app.tool('add-labels-to-issue', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      // Adding a label the issue already has changes nothing.
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Add labels to an issue or pull request. Returns the full label set after addition.',
     parameters: {

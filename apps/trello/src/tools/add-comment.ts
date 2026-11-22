@@ -17,8 +17,11 @@ export function registerAddCommentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Adds to the card without replacing anything; a board member can delete it in Trello.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerCreatePullTool(app: AgentApp) {
   app.tool('create-pull', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Create a new pull request',
     parameters: {
       type: 'object',

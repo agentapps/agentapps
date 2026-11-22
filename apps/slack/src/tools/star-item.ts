@@ -23,7 +23,13 @@ export function registerStarItemTool(app: AgentApp): void {
         fileComment: { type: 'string', description: 'File comment id.' },
       },
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as StarItemArgs;
       const variants = [

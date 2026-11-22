@@ -35,8 +35,10 @@ export function registerCreateCompanyTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {

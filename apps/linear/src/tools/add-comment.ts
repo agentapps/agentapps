@@ -25,7 +25,14 @@ export function registerAddCommentTool(app: AgentApp): void {
       },
       required: ['issueId', 'body'],
     },
-    annotations: { readOnlyHint: false },
+    // Posts a comment the team sees: an outside write, a creation rather than a destruction.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId, body, fields, includeRaw } = args as {

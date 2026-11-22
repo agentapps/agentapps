@@ -19,7 +19,14 @@ export function registerCancelDeploymentTool(app: AgentApp): void {
       },
       required: ['deploymentId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      // A cancelled build cannot resume, but redeploy builds the same deployment again.
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const deploymentId = args.deploymentId as string;
       return await vercelRequest('PATCH', `/v12/deployments/${deploymentId}/cancel`, null, ctx);

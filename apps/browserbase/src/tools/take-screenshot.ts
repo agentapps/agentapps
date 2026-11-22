@@ -5,7 +5,16 @@ import { requireSession } from '../lib/index.js';
 
 export function registerTakeScreenshotTool(app: AgentApp): void {
   app.tool('take-screenshot', {
-    annotations: { readOnlyHint: false },
+    // The page is only read, but the image is written to the machine's filesystem (/workspace,
+    // not ctx.volume), it overwrites a file of the same name, and a `filename` with `..` is not
+    // normalised, so the path can leave /workspace.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Take a screenshot of the current page. Saved to /workspace/ on the shared volume.',
     parameters: {

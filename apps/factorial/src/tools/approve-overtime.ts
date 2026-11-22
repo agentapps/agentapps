@@ -11,7 +11,14 @@ export function registerApproveOvertimeTool(app: AgentApp): void {
       },
       required: ['overtimeRequestId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A decision on another person's request; the app has no tool that returns it to pending.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       return factorialRequest(
         ctx,

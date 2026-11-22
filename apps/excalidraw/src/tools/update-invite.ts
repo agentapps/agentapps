@@ -19,7 +19,14 @@ export function registerUpdateInviteTool(app: AgentApp): void {
       },
       required: ['inviteId', 'role'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets the invite's role; setting it again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.updateInvite(args.inviteId as string, { role: args.role as string });

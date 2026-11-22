@@ -14,14 +14,29 @@ import { type NamespacedUnregister, register } from 'tsx/esm/api';
 // timeout) while it resolved.
 let tsx: NamespacedUnregister | undefined;
 
-/** Imports a module by path; `cacheBust` forces a fresh copy of it (dev reloads). */
+// The loader of the last fresh load. Each fresh load gets its own namespace, which is what
+// makes tsx import the entry module and every module it imports again; the previous one is
+// unregistered first, so loaders do not pile up over a long dev session.
+let fresh: NamespacedUnregister | undefined;
+let freshCount = 0;
+
+/**
+ * Imports a module by path. With `cacheBust`, the module and everything it imports are
+ * loaded again from disk (dev reloads).
+ *
+ * @spec DEVX-REQ-1
+ */
 export async function importAppModule(
   path: string,
   cacheBust = false,
 ): Promise<Record<string, unknown>> {
-  tsx ??= register({ namespace: 'agentapps-create' });
-  const specifier = `${pathToFileURL(path).href}${cacheBust ? `?${Date.now()}` : ''}`;
-  return tsx.import(specifier, import.meta.url);
+  if (!cacheBust) {
+    tsx ??= register({ namespace: 'agentapps-create' });
+    return tsx.import(pathToFileURL(path).href, import.meta.url);
+  }
+  await fresh?.unregister();
+  fresh = register({ namespace: `agentapps-create-reload-${process.pid}-${++freshCount}` });
+  return fresh.import(pathToFileURL(path).href, import.meta.url);
 }
 
 export async function loadFactory(cwd: string, cacheBust = false): Promise<AppFactory> {

@@ -34,7 +34,13 @@ export function registerListBoardsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | undefined> = {};
       params.maxResults = (args.maxResults as number) || 50;

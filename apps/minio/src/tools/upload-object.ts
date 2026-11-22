@@ -38,8 +38,12 @@ export function registerUploadObjectTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Overwrites an object already stored under the same name.
+      destructiveHint: true,
       idempotentHint: false,
-      openWorldHint: false,
+      // The MinIO server is reached over the network, and filePath reads the local disk.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

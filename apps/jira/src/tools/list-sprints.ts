@@ -32,7 +32,13 @@ export function registerListSprintsTool(app: AgentApp): void {
       },
       required: ['boardId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const boardId = args.boardId as number;
       const params: Record<string, string | number | undefined> = {};

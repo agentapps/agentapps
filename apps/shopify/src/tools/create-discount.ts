@@ -51,7 +51,13 @@ export function registerCreateDiscountTool(app: AgentApp): void {
       },
       required: ['title', 'valueType', 'value'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const priceRule: Record<string, unknown> = {
         title: args.title,

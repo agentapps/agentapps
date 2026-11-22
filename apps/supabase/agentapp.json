@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.supabase",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "Supabase",
   "description": "Supabase database and storage — query tables, manage rows, run SQL, list buckets, and upload/download files.",
   "tagline": "Query databases and manage storage with Supabase",

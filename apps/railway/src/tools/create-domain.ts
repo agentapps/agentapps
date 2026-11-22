@@ -25,6 +25,8 @@ export function registerCreateDomainTool(app: AgentApp): void {
       readOnlyHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, environmentId } = args as {

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.clickup',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'ClickUp',
   description:
     'ClickUp project management - manage tasks, lists, folders, spaces and workspaces via ClickUp API with OAuth2',

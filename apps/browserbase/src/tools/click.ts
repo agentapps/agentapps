@@ -3,7 +3,14 @@ import { findElement, requireSession } from '../lib/index.js';
 
 export function registerClickTool(app: AgentApp): void {
   app.tool('click', {
-    annotations: { readOnlyHint: false },
+    // A click on a real web page can submit, buy, send or delete: annotated for the worst case.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Click on an element in the page.',
     parameters: {
       type: 'object',

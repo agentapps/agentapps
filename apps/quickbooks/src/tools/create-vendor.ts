@@ -38,7 +38,13 @@ export function registerCreateVendorTool(app: AgentApp): void {
       },
       required: ['displayName'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         DisplayName: args.displayName as string,

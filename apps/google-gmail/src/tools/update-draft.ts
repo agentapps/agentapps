@@ -42,9 +42,11 @@ export function registerUpdateDraftTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Replaces the whole draft; the previous content cannot be recovered.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);

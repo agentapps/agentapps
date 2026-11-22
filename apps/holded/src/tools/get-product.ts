@@ -18,7 +18,13 @@ export function registerGetProductTool(app: AgentApp): void {
       },
       required: ['productId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const productId = args.productId as string;
       return await holdedRequest('GET', `invoicing/v1/products/${productId}`, null, ctx);

@@ -20,8 +20,10 @@ export function registerListOpportunitiesTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { limit = 50 } = (args ?? {}) as { limit?: number };

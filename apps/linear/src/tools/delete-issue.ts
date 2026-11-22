@@ -12,7 +12,13 @@ export function registerDeleteIssueTool(app: AgentApp): void {
       },
       required: ['issueId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId } = args as { issueId: string };

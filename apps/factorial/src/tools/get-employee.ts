@@ -11,7 +11,13 @@ export function registerGetEmployeeTool(app: AgentApp): void {
       },
       required: ['employeeId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return factorialRequest(ctx, `/employees/employees/${args.employeeId}`);
     },

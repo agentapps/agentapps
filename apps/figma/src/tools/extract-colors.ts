@@ -30,7 +30,13 @@ export function registerExtractColorsTool(app: AgentApp): void {
       },
       required: ['fileKey'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileKey, nodeId, format } = args as {
         fileKey: string;

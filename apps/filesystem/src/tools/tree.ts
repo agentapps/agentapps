@@ -28,7 +28,13 @@ export function registerTreeTool(app: AgentApp): void {
         maxNodes: { type: 'number', description: 'Hard cap on total nodes (default 500)' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const guard = getDefaultGuard();
       const rawPath = (args.path as string | undefined) ?? guard.roots[0] ?? process.cwd();

@@ -19,7 +19,14 @@ export function registerAppendStreamTool(app: AgentApp): void {
       },
       required: ['streamId', 'content'],
     },
-    annotations: { readOnlyHint: false },
+    // Sends more text into a message other people are already reading: a send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { streamId, content } = args as unknown as AppendStreamArgs;
       if (typeof streamId !== 'string' || streamId.trim().length === 0) {

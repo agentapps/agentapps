@@ -14,7 +14,7 @@ npx create-agent-app check-app --strict   # exit 0
 
 `--strict` also fails on TODO text left in the manifest or README; a logo TODO in the Logos section that lists where you looked still passes.
 
-- [ ] Every tool declares all five annotations; `sensitive === !readOnlyHint`;
+- [ ] Every tool declares all five annotations; `sensitive` on every tool with an effect outside the app's own data, never on a read-only one;
       `destructiveHint` only on irreversible tools (check-app and the tests enforce this).
 - [ ] `agentapp.json` passes the schema and equals `createApp()` (the tests).
 - [ ] Logos from an official source with provenance in the README, or placeholder + TODO.
@@ -82,20 +82,25 @@ Adds a Countries app that looks up country facts from the free REST Countries AP
 - No official logo exists yet; placeholder paths and a TODO in the README.
 ```
 
-## 4. Publishing outside the monorepo
+## 4. Using a standalone app outside the monorepo
 
-A standalone app is an npm package that users install into their station with
-`{ "source": "npm:<package>" }` in `agentapps.json` and `agentapps sync`. Before the first
-`npm publish` (only with the user's consent):
+Publishing your own app for others to install by id is not supported yet. `agentapps install
+<appId> <alias>` only looks in the official catalog (the `@agentapps` scope on npm), and an
+`npm:` source is downloaded without its dependencies, so the package a scaffold produces would
+not load from one. Do not tell the user to `npm publish` the app.
 
-1. **Choose a name nobody else owns**, preferably scoped: `@<you>/agentapp-<id>`. The scaffold
-   names the package after the app id, and a bare id may already belong to a stranger on npm;
-   `agentapps sync` would then install their package. Check with `npm view <name>` (it must say
-   "not found"), then set `name` in `package.json` (or scaffold with `--package-name`).
-2. **Remove `"private": true`** from `package.json`; it is there so nothing is published by
-   accident.
-3. **Keep `files`** to what the app needs at runtime: `src`, `assets`, `agentapp.json`,
-   `README.md` (the scaffold sets this). Check with `npm pack --dry-run`: no tests, no agent
-   skill folders, no secrets.
+Until third-party publishing exists, a standalone app is used as a **local source**: a path in
+the workspace's `agentapps.json`, relative to that file.
 
-There is no bundle (`.mcpb`) packaging for the new layout yet; publish to npm instead.
+```json
+{ "apps": [{ "source": "./my-app" }] }
+```
+
+```bash
+agentapps --config ./agentapps.json install app.my-app my-app
+agentapps --config ./agentapps.json my-app tools
+```
+
+To share it, share the source (a git repository). To get it into the catalog, contribute it to
+the agentapps repository. Keep `"private": true` in `package.json`; it is there so nothing is
+published by accident.

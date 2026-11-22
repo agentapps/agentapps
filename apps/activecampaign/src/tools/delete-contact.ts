@@ -14,10 +14,11 @@ export function registerDeleteContactTool(app: AgentApp): void {
       required: ['id'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
+      idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       if (!(args as any).id?.trim()) throw new Error('id is required');

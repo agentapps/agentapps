@@ -23,6 +23,8 @@ export function registerAddSheetTool(app: AgentApp): void {
       readOnlyHint: false,
       openWorldHint: true,
       idempotentHint: false,
+      destructiveHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

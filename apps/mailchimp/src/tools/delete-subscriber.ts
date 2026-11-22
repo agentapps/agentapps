@@ -24,10 +24,11 @@ export function registerDeleteSubscriberTool(app: AgentApp): void {
       required: ['listId', 'subscriberHash'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

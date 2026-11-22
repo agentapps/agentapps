@@ -15,7 +15,14 @@ export function registerRunCodeTool(app: AgentApp): void {
       },
       required: ['code'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Runs arbitrary code with the page, the context and the browser: it can do anything.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page, context, browser } = await ensureBrowser();
       const code = args.code as string;

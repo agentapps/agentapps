@@ -34,7 +34,13 @@ export function registerListFoldersTool(app: AgentApp): void {
       },
       required: ['folderId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { folderId, itemTypes, sortBy, pinStatus, limit, continuation, fields, includeRaw } =
         args as {

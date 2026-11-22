@@ -16,8 +16,12 @@ export function registerStartSessionTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      // Creates and starts a session in WAHA, outside the app's own data.
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default' } = (args ?? {}) as { session?: string };

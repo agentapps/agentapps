@@ -18,7 +18,13 @@ export function registerDeleteContactTool(app: AgentApp): void {
       },
       required: ['contactId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const contactId = args.contactId as string;
       return await holdedRequest('DELETE', `invoicing/v1/contacts/${contactId}`, null, ctx);

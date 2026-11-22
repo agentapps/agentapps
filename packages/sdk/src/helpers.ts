@@ -30,11 +30,17 @@ export interface PollerOptions {
 export interface Poller {
   /** True when the poller is actively scheduling/running iterations. */
   readonly running: boolean;
-  /** Start (or restart) periodic polling. Idempotent. */
-  start(): void;
+  /**
+   * Start periodic polling with the context each iteration receives. Idempotent
+   * while running; a context passed to a running poller replaces the one in use.
+   * Without a context the poller waits: no iteration runs until one is given.
+   *
+   * @spec DEVX-REQ-2
+   */
+  start(ctx?: ToolContext): void;
   /** Stop polling. Clears pending timers and does not abort an in-flight call. */
   stop(): void;
-  /** @internal Attach the context passed to poll iterations. */
+  /** @internal @deprecated Pass the context to `start(ctx)`. */
   _bindContext(ctx: ToolContext): void;
 }
 
@@ -44,7 +50,7 @@ export interface Poller {
  * The supplied function is called every `intervalMs` milliseconds. It receives
  * the current `ToolContext` so it can emit events, check subscribers, or call
  * other tools. The poller is not started automatically; the app must call
- * `start()` (usually when subscribers are detected).
+ * `start(ctx)` (usually when subscribers are detected).
  *
  * Example:
  * ```ts
@@ -52,6 +58,8 @@ export interface Poller {
  *   const events = await fetchCalendarUpdates(ctx);
  *   for (const e of events) ctx.emit('calendar_updated', e);
  * }, 30_000);
+ * // in a tool or lifecycle handler, where a context exists:
+ * poller.start(ctx);
  * ```
  */
 export function createPoller(
@@ -86,7 +94,8 @@ export function createPoller(
     }
   };
 
-  const start = () => {
+  const start = (ctx?: ToolContext) => {
+    if (ctx) currentContext = ctx;
     if (_running) return;
     _running = true;
     if (opts.immediate) {

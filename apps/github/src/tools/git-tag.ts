@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitTagTool(app: AgentApp) {
   app.tool('git-tag', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `delete` removes a tag and `force` moves an existing one.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'List, create, or delete local git tags. Pass `message` on create for an annotated tag (otherwise lightweight).',
     parameters: {

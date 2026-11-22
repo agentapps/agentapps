@@ -1,5 +1,22 @@
 # @agentapps/cli
 
+## 0.2.4
+
+### Patch Changes
+
+- 1960b41: Every tool of every app declares its five annotations, decided by reading what the tool does. 469 tools that ran without asking now wait for approval by default, because they change something in another service or on your machine, among them Stripe refunds, GitHub merges, sending email from Gmail and Outlook, and Zapier actions; none stopped asking. Tools that change nothing, or only the app's own data, run as before. Every app has a new patch version.
+
+  Security: the Gmail and Outlook apps saved an attachment under the name its sender chose, so a name with `../` could place the file outside the download folder. The name is now reduced to a bare file name.
+
+- 91c7735: The CLI and the Station it starts keep a workspace's Volume and Objects in the same directory, `.agentapps/data` in the workspace (or `AGENTAPPS_VOLUMES_BASE_PATH`). The Station used `~/.agentapps/data`, so a file one of them wrote was not there for the other; files a Station wrote there before this version stay in that directory. Links to private Objects are signed with a secret kept in the workspace, so they stay valid across a Station restart and a link created from the CLI is served by the Station (CLI-REQ-14).
+- 7fe597e: `app.google.calendar` 1.0.2: every tool declares its five annotations, so `delete_event` waits for approval by default; it ran without asking. `app.hello` 1.0.2: full annotations and a README.
+- fe123bc: The create-agent-app skill no longer tells authors to publish their app to npm, which does not work yet; it explains the local source. `headerName`, `headerPrefix` (manifest) and `expectedStatuses` (health helper) are marked as having no effect. The help shows the second argument of `serve`.
+- Updated dependencies [91c7735]
+- Updated dependencies [fe123bc]
+  - @agentapps/station@0.2.4
+  - @agentapps/protocol@0.2.4
+  - @agentapps/host@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

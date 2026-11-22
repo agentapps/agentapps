@@ -20,7 +20,14 @@ export function registerBanMemberTool(app: AgentApp): void {
       },
       required: ['guildId', 'userId'],
     },
-    annotations: { readOnlyHint: false },
+    // Destructive: the app has no unban, and the ban can delete the member's recent messages.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

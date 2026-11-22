@@ -34,9 +34,11 @@ export function registerRemoveContactFromListTool(app: AgentApp): void {
       },
       required: ['listId'],
     },
+    // Only the list membership is removed, and add-contact-to-list restores it.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
     },

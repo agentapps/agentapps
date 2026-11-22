@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.amplitude',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Amplitude',
   description:
     'Amplitude analytics — query events, user activity, cohorts, charts, and retention data.',

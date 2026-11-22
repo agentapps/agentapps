@@ -10,7 +10,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitDiffTool(app: AgentApp) {
   app.tool('git-diff', {
-    annotations: { readOnlyHint: false },
+    // Only runs `git diff`: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'Show differences as unified diff + numstat. Defaults to working tree vs HEAD. `from: staged` for index vs HEAD; pass `from`+`to` commit SHAs for arbitrary diffs.',
     parameters: {

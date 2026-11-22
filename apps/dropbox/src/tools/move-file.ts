@@ -18,10 +18,13 @@ export function registerMoveFileTool(app: AgentApp): void {
       },
       required: ['from_path', 'to_path'],
     },
+    // Moving it back undoes it; the call sets no overwrite option.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { from_path, to_path } = args as {

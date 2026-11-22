@@ -14,7 +14,13 @@ export function registerListEmojiTool(app: AgentApp): void {
     description:
       'List custom workspace emojis. Returns { emojis: [{ name, url, isAlias, aliasFor }], count }. Retryable. No params.',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { client } = await getSlackSession(ctx);
       const result = await wrapSlackCall(() => client.emoji.list());

@@ -27,7 +27,14 @@ export function registerUpdateSceneTool(app: AgentApp): void {
       },
       required: ['sceneId'],
     },
-    annotations: { readOnlyHint: false },
+    // Metadata only (name, pin, collection): setting the fields again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       const payload: { name?: string; pinned?: boolean; collectionId?: string } = {};

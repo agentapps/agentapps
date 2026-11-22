@@ -26,7 +26,14 @@ export function registerShareRemoteFileTool(app: AgentApp): void {
       },
       required: ['channels'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Posts the file into the channels: a send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channels, externalId, fileId } = args as unknown as ShareRemoteFileArgs;
       if (!externalId && !fileId) throw new Error('Provide externalId or fileId.');

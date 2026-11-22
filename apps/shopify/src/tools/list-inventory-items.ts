@@ -19,7 +19,13 @@ export function registerListInventoryItemsTool(app: AgentApp): void {
       },
       required: ['ids'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const ids = args.ids as string;
       return await shopifyRequest('GET', '/inventory_items.json', { params: { ids } }, ctx);

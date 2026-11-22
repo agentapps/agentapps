@@ -26,10 +26,13 @@ export function registerUpdateItemTool(app: AgentApp): void {
       },
       required: ['board_id', 'item_id', 'column_values'],
     },
+    // Setting the column values again undoes it; destructiveHint is for changes the app cannot undo.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

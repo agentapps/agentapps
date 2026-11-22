@@ -29,7 +29,13 @@ export function registerImportDesignTool(app: AgentApp): void {
       },
       required: ['title', 'url'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { title, url, mimeType, fields, includeRaw } = args as {
         title: string;

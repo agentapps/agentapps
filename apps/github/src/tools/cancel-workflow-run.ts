@@ -2,7 +2,14 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerCancelWorkflowRunTool(app: AgentApp) {
   app.tool('cancel-workflow-run', {
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A cancelled run can be started again with rerun-workflow-run.
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Cancel a workflow run that is in progress.',
     parameters: {
       type: 'object',

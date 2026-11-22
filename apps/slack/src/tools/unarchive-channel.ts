@@ -18,7 +18,13 @@ export function registerUnarchiveChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId } = args as unknown as UnarchiveChannelArgs;
       validateChannelId(channelId, 'channelId');

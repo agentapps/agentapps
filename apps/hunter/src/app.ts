@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.hunter',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Hunter',
   description:
     "Hunter.io email finder — find professional email addresses by domain, guess a person's email from their name, and verify email deliverability.",

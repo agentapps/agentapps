@@ -27,10 +27,13 @@ export function registerSearchContactsTool(app: AgentApp): void {
       },
       required: ['query'],
     },
+    // A POST that only runs a search query; nothing is written.
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const query = args.query as string;

@@ -13,7 +13,14 @@ interface BlameLine {
 
 export function registerGitBlameTool(app: AgentApp) {
   app.tool('git-blame', {
-    annotations: { readOnlyHint: false },
+    // Only runs `git blame`: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'Per-line attribution for a file. Returns `[{ sha, author, date, lineNumber, content }]`. Restrict with `range: "10,50"` or `ref`.',
     parameters: {

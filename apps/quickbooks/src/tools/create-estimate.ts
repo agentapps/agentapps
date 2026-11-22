@@ -49,7 +49,14 @@ export function registerCreateEstimateTool(app: AgentApp): void {
       },
       required: ['customerRefId', 'lines'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    // Records the estimate in the books; it is not emailed to the customer.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const customerRefId = args.customerRefId as string;
       const lines = args.lines as Array<Record<string, unknown>>;

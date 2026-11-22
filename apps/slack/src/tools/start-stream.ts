@@ -25,7 +25,14 @@ export function registerStartStreamTool(app: AgentApp): void {
       },
       required: ['channel'],
     },
-    annotations: { readOnlyHint: false },
+    // Posts a streaming message in the channel: a send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, threadTs, recipientTeamId } = args as unknown as StartStreamArgs;
       validateChannelId(channel, 'channel');

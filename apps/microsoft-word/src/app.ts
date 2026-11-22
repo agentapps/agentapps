@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // must not be hand-edited out of sync.
 export const app = createApp({
   id: 'app.microsoft.word',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Word',
   description:
     'Microsoft Word document automation — create documents, read their text and structure, and make surgical edits that leave the rest of the file untouched. Edits overwrite the stored file; recover earlier states through OneDrive version history.',

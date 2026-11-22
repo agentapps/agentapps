@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerGetBranchTool(app: AgentApp) {
   app.tool('get-branch', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Get information about a specific branch',
     parameters: {
       type: 'object',

@@ -22,7 +22,13 @@ export function registerListBrandTemplatesTool(app: AgentApp): void {
         includeRaw: { type: 'boolean', description: 'Return raw Canva response. Default false.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { query, ownership, limit, continuation, fields, includeRaw } = args as {
         query?: string;

@@ -34,7 +34,13 @@ export function registerCreateProductTool(app: AgentApp): void {
       },
       required: ['title'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const product: Record<string, unknown> = {
         title: args.title,

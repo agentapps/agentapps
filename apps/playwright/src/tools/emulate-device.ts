@@ -55,7 +55,14 @@ export function registerEmulateDeviceTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Replaces the app's own browser context (the open page is dropped); nothing outside changes.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const device = args.device as string;
       let opts: BrowserOptions;

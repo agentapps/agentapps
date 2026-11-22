@@ -52,7 +52,16 @@ export function registerTextToSpeechTool(app: AgentApp): void {
       },
       required: ['text'],
     },
-    annotations: { readOnlyHint: false },
+    // Changes no data the user keeps, but every call uses characters of the ElevenLabs quota,
+    // so it is not read-only and it touches the account: sensitive. Not marked destructive: it
+    // spends from the plan's existing allowance and starts or raises no spend.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY system secret.');

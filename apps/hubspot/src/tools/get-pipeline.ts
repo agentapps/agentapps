@@ -22,8 +22,10 @@ export function registerGetPipelineTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { objectType, pipelineId } = args as {

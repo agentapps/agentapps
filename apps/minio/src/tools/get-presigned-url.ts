@@ -32,9 +32,13 @@ export function registerGetPresignedUrlTool(app: AgentApp): void {
       required: ['bucket', 'objectName'],
     },
     annotations: {
+      // Signs a URL and stores nothing; a PUT URL lets its holder write the object later.
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // The MinIO client may ask the server for the bucket's region to sign.
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

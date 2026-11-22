@@ -30,8 +30,11 @@ export function registerListModelsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
+      // Returns a list held in the code; no API call.
       openWorldHint: false,
+      sensitive: false,
     },
     handler: async (args) => {
       const allModels: ModelInfo[] = [

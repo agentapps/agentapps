@@ -28,11 +28,13 @@ export function registerDeleteSlideTool(app: AgentApp): void {
       },
       required: ['presentationId'],
     },
+    // Not idempotent: by slideIndex, a repeated call deletes the slide that moved into that
+    // position.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
-      idempotentHint: true,
+      idempotentHint: false,
       openWorldHint: true,
     },
     handler: async (args, ctx) => {

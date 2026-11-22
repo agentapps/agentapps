@@ -27,10 +27,13 @@ export function registerCreateReplyTool(app: AgentApp): void {
       },
       required: ['fileId', 'commentId', 'content'],
     },
+    // `action` can resolve or reopen the comment thread; either one undoes the other.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

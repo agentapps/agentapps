@@ -25,8 +25,11 @@ export function registerReactionTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Seen by the other person, but an empty reaction removes it.
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

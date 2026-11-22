@@ -34,7 +34,13 @@ export function registerCreateDealTool(app: AgentApp): void {
       },
       required: ['title'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = { title: args.title };
       if (args.value !== undefined) body.value = args.value;

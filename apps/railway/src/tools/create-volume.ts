@@ -33,6 +33,8 @@ export function registerCreateVolumeTool(app: AgentApp): void {
       readOnlyHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { projectId, serviceId, environmentId, mountPath } = args as {

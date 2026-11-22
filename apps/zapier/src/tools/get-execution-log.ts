@@ -19,7 +19,13 @@ export function registerGetExecutionLogTool(app: AgentApp): void {
       },
       required: ['executionId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const executionId = args.executionId as string;
 

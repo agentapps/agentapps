@@ -39,6 +39,10 @@ export function registerUpdateDatabaseItemTool(app: AgentApp): void {
       version: '1.0.0',
       stability: 'experimental',
       idempotentHint: true,
+      // `archived: true` moves the row to the trash and `archived: false` restores it.
+      destructiveHint: false,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);

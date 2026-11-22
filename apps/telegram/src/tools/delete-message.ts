@@ -23,7 +23,13 @@ export function registerDeleteMessageTool(app: AgentApp): void {
       },
       required: ['chatId', 'messageId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       return await telegramRequest(
         'deleteMessage',

@@ -39,6 +39,13 @@ export function registerCreateEventTool(app: AgentApp): void {
       },
       required: ['summary', 'startTime', 'endTime'],
     },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
       const calendarId = (args.calendarId as string) ?? 'primary';

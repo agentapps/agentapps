@@ -1,3 +1,4 @@
+import { basename } from 'node:path';
 /**
  * Email construction and parsing helpers.
  *
@@ -302,4 +303,14 @@ export function findAttachments(part: any): any[] {
   }
 
   return attachments;
+}
+
+/**
+ * The name to save an attachment under. The name in the email is chosen by its
+ * sender, so it is reduced to a bare file name: no directories, no `..`, nothing
+ * that could place the file outside the folder it is saved in.
+ */
+export function safeAttachmentName(name: unknown): string {
+  const bare = basename(String(name ?? '').replaceAll('\\', '/'));
+  return bare === '' || bare === '.' || bare === '..' ? 'attachment' : bare;
 }

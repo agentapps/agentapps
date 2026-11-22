@@ -5,6 +5,32 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4] — 2026-11-22
+
+Every tool in the catalog now says how dangerous it is, and the default Policy acts on it. Update with `npm install -g @agentapps/cli`, then `agentapps station restart`.
+
+### Security
+
+- **Every tool declares its annotations.** Of the 1 410 tools of the published apps, 160 declared all five; the rest left a write looking harmless. Each one is now annotated from what it does. 469 tools that ran without asking now wait for approval by default, because they change something in another service or on your machine, among them Stripe refunds, GitHub merges, sending email from Gmail and Outlook, and Zapier actions. No tool stopped asking. `delete_event` of Google Calendar was the one delete that ran unasked.
+- **Attachment names cannot leave their folder.** The Gmail and Outlook apps saved an attachment under the name its sender chose, so a name with `../` could place the file elsewhere on the machine. The name is reduced to a bare file name.
+
+### Changed
+
+- **Three kinds of tool.** A tool that changes nothing runs. A tool that changes only the app's own data (its Storage, Objects or Volume) runs. A tool that changes something outside, or cannot be undone, is marked `sensitive` or `destructiveHint` and waits for approval. `sensitive` used to mean "not read-only", so every write asked; `check-app`, the scaffold and the create-agent-app skill follow the new rule.
+- **One data directory.** The CLI and the Station it starts keep a workspace's Volume and Objects in `.agentapps/data` in the workspace (or `AGENTAPPS_VOLUMES_BASE_PATH`). The Station used `~/.agentapps/data`, so neither saw the other's files; files a Station wrote there stay in that directory.
+- Every app that changed has a new patch version: 83 apps.
+
+### Fixed
+
+- Links to private Objects stay valid across a Station restart, and a link created from the CLI is served by the Station. Each process signed them with its own random secret; the secret now lives in the workspace.
+- `create-agent-app dev` reloads when any source file under `src/` changes, and the reload picks up the modules the entry imports. It only watched `app.ts`.
+- `poller.start(ctx)` gives a poller its context. A poller only ran after a call to an internal method.
+- The conformance suite of `@agentapps/testing` no longer runs the app's first tool for real, the package declares `vitest` as a peer dependency, and its README describes the API it has.
+- The create-agent-app skill no longer tells authors to publish their app to npm, which does not work yet; it explains the local source.
+- `app.hello` passes `check-app`: full annotations and a README.
+
+---
+
 ## [0.2.3] — 2026-11-22
 
 A security release. Update with `npm install -g @agentapps/cli`, then `agentapps station restart`.

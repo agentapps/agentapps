@@ -15,7 +15,14 @@ export function registerSubscribeContactToListTool(app: AgentApp): void {
       },
       required: ['contactId', 'listId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // Sets the contact's status on the list (subscribed or unsubscribed); setting it again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).contactId?.trim()) throw new Error('contactId is required');
       if (!(args as any).listId?.trim()) throw new Error('listId is required');

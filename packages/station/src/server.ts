@@ -194,6 +194,13 @@ export interface StationServerOptions {
    */
   volumesBasePath?: string;
   /**
+   * Secret that signs links to private Objects. Defaults to
+   * `AGENTAPPS_STATION_SECRET`, or a random one for this process.
+   *
+   * @spec CLI-REQ-14
+   */
+  stationSecret?: string;
+  /**
    * Object store override. When omitted the server builds one on
    * `volumesBasePath`, its secret and its public URL once it starts.
    */
@@ -329,7 +336,7 @@ export class StationServer {
     this.adminRoutes = options.adminRoutes ?? {};
     this.enableManagementApi = options.enableManagementApi ?? false;
     this.volumesBasePath = getVolumesBasePath(options.volumesBasePath);
-    this.stationSecret = getStationSecret();
+    this.stationSecret = getStationSecret(options.stationSecret);
     this.objectStore = options.objectStore ?? null;
 
     for (const app of options.apps ?? []) {

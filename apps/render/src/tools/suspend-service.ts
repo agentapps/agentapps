@@ -18,10 +18,13 @@ export function registerSuspendServiceTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
+    // Takes the service offline, but render-resume-service brings it back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId } = args as { serviceId: string };

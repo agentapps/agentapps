@@ -27,7 +27,13 @@ export function registerGetTeamInfoTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fields, includeRaw } = args as GetTeamInfoArgs;
       const { client } = await getSlackSession(ctx);

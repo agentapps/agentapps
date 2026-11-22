@@ -16,7 +16,14 @@ export function registerSnapshotTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Reads the page; with `filename` it also stores the snapshot in the app's own Objects.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { page } = await ensureBrowser();
       const snapshot = await getAccessibilitySnapshot(page);

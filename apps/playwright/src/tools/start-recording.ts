@@ -28,7 +28,15 @@ export function registerStartRecordingTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Replaces the app's own browser context; the video is staged in the OS temp directory
+    // until stop-recording moves it to the app's Objects. Nothing outside the app changes.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const fs = await import('node:fs/promises');
       const { tmpdir } = await import('node:os');

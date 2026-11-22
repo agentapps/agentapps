@@ -19,10 +19,13 @@ export function registerQueryTool(app: AgentApp): void {
       },
       required: ['soql'],
     },
+    // SOQL sent to the query endpoint with GET can only select; it cannot write.
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { soql } = args as { soql: string };

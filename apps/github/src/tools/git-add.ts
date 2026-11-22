@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitAddTool(app: AgentApp) {
   app.tool('git-add', {
-    annotations: { readOnlyHint: false },
+    // Changes the index of the user's repository; staging the same paths again changes nothing.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Stage local changes. Pass an array of paths to stage selectively, or omit `paths` (default `.`) to stage everything.',
     parameters: {

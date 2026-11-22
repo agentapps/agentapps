@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { marked } from 'marked';
 
 // =============================================================================
@@ -173,4 +173,14 @@ export function buildFileAttachment(att: { path: string; filename?: string }) {
     contentType,
     contentBytes: base64Content,
   };
+}
+
+/**
+ * The name to save an attachment under. The name in the email is chosen by its
+ * sender, so it is reduced to a bare file name: no directories, no `..`, nothing
+ * that could place the file outside the folder it is saved in.
+ */
+export function safeAttachmentName(name: unknown): string {
+  const bare = basename(String(name ?? '').replaceAll('\\', '/'));
+  return bare === '' || bare === '.' || bare === '..' ? 'attachment' : bare;
 }

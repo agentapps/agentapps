@@ -14,6 +14,28 @@ import type { ToolContext } from '../src/types.js';
 // ---------------------------------------------------------------------------
 
 describe('createPoller', () => {
+  it('[DEVX-AC-2] start(ctx) is all an app needs: iterations get that context', async () => {
+    const fn = vi.fn().mockResolvedValue(undefined);
+    const poller = createPoller(fn, 20);
+    const ctx = { emit: vi.fn() } as unknown as ToolContext;
+
+    poller.start(ctx);
+    await new Promise((resolve) => setTimeout(resolve, 45));
+    poller.stop();
+
+    expect(fn).toHaveBeenCalled();
+    expect(fn.mock.calls[0][0]).toBe(ctx);
+  });
+
+  it('[DEVX-AC-2] without a context no iteration runs', async () => {
+    const fn = vi.fn().mockResolvedValue(undefined);
+    const poller = createPoller(fn, 10);
+    poller.start();
+    await new Promise((resolve) => setTimeout(resolve, 40));
+    poller.stop();
+    expect(fn).not.toHaveBeenCalled();
+  });
+
   it('starts and stops periodic polling', async () => {
     const fn = vi.fn().mockResolvedValue(undefined);
     const poller = createPoller(fn, 50);

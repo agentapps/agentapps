@@ -5,7 +5,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.whatsapp',
-  version: '2.1.0',
+  version: '2.1.1',
   name: 'WhatsApp',
   description:
     'Send and receive WhatsApp messages via WAHA (WhatsApp HTTP API). Manage sessions, send text/media, and handle incoming messages. Real-time events for incoming messages, reactions, and session status changes. Account linking is always done with a numeric pairing code (request-pairing-code) — QR authentication is not supported.',

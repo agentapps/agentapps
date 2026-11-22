@@ -35,7 +35,15 @@ export function registerCreateFulfillmentTool(app: AgentApp): void {
       },
       required: ['orderId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Marks the order as shipped and Shopify emails the customer unless
+      // notifyCustomer is false: a notification sent cannot be taken back.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const orderId = args.orderId as string;
       const fulfillment: Record<string, unknown> = {};

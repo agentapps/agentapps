@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerGetRepoTool(app: AgentApp) {
   app.tool('get-repo', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Get detailed information about a specific repository',
     parameters: {
       type: 'object',

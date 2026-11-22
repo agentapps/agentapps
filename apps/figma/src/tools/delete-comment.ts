@@ -15,10 +15,11 @@ export function registerDeleteCommentTool(app: AgentApp): void {
       required: ['fileKey', 'commentId'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { fileKey, commentId } = args as { fileKey: string; commentId: string };

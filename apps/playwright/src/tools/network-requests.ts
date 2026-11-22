@@ -15,7 +15,14 @@ export function registerNetworkRequestsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Only filters the request log this process already holds in memory.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args) => {
       const includeStatic = args.includeStatic as boolean;
       const staticTypes = ['image', 'font', 'stylesheet', 'script', 'media'];

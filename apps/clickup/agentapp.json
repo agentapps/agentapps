@@ -1,7 +1,7 @@
 {
   "id": "app.clickup",
   "name": "ClickUp",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "ClickUp project management - manage tasks, lists, folders, spaces and workspaces via ClickUp API with OAuth2",
   "tagline": "Manage tasks, lists, folders, spaces, and workspaces in ClickUp",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

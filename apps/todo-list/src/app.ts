@@ -37,7 +37,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.todo-list',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Todo List',
   description:
     'Workflowy-style hierarchical outliner. Single-tree architecture — no lists, every node is part of one tree. Nodes have text, description, instructions (markdown), and a chronological log. Toggle complete (cascades to descendants), collapse/expand, move subtrees, and search.',

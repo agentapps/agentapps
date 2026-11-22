@@ -3,7 +3,14 @@ import { findElement, requireSession } from '../lib/index.js';
 
 export function registerTypeTool(app: AgentApp): void {
   app.tool('type', {
-    annotations: { readOnlyHint: false },
+    // With `submit` it presses Enter, which sends the form on a real web page.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Type text into an editable element.',
     parameters: {
       type: 'object',

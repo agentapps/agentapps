@@ -25,7 +25,14 @@ export function registerAcceptSharedInviteTool(app: AgentApp): void {
       },
       required: ['channelName'],
     },
-    annotations: { readOnlyHint: false },
+    // Connects the workspace to another organisation's channel; no tool here disconnects it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as AcceptSharedInviteArgs;
       if (typeof a.channelName !== 'string' || a.channelName.trim().length === 0) {

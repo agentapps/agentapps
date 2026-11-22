@@ -25,7 +25,14 @@ export function registerSelectOptionTool(app: AgentApp): void {
       },
       required: ['element', 'ref', 'values'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets a form control on a live web page; selecting again restores the previous value.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const el = await findElementByRef(page, args.ref as string);

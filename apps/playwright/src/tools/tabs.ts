@@ -20,7 +20,14 @@ export function registerTabsTool(app: AgentApp): void {
       },
       required: ['action'],
     },
-    annotations: { readOnlyHint: false },
+    // Lists, opens, closes or selects tabs of the app's own browser; nothing outside changes.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const { context } = await ensureBrowser();
       const currentPage = getPage();

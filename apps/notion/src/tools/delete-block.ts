@@ -27,7 +27,17 @@ export function registerDeleteBlockTool(app: AgentApp): void {
       },
       required: ['blockId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, version: '1.1.0', stability: 'stable' },
+    // Notion moves the block to its trash, but no tool of this app restores a block:
+    // the change cannot be undone through the app.
+    annotations: {
+      sensitive: true,
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { blockId, fields, includeRaw } = args as {

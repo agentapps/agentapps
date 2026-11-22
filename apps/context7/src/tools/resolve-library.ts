@@ -40,7 +40,14 @@ export function registerResolveLibraryTool(app: AgentApp): void {
       },
       required: ['libraryName'],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    // The in-memory result cache is not a change the user can see: still read-only.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const libraryName = String(args.libraryName ?? '').trim();
       const query = String(args.query ?? '').trim();

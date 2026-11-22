@@ -28,8 +28,11 @@ export function registerUploadAttachmentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Sends a local file to Zendesk as a temporary upload that expires if no comment uses it.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { filePath, fileName } = args as {

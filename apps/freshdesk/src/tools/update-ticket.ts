@@ -36,10 +36,13 @@ export function registerUpdateTicketTool(app: AgentApp): void {
       },
       required: ['ticketId'],
     },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const ticketId = args.ticketId as number;

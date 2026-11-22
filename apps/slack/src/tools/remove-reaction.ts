@@ -33,11 +33,13 @@ export function registerRemoveReactionTool(app: AgentApp): void {
       },
       required: ['channel', 'timestamp', 'name'],
     },
+    // Reversible with add-reaction; destructiveHint is for changes the app cannot undo.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
-      destructiveHint: true,
+      destructiveHint: false,
       idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { channel, timestamp, name } = args as unknown as RemoveReactionArgs;

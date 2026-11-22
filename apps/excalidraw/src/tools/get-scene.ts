@@ -15,7 +15,13 @@ export function registerGetSceneTool(app: AgentApp): void {
       },
       required: ['sceneId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.getScene(args.sceneId as string);

@@ -24,7 +24,13 @@ export function registerInsertRowsTool(app: AgentApp): void {
       },
       required: ['table', 'rows'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const table = args.table as string;
       const rows = args.rows as Record<string, unknown>[];

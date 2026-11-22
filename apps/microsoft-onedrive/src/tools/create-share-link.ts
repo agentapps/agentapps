@@ -31,9 +31,11 @@ export function registerCreateShareLinkTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // The link can be revoked with remove-permission, so it is not destructive.
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

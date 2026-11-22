@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.granola',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Granola',
   description:
     'Access your Granola meeting notes, transcripts, AI summaries, and folders via the Granola public API.',

@@ -43,10 +43,11 @@ export function registerSendMessageTool(app: AgentApp): void {
       },
       required: ['to', 'subject', 'body'],
     },
+    // Sends an email, optionally with files read from the machine: it cannot be unsent.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
     },

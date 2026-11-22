@@ -3,7 +3,14 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerRequestReviewersTool(app: AgentApp) {
   app.tool('request-reviewers', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      // Requesting a reviewer already requested changes nothing.
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Request reviewers on a pull request.',
     parameters: {
       type: 'object',

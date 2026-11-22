@@ -35,7 +35,14 @@ export function registerSearchLogsTool(app: AgentApp): void {
       },
       required: ['query'],
     },
-    annotations: { readOnlyHint: true },
+    // A POST that only searches: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         filter: {

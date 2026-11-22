@@ -19,11 +19,13 @@ export function registerSendCampaignTool(app: AgentApp): void {
       },
       required: ['campaignId'],
     },
+    // Sends the campaign's email to the whole audience: it cannot be unsent.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

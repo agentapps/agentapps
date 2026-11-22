@@ -18,10 +18,13 @@ export function registerResumeServiceTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
+    // Reversible with render-suspend-service; it restores a service that already existed.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId } = args as { serviceId: string };

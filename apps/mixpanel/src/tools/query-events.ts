@@ -32,7 +32,13 @@ export function registerQueryEventsTool(app: AgentApp): void {
       },
       required: ['event', 'from_date', 'to_date'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return await mixpanelRequest(
         'GET',

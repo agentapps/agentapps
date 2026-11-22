@@ -18,7 +18,13 @@ export function registerListWorkersTool(app: AgentApp): void {
       },
       required: ['accountId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const accountId = args.accountId as string;
       return await cloudflareRequest('GET', `/accounts/${accountId}/workers/scripts`, null, ctx);

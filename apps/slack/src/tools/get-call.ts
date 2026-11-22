@@ -19,7 +19,13 @@ export function registerGetCallTool(app: AgentApp): void {
       },
       required: ['callId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { callId, includeRaw } = args as unknown as GetCallArgs;
       if (typeof callId !== 'string' || callId.trim().length === 0) {

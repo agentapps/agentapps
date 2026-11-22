@@ -28,8 +28,10 @@ export function registerCreateOpportunityTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { name, stageName, closeDate, amount, accountId } = args as {

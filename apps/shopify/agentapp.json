@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.shopify",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "Shopify",
   "description": "Shopify store management — manage products, orders, customers, inventory, and collections.",
   "tagline": "Manage products, orders, and customers with Shopify",

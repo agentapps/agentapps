@@ -23,7 +23,13 @@ export function registerCreateSceneTool(app: AgentApp): void {
       },
       required: ['name', 'collectionId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.createScene({

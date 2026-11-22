@@ -2,7 +2,13 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerUpdateCheckRunTool(app: AgentApp) {
   app.tool('update-check-run', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Update an existing check run.',
     parameters: {
       type: 'object',

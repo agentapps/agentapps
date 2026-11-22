@@ -529,8 +529,8 @@ export class AgentApp {
    * Generate the array of `ToolDefinition` objects for `tools.json`.
    *
    * Each registered tool is serialized with its name, description,
-   * parameters schema, and resolved annotations (manifest annotations
-   * win; missing MCP hints fall back to the heuristic).
+   * parameters schema, and the annotations its author declared. Nothing is
+   * inferred: a hint that was not declared is left out.
    *
    * Tools are returned sorted by name for stable output.
    */
@@ -595,8 +595,7 @@ export class AgentApp {
     if (auth.type === 'none') {
       return { type: 'none' };
     }
-    // The protocol AppAuth schema now includes api-key (with headerName /
-    // headerPrefix) and github-app, so the SDK definition is a structural
+    // The protocol AppAuth schema includes api-key and github-app, so the SDK definition is a structural
     // subset of the protocol type. The cast is safe because the manifest
     // schema validates the emitted shape.
     return auth as AppAuth;

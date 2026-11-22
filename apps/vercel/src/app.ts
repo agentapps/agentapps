@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.vercel',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Vercel',
   description:
     'Vercel platform management — manage projects, deployments, domains, environment variables, and check deployment logs.',

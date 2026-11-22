@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.playwright',
-  version: '1.0.0',
+  version: '1.0.1',
   name: 'Playwright',
   description:
     'Browser automation and web scraping via Playwright. Navigate, interact, take screenshots, and extract data from web pages.',

@@ -20,7 +20,13 @@ export function registerGetChatTool(app: AgentApp): void {
       },
       required: ['chatId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return await telegramRequest('getChat', { chat_id: args.chatId }, ctx);
     },

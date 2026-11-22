@@ -18,7 +18,15 @@ export function registerGetPageMarkdownTool(app: AgentApp): void {
       },
       required: ['pageId'],
     },
-    annotations: { version: '1.0.0', stability: 'stable', readOnlyHint: true },
+    annotations: {
+      version: '1.0.0',
+      stability: 'stable',
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

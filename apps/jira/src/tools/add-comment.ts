@@ -22,7 +22,13 @@ export function registerAddCommentTool(app: AgentApp): void {
       },
       required: ['issueKey', 'body'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const issueKey = args.issueKey as string;
       const body = args.body as string;

@@ -15,7 +15,14 @@ export function registerRemoveRoleTool(app: AgentApp): void {
       },
       required: ['guildId', 'userId', 'roleId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Not destructive: assign-role gives the role back.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

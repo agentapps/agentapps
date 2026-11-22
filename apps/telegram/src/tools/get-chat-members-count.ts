@@ -19,7 +19,13 @@ export function registerGetChatMembersCountTool(app: AgentApp): void {
       },
       required: ['chatId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const result = await telegramRequest('getChatMemberCount', { chat_id: args.chatId }, ctx);
       return { chatId: args.chatId, memberCount: result };

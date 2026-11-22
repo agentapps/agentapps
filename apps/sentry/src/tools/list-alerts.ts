@@ -15,7 +15,13 @@ export function registerListAlertsTool(app: AgentApp): void {
       },
       required: ['project'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY system secret.');

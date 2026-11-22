@@ -18,7 +18,13 @@ export function registerGetIncidentTool(app: AgentApp): void {
       },
       required: ['incidentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const incidentId = args.incidentId as string;
       return await datadogRequest('GET', `/api/v2/incidents/${incidentId}`, null, ctx);

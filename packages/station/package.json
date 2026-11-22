@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/station",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Agent Apps Station: runs apps, relays their traffic, and holds policies, approvals, secrets and storage",
   "license": "MIT",
   "type": "module",

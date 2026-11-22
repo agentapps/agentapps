@@ -25,7 +25,13 @@ export function registerUploadAssetTool(app: AgentApp): void {
       },
       required: ['name', 'url'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name, url, fields, includeRaw } = args as {
         name: string;

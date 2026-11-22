@@ -37,7 +37,14 @@ export function registerSendWhatsappTool(app: AgentApp): void {
       },
       required: ['to', 'from', 'body'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A sent message reaches another person, is billed, and cannot be taken back.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const to = args.to as string;
       const from = args.from as string;

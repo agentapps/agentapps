@@ -18,7 +18,13 @@ export function registerGetPaymentTool(app: AgentApp): void {
       },
       required: ['paymentIntentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const paymentIntentId = args.paymentIntentId as string;
       return await stripeRequest('GET', `/payment_intents/${paymentIntentId}`, null, ctx);

@@ -32,7 +32,14 @@ export function registerEditMessageTool(app: AgentApp): void {
       },
       required: ['chatId', 'messageId', 'text'],
     },
-    annotations: { readOnlyHint: false },
+    // Setting the text again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         chat_id: args.chatId,

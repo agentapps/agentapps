@@ -15,7 +15,13 @@ export function registerGetUserTool(app: AgentApp): void {
       },
       required: ['userId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.getUser(args.userId as string);

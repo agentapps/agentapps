@@ -32,8 +32,11 @@ export function registerDownloadMediaTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Writes to any path on the machine and overwrites a file already there.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

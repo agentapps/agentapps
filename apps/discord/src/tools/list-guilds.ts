@@ -23,7 +23,13 @@ export function registerListGuildsTool(app: AgentApp): void {
       },
       required: [],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

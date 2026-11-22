@@ -15,7 +15,14 @@ export function registerHandleDialogTool(app: AgentApp): void {
       },
       required: ['accept'],
     },
-    annotations: { readOnlyHint: false },
+    // Accepting a dialog can confirm an irreversible action of the page ("Delete?"): worst case.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
 

@@ -16,7 +16,14 @@ export function registerAssignRoleTool(app: AgentApp): void {
       },
       required: ['guildId', 'userId', 'roleId'],
     },
-    annotations: { readOnlyHint: false },
+    // A PUT that remove-role undoes.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

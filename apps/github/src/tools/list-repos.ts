@@ -31,7 +31,13 @@ function curateRepo(r: Record<string, unknown>): Record<string, unknown> {
 
 export function registerListReposTool(app: AgentApp) {
   app.tool('list-repos', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'List repositories accessible to the current user via the GitHub App (across every installation reachable). Pass `owner` to filter.',
     parameters: {

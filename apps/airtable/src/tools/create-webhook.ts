@@ -51,7 +51,15 @@ export function registerCreateWebhookTool(app: AgentApp): void {
       },
       required: ['baseId', 'notificationUrl'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    // Registers a webhook that makes Airtable send the base's change notifications to the given
+    // URL: an outside write that needs approval. A creation, so not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       const notificationUrl = args.notificationUrl as string;

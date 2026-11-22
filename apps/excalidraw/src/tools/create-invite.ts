@@ -19,7 +19,14 @@ export function registerCreateInviteTool(app: AgentApp): void {
       },
       required: ['email'],
     },
-    annotations: { readOnlyHint: false },
+    // An invite reaches another person by email; delete-invite revokes it but cannot unsend it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.createInvite({

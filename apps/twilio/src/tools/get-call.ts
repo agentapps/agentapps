@@ -18,7 +18,13 @@ export function registerGetCallTool(app: AgentApp): void {
       },
       required: ['callSid'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const callSid = args.callSid as string;
       return await twilioRequest('GET', `/Calls/${callSid}`, null, ctx);

@@ -37,7 +37,15 @@ export function registerCreateDatabaseTool(app: AgentApp): void {
       },
       required: ['parentPageId', 'title', 'properties'],
     },
-    annotations: { readOnlyHint: false, version: '2.0.0', stability: 'stable' },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '2.0.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

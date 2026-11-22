@@ -28,7 +28,13 @@ export function registerExtractTypographyTool(app: AgentApp): void {
       },
       required: ['fileKey'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileKey, format } = args as { fileKey: string; format?: TypographyFormat };
 

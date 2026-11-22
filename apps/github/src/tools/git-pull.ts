@@ -5,7 +5,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitPullTool(app: AgentApp) {
   app.tool('git-pull', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Git refuses to pull over uncommitted changes; local commits are kept.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Pull commits from the remote into the current branch. `rebase: true` for a linear history (no merge commit).',
     parameters: {

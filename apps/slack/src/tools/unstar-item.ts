@@ -23,11 +23,13 @@ export function registerUnstarItemTool(app: AgentApp): void {
         fileComment: { type: 'string', description: 'File comment id.' },
       },
     },
+    // Reversible with star-item; destructiveHint is for changes the app cannot undo.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
-      destructiveHint: true,
+      destructiveHint: false,
       idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as unknown as UnstarItemArgs;

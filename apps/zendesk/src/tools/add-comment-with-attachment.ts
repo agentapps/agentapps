@@ -33,8 +33,11 @@ export function registerAddCommentWithAttachmentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // A comment is public by default, reaches the requester and cannot be removed.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

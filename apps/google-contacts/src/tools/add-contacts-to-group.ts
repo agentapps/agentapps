@@ -31,10 +31,13 @@ export function registerAddContactsToGroupTool(app: AgentApp): void {
       },
       required: ['resourceName', 'contactResourceNames'],
     },
+    // Reversible with remove-contacts-from-group.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const resourceName = args.resourceName as string;

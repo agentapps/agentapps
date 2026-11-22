@@ -24,7 +24,13 @@ export function registerAssignIssueTool(app: AgentApp): void {
       },
       required: ['issueKey', 'accountId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const issueKey = args.issueKey as string;
       const accountId = args.accountId as string | null;

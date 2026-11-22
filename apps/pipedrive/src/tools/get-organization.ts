@@ -19,7 +19,13 @@ export function registerGetOrganizationTool(app: AgentApp): void {
       },
       required: ['orgId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const orgId = args.orgId as number;
       return await pipedriveRequest('GET', `/organizations/${orgId}`, {}, ctx);

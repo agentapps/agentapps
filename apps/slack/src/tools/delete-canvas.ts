@@ -17,7 +17,13 @@ export function registerDeleteCanvasTool(app: AgentApp): void {
       },
       required: ['canvasId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { canvasId } = args as unknown as DeleteCanvasArgs;
       if (typeof canvasId !== 'string' || canvasId.trim().length === 0) {

@@ -161,7 +161,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.homey',
-    appVersion: '2.0.1',
+    appVersion: '2.0.2',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -243,7 +243,7 @@ describe('Homey Agent App', () => {
     // The Homey health handler returns { status: 'ready' } when OAuth secrets
     // are present and valid. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('2.0.1');
+    expect(health.version).toBe('2.0.2');
   });
 
   it('list-devices returns device list with zone names', async () => {

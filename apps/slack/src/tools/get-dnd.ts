@@ -21,7 +21,13 @@ export function registerGetDndTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { userId, includeRaw } = args as unknown as GetDndArgs;
       if (userId !== undefined && !isUserId(userId)) {

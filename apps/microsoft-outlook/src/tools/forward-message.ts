@@ -19,11 +19,13 @@ export function registerForwardMessageTool(app: AgentApp): void {
       },
       required: ['messageId', 'to'],
     },
+    // Sends an email to other people: it cannot be unsent.
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

@@ -18,7 +18,13 @@ export function registerGetPersonTool(app: AgentApp): void {
       },
       required: ['personId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const personId = args.personId as string;
       return await posthogRequest('GET', `persons/${personId}`, null, ctx);

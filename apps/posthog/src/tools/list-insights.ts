@@ -18,7 +18,13 @@ export function registerListInsightsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const limit = (args.limit as number) ?? 10;
       return await posthogRequest('GET', 'insights', { query: { limit } }, ctx);

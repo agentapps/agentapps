@@ -52,7 +52,13 @@ export function registerListChannelsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { types, limit, cursor, excludeArchived, fields, includeRaw } =
         args as ListChannelsArgs;

@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerListIssuesTool(app: AgentApp) {
   app.tool('list-issues', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'List issues for a repository with optional filters',
     parameters: {
       type: 'object',

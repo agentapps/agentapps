@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.gmail',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Gmail',
   description:
     'Gmail email management — send, read, search, label, and filter emails via Google Gmail API.',

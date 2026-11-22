@@ -23,7 +23,13 @@ export function registerListChannelMembersTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channelId, limit, cursor, includeRaw } = args as unknown as ListChannelMembersArgs;
       validateChannelId(channelId, 'channelId');

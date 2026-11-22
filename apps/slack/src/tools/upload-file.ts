@@ -68,7 +68,15 @@ export function registerUploadFileTool(app: AgentApp): void {
       },
       required: ['filePath'],
     },
-    annotations: { readOnlyHint: false },
+    // Reads a local file and, with channels, posts it and initialComment to them: a send
+    // cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { filePath, channels, title, initialComment, threadTs, fields, includeRaw } =
         args as unknown as UploadFileArgs;

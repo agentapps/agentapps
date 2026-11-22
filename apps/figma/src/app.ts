@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.figma',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Figma',
   description:
     'Access Figma design files, extract styles, components, design tokens, and export assets',

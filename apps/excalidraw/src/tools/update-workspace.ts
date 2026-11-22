@@ -14,7 +14,14 @@ export function registerUpdateWorkspaceTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { readOnlyHint: false },
+    // A rename: setting the name again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.updateWorkspace({ name: args.name as string });

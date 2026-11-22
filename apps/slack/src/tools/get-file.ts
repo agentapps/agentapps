@@ -44,7 +44,13 @@ export function registerGetFileTool(app: AgentApp): void {
       },
       required: ['fileId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileId, includeComments, includeRaw } = args as unknown as GetFileArgs;
       if (!isFileId(fileId)) {

@@ -18,7 +18,13 @@ export function registerGetSubscriptionTool(app: AgentApp): void {
       },
       required: ['subscriptionId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const subscriptionId = args.subscriptionId as string;
       return await stripeRequest('GET', `/subscriptions/${subscriptionId}`, null, ctx);

@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerListPrReviewCommentsTool(app: AgentApp) {
   app.tool('list-pr-review-comments', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'List review comments (inline comments on diff) of a pull request.',
     parameters: {
       type: 'object',

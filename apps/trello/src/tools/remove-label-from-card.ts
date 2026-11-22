@@ -17,10 +17,12 @@ export function registerRemoveLabelFromCardTool(app: AgentApp): void {
       required: ['cardId', 'labelId'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      // Detaches the label from the card only; add-label-to-card puts it back.
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

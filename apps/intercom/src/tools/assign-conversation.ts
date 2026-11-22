@@ -31,6 +31,7 @@ export function registerAssignConversationTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { conversationId, adminId, teamId } = args as {

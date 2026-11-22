@@ -29,7 +29,13 @@ export function registerListAuthTeamsTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { includeIcon, limit, cursor, includeRaw } = args as unknown as ListAuthTeamsArgs;
       const safeLimit = sanitizeLimit(limit, { max: 100, default: 100 });

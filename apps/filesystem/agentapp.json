@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.filesystem",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Filesystem",
   "description": "Filesystem operations: read, write, edit, patch, search (glob/grep), list, tree, stat, hash, copy, move, delete, and mkdir. Path-traversal safe, shell-injection safe, gitignore aware.",
   "tagline": "Safe file operations with read, write, search, and more",

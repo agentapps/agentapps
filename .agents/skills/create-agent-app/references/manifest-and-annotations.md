@@ -114,9 +114,18 @@ Every tool declares all of these, as booleans, explicitly. No inference from too
 | `destructiveHint` | the app cannot undo the change (delete, overwrite, revoke, purge, send), and starting or raising real spend (activating a paid campaign, raising a budget): money spent cannot be taken back. Creating, labelling or scaling is not destructive. | `false` | `false` (delete: `true`) |
 | `idempotentHint` | repeating the same call has no extra effect (GET, set-to-value, delete-by-id, revoke) | `true` | create: `false`, set: `true` |
 | `openWorldHint` | the tool talks to something outside the app process (a network API, a CLI) | `true` | `true` |
-| `sensitive` | the call should pause for the user's approval by default. **`sensitive === !readOnlyHint`** | `false` | `true` |
+| `sensitive` | the call should pause for the user's approval by default: the tool changes something **outside the app's own data** in Agent Apps (another service, another person, the user's machine or files). `false` for a read-only tool, and for a tool that only changes the app's own Storage, Objects or Volume | `false` | `true` (own data only: `false`) |
 
-A read-only tool is never destructive. Optional extra fields: `stability`
+A read-only tool is never destructive and never sensitive. The default Policy asks before a call
+to a tool that is `destructiveHint` or `sensitive`, and allows the rest: three kinds of tool,
+so choose with care.
+
+| The tool | Annotations | By default |
+|---|---|---|
+| changes nothing | `readOnlyHint: true`, `sensitive: false` | runs |
+| changes only the app's own data (a note in its Storage, a file in its Volume) | `readOnlyHint: false`, `sensitive: false` | runs |
+| changes something outside, or cannot be undone | `sensitive: true`, and `destructiveHint: true` when irreversible | waits for approval |
+ Optional extra fields: `stability`
 (`experimental` / `stable` / `deprecated`), `deprecationMessage`, `irreversible`, `version`.
 
 Annotations are static per tool. If one operation is harmless in one mode and dangerous in

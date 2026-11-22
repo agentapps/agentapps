@@ -29,7 +29,13 @@ export function registerHeadlinesTool(app: AgentApp): void {
       },
       required: [],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const topic = (args.topic as string) ?? '';
       const region = (args.region as string) ?? '';

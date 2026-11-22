@@ -18,7 +18,13 @@ export function registerGetMonitorTool(app: AgentApp): void {
       },
       required: ['monitorId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const monitorId = args.monitorId as number;
       return await datadogRequest('GET', `/api/v1/monitor/${monitorId}`, null, ctx);

@@ -50,7 +50,14 @@ export function registerCompleteUploadTool(app: AgentApp): void {
       },
       required: ['files'],
     },
-    annotations: { readOnlyHint: false },
+    // With channelId it posts the file and initialComment to a channel: a send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { files, channelId, initialComment, threadTs } = args as unknown as CompleteUploadArgs;
       const parsed = parseFiles(files);

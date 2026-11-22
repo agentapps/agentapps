@@ -11,8 +11,10 @@ export function registerGetSpaceUsageTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const result = await dropboxRequest('users/get_space_usage', null, ctx);

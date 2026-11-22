@@ -55,7 +55,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.0' },
+    host: { name: 'test', version: '1.0.1' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -108,7 +108,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.filesystem',
-    appVersion: '1.0.0',
+    appVersion: '1.0.1',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();

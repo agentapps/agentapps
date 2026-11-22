@@ -58,8 +58,11 @@ export function registerUpdateTicketTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // `description` adds a comment, which reaches the requester and cannot be removed.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { ticketId, subject, description, priority, status, assigneeId, tags, customFields } =

@@ -21,7 +21,13 @@ export function registerGetPermalinkTool(app: AgentApp): void {
       },
       required: ['channel', 'ts'],
     },
-    annotations: { readOnlyHint: true, idempotentHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channel, ts, includeRaw } = args as unknown as GetPermalinkArgs;
       validateChannelId(channel, 'channel');

@@ -14,7 +14,7 @@ Tests run with no network and no real credentials, under `test/` in the app.
   Any `fetch` a test did not queue fails with "unexpected fetch in test".
 - `test/manifest.test.ts`: schema, `createApp()` equals `agentapp.json`, the exact tool list,
   all five annotations on every tool, the exact `sensitive` and destructive sets with
-  `sensitive === !readOnlyHint`, and one check per logo file (a `todo` while it is missing).
+  a read-only tool never `sensitive`, and one check per logo file (a `todo` while it is missing).
   Keep `EXPECTED_TOOLS`, `SENSITIVE_TOOLS` and `DESTRUCTIVE_TOOLS` up to date.
 - `test/tools.test.ts`: health, client and example-tool tests to replace with your own.
 

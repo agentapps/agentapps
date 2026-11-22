@@ -1,7 +1,7 @@
 {
   "id": "app.github",
   "name": "GitHub",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "GitHub repository management + local git development environment - repos, issues, pull requests, actions, commits, branches, releases, plus local git operations on cloned repos",
   "tagline": "Manage repos, issues, PRs, and actions on GitHub",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

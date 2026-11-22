@@ -21,9 +21,12 @@ export function registerListListsTool(app: AgentApp): void {
       },
     },
     annotations: {
+      // The POST is the Lists search endpoint: it only reads.
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const {

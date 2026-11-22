@@ -17,7 +17,13 @@ export function registerListContactsTool(app: AgentApp): void {
       },
       required: [],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const limit = Math.min(Math.max((args as any).limit ?? 20, 1), 100);
       const offset = Math.max((args as any).offset ?? 0, 0);

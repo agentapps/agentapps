@@ -29,7 +29,13 @@ export function registerCreateWebhookTool(app: AgentApp): void {
       },
       required: ['topic', 'address'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const webhook: Record<string, unknown> = {
         topic: args.topic,

@@ -25,7 +25,13 @@ export function registerGetProjectTool(app: AgentApp): void {
       },
       required: ['projectId'],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { projectId, fields, includeRaw } = args as {
         projectId: number;

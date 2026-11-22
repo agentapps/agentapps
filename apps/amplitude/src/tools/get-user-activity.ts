@@ -27,7 +27,13 @@ export function registerGetUserActivityTool(app: AgentApp): void {
       },
       required: ['user'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined | null> = {
         user: args.user as string,

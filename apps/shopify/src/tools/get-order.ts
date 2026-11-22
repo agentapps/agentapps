@@ -18,7 +18,13 @@ export function registerGetOrderTool(app: AgentApp): void {
       },
       required: ['orderId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const orderId = args.orderId as string;
       return await shopifyRequest('GET', `/orders/${orderId}.json`, null, ctx);

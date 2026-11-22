@@ -31,7 +31,13 @@ export function registerAddRemoteFileTool(app: AgentApp): void {
       },
       required: ['externalId', 'externalUrl', 'title'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as AddRemoteFileArgs;
       if (typeof a.externalUrl !== 'string' || !/^https?:\/\//.test(a.externalUrl)) {

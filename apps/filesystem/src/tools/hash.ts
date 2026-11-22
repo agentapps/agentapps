@@ -23,7 +23,13 @@ export function registerHashTool(app: AgentApp): void {
       },
       required: ['filePath'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const filePath = args.filePath as string;
       if (!filePath) throw new Error('filePath must be a non-empty string');

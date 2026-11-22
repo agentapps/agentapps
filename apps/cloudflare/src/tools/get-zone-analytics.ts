@@ -28,7 +28,13 @@ export function registerGetZoneAnalyticsTool(app: AgentApp): void {
       },
       required: ['zoneId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const zoneId = args.zoneId as string;
       const params: Record<string, unknown> = {};

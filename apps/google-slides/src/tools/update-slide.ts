@@ -56,10 +56,14 @@ export function registerUpdateSlideTool(app: AgentApp): void {
       },
       required: ['presentationId', 'text'],
     },
+    // mode=insert only adds text, but mode=replace overwrites every match in the whole
+    // presentation like replace-text: annotated for that case.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

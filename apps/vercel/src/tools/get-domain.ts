@@ -18,7 +18,13 @@ export function registerGetDomainTool(app: AgentApp): void {
       },
       required: ['domain'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const domain = args.domain as string;
       return await vercelRequest('GET', `/v5/domains/${domain}`, null, ctx);

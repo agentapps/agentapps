@@ -29,7 +29,14 @@ export function registerSendEphemeralTool(app: AgentApp): void {
       },
       required: ['channel', 'user', 'text'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, user, text, blocks, threadTs } = args as unknown as SendEphemeralArgs;
       validateChannelId(channel, 'channel');

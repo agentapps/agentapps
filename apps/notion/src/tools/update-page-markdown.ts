@@ -50,7 +50,17 @@ export function registerUpdatePageMarkdownTool(app: AgentApp): void {
       },
       required: ['pageId'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'experimental' },
+    // The default mode overwrites the whole page body (destructive); append adds again on
+    // every call (not idempotent). Annotated for the most dangerous mode.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'experimental',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

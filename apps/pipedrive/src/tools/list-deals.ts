@@ -40,7 +40,13 @@ export function registerListDealsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined> = {};
       if (args.status) params.status = args.status as string;

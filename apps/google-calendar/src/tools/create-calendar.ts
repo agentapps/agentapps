@@ -29,6 +29,13 @@ export function registerCreateCalendarTool(app: AgentApp): void {
       },
       required: ['summary'],
     },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
 

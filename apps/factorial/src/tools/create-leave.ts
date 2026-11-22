@@ -17,7 +17,13 @@ export function registerCreateLeaveTool(app: AgentApp): void {
       },
       required: ['employeeId', 'leaveTypeId', 'startOn', 'finishOn'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       return factorialRequest(ctx, '/timeoff/leaves', {
         method: 'POST',

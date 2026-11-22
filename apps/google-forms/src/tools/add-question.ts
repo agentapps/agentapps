@@ -60,6 +60,7 @@ Params: formId (required), title (required), questionItem (required), index? (in
       destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

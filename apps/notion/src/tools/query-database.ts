@@ -58,7 +58,15 @@ export function registerQueryDatabaseTool(app: AgentApp): void {
       },
       required: [],
     },
-    annotations: { readOnlyHint: true, version: '2.0.0', stability: 'stable' },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+      version: '2.0.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

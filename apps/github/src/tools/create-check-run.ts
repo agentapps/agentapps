@@ -2,7 +2,13 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerCreateCheckRunTool(app: AgentApp) {
   app.tool('create-check-run', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Create a check run on a commit (GitHub App exclusive).',
     parameters: {
       type: 'object',

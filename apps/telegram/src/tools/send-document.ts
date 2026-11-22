@@ -28,7 +28,13 @@ export function registerSendDocumentTool(app: AgentApp): void {
       },
       required: ['chatId', 'document'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         chat_id: args.chatId,

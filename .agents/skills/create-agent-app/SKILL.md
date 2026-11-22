@@ -94,7 +94,9 @@ annotations plus `sensitive` for each tool. Read `references/tool-design.md` and
 
 - Every tool declares `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint` and
   `sensitive` explicitly. Nothing is inferred from the tool name.
-- `sensitive` is `true` exactly for tools that are not read-only.
+- `sensitive` is `true` when the tool changes something outside the app's own data in Agent Apps:
+  another service, another person, the user's machine or files. It is `false` for read-only
+  tools, and for tools that only change the app's own Storage, Objects or Volume.
 - `destructiveHint` means irreversible (delete, overwrite, revoke, send, and starting or raising
   real spend: money spent cannot be taken back), not just "writes".
 - Results stay well under 50,000 characters; write tools return a short summary.
@@ -184,8 +186,9 @@ Turn each bug the live run finds into a mocked test that fails without the fix.
 ## 10. Ship it
 
 Read `references/ship-it.md`: the final checks (including `check-app --strict`, which fails on
-TODO text left in the manifest or README; a logo TODO in the Logos section that lists where you looked still passes), the commit shape, a short, plain change description, and what to change before
-publishing to npm. Push, open a PR or publish only with the user's consent.
+TODO text left in the manifest or README; a logo TODO in the Logos section that lists where you looked still passes), the commit shape, a short, plain change description, and how a standalone app
+is used outside the monorepo (as a local source; publishing your own app to npm is not supported
+yet). Push or open a PR only with the user's consent.
 
 ## Common mistakes
 

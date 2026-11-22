@@ -15,7 +15,14 @@ export function registerDeleteMessageTool(app: AgentApp): void {
       },
       required: ['channelId', 'messageId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, irreversible: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+      irreversible: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

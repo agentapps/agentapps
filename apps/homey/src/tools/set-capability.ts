@@ -36,11 +36,14 @@ export function registerSetCapabilityTool(app: AgentApp): void {
       },
       required: ['device_id', 'capability', 'value'],
     },
+    // Acts on a physical device in the home (a light, a lock, a thermostat), so it waits for
+    // approval. Not destructive: setting the previous value puts the device back.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

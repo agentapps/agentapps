@@ -21,7 +21,14 @@ export function registerSetDndTool(app: AgentApp): void {
       },
       required: ['numMinutes'],
     },
-    annotations: { readOnlyHint: false },
+    // Not idempotent: the snooze runs numMinutes from the moment of each call.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { numMinutes } = args as unknown as SetDndArgs;
       if (typeof numMinutes !== 'number' || !Number.isFinite(numMinutes)) {

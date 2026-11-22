@@ -5,7 +5,14 @@ export function registerCloseTool(app: AgentApp): void {
   app.tool('close', {
     description: 'Close the page',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: false },
+    // Closes the app's own browser process; nothing outside the app changes.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async () => {
       await closeBrowser();
       return 'Browser closed';

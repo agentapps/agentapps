@@ -3,7 +3,15 @@ import { createSession, initNetworkTracking } from '../lib/index.js';
 
 export function registerSessionCreateTool(app: AgentApp): void {
   app.tool('session-create', {
-    annotations: { readOnlyHint: false },
+    // Starts a metered cloud browser on the user's Browserbase account (billed per minute, more
+    // with proxies or keepAlive): it starts real spend.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Create a new Browserbase cloud browser session. Returns a sessionId to use with all other tools, and opens a Live View window so you can watch the browser in real time.',
     parameters: {

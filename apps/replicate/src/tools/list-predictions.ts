@@ -13,7 +13,13 @@ export function registerListPredictionsTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const apiToken = await ctx.systemSecret('API_TOKEN');
       if (!apiToken) {

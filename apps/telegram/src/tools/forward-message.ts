@@ -31,7 +31,14 @@ export function registerForwardMessageTool(app: AgentApp): void {
       },
       required: ['chatId', 'fromChatId', 'messageId'],
     },
-    annotations: { readOnlyHint: false },
+    // Forwarding sends a message to other people: a send cannot be taken back.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         chat_id: args.chatId,

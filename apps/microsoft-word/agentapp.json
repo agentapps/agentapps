@@ -1,7 +1,7 @@
 {
   "id": "app.microsoft.word",
   "name": "Word",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Microsoft Word document automation — create documents, read their text and structure, and make surgical edits that leave the rest of the file untouched. Edits overwrite the stored file; recover earlier states through OneDrive version history.",
   "tagline": "Create, read, and surgically edit Word documents in OneDrive",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

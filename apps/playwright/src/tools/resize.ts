@@ -12,7 +12,14 @@ export function registerResizeTool(app: AgentApp): void {
       },
       required: ['width', 'height'],
     },
-    annotations: { readOnlyHint: false },
+    // Changes only the viewport of the app's own browser.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       await page.setViewportSize({

@@ -1,7 +1,7 @@
 {
   "id": "app.activecampaign",
   "name": "ActiveCampaign",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "ActiveCampaign CRM and email marketing — manage contacts, lists, campaigns, deals, and tags via the v3 API.",
   "tagline": "Manage contacts, campaigns, deals, and tags in ActiveCampaign",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

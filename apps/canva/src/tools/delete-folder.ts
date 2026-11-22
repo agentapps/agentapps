@@ -13,7 +13,13 @@ export function registerDeleteFolderTool(app: AgentApp): void {
       },
       required: ['folderId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { folderId } = args as { folderId: string };
       validateNonEmpty(folderId, 'folderId');

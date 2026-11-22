@@ -21,6 +21,8 @@ export function registerListServicesTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const projectId = (args as Record<string, unknown>).projectId as string;

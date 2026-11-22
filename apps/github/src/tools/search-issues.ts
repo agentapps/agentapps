@@ -3,7 +3,13 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerSearchIssuesTool(app: AgentApp) {
   app.tool('search-issues', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Search issues and pull requests across GitHub. Use GitHub search syntax in `q`.',
     parameters: {
       type: 'object',

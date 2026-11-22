@@ -19,7 +19,13 @@ export function registerGetDeploymentEventsTool(app: AgentApp): void {
       },
       required: ['deploymentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const deploymentId = args.deploymentId as string;
       const data = await vercelRequest('GET', `/v3/deployments/${deploymentId}/events`, null, ctx);

@@ -22,10 +22,13 @@ export function registerUpdateSectionTool(app: AgentApp): void {
       },
       required: ['sectionId', 'name'],
     },
+    // A rename: setting the name again undoes it.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

@@ -30,8 +30,10 @@ export function registerAddCustomDomainTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, domain } = args as { serviceId: string; domain: string };

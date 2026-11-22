@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.railway',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Railway',
   description:
     'Deploy projects to Railway directly from your workspace. Supports automatic deployments, environment management, and database provisioning.',

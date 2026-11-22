@@ -19,10 +19,13 @@ export function registerUpdatePartnerTool(app: AgentApp): void {
       },
       required: ['id', 'values'],
     },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

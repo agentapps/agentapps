@@ -24,7 +24,7 @@ const notesDb = new Map<string, { title: string; content: string; createdAt: str
 // Create the app
 // ---------------------------------------------------------------------------
 
-const app = createApp({ id: 'app.research', version: '1.0.1' });
+const app = createApp({ id: 'app.research', version: '1.0.2' });
 
 // ---------------------------------------------------------------------------
 // Tool: search
@@ -46,7 +46,14 @@ app.tool('search', {
     },
     required: ['query'],
   },
-  annotations: { readOnlyHint: true },
+  // Works on in-process mock data only: no network, no filesystem.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (args, ctx) => {
     const query = args.query as string;
     const limit = Math.min((args.limit as number) ?? 3, 10);
@@ -123,7 +130,14 @@ app.tool('summarize', {
     },
     required: ['text'],
   },
-  annotations: { readOnlyHint: true },
+  // Works on in-process mock data only: no network, no filesystem.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (args, ctx) => {
     const text = args.text as string;
     const maxPoints = Math.min((args.maxPoints as number) ?? 3, 10);
@@ -182,6 +196,14 @@ app.tool('save_note', {
     },
     required: ['title', 'content'],
   },
+  // Writes only to the app's own in-memory notes map: not sensitive, nothing outside changes.
+  annotations: {
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: false,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (args, ctx) => {
     const title = args.title as string;
     const content = args.content as string;
@@ -218,7 +240,14 @@ app.tool('list_notes', {
     type: 'object',
     properties: {},
   },
-  annotations: { readOnlyHint: true },
+  // Works on in-process mock data only: no network, no filesystem.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (_args, ctx) => {
     ctx.log('info', `Listing ${notesDb.size} notes`);
 

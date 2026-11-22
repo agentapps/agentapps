@@ -30,7 +30,13 @@ export function registerGetTeamDndTool(app: AgentApp): void {
       },
       required: ['users'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { users, includeRaw } = args as unknown as GetTeamDndArgs;
       if (typeof users !== 'string' || users.trim().length === 0) {

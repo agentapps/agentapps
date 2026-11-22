@@ -17,7 +17,13 @@ export function registerGetUserIdentityTool(app: AgentApp): void {
     description:
       "Get the authenticated user's basic identity from the OAuth context (minimum scope: identity.basic, optionally identity.email/avatar/team). Returns curated identity. Retryable. No params.",
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { client } = await getSlackSession(ctx);
       const result = await wrapSlackCall(() => (client as any).users.identity());

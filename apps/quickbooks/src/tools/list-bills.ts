@@ -17,7 +17,13 @@ export function registerListBillsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const maxResults = (args.maxResults as number) || 100;
       return await quickbooksRequest(

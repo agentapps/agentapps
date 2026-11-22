@@ -13,7 +13,13 @@ export function registerGetContactTool(app: AgentApp): void {
       },
       required: ['id'],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).id?.trim()) throw new Error('id is required');
       const raw = (await acRequest(ctx, `/contacts/${encodeURIComponent((args as any).id)}`)) as {

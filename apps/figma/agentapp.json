@@ -1,7 +1,7 @@
 {
   "id": "app.figma",
   "name": "Figma",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Access Figma design files, extract styles, components, design tokens, and export assets. Works directly with files via file key. Perfect for design-to-code workflows.",
   "tagline": "Inspect Figma files, extract design tokens, and export assets",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

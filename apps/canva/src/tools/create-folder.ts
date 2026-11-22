@@ -25,7 +25,13 @@ export function registerCreateFolderTool(app: AgentApp): void {
       },
       required: ['name', 'parentFolderId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name, parentFolderId, fields, includeRaw } = args as {
         name: string;

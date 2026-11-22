@@ -10,7 +10,13 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitStatusTool(app: AgentApp) {
   app.tool('git-status', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'Local git status: branch, ahead/behind vs upstream, and lists of staged, modified, untracked, and conflicted files.',
     parameters: {

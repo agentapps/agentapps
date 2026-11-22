@@ -34,7 +34,14 @@ export function registerAutofillDesignTool(app: AgentApp): void {
       },
       required: ['brandTemplateId', 'data'],
     },
-    annotations: { readOnlyHint: false },
+    // The autofill job creates a new design from the brand template; the template is not changed.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { brandTemplateId, title, data, columnConfigs, fields, includeRaw } = args as {
         brandTemplateId: string;

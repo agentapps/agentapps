@@ -29,7 +29,14 @@ export function registerTypeTool(app: AgentApp): void {
       },
       required: ['element', 'ref', 'text'],
     },
-    annotations: { readOnlyHint: false },
+    // Types into a live web page and, with `submit`, presses Enter: it can send a form.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const el = await findElementByRef(page, args.ref as string);

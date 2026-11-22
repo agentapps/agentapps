@@ -24,7 +24,15 @@ export function registerMuteMonitorTool(app: AgentApp): void {
       },
       required: ['monitorId'],
     },
-    annotations: { readOnlyHint: false },
+    // Silences a monitor's alerts (indefinitely when `end` is omitted). It changes a state and
+    // deletes nothing, so it is not destructive, although this app has no unmute tool.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const monitorId = args.monitorId as number;
       const body: Record<string, unknown> = {};

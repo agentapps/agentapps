@@ -20,7 +20,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.context7',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Context7',
   description:
     'Up-to-date library and framework documentation via Context7 (Upstash). Resolves library identifiers and fetches structured doc snippets with code examples.',

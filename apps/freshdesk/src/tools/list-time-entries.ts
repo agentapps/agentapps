@@ -30,8 +30,10 @@ export function registerListTimeEntriesTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const ticketId = args.ticketId as number;

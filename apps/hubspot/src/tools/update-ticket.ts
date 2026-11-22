@@ -29,8 +29,11 @@ export function registerUpdateTicketTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Setting the properties again undoes it.
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

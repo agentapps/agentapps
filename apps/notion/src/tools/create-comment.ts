@@ -35,7 +35,16 @@ export function registerCreateCommentTool(app: AgentApp): void {
       },
       required: ['text'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'stable' },
+    // A comment can be removed again with delete-comment, so posting one is not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { pageId, discussionId, text, fields, includeRaw } = args as {

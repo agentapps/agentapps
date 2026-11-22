@@ -17,10 +17,13 @@ export function registerRedeployTool(app: AgentApp): void {
       },
       required: ['deploymentId'],
     },
+    // Starts a new deployment of the same build on a live service; nothing is deleted.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const deploymentId = (args as Record<string, unknown>).deploymentId as string;

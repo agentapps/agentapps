@@ -3,7 +3,14 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerUpdateIssueTool(app: AgentApp) {
   app.tool('update-issue', {
-    annotations: { readOnlyHint: false },
+    // Closing can be reopened and fields set again; nothing here is beyond undoing.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Update an existing issue. Setting `state: "closed"` closes it. `labels` REPLACES the entire label set — use add-labels-to-issue to append.',
     parameters: {

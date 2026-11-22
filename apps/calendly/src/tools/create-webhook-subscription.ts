@@ -42,8 +42,11 @@ export function registerCreateWebhookSubscriptionTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // delete-webhook-subscription removes it again.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

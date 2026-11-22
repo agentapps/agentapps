@@ -24,7 +24,14 @@ export function registerEvaluateTool(app: AgentApp): void {
       },
       required: ['function'],
     },
-    annotations: { readOnlyHint: false },
+    // Runs arbitrary JavaScript in the page, with its session: it can post, send or delete.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const fn = args.function as string;

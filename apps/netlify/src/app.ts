@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.netlify',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Netlify',
   description:
     'Deploy static sites (HTML/CSS/JS) from the workspace to Netlify and return the public URL. Uses the file-digest REST API with a per-user Personal Access Token.',

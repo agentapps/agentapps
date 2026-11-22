@@ -18,6 +18,14 @@ export function registerDeleteEventTool(app: AgentApp): void {
       },
       required: ['eventId'],
     },
+    // The event cannot be brought back through this app.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
       const calendarId = (args.calendarId as string) ?? 'primary';

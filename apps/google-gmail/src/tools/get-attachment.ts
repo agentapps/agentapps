@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AgentApp } from '@agentapps/sdk';
 import { createGmailClient, getSecrets } from '../lib/gmail-client.js';
-import { findAttachments } from '../lib/helpers.js';
+import { findAttachments, safeAttachmentName } from '../lib/helpers.js';
 
 /**
  * get-attachment — Get the content of an email attachment by its attachment ID.
@@ -29,9 +29,13 @@ export function registerGetAttachmentTool(app: AgentApp): void {
       required: ['messageId', 'attachmentId'],
     },
     annotations: {
-      readOnlyHint: true,
-      idempotentHint: true,
+      // With saveToFile it writes a new timestamped file under ~/Downloads on the
+      // user's machine, so it is annotated as a write outside the app.
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);
@@ -66,7 +70,7 @@ export function registerGetAttachmentTool(app: AgentApp): void {
         const allAttachments = findAttachments(messageResponse.data.payload);
         const originalFilename =
           allAttachments.length === 1 && allAttachments[0].filename
-            ? allAttachments[0].filename
+            ? safeAttachmentName(allAttachments[0].filename)
             : 'attachment';
 
         const now = new Date();

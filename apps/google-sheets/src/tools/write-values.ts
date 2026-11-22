@@ -28,10 +28,13 @@ export function registerWriteValuesTool(app: AgentApp): void {
       },
       required: ['spreadsheetId', 'range', 'values'],
     },
+    // Overwrites whatever the range held; the app has no way to bring the old cells back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       openWorldHint: true,
       idempotentHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

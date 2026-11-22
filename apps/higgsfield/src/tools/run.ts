@@ -36,8 +36,11 @@ export function registerRunTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Submits a paid generation: the credits it spends cannot be taken back.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const credentials = await resolveCredentials(ctx);

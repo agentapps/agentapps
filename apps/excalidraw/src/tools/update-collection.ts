@@ -18,7 +18,14 @@ export function registerUpdateCollectionTool(app: AgentApp): void {
       },
       required: ['collectionId', 'name'],
     },
-    annotations: { readOnlyHint: false },
+    // A rename: setting the name again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.updateCollection(args.collectionId as string, { name: args.name as string });

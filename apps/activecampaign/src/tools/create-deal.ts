@@ -20,7 +20,13 @@ export function registerCreateDealTool(app: AgentApp): void {
       },
       required: ['title', 'value', 'pipelineId', 'stageId', 'ownerId'],
     },
-    annotations: { readOnlyHint: false, openWorldHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).title?.trim()) throw new Error('title is required');
       if (!Number.isFinite((args as any).value)) throw new Error('value must be a finite number');

@@ -47,7 +47,13 @@ export function registerListConnectInvitesTool(app: AgentApp): void {
         teamId: { type: 'string', description: 'Filter by team id.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { count, limit, cursor, teamId, includeRaw } =
         args as unknown as ListConnectInvitesArgs;

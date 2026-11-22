@@ -46,7 +46,15 @@ export function registerSearchTool(app: AgentApp): void {
       },
       required: ['query'],
     },
-    annotations: { readOnlyHint: true, version: '1.1.0', stability: 'stable' },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { query, filter, sort, limit, startCursor, fields, includeRaw } = args as {

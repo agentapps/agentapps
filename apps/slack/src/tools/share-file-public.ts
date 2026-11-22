@@ -19,7 +19,14 @@ export function registerShareFilePublicTool(app: AgentApp): void {
       },
       required: ['fileId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Reversible with revoke-file-public.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { fileId } = args as unknown as ShareFilePublicArgs;
       if (!isFileId(fileId)) {

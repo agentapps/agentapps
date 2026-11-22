@@ -57,7 +57,14 @@ export function registerCreateInvoiceTool(app: AgentApp): void {
       },
       required: ['contactId', 'items'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Creates the document in Holded; it does not send it or charge anyone.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         contactId: args.contactId,

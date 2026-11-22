@@ -31,7 +31,13 @@ export function registerUpdateOrderTool(app: AgentApp): void {
       },
       required: ['orderId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const orderId = args.orderId as string;
       const order: Record<string, unknown> = {};

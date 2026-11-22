@@ -31,6 +31,8 @@ export function registerGetBuildLogsTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const {

@@ -40,7 +40,14 @@ export function registerUpdateIssueTool(app: AgentApp): void {
       },
       required: ['issueKey'],
     },
-    annotations: { readOnlyHint: false },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const issueKey = args.issueKey as string;
       const fields: Record<string, unknown> = {};

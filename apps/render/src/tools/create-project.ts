@@ -30,8 +30,10 @@ export function registerCreateProjectTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { name, ownerId } = args as { name: string; ownerId: string };

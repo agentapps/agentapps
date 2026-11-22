@@ -31,11 +31,13 @@ export function registerStopScenarioTool(app: AgentApp): void {
       },
       required: ['scenarioId'],
     },
+    // Pauses a live automation in Make (start-scenario resumes it): an outside change, so sensitive.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

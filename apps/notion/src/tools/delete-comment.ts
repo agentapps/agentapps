@@ -22,6 +22,7 @@ export function registerDeleteCommentTool(app: AgentApp): void {
       stability: 'stable',
       destructiveHint: true,
       idempotentHint: true,
+      openWorldHint: true,
     },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);

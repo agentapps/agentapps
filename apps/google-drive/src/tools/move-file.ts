@@ -23,10 +23,13 @@ export function registerMoveFileTool(app: AgentApp): void {
       },
       required: ['fileId', 'newParentId'],
     },
+    // Moving the file back undoes it.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

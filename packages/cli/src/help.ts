@@ -45,7 +45,8 @@ Commands:
   approve <id> | deny <id>           Decide a waiting call
   hooks claude-code install <file>   Add conversation hooks to a Claude Code settings file
   hooks claude-code <Event>          Run by Claude Code; forwards the event to the station
-  serve [port]                       Start the station in the background (detached)
+  serve [port] [stationUrl]          Start the station in the background (detached); with stationUrl,
+                                     announce its apps to that station
   station <action>                   Control the station: start|status|stop|restart
   warm                               Warm the tool cache for all installations
   sync                               Install npm: app packages from agentapps.json

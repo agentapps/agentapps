@@ -38,10 +38,13 @@ export function registerBatchUpdateValuesTool(app: AgentApp): void {
       },
       required: ['spreadsheetId', 'data'],
     },
+    // Overwrites whatever the ranges held; the app has no way to bring the old cells back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       openWorldHint: true,
       idempotentHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

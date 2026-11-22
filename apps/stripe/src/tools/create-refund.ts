@@ -31,7 +31,14 @@ export function registerCreateRefundTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A refund moves money back to the customer and cannot be reversed.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {};
       if (args.charge) params.charge = args.charge;

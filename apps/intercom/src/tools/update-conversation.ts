@@ -36,6 +36,7 @@ export function registerUpdateConversationTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { conversationId, state, priority, snoozedUntil } = args as {

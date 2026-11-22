@@ -15,7 +15,14 @@ export function registerDeleteTool(app: AgentApp): void {
       },
       required: ['path'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Removes the user's own files for good (no trash).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const rawPath = args.path as string;
       const recursive = Boolean(args.recursive);

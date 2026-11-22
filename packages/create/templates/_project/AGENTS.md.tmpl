@@ -29,8 +29,10 @@ ships with `@agentapps/create`: `node_modules/@agentapps/create/skill/create-age
 ## Rules
 
 - Every tool declares `readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint` and
-  `sensitive` explicitly; `sensitive` is true exactly for tools that are not read-only. Never
-  infer them from the tool name.
+  `sensitive` explicitly. Never infer them from the tool name.
+- `sensitive` is `true` when the tool changes something outside the app's own data in Agent Apps:
+  another service, another person, the user's machine or files. It is `false` for read-only
+  tools, and for tools that only change the app's own Storage, Objects or Volume.
 - `agentapp.json` and the `createApp()` config in `src/app.ts` describe the same app; change
   both together (a test checks it).
 - Logos come from the service's official brand resources only, with the source in the README.

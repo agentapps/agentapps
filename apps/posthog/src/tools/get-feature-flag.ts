@@ -18,7 +18,13 @@ export function registerGetFeatureFlagTool(app: AgentApp): void {
       },
       required: ['flagId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const flagId = args.flagId as number;
       return await posthogRequest('GET', `feature_flags/${flagId}`, null, ctx);

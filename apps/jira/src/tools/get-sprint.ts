@@ -19,7 +19,13 @@ export function registerGetSprintTool(app: AgentApp): void {
       },
       required: ['sprintId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const sprintId = args.sprintId as number;
 

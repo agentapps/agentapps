@@ -21,11 +21,11 @@ export function registerDeleteContactTool(app: AgentApp): void {
       required: ['resourceName'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const resourceName = args.resourceName as string;

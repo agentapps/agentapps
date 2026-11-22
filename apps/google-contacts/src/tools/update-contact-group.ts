@@ -34,10 +34,13 @@ export function registerUpdateContactGroupTool(app: AgentApp): void {
       },
       required: ['resourceName', 'name'],
     },
+    // Renaming back undoes it.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const resourceName = args.resourceName as string;

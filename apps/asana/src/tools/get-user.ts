@@ -16,6 +16,8 @@ export function registerGetUserTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const user = await asanaRequest(ctx, 'users/me');

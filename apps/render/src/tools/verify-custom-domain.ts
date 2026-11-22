@@ -28,10 +28,13 @@ export function registerVerifyCustomDomainTool(app: AgentApp): void {
       },
       required: ['serviceId', 'domainId'],
     },
+    // Asks Render to re-check DNS, which can move the domain to verified on Render's side.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, domainId } = args as { serviceId: string; domainId: string };

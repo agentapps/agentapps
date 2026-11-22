@@ -43,10 +43,14 @@ export function registerExportSheetTool(app: AgentApp): void {
       },
       required: ['fileId'],
     },
+    // Reads from Google but writes a file on the user's machine, replacing any file already
+    // at `outputPath` (or at the default path in Downloads).
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       openWorldHint: true,
       idempotentHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

@@ -30,10 +30,14 @@ export function registerAddSubscriberTool(app: AgentApp): void {
       },
       required: ['listId', 'email_address'],
     },
+    // Adds a member to the audience (delete-subscriber removes it). With status "pending" Mailchimp
+    // emails the person an opt-in confirmation; that is the service's doing, not a send by this tool.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       validateAddSubscriberArgs(args);

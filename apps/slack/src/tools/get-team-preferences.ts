@@ -20,7 +20,13 @@ export function registerGetTeamPreferencesTool(app: AgentApp): void {
     description:
       'Get workspace policy preferences (locale, default channels, who can create/archive channels, message edit window, calls/huddles enabled). Returns curated preferences. Retryable. No params.',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { client } = await getSlackSession(ctx);
       const result = await wrapSlackCall(() => (client as any).team.preferences.list());

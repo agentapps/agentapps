@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // same app and must not be hand-edited out of sync with each other.
 export const app = createApp({
   id: 'app.microsoft.onenote',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'OneNote',
   description:
     'Microsoft OneNote automation — browse notebooks and sections, read and write pages as markdown, and search notes via the Microsoft Graph OneNote API.',

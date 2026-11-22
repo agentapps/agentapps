@@ -14,8 +14,10 @@ export function registerListLabelsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const labels = await todoistRequest<unknown[]>(ctx, '/labels');

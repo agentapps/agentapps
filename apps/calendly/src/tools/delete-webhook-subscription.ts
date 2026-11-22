@@ -21,10 +21,11 @@ export function registerDeleteWebhookSubscriptionTool(app: AgentApp): void {
       required: ['webhookId'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
+      idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

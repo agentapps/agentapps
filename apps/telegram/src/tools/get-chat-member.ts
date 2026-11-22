@@ -24,7 +24,13 @@ export function registerGetChatMemberTool(app: AgentApp): void {
       },
       required: ['chatId', 'userId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return await telegramRequest(
         'getChatMember',

@@ -18,7 +18,14 @@ export function registerLeaveChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: false },
+    // Leaving a private channel cannot be undone here: join-channel only joins public ones.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId } = args as unknown as LeaveChannelArgs;
       validateChannelId(channelId, 'channelId');

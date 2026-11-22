@@ -1,7 +1,7 @@
 {
   "id": "app.todoist",
   "name": "Todoist",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Todoist task management — create, update, complete and delete tasks, organize projects, sections, labels and comments.",
   "tagline": "Manage tasks, projects, labels, sections and comments in Todoist",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

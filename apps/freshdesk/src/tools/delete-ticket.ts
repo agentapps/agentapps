@@ -20,11 +20,13 @@ export function registerDeleteTicketTool(app: AgentApp): void {
       },
       required: ['ticketId'],
     },
+    // The app has no restore tool, so a deleted ticket cannot be brought back through it.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const ticketId = args.ticketId as number;

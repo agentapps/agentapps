@@ -23,7 +23,14 @@ export function registerGetPublicUrlTool(app: AgentApp): void {
       },
       required: ['bucket', 'path'],
     },
-    annotations: { readOnlyHint: true },
+    // Builds the URL from the configured project URL: no request leaves the app process.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const bucket = args.bucket as string;
       const path = args.path as string;

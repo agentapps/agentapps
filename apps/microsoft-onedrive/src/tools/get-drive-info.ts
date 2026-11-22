@@ -18,6 +18,7 @@ export function registerGetDriveInfoTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

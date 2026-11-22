@@ -4,7 +4,13 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitListFilesTool(app: AgentApp) {
   app.tool('git-list-files', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'List files in the repo, respecting `.gitignore`. Returns `{ tracked, untracked, ignored }` arrays. Optionally filter by `pattern` (glob, relative to repo root).',
     parameters: {

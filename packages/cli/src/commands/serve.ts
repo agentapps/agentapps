@@ -20,6 +20,7 @@ import {
   StationServer,
 } from '@agentapps/station';
 import { loadWorkspaceConfig, needsDownload, resolveSourcePath } from '../config.js';
+import { workspaceDataPath, workspaceStationSecret } from '../data-paths.js';
 import { InstallationSecretsStore, workspaceStoragePath } from '../host.js';
 import { resolveApp } from '../resolve.js';
 import { loadAppSecrets } from '../secrets-store.js';
@@ -196,6 +197,9 @@ export async function handleServe(
     publicUrl,
     stationId: `serve-${hostname()}-${port}`,
     secrets: createLocalSecretsManager(ctx.configPath),
+    // CLI-REQ-14: the same Volume, Objects and link-signing secret as the CLI.
+    volumesBasePath: workspaceDataPath(ctx.configPath),
+    stationSecret: workspaceStationSecret(ctx.configPath),
     // CLI-REQ-3: the same on-disk Storage the CLI uses, not process memory.
     documentStore: new FileDocumentStore(workspaceStoragePath(ctx.configPath)),
     resolveInstallation: (installationId) => {

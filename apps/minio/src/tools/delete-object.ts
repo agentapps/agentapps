@@ -23,11 +23,12 @@ export function registerDeleteObjectTool(app: AgentApp): void {
       required: ['bucket', 'objectName'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
-      openWorldHint: false,
+      // The MinIO server is reached over the network.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

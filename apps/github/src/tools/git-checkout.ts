@@ -76,10 +76,13 @@ export function registerGitCheckoutTool(app: AgentApp) {
       };
     },
     annotations: {
-      destructiveHint: false,
       readOnlyHint: false,
+      // `force` discards local changes and `paths` overwrites working files with no way back.
+      destructiveHint: true,
       idempotentHint: false,
-      openWorldHint: false,
+      // Runs the git CLI on the user's files.
+      openWorldHint: true,
+      sensitive: true,
     },
   });
 }

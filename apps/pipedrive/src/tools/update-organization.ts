@@ -26,7 +26,13 @@ export function registerUpdateOrganizationTool(app: AgentApp): void {
       },
       required: ['orgId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const orgId = args.orgId as number;
       const body: Record<string, unknown> = {};

@@ -23,7 +23,14 @@ export function registerRenameChannelTool(app: AgentApp): void {
       },
       required: ['channelId', 'name'],
     },
-    annotations: { readOnlyHint: false },
+    // Renaming back undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, name } = args as unknown as RenameChannelArgs;
       validateChannelId(channelId, 'channelId');

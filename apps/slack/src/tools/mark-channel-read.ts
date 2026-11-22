@@ -23,7 +23,13 @@ export function registerMarkChannelReadTool(app: AgentApp): void {
       },
       required: ['channelId', 'timestamp'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, timestamp } = args as unknown as MarkChannelReadArgs;
       validateChannelId(channelId, 'channelId');

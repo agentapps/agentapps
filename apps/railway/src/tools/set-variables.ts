@@ -30,10 +30,14 @@ export function registerSetVariablesTool(app: AgentApp): void {
       },
       required: ['projectId', 'serviceId', 'environmentId', 'variables'],
     },
+    // An upsert overwrites existing values, and list-variables masks or truncates them,
+    // so the app cannot read back and restore what was there.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { projectId, serviceId, environmentId, variables } = args as {

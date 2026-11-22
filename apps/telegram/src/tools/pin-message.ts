@@ -28,7 +28,15 @@ export function registerPinMessageTool(app: AgentApp): void {
       },
       required: ['chatId', 'messageId'],
     },
-    annotations: { readOnlyHint: false },
+    // Pinning marks a message and deletes nothing, so it is not destructive, although this
+    // app has no unpin tool and members are notified unless disableNotification is set.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         chat_id: args.chatId,

@@ -32,7 +32,13 @@ export function registerSearchIssuesTool(app: AgentApp): void {
       },
       required: ['jql'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const jql = args.jql as string;
       const maxResults = (args.maxResults as number) || 20;

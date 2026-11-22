@@ -34,7 +34,15 @@ export function registerScheduleMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'text', 'postAt'],
     },
-    annotations: { readOnlyHint: false },
+    // The message goes out at postAt with no further call, and a sent message cannot be
+    // unsent. delete-scheduled-message only helps before that time.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, text, postAt, blocks, threadTs, unfurlLinks, unfurlMedia } =
         args as unknown as ScheduleMessageArgs;

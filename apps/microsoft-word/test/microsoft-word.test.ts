@@ -98,7 +98,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.1' },
+    host: { name: 'test', version: '1.0.2' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -192,7 +192,7 @@ beforeEach(() => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({})));
 
   const runtime = new InProcessRuntime(factory);
-  appStation = new AppStation({ appId: 'app.microsoft.word', appVersion: '1.0.1', runtime });
+  appStation = new AppStation({ appId: 'app.microsoft.word', appVersion: '1.0.2', runtime });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
   host = hostSide;
   received = collectMessages(host);
@@ -250,7 +250,7 @@ describe('Microsoft Word Agent App', () => {
 
     expect(result.success).toBe(true);
     expect(manifest.id).toBe('app.microsoft.word');
-    expect(manifest.version).toBe('1.0.1');
+    expect(manifest.version).toBe('1.0.2');
     expect(manifest.auth.scopes).toContain('Files.ReadWrite.All');
     // Least privilege (spec §3.3): these belong to other apps in the suite.
     expect(manifest.auth.scopes).not.toContain('Sites.Read.All');
@@ -2080,7 +2080,7 @@ describe('Microsoft Word Agent App', () => {
     ]);
   });
 
-  it('declares all four annotations on every tool', async () => {
+  it('declares all five annotations on every tool', async () => {
     const sessionId = await initAndOpen();
 
     host.send({ ...createEnvelope('list_tools'), sessionId } as MessageBase);
@@ -2093,7 +2093,13 @@ describe('Microsoft Word Agent App', () => {
 
     for (const tool of tools) {
       expect(tool.annotations, `${tool.name} has no annotations`).toBeDefined();
-      for (const hint of ['readOnlyHint', 'destructiveHint', 'idempotentHint', 'openWorldHint']) {
+      for (const hint of [
+        'readOnlyHint',
+        'destructiveHint',
+        'idempotentHint',
+        'openWorldHint',
+        'sensitive',
+      ]) {
         expect(typeof tool.annotations?.[hint], `${tool.name} does not declare ${hint}`).toBe(
           'boolean',
         );

@@ -23,7 +23,13 @@ export function registerAddDomainTool(app: AgentApp): void {
       },
       required: ['projectId', 'name'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const projectId = args.projectId as string;
       const body: Record<string, unknown> = {

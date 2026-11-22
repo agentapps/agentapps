@@ -63,6 +63,7 @@ Params: formId (required), item (required — must include itemId), location (re
       destructiveHint: false,
       openWorldHint: true,
       idempotentHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

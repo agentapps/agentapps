@@ -24,8 +24,11 @@ export function registerGetObjectInfoTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // The MinIO server is reached over the network.
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

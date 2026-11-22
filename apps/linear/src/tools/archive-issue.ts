@@ -13,7 +13,14 @@ export function registerArchiveIssueTool(app: AgentApp): void {
       },
       required: ['issueId'],
     },
-    annotations: { readOnlyHint: false },
+    // An archived issue can be restored in Linear, so this is not destructive (this app has no unarchive tool).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId } = args as { issueId: string };

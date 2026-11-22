@@ -31,10 +31,13 @@ export function registerAddContactTool(app: AgentApp): void {
       },
       required: ['contacts'],
     },
+    // An upsert by email: it adds the contact or sets its fields, and can be set back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const contacts = args.contacts as Array<Record<string, unknown>>;

@@ -19,7 +19,14 @@ export function registerAddIssuesToProjectTool(app: AgentApp): void {
       },
       required: ['projectId', 'issueIds'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets each issue's project (replacing a previous one); setting it again restores it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { projectId, issueIds } = args as { projectId: string; issueIds: string[] };

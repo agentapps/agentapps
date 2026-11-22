@@ -27,7 +27,13 @@ export function registerGetPropertyValuesTool(app: AgentApp): void {
       },
       required: ['event', 'name'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined | null> = {
         event: args.event as string,

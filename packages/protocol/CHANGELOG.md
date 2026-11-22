@@ -1,5 +1,11 @@
 # @agentapps/protocol
 
+## 0.2.4
+
+### Patch Changes
+
+- fe123bc: The create-agent-app skill no longer tells authors to publish their app to npm, which does not work yet; it explains the local source. `headerName`, `headerPrefix` (manifest) and `expectedStatuses` (health helper) are marked as having no effect. The help shows the second argument of `serve`.
+
 ## 0.2.3
 
 ## 0.2.2

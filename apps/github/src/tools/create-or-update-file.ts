@@ -2,7 +2,14 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerCreateOrUpdateFileTool(app: AgentApp) {
   app.tool('create-or-update-file', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Replaces a file through a new commit; the previous content stays in the history.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Create or update a file in a repo. Pass `sha` of the existing file when updating.',
     parameters: {

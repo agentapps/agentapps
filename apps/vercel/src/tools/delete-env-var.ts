@@ -23,7 +23,13 @@ export function registerDeleteEnvVarTool(app: AgentApp): void {
       },
       required: ['projectId', 'envId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const projectId = args.projectId as string;
       const envId = args.envId as string;

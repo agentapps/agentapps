@@ -32,7 +32,14 @@ export function registerUpdateDealTool(app: AgentApp): void {
       },
       required: ['dealId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      // status "deleted" deletes the deal, and no tool of this app restores it.
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const dealId = args.dealId as number;
       const body: Record<string, unknown> = {};

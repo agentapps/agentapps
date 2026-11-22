@@ -23,7 +23,14 @@ export function registerSetChatTitleTool(app: AgentApp): void {
       },
       required: ['chatId', 'title'],
     },
-    annotations: { readOnlyHint: false },
+    // Setting the title again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       return await telegramRequest(
         'setChatTitle',

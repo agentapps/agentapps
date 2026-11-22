@@ -5,7 +5,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitFetchTool(app: AgentApp) {
   app.tool('git-fetch', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Updates remote-tracking refs in the user's repository, not the working tree.
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Fetch refs from the remote without merging. Use `refspec` to fetch arbitrary refs (e.g. `pull/<n>/head:pr-<n>` for a PR head, `refs/tags/v1.0.0:refs/tags/v1.0.0` for a tag).',
     parameters: {

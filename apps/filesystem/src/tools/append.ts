@@ -18,7 +18,15 @@ export function registerAppendTool(app: AgentApp): void {
       },
       required: ['filePath', 'content'],
     },
-    annotations: { readOnlyHint: false },
+    // Works on the user's own files (the workspace roots), not on the app's Volume, so it is
+    // sensitive. Appending overwrites nothing, so it is not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const filePath = args.filePath as string;
       const content = args.content;

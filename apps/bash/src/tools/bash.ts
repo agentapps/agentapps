@@ -26,7 +26,15 @@ export function registerBashTool(app: AgentApp): void {
       },
       required: ['command', 'description'],
     },
-    annotations: { readOnlyHint: false },
+    // Runs an arbitrary shell command on the user's machine: annotated for the worst a
+    // command can do (delete or overwrite files, send data, spend money).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const command = args.command as string;
       // VOL-REQ-5: the mounted Workspace Volume is the default working directory.

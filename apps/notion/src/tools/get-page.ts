@@ -27,7 +27,15 @@ export function registerGetPageTool(app: AgentApp): void {
       },
       required: ['pageId'],
     },
-    annotations: { readOnlyHint: true, version: '1.1.0', stability: 'stable' },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

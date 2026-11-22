@@ -19,7 +19,13 @@ export function registerDeleteListFieldTool(app: AgentApp): void {
       },
       required: ['listId', 'fieldId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId, fieldId } = args as unknown as DeleteListFieldArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0)

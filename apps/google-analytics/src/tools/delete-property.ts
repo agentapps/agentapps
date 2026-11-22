@@ -24,11 +24,13 @@ export function registerDeletePropertyTool(app: AgentApp): void {
       },
       required: ['propertyId'],
     },
+    // A soft delete, but only the Google Analytics UI can restore it: this app cannot.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
+      idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

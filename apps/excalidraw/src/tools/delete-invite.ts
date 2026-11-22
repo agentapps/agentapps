@@ -14,7 +14,13 @@ export function registerDeleteInviteTool(app: AgentApp): void {
       },
       required: ['inviteId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       await client.deleteInvite(args.inviteId as string);

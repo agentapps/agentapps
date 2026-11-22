@@ -21,7 +21,15 @@ export function registerArchiveChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    // Kept destructive although unarchive-channel exists: after archiving, the bot token may
+    // no longer reach the channel (see the catch below), so the undo is not guaranteed.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId } = args as unknown as ArchiveChannelArgs;
       validateChannelId(channelId, 'channelId');

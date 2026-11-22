@@ -14,7 +14,13 @@ export function registerRemoveUserTool(app: AgentApp): void {
       },
       required: ['userId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       await client.removeUser(args.userId as string);

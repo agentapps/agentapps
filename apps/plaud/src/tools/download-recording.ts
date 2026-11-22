@@ -15,10 +15,13 @@ export function registerDownloadRecordingTool(app: AgentApp): void {
       },
       required: ['id'],
     },
+    // Despite the name, it downloads nothing: it reads the file detail and returns a URL.
     annotations: {
-      readOnlyHint: false,
+      readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const id = (args as Record<string, unknown>).id as string;

@@ -26,7 +26,13 @@ export function registerEditBookmarkTool(app: AgentApp): void {
       },
       required: ['channel', 'bookmarkId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as EditBookmarkArgs;
       validateChannelId(a.channel, 'channel');

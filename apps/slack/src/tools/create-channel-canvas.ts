@@ -24,7 +24,13 @@ export function registerCreateChannelCanvasTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, title, contentMarkdown } = args as unknown as CreateChannelCanvasArgs;
       validateChannelId(channelId, 'channelId');

@@ -31,7 +31,14 @@ export function registerAddCommentTool(app: AgentApp): void {
       },
       required: ['baseId', 'tableIdOrName', 'recordId', 'text'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    // Posts a comment collaborators see: an outside write, a creation rather than a destruction.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       const tableIdOrName = args.tableIdOrName as string;

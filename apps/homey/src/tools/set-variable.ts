@@ -32,11 +32,14 @@ export function registerSetVariableTool(app: AgentApp): void {
       },
       required: ['variable_id', 'value'],
     },
+    // Changes a logic variable on the Homey, which flows may react to. Setting the previous
+    // value restores the variable.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

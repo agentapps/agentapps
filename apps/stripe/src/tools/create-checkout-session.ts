@@ -50,7 +50,14 @@ export function registerCreateCheckoutSessionTool(app: AgentApp): void {
       },
       required: ['success_url', 'line_items', 'mode'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Creates a payment page; no money moves until a customer pays on it.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         success_url: args.success_url,

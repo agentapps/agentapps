@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitCherryPickTool(app: AgentApp) {
   app.tool('git-cherry-pick', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Adds commits; git refuses to run over uncommitted changes.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Cherry-pick commits onto the current branch. Pass `commits: ["sha", ...]` or drive an in-progress pick with `mode: continue/skip/abort`.',
     parameters: {

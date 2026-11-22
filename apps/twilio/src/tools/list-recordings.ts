@@ -26,7 +26,13 @@ export function registerListRecordingsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         PageSize: (args.pageSize as number) || 20,

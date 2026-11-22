@@ -30,7 +30,13 @@ export function registerCreateLabelTool(app: AgentApp): void {
       },
       required: ['name', 'teamId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { name, teamId, color, description, fields, includeRaw } = args as {

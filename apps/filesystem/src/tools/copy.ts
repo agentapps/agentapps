@@ -18,7 +18,15 @@ export function registerCopyTool(app: AgentApp): void {
       },
       required: ['source', 'destination'],
     },
-    annotations: { readOnlyHint: false },
+    // Works on the user's own files (the workspace roots). Destructive because overwrite: true
+    // replaces whatever was at the destination.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const source = args.source as string;
       const destination = args.destination as string;

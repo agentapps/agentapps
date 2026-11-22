@@ -34,7 +34,13 @@ export function registerCreateCustomerTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {};
       if (args.email) params.email = args.email;

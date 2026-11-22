@@ -19,7 +19,14 @@ export function registerHoverTool(app: AgentApp): void {
       },
       required: ['element', 'ref'],
     },
-    annotations: { readOnlyHint: false },
+    // Moves the pointer over an element: the page may open a menu, but nothing is submitted.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const el = await findElementByRef(page, args.ref as string);

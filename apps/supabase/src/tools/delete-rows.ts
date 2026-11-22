@@ -24,7 +24,14 @@ export function registerDeleteRowsTool(app: AgentApp): void {
       },
       required: ['table', 'filter'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    // Repeating the same filter finds the rows already gone, so the call is idempotent.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const table = args.table as string;
       const filter = args.filter as string;

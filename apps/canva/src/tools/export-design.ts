@@ -49,7 +49,14 @@ export function registerExportDesignTool(app: AgentApp): void {
       },
       required: ['designId', 'format'],
     },
-    annotations: { readOnlyHint: false },
+    // Starts an export job in Canva (POST /exports): the design is untouched, but a job is created outside.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const {
         designId,

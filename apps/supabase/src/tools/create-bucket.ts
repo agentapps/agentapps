@@ -27,7 +27,13 @@ export function registerCreateBucketTool(app: AgentApp): void {
       },
       required: ['id'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const id = args.id as string;
       const name = (args.name as string) || id;

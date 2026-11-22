@@ -25,10 +25,13 @@ export function registerCallMethodTool(app: AgentApp): void {
       },
       required: ['model', 'method'],
     },
+    // Any method of any model: it can unlink records, confirm orders or send mail. Worst case.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

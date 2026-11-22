@@ -73,7 +73,14 @@ export function registerSendNotificationTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Sends a push notification to the user's devices: a sent notification cannot be recalled.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await resolveApiKey(ctx);
 

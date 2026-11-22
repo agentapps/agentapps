@@ -40,8 +40,12 @@ export function registerCreateContactTool(app: AgentApp): void {
       },
       required: ['email'],
     },
+    // With updateEnabled it updates fields of an existing contact; a field update is not
+    // destructive, and delete-contact removes a contact created by mistake.
     annotations: {
+      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
     },

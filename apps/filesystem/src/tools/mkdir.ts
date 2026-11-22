@@ -15,7 +15,15 @@ export function registerMkdirTool(app: AgentApp): void {
       },
       required: ['path'],
     },
-    annotations: { readOnlyHint: false },
+    // Creates a directory among the user's own files (the workspace roots): sensitive, not
+    // destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const rawPath = args.path as string;
       const recursive = args.recursive !== false;

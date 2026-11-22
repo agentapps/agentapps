@@ -22,7 +22,14 @@ const ALLOWED_KEYS = new Set([
 
 export function registerGitConfigTool(app: AgentApp) {
   app.tool('git-config', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `set` and `unset` change the user's git configuration, the global one with scope "global".
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Read or write git config (whitelisted keys only). Default scope is `local` (the repo). For identity, prefer `user.name` and `user.email`.',
     parameters: {

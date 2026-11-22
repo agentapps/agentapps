@@ -26,10 +26,14 @@ export function registerConnectRepoTool(app: AgentApp): void {
       },
       required: ['serviceId', 'repo'],
     },
+    // Changes the service's source and triggers a deployment. Connecting the earlier repo
+    // again undoes it, so it is not destructive.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

@@ -44,7 +44,13 @@ export function registerCreateIssueTool(app: AgentApp): void {
       },
       required: ['projectKey', 'issueType', 'summary'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const fields: Record<string, unknown> = {
         project: { key: args.projectKey as string },

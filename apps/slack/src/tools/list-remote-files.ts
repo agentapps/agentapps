@@ -26,7 +26,13 @@ export function registerListRemoteFilesTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channel, tsFrom, tsTo, limit, cursor, includeRaw } =
         args as unknown as ListRemoteFilesArgs;

@@ -23,11 +23,13 @@ export function registerDeleteRecordTool(app: AgentApp): void {
       },
       required: ['objectType', 'recordId'],
     },
+    // The app has no undelete tool, so a deleted record cannot be brought back through it.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { objectType, recordId } = args as {

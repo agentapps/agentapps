@@ -34,9 +34,12 @@ export function registerReplaceAllTextTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Overwrites every match across the document (an empty replaceText deletes them);
+      // the reverse replace cannot tell the new occurrences from the ones already there.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

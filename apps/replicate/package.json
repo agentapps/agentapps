@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.replicate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Replicate AI Agent App — run any AI model on Replicate with async predictions.",
   "type": "module",

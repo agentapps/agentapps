@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // same app and must not be hand-edited out of sync with each other.
 export const app = createApp({
   id: 'app.microsoft.onedrive',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'OneDrive',
   description:
     'Microsoft OneDrive file management — browse, upload, download, organize, and share files via Microsoft Graph API.',

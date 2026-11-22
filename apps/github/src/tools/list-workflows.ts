@@ -2,7 +2,13 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerListWorkflowsTool(app: AgentApp) {
   app.tool('list-workflows', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'List workflows in a repository',
     parameters: {
       type: 'object',

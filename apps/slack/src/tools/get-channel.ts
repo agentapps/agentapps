@@ -33,7 +33,13 @@ export function registerGetChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channelId, fields, includeRaw } = args as unknown as GetChannelArgs;
       validateChannelId(channelId, 'channelId');

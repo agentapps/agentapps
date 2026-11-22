@@ -18,7 +18,13 @@ export function registerGetMessageTool(app: AgentApp): void {
       },
       required: ['messageSid'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const messageSid = args.messageSid as string;
       return await twilioRequest('GET', `/Messages/${messageSid}`, null, ctx);

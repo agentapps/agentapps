@@ -41,7 +41,15 @@ export function registerUploadFileTool(app: AgentApp): void {
       },
       required: ['pageId', 'name', 'contentType'],
     },
-    annotations: { readOnlyHint: false, version: '1.0.0', stability: 'experimental' },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.0.0',
+      stability: 'experimental',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { pageId, name, contentType, dataUrl, filePath } = args as {

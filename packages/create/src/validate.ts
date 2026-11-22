@@ -7,7 +7,7 @@
  * source, and then finding no tool is an error.
  *
  * Errors (non-zero exit): manifest schema; the app cannot be loaded; no tools; a tool
- * without all five annotations as booleans; `sensitive` not equal to `!readOnlyHint`; a
+ * without all five annotations as booleans; a read-only tool marked `sensitive`; a
  * read-only tool marked destructive; agentapp.json differs from `app.toManifest()`; a mono
  * logo with a colour (`fill`/`stroke` other than none/currentColor/inherit, or `<style>`);
  * a PNG logo under 1024x1024; a missing logo without a TODO in the README's Logos
@@ -194,9 +194,11 @@ function checkTools(tools: ToolDefinition[], errors: string[]): string[] {
       continue;
     }
     if (a.sensitive) sensitive.push(tool.name);
-    if (a.sensitive === a.readOnlyHint) {
+    // DEVX-REQ-4: a tool that changes nothing never asks; a tool that changes only the
+    // app's own data in Agent Apps does not have to.
+    if (a.sensitive && a.readOnlyHint) {
       errors.push(
-        `Tool '${tool.name}': sensitive must be ${!a.readOnlyHint} (sensitive is true exactly for tools that are not read-only)`,
+        `Tool '${tool.name}': sensitive must be false (a read-only tool changes nothing, so it never waits for approval)`,
       );
     }
     if (a.readOnlyHint && a.destructiveHint) {

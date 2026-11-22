@@ -18,7 +18,14 @@ export function registerNavigateTool(app: AgentApp): void {
       },
       required: ['url'],
     },
-    annotations: { readOnlyHint: false },
+    // Loads a page (a GET) in the app's own browser: it changes the browser's state, not the site.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       resetLastNavigationTime();

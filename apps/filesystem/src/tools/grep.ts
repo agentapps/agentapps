@@ -33,7 +33,13 @@ export function registerGrepTool(app: AgentApp): void {
       },
       required: ['pattern'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const pattern = args.pattern as string;
       if (!pattern) throw new Error('pattern must be a non-empty string');

@@ -18,7 +18,13 @@ export function registerGetContactTool(app: AgentApp): void {
       },
       required: ['contactId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const contactId = args.contactId as string;
       return await holdedRequest('GET', `invoicing/v1/contacts/${contactId}`, null, ctx);

@@ -17,7 +17,13 @@ export function registerRemoveEmojiTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name } = args as unknown as RemoveEmojiArgs;
       if (typeof name !== 'string' || name.trim().length === 0) {

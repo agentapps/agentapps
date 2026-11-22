@@ -21,7 +21,13 @@ export function registerListIncidentsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const query: Record<string, string | number | boolean | undefined | null> = {};
       query['page[size]'] = (args.pageSize as number) || 10;

@@ -38,7 +38,13 @@ export function registerCreateRecordsTool(app: AgentApp): void {
       },
       required: ['baseId', 'tableIdOrName', 'records'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       const tableIdOrName = args.tableIdOrName as string;

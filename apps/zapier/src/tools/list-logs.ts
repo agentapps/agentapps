@@ -22,7 +22,13 @@ export function registerListLogsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const query: Record<string, string | number | boolean | undefined | null> = {};
       if (args.offset !== undefined) query.offset = args.offset as number;

@@ -159,19 +159,19 @@ describe('check-app: tools, as the host sees them', () => {
     expect((await check()).errors.some((e) => e.includes('does not declare sensitive'))).toBe(true);
   });
 
-  it('fails when a read-only tool is sensitive', async () => {
+  it('[DEVX-AC-4] fails when a read-only tool is sensitive', async () => {
     const annotations = READ_ONLY.replace('sensitive: false', 'sensitive: true');
     createProject({ 'src/app.ts': appTs(tool('hello', annotations)) });
     expect((await check()).errors).toContain(
-      "Tool 'hello': sensitive must be false (sensitive is true exactly for tools that are not read-only)",
+      "Tool 'hello': sensitive must be false (a read-only tool changes nothing, so it never waits for approval)",
     );
   });
 
-  it('fails when a write tool is not sensitive', async () => {
+  it('[DEVX-AC-4] accepts a write tool that is not sensitive: it changes only its own data', async () => {
     const annotations = WRITE.replace('sensitive: true', 'sensitive: false');
     createProject({ 'src/app.ts': appTs(tool('write', annotations)) });
     const errors = (await check()).errors;
-    expect(errors.some((e) => e.includes("'write': sensitive must be true"))).toBe(true);
+    expect(errors.some((e) => e.includes("'write'"))).toBe(false);
   });
 
   it('fails when a read-only tool is marked destructive', async () => {

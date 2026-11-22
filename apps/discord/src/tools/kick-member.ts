@@ -14,7 +14,14 @@ export function registerKickMemberTool(app: AgentApp): void {
       },
       required: ['guildId', 'userId'],
     },
-    annotations: { readOnlyHint: false },
+    // Destructive: the app cannot put a kicked member back (they need a new invite).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

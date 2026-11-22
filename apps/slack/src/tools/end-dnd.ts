@@ -6,7 +6,13 @@ export function registerEndDndTool(app: AgentApp): void {
   app.tool('end-dnd', {
     description: 'End the current snooze. Returns { snoozeEnabled: false }. Idempotent. No params.',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (_args, ctx) => {
       const { client } = await getSlackSession(ctx);
       try {

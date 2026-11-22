@@ -24,7 +24,14 @@ export function registerCancelSubscriptionTool(app: AgentApp): void {
       },
       required: ['subscriptionId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // With cancelAtPeriodEnd false the subscription ends at once and cannot be reactivated.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const subscriptionId = args.subscriptionId as string;
       const cancelAtPeriodEnd = args.cancelAtPeriodEnd !== false;

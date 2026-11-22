@@ -49,7 +49,14 @@ export function registerCreateInvoiceTool(app: AgentApp): void {
       },
       required: ['customerRefId', 'lines'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    // Records the invoice in the books; it is not emailed to the customer and moves no money.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const customerRefId = args.customerRefId as string;
       const lines = args.lines as Array<Record<string, unknown>>;

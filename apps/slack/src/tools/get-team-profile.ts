@@ -43,7 +43,13 @@ export function registerGetTeamProfileTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { visibility, includeRaw } = args as unknown as GetTeamProfileArgs;
       const { client } = await getSlackSession(ctx);

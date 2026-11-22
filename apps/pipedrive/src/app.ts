@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.pipedrive',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Pipedrive',
   description: 'Pipedrive CRM — manage deals, persons, organizations, activities, and pipelines.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

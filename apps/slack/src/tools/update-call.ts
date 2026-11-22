@@ -24,7 +24,13 @@ export function registerUpdateCallTool(app: AgentApp): void {
       },
       required: ['callId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as UpdateCallArgs;
       if (typeof a.callId !== 'string' || a.callId.trim().length === 0) {

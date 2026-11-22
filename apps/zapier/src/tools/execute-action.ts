@@ -28,6 +28,14 @@ export function registerExecuteActionTool(app: AgentApp): void {
       },
       required: ['actionId', 'instructions'],
     },
+    annotations: {
+      readOnlyHint: false,
+      // Runs whatever the exposed action does (send an email, delete a row): assume the worst.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const actionId = args.actionId as string;
       const instructions = args.instructions as string;

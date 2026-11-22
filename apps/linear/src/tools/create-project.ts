@@ -33,7 +33,13 @@ export function registerCreateProjectTool(app: AgentApp): void {
       },
       required: ['name', 'teamIds'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { name, teamIds, description, leadId, startDate, targetDate, fields, includeRaw } =

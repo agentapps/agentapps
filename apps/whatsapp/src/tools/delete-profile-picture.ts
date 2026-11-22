@@ -14,11 +14,12 @@ export function registerDeleteProfilePictureTool(app: AgentApp): void {
       },
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default' } = (args ?? {}) as { session?: string };

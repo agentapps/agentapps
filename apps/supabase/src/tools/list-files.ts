@@ -31,7 +31,14 @@ export function registerListFilesTool(app: AgentApp): void {
       },
       required: ['bucket'],
     },
-    annotations: { readOnlyHint: true },
+    // The storage API lists objects with a POST; nothing is changed.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const bucket = args.bucket as string;
       const path = (args.path as string) || '';

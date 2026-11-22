@@ -3,7 +3,14 @@ import { getActiveSessions } from '../lib/index.js';
 
 export function registerSessionListTool(app: AgentApp): void {
   app.tool('session-list', {
-    annotations: { readOnlyHint: false },
+    // Reads the sessions the app holds in memory: it changes nothing and calls no API.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     description: 'List all active Browserbase sessions in this instance.',
     parameters: { type: 'object', properties: {} },
     handler: async (_args, _ctx) => {

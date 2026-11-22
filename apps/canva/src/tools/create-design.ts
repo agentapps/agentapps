@@ -34,7 +34,13 @@ export function registerCreateDesignTool(app: AgentApp): void {
       },
       required: ['designType'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { designType, title, width, height, assetId, fields, includeRaw } = args as {
         designType: string;

@@ -7,7 +7,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitWriteFileTool(app: AgentApp) {
   app.tool('git-write-file', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Overwrites the file on disk, uncommitted changes included.
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Write file content into the working tree (creates parent dirs) and stage it. Use `stage: false` to skip staging.',
     parameters: {

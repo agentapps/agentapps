@@ -38,7 +38,14 @@ export function registerCreateDnsRecordTool(app: AgentApp): void {
       },
       required: ['zoneId', 'type', 'name', 'content'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    // Adds a record; delete-dns-record removes it again, so it is not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const zoneId = args.zoneId as string;
       const body: Record<string, unknown> = {

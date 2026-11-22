@@ -125,8 +125,7 @@ export function getOrCreatePoller(
     { immediate: true, continueOnError: true },
   );
 
-  poller._bindContext(ctx);
-  poller.start();
+  poller.start(ctx);
   activePoller = poller;
   return poller;
 }

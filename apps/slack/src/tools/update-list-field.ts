@@ -23,7 +23,13 @@ export function registerUpdateListFieldTool(app: AgentApp): void {
       },
       required: ['listId', 'fieldId'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId, fieldId, name, required } = args as unknown as UpdateListFieldArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0)

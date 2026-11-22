@@ -40,7 +40,13 @@ export function registerQueryTableTool(app: AgentApp): void {
       },
       required: ['table'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const table = args.table as string;
       const select = (args.select as string) || '*';

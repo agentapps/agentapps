@@ -37,7 +37,15 @@ export function registerCreateAdvancedBlocksTool(app: AgentApp): void {
       },
       required: ['pageId', 'blockType', 'content'],
     },
-    annotations: { readOnlyHint: false, version: '2.0.0', stability: 'experimental' },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '2.0.0',
+      stability: 'experimental',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { pageId, blockType, content, fields, includeRaw } = args as {

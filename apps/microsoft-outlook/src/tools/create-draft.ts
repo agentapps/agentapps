@@ -20,11 +20,13 @@ export function registerCreateDraftTool(app: AgentApp): void {
       },
       required: ['to', 'subject', 'body'],
     },
+    // Nothing is sent: the draft stays in the mailbox until send-draft, and delete-draft removes it.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

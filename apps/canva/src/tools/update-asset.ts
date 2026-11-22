@@ -30,7 +30,14 @@ export function registerUpdateAssetTool(app: AgentApp): void {
       },
       required: ['assetId'],
     },
-    annotations: { readOnlyHint: false },
+    // Setting the name and tags again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { assetId, name, tags, fields, includeRaw } = args as {
         assetId: string;

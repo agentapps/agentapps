@@ -19,7 +19,13 @@ export function registerGetUserProfileTool(app: AgentApp): void {
       },
       required: ['distinct_id'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return await mixpanelRequest(
         'GET',

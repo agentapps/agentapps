@@ -38,10 +38,14 @@ export function registerDownloadFileTool(app: AgentApp): void {
       },
       required: ['fileId'],
     },
+    // Writes to the user's machine (~/Downloads or any outputPath) and silently overwrites a
+    // file that is already there.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

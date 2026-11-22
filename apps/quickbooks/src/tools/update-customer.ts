@@ -50,7 +50,14 @@ export function registerUpdateCustomerTool(app: AgentApp): void {
       },
       required: ['id', 'syncToken'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // Setting the fields again undoes it. A repeat with the same syncToken is rejected as stale.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         Id: args.id as string,

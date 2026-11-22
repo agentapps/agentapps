@@ -2,7 +2,13 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerSearchCodeTool(app: AgentApp) {
   app.tool('search-code', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Search for code across GitHub repositories',
     parameters: {
       type: 'object',

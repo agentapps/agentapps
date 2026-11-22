@@ -14,6 +14,10 @@ export function registerCreateFolderTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { spaceId, name } = args as { spaceId: string; name: string };

@@ -24,7 +24,13 @@ export function registerGetExportJobTool(app: AgentApp): void {
       },
       required: ['exportId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { exportId, fields, includeRaw } = args as {
         exportId: string;

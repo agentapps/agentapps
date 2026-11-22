@@ -55,9 +55,12 @@ export function registerCreateBookingTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Destructive: it commits a real person to paid work and the app has no way to cancel
+      // the booking.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

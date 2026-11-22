@@ -18,7 +18,14 @@ export function registerCancelPredictionTool(app: AgentApp): void {
       },
       required: ['predictionId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A cancelled prediction cannot be resumed: its work is lost and a new run is paid again.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiToken = await ctx.systemSecret('API_TOKEN');
       if (!apiToken) {

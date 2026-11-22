@@ -13,6 +13,8 @@ export function registerGetCurrentUserTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const client = await getPlaudClient(ctx);

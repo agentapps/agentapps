@@ -18,7 +18,13 @@ export function registerRemoveRemoteFileTool(app: AgentApp): void {
         fileId: { type: 'string', description: 'Slack file id.' },
       },
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { externalId, fileId } = args as unknown as RemoveRemoteFileArgs;
       if (!externalId && !fileId) throw new Error('Provide externalId or fileId.');

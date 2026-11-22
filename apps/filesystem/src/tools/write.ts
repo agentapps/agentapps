@@ -18,7 +18,14 @@ export function registerWriteTool(app: AgentApp): void {
       },
       required: ['filePath', 'content'],
     },
-    annotations: { readOnlyHint: false },
+    // Overwrites one of the user's own files; the previous content is not kept.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const filePath = args.filePath as string;
       const content = args.content;

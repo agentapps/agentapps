@@ -33,8 +33,12 @@ export function registerCopyObjectTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Overwrites an object already at the destination.
+      destructiveHint: true,
       idempotentHint: true,
-      openWorldHint: false,
+      // The MinIO server is reached over the network.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

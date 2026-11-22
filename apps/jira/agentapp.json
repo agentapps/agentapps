@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.jira",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "Jira",
   "description": "Jira project management — search issues, create/update tickets, manage transitions, and track sprints.",
   "tagline": "Manage issues and projects in Jira",

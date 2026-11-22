@@ -19,7 +19,13 @@ export function registerRevokeAuthTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { test } = args as unknown as RevokeAuthArgs;
       const { client } = await getSlackSession(ctx);

@@ -27,6 +27,10 @@ export function registerUpdateTaskTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { taskId, name, description, priority, status, dueDate, startDate, timeEstimate } =

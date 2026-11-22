@@ -44,7 +44,15 @@ export function registerCreateActualTool(app: AgentApp): void {
         'roleId',
       ],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // Runn upserts the actual for that day/person/project/role: the same call twice changes nothing
+    // more, and logging the previous minutes again undoes it, so it is a set-to-value, not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         date: string;

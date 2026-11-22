@@ -35,7 +35,13 @@ export function registerUnfurlLinkTool(app: AgentApp): void {
       },
       required: ['channel', 'ts', 'unfurls'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as UnfurlLinkArgs;
       validateChannelId(a.channel, 'channel');

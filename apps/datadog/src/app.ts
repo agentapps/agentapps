@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.datadog',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Datadog',
   description:
     'Datadog monitoring — query metrics, list monitors, manage incidents, search logs, and check service status.',

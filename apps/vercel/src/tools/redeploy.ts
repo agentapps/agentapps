@@ -24,7 +24,14 @@ export function registerRedeployTool(app: AgentApp): void {
       },
       required: ['deploymentId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Can replace what production serves; redeploying the previous deployment puts it back.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const deploymentId = args.deploymentId as string;
       const body: Record<string, unknown> = {

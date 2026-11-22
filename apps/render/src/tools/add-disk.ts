@@ -37,10 +37,13 @@ export function registerAddDiskTool(app: AgentApp): void {
       },
       required: ['serviceId', 'name', 'mountPath', 'sizeGB'],
     },
+    // A persistent disk is billed per GB from the moment it exists: it starts real spend.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, name, mountPath, sizeGB } = args as {

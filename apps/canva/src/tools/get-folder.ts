@@ -24,7 +24,13 @@ export function registerGetFolderTool(app: AgentApp): void {
       },
       required: ['folderId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { folderId, fields, includeRaw } = args as {
         folderId: string;

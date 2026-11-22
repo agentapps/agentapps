@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitCommitTool(app: AgentApp) {
   app.tool('git-commit', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `amend` replaces the last commit but discards no file content: it holds what was staged.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Create a commit with the staged changes. Returns `{ sha, branch, message }`. Use `amend: true` to amend the previous commit instead.',
     parameters: {

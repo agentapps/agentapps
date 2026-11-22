@@ -29,7 +29,13 @@ export function registerListEventsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
       const calendarId = (args.calendarId as string) ?? 'primary';

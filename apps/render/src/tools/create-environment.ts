@@ -30,8 +30,10 @@ export function registerCreateEnvironmentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { projectId, name } = args as { projectId: string; name: string };

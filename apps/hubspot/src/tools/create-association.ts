@@ -33,8 +33,11 @@ export function registerCreateAssociationTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // delete-association removes it again.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { fromObjectType, fromObjectId, toObjectType, toObjectId, associationType } = args as {

@@ -15,7 +15,14 @@ export function registerDeleteSceneTool(app: AgentApp): void {
       },
       required: ['sceneId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A soft delete, but only the Excalidraw Plus UI can restore it: the app has no restore tool.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       await client.deleteScene(args.sceneId as string);

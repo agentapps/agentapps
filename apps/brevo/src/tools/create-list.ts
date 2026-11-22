@@ -30,7 +30,9 @@ export function registerCreateListTool(app: AgentApp): void {
       required: ['name', 'folderId'],
     },
     annotations: {
+      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
     },

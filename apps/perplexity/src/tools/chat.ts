@@ -45,7 +45,14 @@ export function registerChatTool(app: AgentApp): void {
       },
       required: ['messages'],
     },
-    annotations: { readOnlyHint: true },
+    // A completion from the Perplexity API: it changes nothing, though each call uses API credit.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('APIKEY');
       if (!apiKey) {

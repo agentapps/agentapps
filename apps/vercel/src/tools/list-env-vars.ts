@@ -18,7 +18,13 @@ export function registerListEnvVarsTool(app: AgentApp): void {
       },
       required: ['projectId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const projectId = args.projectId as string;
       const data = (await vercelRequest(

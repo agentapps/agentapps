@@ -10,7 +10,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitLogTool(app: AgentApp) {
   app.tool('git-log', {
-    annotations: { readOnlyHint: false },
+    // Only runs `git log`: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'Local commit history with structured entries. Defaults to last 20 commits on the current branch. Filter by `ref`, `path`, `author`, `since`/`until`.',
     parameters: {

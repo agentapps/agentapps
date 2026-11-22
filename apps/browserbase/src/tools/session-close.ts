@@ -3,7 +3,15 @@ import { closeSession } from '../lib/index.js';
 
 export function registerSessionCloseTool(app: AgentApp): void {
   app.tool('session-close', {
-    annotations: { readOnlyHint: false },
+    // Ends the cloud browser: its pages and unsaved state are gone and the session cannot be
+    // reopened. Closing an already closed session does nothing (errors are ignored).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Close a Browserbase session and release cloud resources.',
     parameters: {
       type: 'object',

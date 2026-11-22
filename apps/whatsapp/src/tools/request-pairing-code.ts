@@ -21,8 +21,12 @@ export function registerRequestPairingCodeTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // May stop and restart the session; start-session brings it back.
+      destructiveHint: false,
       idempotentHint: false,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP, and WhatsApp issues the code.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default', phoneNumber } = args as {

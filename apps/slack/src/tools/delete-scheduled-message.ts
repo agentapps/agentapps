@@ -28,7 +28,13 @@ export function registerDeleteScheduledMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'scheduledMessageId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, scheduledMessageId, asUser } = args as unknown as DeleteScheduledMessageArgs;
       validateChannelId(channel, 'channel');

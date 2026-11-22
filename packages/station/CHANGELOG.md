@@ -1,5 +1,13 @@
 # @agentapps/controller
 
+## 0.2.4
+
+### Patch Changes
+
+- 91c7735: The CLI and the Station it starts keep a workspace's Volume and Objects in the same directory, `.agentapps/data` in the workspace (or `AGENTAPPS_VOLUMES_BASE_PATH`). The Station used `~/.agentapps/data`, so a file one of them wrote was not there for the other; files a Station wrote there before this version stay in that directory. Links to private Objects are signed with a secret kept in the workspace, so they stay valid across a Station restart and a link created from the CLI is served by the Station (CLI-REQ-14).
+- Updated dependencies [fe123bc]
+  - @agentapps/protocol@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

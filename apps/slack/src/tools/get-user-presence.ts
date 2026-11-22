@@ -22,7 +22,13 @@ export function registerGetUserPresenceTool(app: AgentApp): void {
       },
       required: ['userId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { userId, includeRaw } = args as unknown as GetUserPresenceArgs;
       validateUserId(userId, 'userId');

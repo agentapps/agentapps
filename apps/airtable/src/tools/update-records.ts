@@ -43,7 +43,14 @@ export function registerUpdateRecordsTool(app: AgentApp): void {
       },
       required: ['baseId', 'tableIdOrName', 'records'],
     },
-    annotations: { readOnlyHint: false },
+    // PATCH by record id: setting the fields again undoes it, and the same call twice changes nothing more.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       const tableIdOrName = args.tableIdOrName as string;

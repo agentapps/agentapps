@@ -19,7 +19,13 @@ interface InstallationReposPayload {
 
 export function registerGetInstallationContextTool(app: AgentApp) {
   app.tool('get-installation-context', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'List the GitHub App installations reachable by the current user, with accessible repos, granted permissions, and manage/install URLs.',
     parameters: { type: 'object', properties: {} },
@@ -65,7 +71,13 @@ export function registerGetInstallationContextTool(app: AgentApp) {
 /** Deprecated alias */
 export function registerGetUserTool(app: AgentApp) {
   app.tool('get-user', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Deprecated alias for get-installation-context.',
     parameters: { type: 'object', properties: {} },
     handler: async (_args, ctx) => {

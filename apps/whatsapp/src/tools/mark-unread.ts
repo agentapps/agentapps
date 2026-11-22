@@ -21,8 +21,12 @@ export function registerMarkUnreadTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // A flag on the user's own account; read-messages clears it.
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default', chatId } = args as {

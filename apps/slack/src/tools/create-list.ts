@@ -32,7 +32,13 @@ export function registerCreateListTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name, description, schema, todoMode } = args as unknown as CreateListArgs;
       if (typeof name !== 'string' || name.trim().length === 0) {

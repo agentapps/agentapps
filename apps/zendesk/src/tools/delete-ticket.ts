@@ -20,11 +20,11 @@ export function registerDeleteTicketTool(app: AgentApp): void {
       required: ['ticketId'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { ticketId } = args as { ticketId: string };

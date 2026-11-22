@@ -18,9 +18,11 @@ export function registerDeleteTaskTool(app: AgentApp): void {
       },
       required: ['taskId'],
     },
+    // Asana keeps a deleted task in its trash for a while, but no tool of this app restores it.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
     },

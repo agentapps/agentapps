@@ -36,7 +36,15 @@ export function registerFillFormTool(app: AgentApp): void {
       },
       required: ['fields'],
     },
-    annotations: { readOnlyHint: false },
+    // Acts on a live web page. A `radio` field is a plain click on whatever `ref` points at,
+    // so it can press a submit button: annotated for the worst case, like click.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const fields = args.fields as Array<{

@@ -18,7 +18,13 @@ export function registerGetEventTool(app: AgentApp): void {
       },
       required: ['eventId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const eventId = args.eventId as string;
       return await posthogRequest('GET', `events/${eventId}`, null, ctx);

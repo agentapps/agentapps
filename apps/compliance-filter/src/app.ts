@@ -48,7 +48,7 @@ function detectPii(text: string): PiiMatch[] {
 
 const app = createApp({
   id: 'app.compliance-filter',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Compliance Filter',
   description: 'Scans messages for PII and blocks them before they reach the agent.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
@@ -113,7 +113,14 @@ app.tool('check-text', {
     },
     required: ['text'],
   },
-  annotations: { readOnlyHint: true },
+  // A pure regex scan of the given text inside the app process: nothing outside is reached.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (args) => {
     const matches = detectPii(args.text as string);
     return {

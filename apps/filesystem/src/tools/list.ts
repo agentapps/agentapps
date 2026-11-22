@@ -43,7 +43,13 @@ export function registerListTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor from previous response' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const guard = getDefaultGuard();
       const rawPath = (args.path as string | undefined) ?? guard.roots[0] ?? process.cwd();

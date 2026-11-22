@@ -17,8 +17,10 @@ export function registerListSitesTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const client = await netlifyClient(ctx);

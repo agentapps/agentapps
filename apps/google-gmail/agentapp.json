@@ -1,7 +1,7 @@
 {
   "id": "app.google.gmail",
   "name": "Gmail",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Gmail email management — send, read, search, label, and filter emails via Google Gmail API.",
   "tagline": "Send, read, search, and manage emails in Gmail",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

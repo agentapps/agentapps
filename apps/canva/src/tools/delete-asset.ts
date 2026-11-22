@@ -13,7 +13,13 @@ export function registerDeleteAssetTool(app: AgentApp): void {
       },
       required: ['assetId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { assetId } = args as { assetId: string };
       validateNonEmpty(assetId, 'assetId');

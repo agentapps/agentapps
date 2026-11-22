@@ -15,7 +15,14 @@ export function registerAssignIssueTool(app: AgentApp): void {
       },
       required: ['issueId', 'assignedTo'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets the assignee; assigning again to someone else undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY system secret.');

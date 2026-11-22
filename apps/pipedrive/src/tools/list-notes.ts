@@ -38,7 +38,13 @@ export function registerListNotesTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined> = {};
       if (args.deal_id) params.deal_id = args.deal_id as number;

@@ -24,7 +24,13 @@ export function registerCreateReleaseTool(app: AgentApp): void {
       },
       required: ['version', 'projects'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY system secret.');

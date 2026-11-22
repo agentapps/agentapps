@@ -3,7 +3,14 @@ import { requireSession } from '../lib/index.js';
 
 export function registerPressKeyTool(app: AgentApp): void {
   app.tool('press-key', {
-    annotations: { readOnlyHint: false },
+    // A key press on a real web page: Enter submits a form or confirms a dialog.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Press a keyboard key.',
     parameters: {
       type: 'object',

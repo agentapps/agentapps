@@ -24,7 +24,13 @@ export function registerGetDesignTool(app: AgentApp): void {
       },
       required: ['designId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { designId, fields, includeRaw } = args as {
         designId: string;

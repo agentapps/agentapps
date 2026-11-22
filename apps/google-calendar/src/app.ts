@@ -29,7 +29,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.calendar',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Google Calendar',
   description:
     'Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.',

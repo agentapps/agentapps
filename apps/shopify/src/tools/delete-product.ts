@@ -18,7 +18,13 @@ export function registerDeleteProductTool(app: AgentApp): void {
       },
       required: ['productId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const productId = args.productId as string;
       return await shopifyRequest('DELETE', `/products/${productId}.json`, null, ctx);

@@ -6,7 +6,14 @@ type StashAction = 'push' | 'pop' | 'apply' | 'drop' | 'list' | 'clear';
 
 export function registerGitStashTool(app: AgentApp) {
   app.tool('git-stash', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `drop` and `clear` throw stashed work away.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Manage the stash. Default action `push` saves uncommitted changes. Other actions: pop, apply, drop, list, clear.',
     parameters: {

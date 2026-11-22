@@ -31,6 +31,8 @@ export function registerCreateProjectTool(app: AgentApp): void {
       readOnlyHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

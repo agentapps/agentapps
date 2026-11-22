@@ -32,7 +32,13 @@ export function registerCreateFeatureFlagTool(app: AgentApp): void {
       },
       required: ['key', 'name'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         key: args.key as string,

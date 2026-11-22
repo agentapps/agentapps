@@ -44,9 +44,9 @@ export const AppAuthSchema = z.discriminatedUnion('type', [
     systemSecrets: z.array(z.string()).optional(),
     /** Installation secrets (personal API keys, OAuth tokens). */
     installationSecrets: z.array(z.string()).optional(),
-    /** Header name used to send the API key (defaults to 'Authorization'). */
+    /** @deprecated Has no effect: the app builds its own request headers. */
     headerName: z.string().optional(),
-    /** Prefix prepended to the secret value (defaults to 'Bearer '). */
+    /** @deprecated Has no effect: the app builds its own request headers. */
     headerPrefix: z.string().optional(),
   }),
   z.object({

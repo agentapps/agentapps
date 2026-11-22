@@ -19,7 +19,7 @@ import { createApp } from '@agentapps/sdk';
 
 const app = createApp({
   id: 'app.hello',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Hello',
   description:
     'Minimal example app with greet and countdown tools. Demonstrates tools, health checks, progress reporting, and cancellation.',
@@ -49,7 +49,14 @@ app.tool('greet', {
     },
     required: ['name'],
   },
-  annotations: { readOnlyHint: true },
+  // A pure function: it reads nothing outside the process and changes nothing.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
+  },
   handler: async (args, ctx) => {
     ctx.log('info', `Greeting ${args.name}`, {
       language: args.language ?? 'en',
@@ -89,6 +96,14 @@ app.tool('countdown', {
       },
     },
     required: ['from'],
+  },
+  // A pure function: it reads nothing outside the process and changes nothing.
+  annotations: {
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+    sensitive: false,
   },
   handler: async (args, ctx) => {
     const total = Math.min((args.from as number) ?? 10, 100);

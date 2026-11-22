@@ -13,7 +13,15 @@ export function registerToggleComplete(app: AgentApp): void {
       },
       required: ['nodeId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // A toggle: each call flips the flag (and adds a log entry), so it is not idempotent.
+    // Own Storage only.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

@@ -46,7 +46,13 @@ export function registerCreateProjectTool(app: AgentApp): void {
       },
       required: ['name', 'clientId'],
     },
-    annotations: { readOnlyHint: false, openWorldHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         name: string;

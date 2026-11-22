@@ -24,6 +24,7 @@ export function registerReadDocumentTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

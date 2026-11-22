@@ -32,7 +32,13 @@ export function registerListWorkflowStatesTool(app: AgentApp): void {
       },
       required: ['teamId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { teamId, limit, startCursor, fields, includeRaw } = args as {

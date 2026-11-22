@@ -48,7 +48,16 @@ export function registerUpdateDatabaseSchemaTool(app: AgentApp): void {
       },
       required: ['databaseId', 'properties'],
     },
-    annotations: { readOnlyHint: false, version: '2.0.0', stability: 'stable' },
+    // Setting a property to null removes the column and every value in it: the app cannot undo that.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+      version: '2.0.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

@@ -19,7 +19,14 @@ export function registerDeleteAnnotationTool(app: AgentApp): void {
       },
       required: ['annotationId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // DELETE by id: the app has no way to bring the annotation back.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const annotationId = args.annotationId as string;
 

@@ -7,7 +7,13 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitReadFileTool(app: AgentApp) {
   app.tool('git-read-file', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description:
       'Read a file from the working tree or from a specific git revision. Pass `ref` (commit/branch/tag) to read the version at that point.',
     parameters: {

@@ -3,7 +3,15 @@ import { findElement, requireSession } from '../lib/index.js';
 
 export function registerEvaluateTool(app: AgentApp): void {
   app.tool('evaluate', {
-    annotations: { readOnlyHint: false },
+    // Runs arbitrary JavaScript in a real web page with the session's logins: it can do anything
+    // the page can, including requests that cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Execute JavaScript in the page context.',
     parameters: {
       type: 'object',

@@ -3,7 +3,13 @@ import { requireSession } from '../lib/index.js';
 
 export function registerGetContentTool(app: AgentApp): void {
   app.tool('get-content', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Get the current page HTML or plain text content.',
     parameters: {
       type: 'object',

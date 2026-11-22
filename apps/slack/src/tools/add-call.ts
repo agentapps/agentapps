@@ -37,7 +37,13 @@ export function registerAddCallTool(app: AgentApp): void {
       },
       required: ['externalUniqueId', 'joinUrl'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as AddCallArgs;
       if (typeof a.externalUniqueId !== 'string' || a.externalUniqueId.trim().length === 0) {

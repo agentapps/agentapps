@@ -23,7 +23,15 @@ export function registerRpcTool(app: AgentApp): void {
       },
       required: ['functionName'],
     },
-    annotations: { readOnlyHint: false },
+    // Runs any database function by name: it can delete or overwrite data, so it is annotated for
+    // the most dangerous thing a function can do.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const functionName = args.functionName as string;
       const params = (args.params as Record<string, unknown>) || {};

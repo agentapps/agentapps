@@ -31,6 +31,8 @@ export function registerSendConversationMessageTool(app: AgentApp): void {
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      // A sent message reaches the customer and cannot be recalled.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
     },

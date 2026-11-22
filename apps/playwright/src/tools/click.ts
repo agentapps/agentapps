@@ -33,7 +33,14 @@ export function registerClickTool(app: AgentApp): void {
       },
       required: ['element', 'ref'],
     },
-    annotations: { readOnlyHint: false },
+    // A click on a live web page can submit, send, buy or delete: annotated for the worst case.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const el = await findElementByRef(page, args.ref as string);

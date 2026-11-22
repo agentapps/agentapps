@@ -36,7 +36,13 @@ export function registerGetReactionsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channel, timestamp, file, full, includeRaw } = args as unknown as GetReactionsArgs;
       const isMessage = channel !== undefined && timestamp !== undefined;

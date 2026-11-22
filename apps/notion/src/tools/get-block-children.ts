@@ -23,6 +23,10 @@ export function registerGetBlockChildrenTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
       version: '1.1.0',
       stability: 'deprecated',
       deprecationMessage:

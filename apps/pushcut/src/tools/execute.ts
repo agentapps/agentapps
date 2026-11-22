@@ -28,7 +28,15 @@ export function registerExecuteTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Runs a Shortcut or HomeKit scene on the user's device: it can do anything the shortcut
+    // does (send messages, move devices) and the app cannot undo a run.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await resolveApiKey(ctx);
 

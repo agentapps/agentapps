@@ -5,7 +5,14 @@ import { resolveUserToken } from '../lib/github-user-token.js';
 
 export function registerCloneRepoTool(app: AgentApp) {
   app.tool('clone-repo', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Writes a new directory on the user's machine; it refuses a path that exists.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Clone a GitHub repository to the local filesystem. Returns {path, branch, sha, recentCommits[]}.',
     parameters: {

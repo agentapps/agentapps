@@ -36,10 +36,14 @@ export function registerReplaceTextTool(app: AgentApp): void {
       },
       required: ['presentationId', 'findText', 'replaceText'],
     },
+    // Overwrites every match in the whole presentation; replacing back does not restore it when
+    // the new text also appeared elsewhere.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

@@ -34,10 +34,13 @@ export function registerCreateSharedLinkTool(app: AgentApp): void {
       },
       required: ['path'],
     },
+    // Exposes the file through a URL, but revoke-shared-link takes it back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { path, settings } = args as {

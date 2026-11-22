@@ -1,7 +1,7 @@
 {
   "id": "app.make",
   "name": "Make",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Make.com automation — trigger scenarios via webhooks (no token needed) and manage scenarios via the account API: create, read, update, delete, clone, start, stop, list, run, and inspect blueprints.",
   "tagline": "Trigger webhooks and manage Make.com scenarios",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

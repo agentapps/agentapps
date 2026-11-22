@@ -21,7 +21,14 @@ export function registerSendWebhookMessageTool(app: AgentApp): void {
       },
       required: ['webhookId', 'webhookToken'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Destructive: a sent message cannot be unsent.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

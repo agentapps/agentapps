@@ -29,10 +29,13 @@ export function registerCreateSaleOrderTool(app: AgentApp): void {
       },
       required: ['partnerId'],
     },
+    // Creates the order without confirming it (no action_confirm call): not destructive.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

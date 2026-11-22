@@ -27,7 +27,13 @@ export function registerCreateAnnotationTool(app: AgentApp): void {
       },
       required: ['date', 'label'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         date: args.date as string,

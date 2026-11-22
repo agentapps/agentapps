@@ -14,7 +14,14 @@ export function registerDeleteChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, irreversible: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+      irreversible: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

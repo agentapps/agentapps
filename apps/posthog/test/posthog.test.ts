@@ -92,7 +92,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.posthog',
-    appVersion: '2.1.0',
+    appVersion: '2.1.1',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();

@@ -1,5 +1,19 @@
 # @agentapps/create
 
+## 0.2.4
+
+### Patch Changes
+
+- e92feb6: `create-agent-app dev` reloads when any source file under `src/` changes, and the reload picks up the modules the entry imports; it only watched `app.ts` and kept the rest cached. `poller.start(ctx)` gives a poller its context; before, a poller only ran after a call to an internal method. The conformance suite of `@agentapps/testing` no longer calls the app's first tool for real, and the package declares `vitest` as a peer dependency (DEVX-REQ-1..3).
+- 58715b5: `sensitive` now means that a tool changes something outside the app's own data (another service, another person, the user's machine). A tool that only changes the app's own Storage, Objects or Volume no longer has to be sensitive, so it runs without asking by default; `check-app` still rejects a read-only tool marked sensitive (DEVX-REQ-4).
+- fe123bc: The create-agent-app skill no longer tells authors to publish their app to npm, which does not work yet; it explains the local source. `headerName`, `headerPrefix` (manifest) and `expectedStatuses` (health helper) are marked as having no effect. The help shows the second argument of `serve`.
+- Updated dependencies [e92feb6]
+- Updated dependencies [91c7735]
+- Updated dependencies [fe123bc]
+  - @agentapps/sdk@0.2.4
+  - @agentapps/station@0.2.4
+  - @agentapps/protocol@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

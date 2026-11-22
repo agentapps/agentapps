@@ -23,7 +23,14 @@ export function registerWaitForTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Only waits for a time, a URL, the network or a text: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
 

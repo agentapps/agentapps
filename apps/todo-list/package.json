@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.todo-list",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Todo List Agent App — Workflowy-style hierarchical outliner with storage via callbacks.",
   "type": "module",

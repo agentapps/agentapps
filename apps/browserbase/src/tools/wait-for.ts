@@ -3,7 +3,14 @@ import { requireSession } from '../lib/index.js';
 
 export function registerWaitForTool(app: AgentApp): void {
   app.tool('wait-for', {
-    annotations: { readOnlyHint: false },
+    // Only waits and watches the page for text: it changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Wait for text to appear/disappear on the page, or wait a fixed amount of time.',
     parameters: {
       type: 'object',

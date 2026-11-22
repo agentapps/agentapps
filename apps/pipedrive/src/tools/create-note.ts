@@ -31,7 +31,13 @@ export function registerCreateNoteTool(app: AgentApp): void {
       },
       required: ['content'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = { content: args.content };
       if (args.deal_id) body.deal_id = args.deal_id;

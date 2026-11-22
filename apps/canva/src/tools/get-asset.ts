@@ -24,7 +24,13 @@ export function registerGetAssetTool(app: AgentApp): void {
       },
       required: ['assetId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { assetId, fields, includeRaw } = args as {
         assetId: string;

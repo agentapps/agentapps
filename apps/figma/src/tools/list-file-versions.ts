@@ -36,7 +36,13 @@ export function registerListFileVersionsTool(app: AgentApp): void {
       },
       required: ['fileKey'],
     },
-    annotations: { readOnlyHint: true, idempotentHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileKey, pageSize, before, fields, includeRaw } = args as {
         fileKey: string;

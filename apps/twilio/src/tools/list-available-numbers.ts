@@ -48,7 +48,13 @@ export function registerListAvailableNumbersTool(app: AgentApp): void {
       },
       required: ['countryCode'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const countryCode = args.countryCode as string;
       const params: Record<string, unknown> = {

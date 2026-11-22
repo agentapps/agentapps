@@ -29,7 +29,14 @@ export function registerLookupPhoneTool(app: AgentApp): void {
       },
       required: ['phoneNumber'],
     },
-    annotations: { readOnlyHint: true },
+    // A GET that changes nothing, though Twilio bills carrier and caller-name lookups per request.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const phoneNumber = args.phoneNumber as string;
       const params: Record<string, unknown> = {};

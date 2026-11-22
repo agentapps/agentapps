@@ -13,7 +13,13 @@ export function registerGetCompanyInfoTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const { realmId } = await getQuickBooksAuth(ctx);
       return await quickbooksRequest('GET', `companyinfo/${realmId}`, null, ctx);

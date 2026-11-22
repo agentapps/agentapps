@@ -35,7 +35,14 @@ export function registerUpdateFeatureFlagTool(app: AgentApp): void {
       },
       required: ['flagId'],
     },
-    annotations: { readOnlyHint: false },
+    // Can switch a live flag on or off; setting the fields again undoes it, so not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const flagId = args.flagId as number;
       const body: Record<string, unknown> = {};

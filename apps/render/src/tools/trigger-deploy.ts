@@ -29,9 +29,11 @@ export function registerTriggerDeployTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
+    // A new deploy replaces the running build; render-rollback-deploy returns to the previous one.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
     },

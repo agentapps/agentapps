@@ -15,11 +15,11 @@ export function registerRevokeSharedLinkTool(app: AgentApp): void {
       required: ['url'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { url } = args as { url: string };

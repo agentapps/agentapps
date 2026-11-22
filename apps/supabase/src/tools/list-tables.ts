@@ -13,7 +13,13 @@ export function registerListTablesTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const result = (await supabaseRequest('GET', '/rest/v1/', null, ctx)) as {
         data: Record<string, unknown>;

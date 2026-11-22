@@ -17,7 +17,13 @@ export function registerDeleteListTool(app: AgentApp): void {
       },
       required: ['listId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId } = args as unknown as DeleteListArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0) {

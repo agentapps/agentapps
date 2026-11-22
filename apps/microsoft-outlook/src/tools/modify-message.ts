@@ -26,11 +26,13 @@ export function registerModifyMessageTool(app: AgentApp): void {
       },
       required: ['messageId'],
     },
+    // Read state, importance, categories and flag: setting them again undoes it.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

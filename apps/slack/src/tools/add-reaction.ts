@@ -33,7 +33,13 @@ export function registerAddReactionTool(app: AgentApp): void {
       },
       required: ['channel', 'timestamp', 'name'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, timestamp, name } = args as unknown as AddReactionArgs;
       validateChannelId(channel, 'channel');

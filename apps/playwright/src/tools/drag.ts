@@ -28,7 +28,14 @@ export function registerDragTool(app: AgentApp): void {
       },
       required: ['startElement', 'startRef', 'endElement', 'endRef'],
     },
-    annotations: { readOnlyHint: false },
+    // A drag on a live web page can move or reorder something there; dragging back undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
 

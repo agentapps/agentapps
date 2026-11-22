@@ -29,7 +29,14 @@ export function registerPurgeCacheTool(app: AgentApp): void {
       },
       required: ['zoneId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A purge cannot be undone: the cache only refills as visitors hit the origin again.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const zoneId = args.zoneId as string;
       const body: Record<string, unknown> = {};

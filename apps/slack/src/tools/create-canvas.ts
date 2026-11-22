@@ -24,7 +24,13 @@ export function registerCreateCanvasTool(app: AgentApp): void {
       },
       required: ['title'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { title, contentMarkdown } = args as unknown as CreateCanvasArgs;
       if (typeof title !== 'string' || title.trim().length === 0) {

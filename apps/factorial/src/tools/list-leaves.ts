@@ -23,7 +23,13 @@ export function registerListLeavesTool(app: AgentApp): void {
         offset: { type: 'number', description: 'Pagination offset' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const qs = buildQueryString({
         employee_ids: args.employeeIds,

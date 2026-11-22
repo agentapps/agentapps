@@ -57,7 +57,13 @@ export function registerCreateExpenseTool(app: AgentApp): void {
       },
       required: ['contactId', 'items'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         contactId: args.contactId,

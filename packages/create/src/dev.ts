@@ -57,22 +57,32 @@ async function start(cwd: string) {
   // Wait a bit for initialization
   await new Promise((r) => setTimeout(r, 100));
 
-  console.log('🚀 Dev appStation ready. Watching src/app.ts for changes...\n');
+  console.log('🚀 Dev appStation ready. Watching src/ for changes...\n');
   console.log('  Press Ctrl+C to stop\n');
+}
+
+/** Whether a change to this file under src/ reloads the app. @spec DEVX-REQ-1 */
+export function isSourceFile(filename: string): boolean {
+  return /\.(ts|mts|js|mjs|json)$/.test(filename) && !filename.endsWith('.d.ts');
 }
 
 export async function dev(cwd = process.cwd()) {
   await start(cwd);
 
-  const watcher = watch(join(cwd, 'src'), { recursive: true }, async (_event, filename) => {
-    if (filename?.endsWith('app.ts') || filename?.endsWith('app.js')) {
+  // DEVX-REQ-1: any source file under src/ reloads the app, not only the entry module. One
+  // save often arrives as several events, so they are folded into one reload.
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  const watcher = watch(join(cwd, 'src'), { recursive: true }, (_event, filename) => {
+    if (!filename || !isSourceFile(filename)) return;
+    clearTimeout(pending);
+    pending = setTimeout(async () => {
       console.log(`\n🔄 Detected change in ${filename}, reloading...\n`);
       try {
         await start(cwd);
       } catch (err) {
         console.error('\n❌ Reload failed:', err instanceof Error ? err.message : err);
       }
-    }
+    }, 100);
   });
 
   process.on('SIGINT', async () => {

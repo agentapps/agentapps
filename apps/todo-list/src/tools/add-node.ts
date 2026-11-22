@@ -26,7 +26,14 @@ export function registerAddNode(app: AgentApp): void {
       },
       required: ['text'],
     },
-    annotations: { readOnlyHint: false },
+    // Writes only to the app's own Storage, so it is not sensitive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

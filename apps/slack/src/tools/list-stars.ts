@@ -27,7 +27,13 @@ export function registerListStarsTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { count, limit, cursor, includeRaw } = args as unknown as ListStarsArgs;
       const safeCount = sanitizeLimit(limit ?? count, { max: 1000, default: 100 });

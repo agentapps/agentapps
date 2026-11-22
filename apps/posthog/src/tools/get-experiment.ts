@@ -19,7 +19,13 @@ export function registerGetExperimentTool(app: AgentApp): void {
       },
       required: ['experimentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const experimentId = args.experimentId as number;
       return await posthogRequest('GET', `experiments/${experimentId}`, null, ctx);

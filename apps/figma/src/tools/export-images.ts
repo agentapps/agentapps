@@ -34,7 +34,13 @@ export function registerExportImagesTool(app: AgentApp): void {
       },
       required: ['fileKey', 'nodeIds'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileKey, nodeIds, format, scale, fields, includeRaw } = args as {
         fileKey: string;

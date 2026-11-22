@@ -33,6 +33,7 @@ export function registerInsertTableTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

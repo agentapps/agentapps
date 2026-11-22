@@ -3,7 +3,15 @@ import { getNetworkRequests, requireSession } from '../lib/index.js';
 
 export function registerNetworkRequestsTool(app: AgentApp): void {
   app.tool('network-requests', {
-    annotations: { readOnlyHint: false },
+    // Reads the request log the app keeps in memory: it changes nothing and leaves the process
+    // for nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     description: 'List network requests made in the current session.',
     parameters: {
       type: 'object',

@@ -18,7 +18,13 @@ export function registerDeleteFileTool(app: AgentApp): void {
       },
       required: ['fileId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { fileId } = args as unknown as DeleteFileArgs;
       if (!isFileId(fileId)) {

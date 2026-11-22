@@ -14,7 +14,13 @@ export function registerGetInviteTool(app: AgentApp): void {
       },
       required: ['inviteId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.getInvite(args.inviteId as string);

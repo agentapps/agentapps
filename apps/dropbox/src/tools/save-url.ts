@@ -22,8 +22,10 @@ export function registerSaveUrlTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { path, url } = args as { path: string; url: string };

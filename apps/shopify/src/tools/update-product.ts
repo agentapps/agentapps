@@ -39,7 +39,13 @@ export function registerUpdateProductTool(app: AgentApp): void {
       },
       required: ['productId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const productId = args.productId as string;
       const product: Record<string, unknown> = {};

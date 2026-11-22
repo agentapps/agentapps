@@ -9,7 +9,13 @@ export function registerGetWorkspaceTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.getWorkspace();

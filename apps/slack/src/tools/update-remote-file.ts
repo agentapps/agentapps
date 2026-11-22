@@ -29,7 +29,13 @@ export function registerUpdateRemoteFileTool(app: AgentApp): void {
         indexableFileContents: { type: 'string' },
       },
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const a = args as unknown as UpdateRemoteFileArgs;
       if (!a.externalId && !a.fileId) {

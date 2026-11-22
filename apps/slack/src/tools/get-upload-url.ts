@@ -27,7 +27,15 @@ export function registerGetUploadUrlTool(app: AgentApp): void {
       },
       required: ['filename', 'length'],
     },
-    annotations: { readOnlyHint: true },
+    // Reserves an upload slot that changes nothing visible until complete-upload runs;
+    // each call returns a new URL and file id, so it is not idempotent.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { filename, length, altTxt, snippetType, includeRaw } =
         args as unknown as GetUploadUrlArgs;

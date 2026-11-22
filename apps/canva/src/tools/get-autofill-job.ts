@@ -24,7 +24,13 @@ export function registerGetAutofillJobTool(app: AgentApp): void {
       },
       required: ['jobId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { jobId, fields, includeRaw } = args as {
         jobId: string;

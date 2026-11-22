@@ -24,7 +24,15 @@ export function registerEditCanvasTool(app: AgentApp): void {
       },
       required: ['canvasId', 'changes'],
     },
-    annotations: { readOnlyHint: false },
+    // The replace and delete operations drop canvas content that this app cannot bring back;
+    // the insert operations add content again on every call.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { canvasId, changes } = args as unknown as EditCanvasArgs;
       if (typeof canvasId !== 'string' || canvasId.trim().length === 0) {

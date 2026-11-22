@@ -24,7 +24,13 @@ export function registerCreateListItemTool(app: AgentApp): void {
       },
       required: ['listId', 'fields'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId, fields } = args as unknown as CreateListItemArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0) {

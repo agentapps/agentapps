@@ -3,7 +3,15 @@ import { findElement, requireSession } from '../lib/index.js';
 
 export function registerFillFormTool(app: AgentApp): void {
   app.tool('fill-form', {
-    annotations: { readOnlyHint: false },
+    // Besides filling text it clicks checkboxes and radios and picks options: the `radio` type
+    // clicks whatever `ref` names, so it carries the same risk as click.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Fill multiple form fields at once.',
     parameters: {
       type: 'object',

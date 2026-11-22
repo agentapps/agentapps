@@ -32,8 +32,10 @@ export function registerCreateSegmentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       validateCreateSegmentArgs(args);

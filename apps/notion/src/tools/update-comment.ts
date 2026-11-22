@@ -35,6 +35,10 @@ export function registerUpdateCommentTool(app: AgentApp): void {
       version: '1.0.0',
       stability: 'stable',
       idempotentHint: true,
+      // Setting the text again undoes it; destructiveHint is for changes the app cannot undo.
+      destructiveHint: false,
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);

@@ -1,5 +1,16 @@
 # @agentapps/testing
 
+## 0.2.4
+
+### Patch Changes
+
+- e92feb6: `create-agent-app dev` reloads when any source file under `src/` changes, and the reload picks up the modules the entry imports; it only watched `app.ts` and kept the rest cached. `poller.start(ctx)` gives a poller its context; before, a poller only ran after a call to an internal method. The conformance suite of `@agentapps/testing` no longer calls the app's first tool for real, and the package declares `vitest` as a peer dependency (DEVX-REQ-1..3).
+- Updated dependencies [91c7735]
+- Updated dependencies [fe123bc]
+  - @agentapps/station@0.2.4
+  - @agentapps/protocol@0.2.4
+  - @agentapps/host@0.2.4
+
 ## 0.2.3
 
 ### Patch Changes

@@ -7,6 +7,14 @@ export function registerOpenCalendarTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
+    // Opens a page for the user; changes nothing.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       await ctx.openUrl({
         url: 'https://calendar.google.com',

@@ -44,7 +44,13 @@ export function registerListScheduledMessagesTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor from a previous call.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channel, latest, oldest, limit, cursor, includeRaw } =
         args as unknown as ListScheduledMessagesArgs;

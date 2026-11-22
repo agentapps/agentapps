@@ -42,7 +42,14 @@ export function registerCreatePaymentLinkTool(app: AgentApp): void {
       },
       required: ['lineItems'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Creates a payment page; no money moves until a customer pays on it.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const lineItems = args.lineItems as Array<{ price: string; quantity: number }>;
       const params: Record<string, unknown> = {

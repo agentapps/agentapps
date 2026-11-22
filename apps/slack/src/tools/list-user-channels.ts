@@ -29,7 +29,13 @@ export function registerListUserChannelsTool(app: AgentApp): void {
         cursor: { type: 'string', description: 'Pagination cursor.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { userId, types, excludeArchived, limit, cursor, includeRaw } =
         args as unknown as ListUserChannelsArgs;

@@ -15,11 +15,11 @@ export function registerDeleteFileTool(app: AgentApp): void {
       required: ['path'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { path } = args as { path: string };

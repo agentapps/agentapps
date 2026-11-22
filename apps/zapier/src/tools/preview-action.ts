@@ -28,7 +28,14 @@ export function registerPreviewActionTool(app: AgentApp): void {
       },
       required: ['actionId', 'instructions'],
     },
-    annotations: { readOnlyHint: true },
+    // A POST to the execute endpoint, but always with preview_only: nothing runs.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const actionId = args.actionId as string;
       const instructions = args.instructions as string;

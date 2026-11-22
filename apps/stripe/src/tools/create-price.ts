@@ -43,7 +43,13 @@ export function registerCreatePriceTool(app: AgentApp): void {
       },
       required: ['unit_amount', 'currency', 'product'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         unit_amount: args.unit_amount,

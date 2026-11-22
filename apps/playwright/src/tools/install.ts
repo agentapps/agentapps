@@ -8,7 +8,14 @@ export function registerInstallTool(app: AgentApp): void {
     description:
       'Install the browser specified in the config. Call this if you get an error about the browser not being installed.',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: false },
+    // Runs the Playwright CLI and downloads Chromium onto the user's machine.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async () => {
       // The app runs in-process inside the host CLI, so the working directory
       // is the user's workspace — `npx playwright` would resolve against that

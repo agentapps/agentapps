@@ -22,8 +22,10 @@ export function registerListProjectsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const data = await renderRequest<{ project: RenderProject }[]>(ctx, '/projects', {

@@ -22,7 +22,13 @@ export function registerUpdateListItemTool(app: AgentApp): void {
       },
       required: ['listId', 'itemId', 'fields'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId, itemId, fields } = args as unknown as UpdateListItemArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0) {

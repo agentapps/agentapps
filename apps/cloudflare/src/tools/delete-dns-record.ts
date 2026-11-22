@@ -22,7 +22,13 @@ export function registerDeleteDnsRecordTool(app: AgentApp): void {
       },
       required: ['zoneId', 'recordId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const zoneId = args.zoneId as string;
       const recordId = args.recordId as string;

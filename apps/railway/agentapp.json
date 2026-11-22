@@ -1,7 +1,7 @@
 {
   "id": "app.railway",
   "name": "Railway",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Deploy projects to Railway directly from your workspace. Supports automatic deployments, environment management, and database provisioning.",
   "tagline": "Deploy, manage services, environments, variables, domains, and volumes on Railway",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -30,7 +30,13 @@ export function registerCreatePlaceholderTool(app: AgentApp): void {
       },
       required: ['roleId'],
     },
-    annotations: { readOnlyHint: false, openWorldHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         roleId: number;

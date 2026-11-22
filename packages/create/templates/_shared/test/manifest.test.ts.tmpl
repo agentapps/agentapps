@@ -14,7 +14,7 @@ import { listTools } from './harness.js';
 
 /** Every tool, sorted. */
 const EXPECTED_TOOLS = {{EXPECTED_TOOLS}};
-/** Tools that pause for approval by default: exactly the ones that are not read-only. */
+/** Tools that pause for approval by default: the ones that change something outside the app's own data. */
 const SENSITIVE_TOOLS: string[] = {{SENSITIVE_TOOLS}};
 /** Tools whose effect the app cannot undo (delete, overwrite, revoke, send). */
 const DESTRUCTIVE_TOOLS: string[] = {{DESTRUCTIVE_TOOLS}};
@@ -78,7 +78,7 @@ describe('{{NAME}}: tools', () => {
     }
   });
 
-  it('marks exactly the writes as sensitive and only irreversible tools as destructive', async () => {
+  it('marks as sensitive the tools with an effect outside the app, and only irreversible tools as destructive', async () => {
     const tools = await listTools();
     const where = (hint: string) =>
       tools
@@ -88,7 +88,8 @@ describe('{{NAME}}: tools', () => {
     expect(where('sensitive')).toEqual(SENSITIVE_TOOLS);
     expect(where('destructiveHint')).toEqual(DESTRUCTIVE_TOOLS);
     for (const t of tools) {
-      expect(t.annotations?.sensitive, t.name).toBe(!t.annotations?.readOnlyHint);
+      // A read-only tool changes nothing, so it never waits for approval.
+      if (t.annotations?.readOnlyHint) expect(t.annotations?.sensitive, t.name).toBe(false);
     }
   });
 });

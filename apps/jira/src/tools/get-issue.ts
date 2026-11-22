@@ -22,7 +22,13 @@ export function registerGetIssueTool(app: AgentApp): void {
       },
       required: ['issueKey'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const issueKey = args.issueKey as string;
       const params: Record<string, string | number | undefined> = {};

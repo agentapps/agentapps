@@ -3,7 +3,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.browserbase',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Browserbase',
   description:
     'Cloud browser automation at scale. Anti-bot bypass, CAPTCHA solving, residential proxies, session recording, and parallel browsers.',

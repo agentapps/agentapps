@@ -1,7 +1,7 @@
 {
   "id": "app.runn",
   "name": "Runn",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Runn resource management — projects, people, assignments, timesheets and capacity planning through the Runn API.",
   "tagline": "Manage projects, people, assignments, timesheets, and capacity in Runn",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

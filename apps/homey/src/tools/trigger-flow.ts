@@ -14,10 +14,12 @@ export function registerTriggerFlowTool(app: AgentApp): void {
       },
       required: ['flow_id'],
     },
+    // Runs a user-defined flow, which can do anything in the home (move devices, send
+    // notifications); the app has no way to undo a run.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
     },

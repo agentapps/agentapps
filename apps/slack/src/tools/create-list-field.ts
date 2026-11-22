@@ -48,7 +48,13 @@ export function registerCreateListFieldTool(app: AgentApp): void {
       },
       required: ['listId', 'name', 'type'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { listId, name, type, required } = args as unknown as CreateListFieldArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0)

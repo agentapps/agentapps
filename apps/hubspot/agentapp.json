@@ -1,7 +1,7 @@
 {
   "id": "app.hubspot",
   "name": "HubSpot",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "HubSpot CRM integration — manage contacts, companies, deals, tickets, engagements, lists, and conversations via HubSpot REST API v3 with OAuth2.",
   "tagline": "Manage contacts, companies, deals, tickets, engagements, lists, and conversations in HubSpot CRM",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

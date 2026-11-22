@@ -14,10 +14,11 @@ export function registerSendDraftTool(app: AgentApp): void {
       },
       required: ['draftId'],
     },
+    // Sends an email: it cannot be unsent.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
     },

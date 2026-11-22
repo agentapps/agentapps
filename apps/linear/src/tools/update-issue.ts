@@ -52,7 +52,14 @@ export function registerUpdateIssueTool(app: AgentApp): void {
       },
       required: ['issueId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const {

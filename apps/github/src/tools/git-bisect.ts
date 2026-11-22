@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitBisectTool(app: AgentApp) {
   app.tool('git-bisect', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Checks out commits while it runs; `reset` returns to where it started.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Binary search for the commit that introduced a bug. Workflow: start → mark each step good/bad → done. Use `reset` to abort.',
     parameters: {

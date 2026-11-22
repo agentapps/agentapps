@@ -18,7 +18,13 @@ export function registerDeleteInvoiceTool(app: AgentApp): void {
       },
       required: ['invoiceId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const invoiceId = args.invoiceId as string;
       return await holdedRequest(

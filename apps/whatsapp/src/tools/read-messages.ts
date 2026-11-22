@@ -32,8 +32,12 @@ export function registerReadMessagesTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Sends read receipts to the other person; they cannot be taken back.
+      destructiveHint: true,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

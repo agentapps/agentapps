@@ -27,11 +27,13 @@ export function registerTagConversationTool(app: AgentApp): void {
       },
       required: ['conversationId'],
     },
+    // Removing a tag is undone by adding it again, so not destructive.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

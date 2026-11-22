@@ -27,6 +27,8 @@ export function registerAddFollowersTool(app: AgentApp): void {
       readOnlyHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

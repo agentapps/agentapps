@@ -25,9 +25,11 @@ export function registerConvertFileTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Writes the PDF to the user's disk and overwrites a file of the same name there.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

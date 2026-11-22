@@ -13,6 +13,10 @@ export function registerGetTaskTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { taskId } = args as { taskId: string };

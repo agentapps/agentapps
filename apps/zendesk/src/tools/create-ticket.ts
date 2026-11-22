@@ -58,8 +58,11 @@ export function registerCreateTicketTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // delete-ticket removes the ticket; whether the requester is emailed depends on triggers.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

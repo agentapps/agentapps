@@ -19,7 +19,14 @@ export function registerEndCallTool(app: AgentApp): void {
       },
       required: ['callId'],
     },
-    annotations: { readOnlyHint: false },
+    // No tool here reopens a call once it is marked as ended.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { callId, duration } = args as unknown as EndCallArgs;
       if (typeof callId !== 'string' || callId.trim().length === 0) {

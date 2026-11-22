@@ -2,7 +2,14 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerRerunWorkflowRunTool(app: AgentApp) {
   app.tool('rerun-workflow-run', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A workflow run can deploy or publish and spends Actions minutes; the app cannot undo it.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Re-run a workflow run. Default re-runs only failed jobs.',
     parameters: {
       type: 'object',

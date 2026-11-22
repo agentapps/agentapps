@@ -22,7 +22,14 @@ export function registerUpdateUserTool(app: AgentApp): void {
       },
       required: ['userId'],
     },
-    annotations: { readOnlyHint: false },
+    // Changes another person's role or name; setting the fields again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       const payload: { role?: string; name?: string } = {};

@@ -42,6 +42,7 @@ export function registerUploadFileTool(app: AgentApp): void {
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

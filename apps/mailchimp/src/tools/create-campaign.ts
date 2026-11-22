@@ -40,10 +40,13 @@ export function registerCreateCampaignTool(app: AgentApp): void {
       },
       required: ['type'],
     },
+    // Creates the campaign as a draft; nothing is sent until send-campaign.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       validateCreateCampaignArgs(args);

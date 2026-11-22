@@ -19,6 +19,14 @@ export function registerDisableZapTool(app: AgentApp): void {
       },
       required: ['zapId'],
     },
+    annotations: {
+      readOnlyHint: false,
+      // enable-zap turns it back on, though triggers that fire meanwhile are not processed.
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const zapId = args.zapId as string;
 

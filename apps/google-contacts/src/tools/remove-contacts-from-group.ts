@@ -30,11 +30,13 @@ export function registerRemoveContactsFromGroupTool(app: AgentApp): void {
       },
       required: ['resourceName', 'contactResourceNames'],
     },
+    // Reversible with add-contacts-to-group; the contacts themselves are not deleted.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const resourceName = args.resourceName as string;

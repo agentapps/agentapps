@@ -7,7 +7,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitMvTool(app: AgentApp) {
   app.tool('git-mv', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // `force` overwrites the destination file, whose content may not be committed.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Move or rename a tracked file/directory while preserving git history. Both `from` and `to` are relative to repo root.',
     parameters: {

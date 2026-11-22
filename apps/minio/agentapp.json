@@ -1,7 +1,7 @@
 {
   "id": "app.minio",
   "name": "MinIO",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "MinIO S3-compatible object storage — manage buckets, upload/download objects, generate presigned URLs.",
   "tagline": "Manage buckets, objects, and presigned URLs in MinIO S3-compatible storage",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

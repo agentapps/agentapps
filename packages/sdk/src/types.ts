@@ -173,9 +173,9 @@ export interface AppApiKeyAuth {
   type: 'api-key';
   systemSecrets?: string[];
   installationSecrets?: string[];
-  /** Header name used to send the API key (defaults to 'Authorization'). */
+  /** @deprecated Has no effect: the app builds its own request headers. */
   headerName?: string;
-  /** Prefix prepended to the secret value (defaults to 'Bearer '). */
+  /** @deprecated Has no effect: the app builds its own request headers. */
   headerPrefix?: string;
 }
 

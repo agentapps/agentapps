@@ -29,7 +29,14 @@ export function registerUpdateSceneContentTool(app: AgentApp): void {
       },
       required: ['sceneId', 'elements'],
     },
-    annotations: { readOnlyHint: false },
+    // A full replace (PUT): the previous drawing is overwritten and the app cannot restore it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       return client.updateSceneContent(args.sceneId as string, {

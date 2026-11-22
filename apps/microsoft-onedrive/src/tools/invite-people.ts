@@ -34,9 +34,11 @@ export function registerInvitePeopleTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Emails the invitation by default: the access can be revoked, the email cannot be unsent.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

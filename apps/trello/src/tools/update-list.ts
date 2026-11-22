@@ -43,8 +43,11 @@ export function registerUpdateListTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Fields can be set back, and `closed` archives: closed false restores the list.
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

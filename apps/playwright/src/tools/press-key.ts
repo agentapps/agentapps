@@ -15,7 +15,14 @@ export function registerPressKeyTool(app: AgentApp): void {
       },
       required: ['key'],
     },
-    annotations: { readOnlyHint: false },
+    // A key press on a live web page (Enter, Delete) can submit, send or delete: worst case.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       await page.keyboard.press(args.key as string);

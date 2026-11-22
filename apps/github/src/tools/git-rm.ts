@@ -4,7 +4,15 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitRmTool(app: AgentApp) {
   app.tool('git-rm', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Without -f git refuses to remove a file with uncommitted changes, so what it
+      // deletes is still in HEAD and git-checkout restores it.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Remove tracked files from the working tree and stage the deletion. Pass `cached: true` to only unstage (without deleting from disk).',
     parameters: {

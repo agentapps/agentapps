@@ -22,6 +22,14 @@ export function registerMoveEventTool(app: AgentApp): void {
       },
       required: ['eventId', 'destination'],
     },
+    // Moving it back undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
       const calendarId = (args.calendarId as string) ?? 'primary';

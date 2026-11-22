@@ -31,7 +31,14 @@ export function registerSendSmsTool(app: AgentApp): void {
       },
       required: ['to', 'from', 'body'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A sent message reaches another person, is billed, and cannot be taken back.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         To: args.to as string,

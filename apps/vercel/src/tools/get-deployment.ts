@@ -18,7 +18,13 @@ export function registerGetDeploymentTool(app: AgentApp): void {
       },
       required: ['deploymentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const deploymentId = args.deploymentId as string;
       return await vercelRequest('GET', `/v13/deployments/${deploymentId}`, null, ctx);

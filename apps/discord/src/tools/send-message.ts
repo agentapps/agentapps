@@ -27,7 +27,14 @@ export function registerSendMessageTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Destructive: a sent message has been seen and notified; deleting it does not unsend it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

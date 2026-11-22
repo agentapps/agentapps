@@ -20,10 +20,11 @@ export function registerReplyMessageTool(app: AgentApp): void {
       },
       required: ['messageId', 'body'],
     },
+    // Sends an email (to everyone on the thread with replyAll): it cannot be unsent.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
     },

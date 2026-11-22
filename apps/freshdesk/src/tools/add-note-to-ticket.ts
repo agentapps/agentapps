@@ -29,10 +29,13 @@ export function registerAddNoteToTicketTool(app: AgentApp): void {
       },
       required: ['ticketId', 'body'],
     },
+    // Adds a note (private by default) without mailing the requester: a create, not a send.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const ticketId = args.ticketId as number;

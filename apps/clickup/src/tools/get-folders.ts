@@ -14,6 +14,10 @@ export function registerGetFoldersTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { spaceId, archived = false } = args as { spaceId: string; archived?: boolean };

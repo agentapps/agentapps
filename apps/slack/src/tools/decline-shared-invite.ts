@@ -19,7 +19,13 @@ export function registerDeclineSharedInviteTool(app: AgentApp): void {
       },
       required: ['inviteId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { inviteId, targetTeam } = args as unknown as DeclineSharedInviteArgs;
       if (typeof inviteId !== 'string' || inviteId.trim().length === 0) {

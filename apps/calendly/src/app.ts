@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.calendly',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Calendly',
   description:
     'Calendly scheduling — manage event types, scheduled events, invitees, and availability.',

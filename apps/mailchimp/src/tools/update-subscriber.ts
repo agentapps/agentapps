@@ -37,10 +37,13 @@ export function registerUpdateSubscriberTool(app: AgentApp): void {
       },
       required: ['listId', 'subscriberHash'],
     },
+    // Setting the email, status or merge fields again undoes it; not a change the app cannot undo.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       validateUpdateSubscriberArgs(args);

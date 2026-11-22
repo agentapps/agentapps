@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/protocol",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Agent Apps Protocol v2.0 — message schemas, control + session planes, error codes",
   "license": "MIT",
   "type": "module",

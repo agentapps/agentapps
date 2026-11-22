@@ -19,6 +19,14 @@ export function registerEnableZapTool(app: AgentApp): void {
       },
       required: ['zapId'],
     },
+    annotations: {
+      readOnlyHint: false,
+      // disable-zap turns it off again; the switch itself runs no action.
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const zapId = args.zapId as string;
 

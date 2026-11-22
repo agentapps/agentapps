@@ -41,6 +41,7 @@ export function registerUpdateFormInfoTool(app: AgentApp): void {
       destructiveHint: false,
       openWorldHint: true,
       idempotentHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

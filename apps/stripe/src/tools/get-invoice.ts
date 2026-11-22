@@ -18,7 +18,13 @@ export function registerGetInvoiceTool(app: AgentApp): void {
       },
       required: ['invoiceId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const invoiceId = args.invoiceId as string;
       return await stripeRequest('GET', `/invoices/${invoiceId}`, null, ctx);

@@ -31,8 +31,12 @@ export function registerDownloadObjectTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Writes to any path on the machine and overwrites a file already there.
+      destructiveHint: true,
       idempotentHint: true,
-      openWorldHint: false,
+      // The MinIO server is reached over the network, and the file lands on the local disk.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

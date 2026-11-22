@@ -18,10 +18,13 @@ export function registerRestartServiceTool(app: AgentApp): void {
       },
       required: ['serviceId'],
     },
+    // Interrupts the running service but leaves nothing changed that would need undoing.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId } = args as { serviceId: string };

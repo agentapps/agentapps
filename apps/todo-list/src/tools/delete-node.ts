@@ -16,7 +16,15 @@ export function registerDeleteNode(app: AgentApp): void {
       },
       required: ['nodeId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    // Deletes the node and its whole subtree for good: destructive. It only touches the app's
+    // own Storage, so it is not sensitive; the destructive hint is what asks for approval.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

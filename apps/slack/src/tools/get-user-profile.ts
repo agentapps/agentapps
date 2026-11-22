@@ -70,7 +70,13 @@ export function registerGetUserProfileTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { userId, includeLabels, includeRaw } = args as unknown as GetUserProfileArgs;
       if (userId !== undefined && !isUserId(userId)) {

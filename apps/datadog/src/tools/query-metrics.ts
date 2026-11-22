@@ -27,7 +27,13 @@ export function registerQueryMetricsTool(app: AgentApp): void {
       },
       required: ['query', 'from', 'to'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       return await datadogRequest(
         'GET',

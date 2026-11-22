@@ -52,9 +52,11 @@ See https://developers.google.com/forms/api/reference/rest/v1/forms/batchUpdate 
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // Runs any batch request, deleteItem included, and a deleted item cannot be restored.
+      destructiveHint: true,
       openWorldHint: true,
       idempotentHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

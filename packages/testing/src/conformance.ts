@@ -8,7 +8,10 @@ import { describe, expect, it } from 'vitest';
 import { createTestHarness, type TestHarnessOptions } from './harness.js';
 
 /**
- * Run the standard conformance suite against an app factory.
+ * Run the standard conformance suite against an app factory. It registers
+ * vitest tests, so call it from a test file. No tool of the app is executed.
+ *
+ * @spec DEVX-REQ-3
  *
  * @example
  * ```ts
@@ -67,18 +70,16 @@ export function runConformanceTests(appFactory: AppFactory, options?: TestHarnes
           installationId: 'inst_conformance',
           tenant: { userId: 'u_conformance' },
         });
-        const tools = await session.listTools();
-        if (tools.length > 0) {
-          const first = tools[0];
-          const result = await session.callTool(
-            first.name,
-            {},
-            { userId: 'u_conformance', installationId: 'inst_conformance' },
-          );
-          // Must be an object with success boolean
-          expect(typeof result).toBe('object');
-          expect(typeof result.success).toBe('boolean');
-        }
+        // DEVX-REQ-3: the suite never runs one of the app's tools, which could write
+        // or reach the network. A tool the app does not have exercises the same path.
+        const result = await session.callTool(
+          '__conformance_unknown_tool__',
+          {},
+          { userId: 'u_conformance', installationId: 'inst_conformance' },
+        );
+        expect(typeof result).toBe('object');
+        expect(result.success).toBe(false);
+        expect(typeof result.error?.code).toBe('string');
         await session.close();
       } finally {
         await harness.shutdown();

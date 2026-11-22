@@ -24,11 +24,13 @@ export function registerReplyToTicketTool(app: AgentApp): void {
       },
       required: ['ticketId', 'body'],
     },
+    // Sends a public reply to the requester: a sent message cannot be taken back.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const ticketId = args.ticketId as number;

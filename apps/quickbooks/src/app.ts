@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.quickbooks',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'QuickBooks',
   description:
     'QuickBooks Online accounting — manage invoices, customers, payments, accounts, items, and reports.',

@@ -26,7 +26,13 @@ export function registerGetDataStreamTool(app: AgentApp): void {
       },
       required: ['propertyId', 'streamId'],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;
       const secrets = await getAnalyticsSecrets(ctx);

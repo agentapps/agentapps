@@ -31,7 +31,14 @@ export function registerInviteSharedTool(app: AgentApp): void {
       },
       required: ['channel'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Sends an invitation to people outside the workspace: a send cannot be undone.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, emails, userIds, externalLimited } = args as unknown as InviteSharedArgs;
       validateChannelId(channel, 'channel');

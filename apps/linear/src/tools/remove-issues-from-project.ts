@@ -18,7 +18,14 @@ export function registerRemoveIssuesFromProjectTool(app: AgentApp): void {
       },
       required: ['issueIds'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Detaches issues from their project (linear-add-issues-to-project puts them back); nothing is deleted.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueIds } = args as { issueIds: string[] };

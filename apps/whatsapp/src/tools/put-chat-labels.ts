@@ -37,8 +37,12 @@ export function registerPutChatLabelsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Replaces the chat's label set; putting the previous set back undoes it.
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

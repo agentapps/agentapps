@@ -11,7 +11,13 @@ export function registerDeleteTaskTool(app: AgentApp): void {
       },
       required: ['taskId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { taskId } = args as { taskId: string };
       await clickupRequest(ctx, `/task/${taskId}`, { method: 'DELETE' });

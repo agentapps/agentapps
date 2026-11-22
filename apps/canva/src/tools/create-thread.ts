@@ -25,7 +25,14 @@ export function registerCreateThreadTool(app: AgentApp): void {
       },
       required: ['designId', 'message'],
     },
-    annotations: { readOnlyHint: false },
+    // Posts a comment other collaborators see: an outside write, a creation rather than a destruction.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { designId, message, fields, includeRaw } = args as {
         designId: string;

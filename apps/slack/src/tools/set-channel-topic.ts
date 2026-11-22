@@ -20,7 +20,13 @@ export function registerSetChannelTopicTool(app: AgentApp): void {
       },
       required: ['channelId', 'topic'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, topic } = args as unknown as SetChannelTopicArgs;
       validateChannelId(channelId, 'channelId');

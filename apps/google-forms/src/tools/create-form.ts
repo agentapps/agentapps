@@ -25,8 +25,10 @@ export function registerCreateFormTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

@@ -19,7 +19,14 @@ export function registerRemoveLabelsFromIssueTool(app: AgentApp): void {
       },
       required: ['issueId', 'labelIds'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Detaches labels (linear-add-labels-to-issue puts them back); the labels themselves are kept.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId, labelIds } = args as { issueId: string; labelIds: string[] };

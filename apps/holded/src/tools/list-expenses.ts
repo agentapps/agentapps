@@ -17,7 +17,13 @@ export function registerListExpensesTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       let path = 'invoicing/v1/documents/expense';
       if (args.page) {

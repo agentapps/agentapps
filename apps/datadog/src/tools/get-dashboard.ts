@@ -18,7 +18,13 @@ export function registerGetDashboardTool(app: AgentApp): void {
       },
       required: ['dashboardId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const dashboardId = args.dashboardId as string;
       return await datadogRequest('GET', `/api/v1/dashboard/${dashboardId}`, null, ctx);

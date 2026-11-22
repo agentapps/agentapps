@@ -50,8 +50,11 @@ export function registerUpdateContactTool(app: AgentApp): void {
       },
       required: ['identifier'],
     },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
     annotations: {
+      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
     },

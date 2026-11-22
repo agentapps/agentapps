@@ -20,7 +20,13 @@ export function registerPinMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'timestamp'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, timestamp } = args as unknown as PinMessageArgs;
       validateChannelId(channel, 'channel');

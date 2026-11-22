@@ -56,8 +56,12 @@ export function registerImportContactsTool(app: AgentApp): void {
       },
       required: ['listIds'],
     },
+    // Creates contacts and, with updateExistingContacts, updates fields of existing ones: neither
+    // is destructive, though a bulk import has no single undo.
     annotations: {
+      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
     },

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.asana',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Asana',
   description:
     'Asana project management — manage tasks, projects, workspaces, sections, tags, teams, and users.',

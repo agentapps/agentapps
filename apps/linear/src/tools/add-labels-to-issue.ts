@@ -19,7 +19,14 @@ export function registerAddLabelsToIssueTool(app: AgentApp): void {
       },
       required: ['issueId', 'labelIds'],
     },
-    annotations: { readOnlyHint: false },
+    // Merges into the current label set, so repeating the call adds nothing more.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId, labelIds } = args as { issueId: string; labelIds: string[] };

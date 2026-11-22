@@ -22,10 +22,14 @@ export function registerAddUpdateTool(app: AgentApp): void {
       },
       required: ['item_id', 'body'],
     },
+    // Posts an update (a comment) the item's subscribers see: an outside write, a creation rather
+    // than a destruction.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

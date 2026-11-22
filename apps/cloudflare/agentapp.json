@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.cloudflare",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "name": "Cloudflare",
   "description": "Cloudflare platform management — manage DNS records, zones, Workers, KV namespaces, and purge cache.",
   "tagline": "Manage DNS, Workers, and caching with Cloudflare",

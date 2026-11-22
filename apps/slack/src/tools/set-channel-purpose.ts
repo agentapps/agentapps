@@ -20,7 +20,13 @@ export function registerSetChannelPurposeTool(app: AgentApp): void {
       },
       required: ['channelId', 'purpose'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, purpose } = args as unknown as SetChannelPurposeArgs;
       validateChannelId(channelId, 'channelId');

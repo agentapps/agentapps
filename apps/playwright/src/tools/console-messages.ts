@@ -42,7 +42,14 @@ export function registerConsoleMessagesTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Only filters the console buffer this process already holds in memory.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args) => {
       const level = (args.level as string) || 'info';
       const limit = Math.min((args.limit as number) || 50, 200);

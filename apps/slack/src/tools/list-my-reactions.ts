@@ -34,7 +34,13 @@ export function registerListMyReactionsTool(app: AgentApp): void {
         full: { type: 'boolean', description: 'Include all reactors. Default true.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { userId, count, page, full, limit, includeRaw } =
         args as unknown as ListMyReactionsArgs;

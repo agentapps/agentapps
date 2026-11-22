@@ -37,7 +37,13 @@ export function registerGetFileTool(app: AgentApp): void {
       },
       required: ['fileKey'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { fileKey, depth, geometry, branchData, fields, includeRaw } = args as {
         fileKey: string;

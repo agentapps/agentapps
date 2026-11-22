@@ -60,7 +60,14 @@ export function registerUpdateInvoiceTool(app: AgentApp): void {
       },
       required: ['invoiceId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const invoiceId = args.invoiceId as string;
       const body: Record<string, unknown> = {};

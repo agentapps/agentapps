@@ -27,7 +27,13 @@ export function registerGetIssueTool(app: AgentApp): void {
       },
       required: ['issueId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const client = await getLinearClient(ctx);
       const { issueId, fields, includeRaw } = args as {

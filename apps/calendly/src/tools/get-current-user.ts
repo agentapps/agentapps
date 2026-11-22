@@ -13,8 +13,10 @@ export function registerGetCurrentUserTool(app: AgentApp): void {
     parameters: { type: 'object', properties: {} },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const data = (await calendlyRequest('GET', '/users/me', undefined, ctx)) as {

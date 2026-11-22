@@ -20,8 +20,12 @@ export function registerSetProfileStatusTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Setting the previous status again undoes it.
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default', status } = args as {

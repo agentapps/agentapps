@@ -16,8 +16,12 @@ export function registerStopSessionTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Stops without logging out; start-session resumes it.
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default' } = (args ?? {}) as { session?: string };

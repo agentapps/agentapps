@@ -29,10 +29,13 @@ export function registerValidateEmailTool(app: AgentApp): void {
       },
       required: ['email'],
     },
+    // A POST that only asks SendGrid for a verdict on an address; nothing is written or sent.
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const email = args.email as string;

@@ -31,7 +31,14 @@ export function registerReadTool(app: AgentApp): void {
       },
       required: ['filePath'],
     },
-    annotations: { readOnlyHint: true },
+    // Read-only: the "read in this session" mark it leaves lives in the app's memory.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const filePath = args.filePath as string;
       const guard = getDefaultGuard();

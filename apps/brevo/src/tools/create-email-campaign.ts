@@ -12,8 +12,9 @@ interface CreateCampaignResponse {
  * Creates a campaign (newsletter). Without `scheduledAt` it's a draft you send
  * later with `send-email-campaign`; with `scheduledAt` (and listIds) Brevo
  * schedules it. Content is EXACTLY ONE of htmlContent / htmlUrl / templateId.
- * Creating a campaign is reversible (it can be deleted before sending), so it's
- * not marked irreversible/destructive — only the actual send is.
+ * A draft is harmless, but with `scheduledAt` Brevo sends the campaign on its own
+ * at that time and this app has no tool to unschedule or delete it, so the tool
+ * is annotated for that case: destructive, like the actual send.
  */
 export function registerCreateEmailCampaignTool(app: AgentApp): void {
   app.tool('create-email-campaign', {
@@ -85,8 +86,12 @@ export function registerCreateEmailCampaignTool(app: AgentApp): void {
       },
       required: ['name', 'subject', 'sender'],
     },
+    // With scheduledAt the campaign is sent to real recipients with no further call, and the app
+    // cannot unschedule it: annotated for the most dangerous thing it can do.
     annotations: {
+      sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       openWorldHint: true,
       idempotentHint: false,
     },

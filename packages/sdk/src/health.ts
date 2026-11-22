@@ -24,7 +24,7 @@ export interface ApiAccessOptions {
   label?: string;
   /** Timeout in milliseconds. Default: 10000. */
   timeoutMs?: number;
-  /** Expected HTTP status codes. Default: [200, 204]. */
+  /** @deprecated Has no effect: the `check` function decides whether the API is healthy. */
   expectedStatuses?: number[];
   /** Optional OAuth provider to suggest in the action when auth fails. */
   provider?: string;

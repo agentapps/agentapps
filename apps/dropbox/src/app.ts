@@ -11,7 +11,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.dropbox',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Dropbox',
   description:
     'Dropbox file storage — list, search, upload, download, and share files and folders.',

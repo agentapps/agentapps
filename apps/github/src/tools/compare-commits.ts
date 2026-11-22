@@ -5,7 +5,13 @@ const BASEHEAD_PATTERN = /^[\w.\-/:]+\.\.\.[\w.\-/:]+$/;
 
 export function registerCompareCommitsTool(app: AgentApp) {
   app.tool('compare-commits', {
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Compare two commits or branches. `basehead` format `BASE...HEAD`.',
     parameters: {
       type: 'object',

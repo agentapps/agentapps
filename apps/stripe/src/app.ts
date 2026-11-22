@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.stripe',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Stripe',
   description:
     'Stripe payment processing — manage customers, payments, invoices, subscriptions, products, prices, charges, refunds, checkout sessions, payouts, and payment links.',

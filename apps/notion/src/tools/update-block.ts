@@ -49,7 +49,17 @@ export function registerUpdateBlockTool(app: AgentApp): void {
       },
       required: ['blockId', 'oldText', 'newText'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'stable' },
+    // A text replacement: swapping oldText and newText undoes it, so not destructive. Not
+    // idempotent: a second call fails, or replaces again when newText contains oldText.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { blockId, oldText, newText, fields, includeRaw } = args as {

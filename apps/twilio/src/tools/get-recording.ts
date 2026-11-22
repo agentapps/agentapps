@@ -19,7 +19,13 @@ export function registerGetRecordingTool(app: AgentApp): void {
       },
       required: ['recordingSid'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const recordingSid = args.recordingSid as string;
       return await twilioRequest('GET', `/Recordings/${recordingSid}`, null, ctx);

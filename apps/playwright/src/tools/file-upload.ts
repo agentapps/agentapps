@@ -15,7 +15,14 @@ export function registerFileUploadTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Hands files from the user's machine to a web page, which may upload them at once: a send.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const { page } = await ensureBrowser();
       const paths = args.paths as string[] | undefined;

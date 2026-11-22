@@ -54,7 +54,14 @@ export function registerUpdateContactTool(app: AgentApp): void {
       },
       required: ['contactId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const contactId = args.contactId as string;
       const body: Record<string, unknown> = {};

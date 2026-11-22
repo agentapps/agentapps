@@ -47,7 +47,13 @@ export function registerListUsersTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { limit, cursor, includeDeleted, includeBots, fields, includeRaw } =
         args as ListUsersArgs;

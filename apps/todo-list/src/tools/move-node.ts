@@ -22,7 +22,14 @@ export function registerMoveNode(app: AgentApp): void {
       },
       required: ['nodeId'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets parent and position in the app's own Storage; the same call again changes nothing.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

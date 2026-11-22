@@ -25,6 +25,7 @@ export function registerRemovePermissionTool(app: AgentApp): void {
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

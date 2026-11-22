@@ -25,7 +25,14 @@ export function registerUpdateFolderTool(app: AgentApp): void {
       },
       required: ['folderId', 'name'],
     },
-    annotations: { readOnlyHint: false },
+    // Renaming again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { folderId, name, fields, includeRaw } = args as {
         folderId: string;

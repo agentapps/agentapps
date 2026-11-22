@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AgentApp } from '@agentapps/sdk';
+import { safeAttachmentName } from '../lib/helpers.js';
 import { createGraphClient } from '../lib/index.js';
 
 /**
@@ -21,11 +22,13 @@ export function registerStoreAttachmentTool(app: AgentApp): void {
       },
       required: ['messageId', 'attachmentId'],
     },
+    // Writes to any outputPath on the machine and silently overwrites a file of the same name.
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);
@@ -41,7 +44,8 @@ export function registerStoreAttachmentTool(app: AgentApp): void {
       );
 
       mkdirSync(outputPath, { recursive: true });
-      const filePath = join(outputPath, attachment.name);
+      // The name comes from the email's sender.
+      const filePath = join(outputPath, safeAttachmentName(attachment.name));
       writeFileSync(filePath, Buffer.from(attachment.contentBytes, 'base64'));
 
       return {

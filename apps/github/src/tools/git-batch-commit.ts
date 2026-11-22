@@ -22,7 +22,15 @@ interface BatchChange {
 
 export function registerGitBatchCommitTool(app: AgentApp) {
   app.tool('git-batch-commit', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // It demands a clean tree, but can still overwrite or delete a git-ignored
+      // file, which no commit holds.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Apply multiple file changes (create/update/delete/rename) and create ONE atomic commit. Use this for refactors and any multi-file change where the intermediate states should not be visible in git history.',
     parameters: {

@@ -15,11 +15,11 @@ import { createInterface } from 'node:readline';
 import type { RequestHandlers } from '@agentapps/host';
 import {
   FileDocumentStore,
-  getStationSecret,
   handleVolumeRequest,
   ObjectStore,
   toObjectInfo,
 } from '@agentapps/station';
+import { workspaceDataPath, workspaceStationSecret } from './data-paths.js';
 import { BOLD, CYAN, GREEN, RESET } from './render/colors.js';
 import { loadAppSecrets, writeSecretFile } from './secrets-store.js';
 import type { AppConfigEntry, ResolvedApp } from './types.js';
@@ -71,15 +71,16 @@ export function createCliHostRequestHandlers(ctx: HostContext): RequestHandlers 
   // Storage: one JSON file per installation and collection under the data dir.
   const documentStore = new FileDocumentStore(workspaceStoragePath(ctx.configPath));
   const storageInstallation = ctx.installationId ?? '_default';
-  const volumesBasePath = resolve(dirname(resolve(ctx.configPath)), DATA_DIR);
+  // CLI-REQ-14: the same directory and signing secret as the Station this CLI starts.
+  const volumesBasePath = workspaceDataPath(ctx.configPath);
   const publicUrl =
     ctx.publicUrl ??
     (ctx.stationPort ? `http://localhost:${ctx.stationPort}` : 'http://localhost:4100');
   // Objects live next to the Volume under the local data directory; URLs point
   // at the Station, which serves GET /objects/{id} from the same directory.
   const objectStore = new ObjectStore({
-    volumesBasePath: resolve(dirname(resolve(ctx.configPath)), DATA_DIR),
-    stationSecret: getStationSecret(),
+    volumesBasePath,
+    stationSecret: workspaceStationSecret(ctx.configPath),
     publicUrl,
   });
   const objectScope = (installationId: string) => ({

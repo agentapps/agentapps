@@ -16,11 +16,11 @@ export function registerDeleteRecordTool(app: AgentApp): void {
       required: ['model', 'id'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

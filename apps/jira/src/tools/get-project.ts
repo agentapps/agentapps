@@ -19,7 +19,13 @@ export function registerGetProjectTool(app: AgentApp): void {
       },
       required: ['projectKeyOrId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const projectKeyOrId = args.projectKeyOrId as string;
 

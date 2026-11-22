@@ -24,7 +24,13 @@ export function registerAddCallParticipantsTool(app: AgentApp): void {
       },
       required: ['callId', 'users'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { callId, users } = args as unknown as AddCallParticipantsArgs;
       if (typeof callId !== 'string' || callId.trim().length === 0) {

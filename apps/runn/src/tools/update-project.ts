@@ -41,7 +41,14 @@ export function registerUpdateProjectTool(app: AgentApp): void {
       },
       required: ['projectId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // Setting the fields again undoes it; the budget here is a planning figure, not real spend.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         projectId: number;

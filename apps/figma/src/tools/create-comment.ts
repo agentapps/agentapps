@@ -46,7 +46,14 @@ export function registerCreateCommentTool(app: AgentApp): void {
       },
       required: ['fileKey', 'message'],
     },
-    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // delete-comment removes it.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { fileKey, message, parentCommentId, clientMeta, fields, includeRaw } = args as {
         fileKey: string;

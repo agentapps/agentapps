@@ -48,6 +48,7 @@ export function registerCloneScenarioTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

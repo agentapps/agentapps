@@ -5,7 +5,14 @@ export function registerConsoleClearTool(app: AgentApp): void {
   app.tool('console-clear', {
     description: 'Clear all captured console messages',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: false },
+    // Empties the in-memory console buffer of this process: a transient capture, not stored data.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async () => {
       const count = consoleMessages.length;
       consoleMessages.length = 0;

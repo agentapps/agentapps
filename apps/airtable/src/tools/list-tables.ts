@@ -19,7 +19,13 @@ export function registerListTablesTool(app: AgentApp): void {
       },
       required: ['baseId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       return await airtableRequest('GET', `/meta/bases/${baseId}/tables`, {}, ctx);

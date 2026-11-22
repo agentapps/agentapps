@@ -19,7 +19,13 @@ export function registerGetZapTool(app: AgentApp): void {
       },
       required: ['zapId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const zapId = args.zapId as string;
 

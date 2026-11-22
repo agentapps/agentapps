@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.brevo',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Brevo',
   description:
     'Brevo email marketing — send transactional emails, manage contacts and lists, create email templates, and browse email campaigns through the Brevo API.',

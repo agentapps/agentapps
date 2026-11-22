@@ -54,11 +54,14 @@ export function registerUpdateScenarioTool(app: AgentApp): void {
       },
       required: ['scenarioId'],
     },
+    // Replaces the given fields, the blueprint included; setting them again undoes it, so it is
+    // kept as not destructive. It changes a live automation, so it needs approval.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = (args ?? {}) as Record<string, unknown>;

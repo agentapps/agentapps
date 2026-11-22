@@ -28,7 +28,13 @@ export function registerListListFieldsTool(app: AgentApp): void {
       },
       required: ['listId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { listId, includeRaw } = args as unknown as ListListFieldsArgs;
       if (typeof listId !== 'string' || listId.trim().length === 0) {

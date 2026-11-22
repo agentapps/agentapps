@@ -45,7 +45,13 @@ export function registerGetDocsTool(app: AgentApp): void {
       },
       required: ['libraryId', 'query'],
     },
-    annotations: { readOnlyHint: true, openWorldHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const libraryId = String(args.libraryId ?? '').trim();
       const query = String(args.query ?? '').trim();

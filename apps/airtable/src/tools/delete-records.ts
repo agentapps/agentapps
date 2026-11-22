@@ -28,7 +28,13 @@ export function registerDeleteRecordsTool(app: AgentApp): void {
       },
       required: ['baseId', 'tableIdOrName', 'recordIds'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const baseId = args.baseId as string;
       const tableIdOrName = args.tableIdOrName as string;

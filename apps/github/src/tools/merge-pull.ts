@@ -3,7 +3,15 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerMergePullTool(app: AgentApp) {
   app.tool('merge-pull', {
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A merge writes to the base branch and cannot be undone through the app.
+      destructiveHint: true,
+      // A pull request already merged cannot be merged again.
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Merge a pull request',
     parameters: {
       type: 'object',

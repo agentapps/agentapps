@@ -42,7 +42,14 @@ export function registerUpdateMessageTool(app: AgentApp): void {
       },
       required: ['channel', 'ts'],
     },
-    annotations: { readOnlyHint: false },
+    // Setting the previous text again undoes it; destructiveHint is for changes the app cannot undo.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, ts, text, blocks, attachments } = args as unknown as UpdateMessageArgs;
       validateChannelId(channel, 'channel');

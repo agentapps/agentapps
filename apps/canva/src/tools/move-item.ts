@@ -17,7 +17,14 @@ export function registerMoveItemTool(app: AgentApp): void {
       },
       required: ['itemId', 'toFolderId'],
     },
-    annotations: { readOnlyHint: false },
+    // Moving the item back undoes it, and moving it to the same folder twice changes nothing more.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { itemId, toFolderId } = args as { itemId: string; toFolderId: string };
       validateNonEmpty(itemId, 'itemId');

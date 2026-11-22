@@ -21,6 +21,8 @@ export function registerGetDeploymentTool(app: AgentApp): void {
       readOnlyHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      destructiveHint: false,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const deploymentId = (args as Record<string, unknown>).deploymentId as string;

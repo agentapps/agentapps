@@ -7,7 +7,13 @@ export function registerHealthCheckTool(app: AgentApp): void {
     description:
       'Internal health check. Probes Slack OAuth credentials and API reachability via auth.test.',
     parameters: { type: 'object', properties: {} },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const issues: Array<{
         code: string;

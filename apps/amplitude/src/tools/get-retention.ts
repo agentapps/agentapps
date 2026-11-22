@@ -35,7 +35,13 @@ export function registerGetRetentionTool(app: AgentApp): void {
       },
       required: ['se', 're', 'start', 'end'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined | null> = {
         se: args.se as string,

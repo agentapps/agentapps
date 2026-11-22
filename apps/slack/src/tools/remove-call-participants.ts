@@ -20,7 +20,13 @@ export function registerRemoveCallParticipantsTool(app: AgentApp): void {
       },
       required: ['callId', 'users'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { callId, users } = args as unknown as RemoveCallParticipantsArgs;
       if (typeof callId !== 'string' || callId.trim().length === 0) {

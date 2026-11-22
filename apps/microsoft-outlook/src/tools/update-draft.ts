@@ -20,11 +20,13 @@ export function registerUpdateDraftTool(app: AgentApp): void {
       },
       required: ['draftId'],
     },
+    // Edits an unsent draft; setting the fields again undoes it.
     annotations: {
       readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

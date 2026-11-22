@@ -11,7 +11,13 @@ export function registerListTeamMembershipsTool(app: AgentApp): void {
         employeeId: { type: 'number', description: 'Filter by employee ID' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const qs = buildQueryString({
         team_id: args.teamId,

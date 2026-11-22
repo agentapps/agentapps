@@ -16,7 +16,15 @@ export function registerCreateContactTool(app: AgentApp): void {
       },
       required: ['email'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
+    // POST /contact/sync upserts by email: the same call twice leaves one contact, and it can
+    // overwrite the fields of an existing one (setting them again undoes it).
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!(args as any).email?.trim()) throw new Error('email is required');
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((args as any).email.trim()))

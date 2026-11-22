@@ -28,9 +28,12 @@ export function registerShareFileTool(app: AgentApp): void {
       },
       required: ['fileId', 'emailAddress'],
     },
+    // Grants another person access (role can be `owner`) and Drive emails them; the app has no
+    // tool to remove a permission, so it cannot undo this.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
     },

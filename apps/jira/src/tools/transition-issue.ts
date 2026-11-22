@@ -24,7 +24,15 @@ export function registerTransitionIssueTool(app: AgentApp): void {
       },
       required: ['issueKey', 'transitionId'],
     },
-    annotations: { readOnlyHint: false },
+    // A status change, not a deletion. Not idempotent: after it runs, the same transition id
+    // may no longer apply, or may run the workflow's side effects again.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const issueKey = args.issueKey as string;
       const transitionId = args.transitionId as string;

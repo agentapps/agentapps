@@ -36,10 +36,14 @@ export function registerUpdateContactTool(app: AgentApp): void {
       },
       required: ['resourceName'],
     },
+    // Destructive: email and phone replace the contact's whole list with a single value, so
+    // any other addresses or numbers are lost and this app cannot write them back.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const resourceName = args.resourceName as string;

@@ -41,7 +41,14 @@ export function registerCreateEnvVarTool(app: AgentApp): void {
       },
       required: ['projectId', 'key', 'value', 'target'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A plain create with no upsert: it does not overwrite an existing variable.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const projectId = args.projectId as string;
       const body: Record<string, unknown> = {

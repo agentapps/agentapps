@@ -13,7 +13,14 @@ export function registerToggleCollapse(app: AgentApp): void {
       },
       required: ['nodeId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // A toggle: each call flips the flag, so it is not idempotent. Own Storage only.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

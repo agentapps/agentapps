@@ -68,7 +68,13 @@ export function registerListMessagesTool(app: AgentApp): void {
       },
       required: ['channel'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { channel, threadTs, limit, cursor, oldest, latest, inclusive, fields, includeRaw } =
         args as unknown as ListMessagesArgs;

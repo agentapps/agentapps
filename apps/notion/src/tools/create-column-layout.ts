@@ -32,7 +32,15 @@ export function registerCreateColumnLayoutTool(app: AgentApp): void {
       },
       required: ['pageId', 'columns'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'experimental' },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'experimental',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { pageId, columns, fields, includeRaw } = args as {

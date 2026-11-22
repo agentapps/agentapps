@@ -29,7 +29,14 @@ export function registerAnswerCallbackQueryTool(app: AgentApp): void {
       },
       required: ['callbackQueryId'],
     },
-    annotations: { readOnlyHint: false },
+    // Shows a notification or alert to another person; once shown it cannot be taken back.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, unknown> = {
         callback_query_id: args.callbackQueryId,

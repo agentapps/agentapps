@@ -15,7 +15,14 @@ export function registerDeleteCollectionTool(app: AgentApp): void {
       },
       required: ['collectionId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // A soft delete, but the app has no tool to restore a collection from trash.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const client = await getExcalidrawClient(ctx);
       await client.deleteCollection(args.collectionId as string);

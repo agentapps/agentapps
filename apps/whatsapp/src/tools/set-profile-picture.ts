@@ -20,8 +20,11 @@ export function registerSetProfilePictureTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Overwrites the current picture, which the app keeps no copy of.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default', url } = args as {

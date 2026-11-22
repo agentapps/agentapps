@@ -51,7 +51,13 @@ export function registerCreateActivityTool(app: AgentApp): void {
       },
       required: ['subject', 'type'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const body: Record<string, unknown> = {
         subject: args.subject,

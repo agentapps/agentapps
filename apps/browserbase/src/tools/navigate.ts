@@ -3,7 +3,15 @@ import { requireSession } from '../lib/index.js';
 
 export function registerNavigateTool(app: AgentApp): void {
   app.tool('navigate', {
-    annotations: { readOnlyHint: false },
+    // Loads a page in the app's own browser session, like the Playwright app: it changes that
+    // session and nothing else, so it does not wait for approval. Acting on the page does.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     description: 'Navigate the browser to a URL.',
     parameters: {
       type: 'object',

@@ -95,7 +95,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.intercom',
-    appVersion: '2.0.1',
+    appVersion: '2.0.2',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -163,7 +163,7 @@ describe('Intercom Agent App', () => {
     // The Intercom health handler returns { status: 'ready' } when a valid
     // access token is present. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('2.0.1');
+    expect(health.version).toBe('2.0.2');
   });
 
   it('get-workspace returns admin and workspace info', async () => {

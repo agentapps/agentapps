@@ -28,7 +28,14 @@ export function registerConsoleErrorsTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Only filters the console buffer this process already holds in memory.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args) => {
       const limit = Math.min((args.limit as number) || 20, 100);
       const search = (args.search as string)?.toLowerCase();

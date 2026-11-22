@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.discord',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Discord',
   description:
     'Full Discord integration: guilds, channels, messages, members, roles, webhooks, reactions, and moderation. Uses Discord REST API v10 with OAuth 2.0 / Bot Token.',

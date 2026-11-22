@@ -21,7 +21,13 @@ export function registerJoinChannelTool(app: AgentApp): void {
       },
       required: ['channelId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId } = args as unknown as JoinChannelArgs;
       validateChannelId(channelId, 'channelId');

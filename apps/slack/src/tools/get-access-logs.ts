@@ -50,7 +50,13 @@ export function registerGetAccessLogsTool(app: AgentApp): void {
         page: { type: 'number', description: 'Page number.' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { before, count, page, includeRaw } = args as unknown as GetAccessLogsArgs;
       const safeCount = sanitizeLimit(count, { max: 1000, default: 100 });

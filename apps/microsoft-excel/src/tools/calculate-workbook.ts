@@ -30,6 +30,8 @@ export function registerCalculateWorkbookTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      // It writes nothing of its own, but it changes the values stored in the user's workbook.
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);

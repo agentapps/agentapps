@@ -37,7 +37,14 @@ export function registerTakeScreenshotTool(app: AgentApp): void {
         },
       },
     },
-    annotations: { readOnlyHint: false },
+    // Reads the page and stores the image in the app's own Objects; each call adds an object.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { page } = await ensureBrowser();
 

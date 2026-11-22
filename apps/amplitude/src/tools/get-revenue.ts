@@ -32,7 +32,13 @@ export function registerGetRevenueTool(app: AgentApp): void {
       },
       required: ['start', 'end'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const params: Record<string, string | number | boolean | undefined | null> = {
         start: args.start as string,

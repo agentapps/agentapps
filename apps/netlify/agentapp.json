@@ -1,7 +1,7 @@
 {
   "id": "app.netlify",
   "name": "Netlify",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Deploy static sites (HTML/CSS/JS) from the workspace to Netlify and return the public URL. Uses the file-digest REST API with a per-user Personal Access Token.",
   "tagline": "Deploy static sites to Netlify from the workspace",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

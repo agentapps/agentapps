@@ -8,8 +8,11 @@ export function registerHealthCheckTool(app: AgentApp): void {
     parameters: { type: 'object', properties: {} },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (_args, ctx) => {
       const res = await wahaFetch(ctx, '/sessions');

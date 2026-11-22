@@ -18,7 +18,13 @@ export function registerGetPaymentTool(app: AgentApp): void {
       },
       required: ['paymentId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const paymentId = args.paymentId as string;
       return await quickbooksRequest('GET', `payment/${paymentId}`, null, ctx);

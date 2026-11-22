@@ -24,11 +24,14 @@ export function registerCancelEventTool(app: AgentApp): void {
       },
       required: ['eventId'],
     },
+    // Destructive: the invitees are told and the app cannot reinstate the event. Idempotent:
+    // an event is cancelled once; a repeat is rejected.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
       destructiveHint: true,
+      idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const a = args as Record<string, unknown>;

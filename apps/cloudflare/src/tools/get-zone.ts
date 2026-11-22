@@ -18,7 +18,13 @@ export function registerGetZoneTool(app: AgentApp): void {
       },
       required: ['zoneId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const zoneId = args.zoneId as string;
       return await cloudflareRequest('GET', `/zones/${zoneId}`, null, ctx);

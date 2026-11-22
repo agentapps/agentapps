@@ -45,6 +45,7 @@ Params: formId (required), eventType (required), topicName (required — fully q
       destructiveHint: false,
       openWorldHint: true,
       idempotentHint: false,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

@@ -4,7 +4,14 @@ import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitMergeTool(app: AgentApp) {
   app.tool('git-merge', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // Git refuses to merge over uncommitted changes; git-reset undoes the merge.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Merge a branch/tag/commit into the current branch. On conflict, throws `GIT_CONFLICT` and the agent should resolve via `git-status` + edit + `git-add`.',
     parameters: {

@@ -11,7 +11,14 @@ export function registerIgnoreIssueTool(app: AgentApp): void {
       },
       required: ['issueId'],
     },
-    annotations: { readOnlyHint: false },
+    // A status change that Sentry can revert (the issue and its events are kept): not destructive.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('API_KEY');
       if (!apiKey) throw new Error('Missing API_KEY system secret.');

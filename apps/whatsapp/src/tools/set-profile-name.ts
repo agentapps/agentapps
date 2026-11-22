@@ -20,8 +20,12 @@ export function registerSetProfileNameTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Setting the previous name again undoes it.
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { session = 'default', name } = args as {

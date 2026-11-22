@@ -23,8 +23,10 @@ export function registerCreateAccountTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { name, industry, phone, website, type, description } = args as {

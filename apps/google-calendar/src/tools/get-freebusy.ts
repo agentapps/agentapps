@@ -49,7 +49,13 @@ export function registerGetFreebusyTool(app: AgentApp): void {
       },
       required: ['timeMin', 'timeMax', 'items'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const tokens = await ensureAuthenticated(ctx);
 

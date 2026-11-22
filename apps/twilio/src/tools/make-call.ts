@@ -36,7 +36,14 @@ export function registerMakeCallTool(app: AgentApp): void {
       },
       required: ['to', 'from'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A placed call reaches another person, is billed, and cannot be taken back.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       if (!args.url && !args.twiml) {
         throw new Error('Either "url" or "twiml" must be provided.');

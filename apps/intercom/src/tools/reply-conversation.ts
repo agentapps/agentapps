@@ -32,12 +32,14 @@ export function registerReplyConversationTool(app: AgentApp): void {
       },
       required: ['conversationId', 'body'],
     },
+    // Destructive: the default type "comment" sends the reply to the customer, and a send
+    // cannot be undone.
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

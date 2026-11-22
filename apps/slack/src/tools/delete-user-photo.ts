@@ -7,7 +7,13 @@ export function registerDeleteUserPhotoTool(app: AgentApp): void {
     description:
       "Delete the authenticated user's profile photo (replaces with default avatar). Returns { deleted: true }. Not retryable. No params.",
     parameters: { type: 'object', properties: {} },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (_args, ctx) => {
       const { client } = await getSlackSession(ctx);
       await wrapSlackMutation(() => (client as any).users.deletePhoto());

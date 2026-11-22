@@ -27,10 +27,13 @@ export function registerRollbackDeployTool(app: AgentApp): void {
       },
       required: ['serviceId', 'deployId'],
     },
+    // Starts a new deploy of an older build; deploying the newer one again undoes it.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, deployId } = args as { serviceId: string; deployId: string };

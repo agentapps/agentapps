@@ -63,7 +63,13 @@ export function registerGetIntegrationLogsTool(app: AgentApp): void {
         page: { type: 'number' },
       },
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { appId, changeType, serviceId, user, count, page, includeRaw } =
         args as unknown as GetIntegrationLogsArgs;

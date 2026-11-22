@@ -13,7 +13,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google-news',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Google News',
   description: 'Latest news headlines from Google News RSS. No API key required.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

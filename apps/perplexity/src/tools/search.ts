@@ -29,7 +29,14 @@ export function registerSearchTool(app: AgentApp): void {
       },
       required: ['query'],
     },
-    annotations: { readOnlyHint: true },
+    // A query to the Perplexity API: it changes nothing, though each call uses API credit.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const apiKey = await ctx.systemSecret('APIKEY');
       if (!apiKey) {

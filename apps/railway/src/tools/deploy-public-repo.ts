@@ -30,9 +30,11 @@ export function registerDeployPublicRepoTool(app: AgentApp): void {
       },
       required: ['projectId', 'repo'],
     },
+    // Creates a service and starts a deployment; delete-service removes it again.
     annotations: {
       sensitive: true,
       readOnlyHint: false,
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
     },

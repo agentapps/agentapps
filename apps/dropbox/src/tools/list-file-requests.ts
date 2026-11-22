@@ -15,8 +15,10 @@ export function registerListFileRequestsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { limit = 1000 } = args as { limit?: number };

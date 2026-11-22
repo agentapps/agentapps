@@ -24,10 +24,12 @@ export function registerSendTextTool(app: AgentApp): void {
       required: ['chatId', 'text'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
+      // A sent message cannot be taken back through the app.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

@@ -13,7 +13,13 @@ export function registerListBucketsTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       const result = (await supabaseRequest('GET', '/storage/v1/bucket', null, ctx)) as {
         data: unknown;

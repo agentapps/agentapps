@@ -14,6 +14,10 @@ export function registerGetListsTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { folderId, archived = false } = args as { folderId: string; archived?: boolean };

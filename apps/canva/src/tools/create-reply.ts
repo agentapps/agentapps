@@ -26,7 +26,14 @@ export function registerCreateReplyTool(app: AgentApp): void {
       },
       required: ['designId', 'threadId', 'message'],
     },
-    annotations: { readOnlyHint: false },
+    // Posts a reply other collaborators see: an outside write, a creation rather than a destruction.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { designId, threadId, message, fields, includeRaw } = args as {
         designId: string;

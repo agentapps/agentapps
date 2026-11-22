@@ -27,7 +27,13 @@ export function registerGetRowTool(app: AgentApp): void {
       },
       required: ['table', 'column', 'value'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const table = args.table as string;
       const column = args.column as string;

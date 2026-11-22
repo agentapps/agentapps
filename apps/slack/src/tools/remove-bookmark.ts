@@ -23,7 +23,13 @@ export function registerRemoveBookmarkTool(app: AgentApp): void {
       },
       required: ['channel', 'bookmarkId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channel, bookmarkId } = args as unknown as RemoveBookmarkArgs;
       validateChannelId(channel, 'channel');

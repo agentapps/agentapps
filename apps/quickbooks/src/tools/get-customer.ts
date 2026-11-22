@@ -18,7 +18,13 @@ export function registerGetCustomerTool(app: AgentApp): void {
       },
       required: ['customerId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const customerId = args.customerId as string;
       return await quickbooksRequest('GET', `customer/${customerId}`, null, ctx);

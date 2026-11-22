@@ -16,7 +16,13 @@ export function registerSearchNodes(app: AgentApp): void {
       },
       required: ['query'],
     },
-    annotations: { readOnlyHint: true, idempotentHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       try {
         requireUserId(ctx);

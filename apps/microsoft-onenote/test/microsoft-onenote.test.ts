@@ -73,7 +73,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.1' },
+    host: { name: 'test', version: '1.0.2' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -153,7 +153,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.microsoft.onenote',
-    appVersion: '1.0.1',
+    appVersion: '1.0.2',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -214,7 +214,7 @@ describe('Microsoft OneNote Agent App', () => {
 
     expect(result.success).toBe(true);
     expect(manifest.id).toBe('app.microsoft.onenote');
-    expect(manifest.version).toBe('1.0.1');
+    expect(manifest.version).toBe('1.0.2');
     expect(manifest.auth.scopes).toContain('Notes.ReadWrite.All');
     expect(manifest.auth.scopes).toContain('Notes.Create');
     // Least privilege (spec §3.3): drive and SharePoint scopes belong to the

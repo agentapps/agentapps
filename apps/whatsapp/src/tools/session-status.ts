@@ -16,8 +16,11 @@ export function registerSessionStatusTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: true,
+      destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // WAHA is a separate process reached over HTTP.
+      openWorldHint: true,
+      sensitive: false,
     },
     handler: async (args, ctx) => {
       const { session = 'default' } = (args ?? {}) as { session?: string };

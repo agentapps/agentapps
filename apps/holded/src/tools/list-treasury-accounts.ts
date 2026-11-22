@@ -13,7 +13,13 @@ export function registerListTreasuryAccountsTool(app: AgentApp): void {
       type: 'object',
       properties: {},
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (_args, ctx) => {
       return await holdedRequest('GET', 'treasury/v1/accounts', null, ctx);
     },

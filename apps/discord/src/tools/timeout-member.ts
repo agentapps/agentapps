@@ -20,7 +20,15 @@ export function registerTimeoutMemberTool(app: AgentApp): void {
       },
       required: ['guildId', 'userId'],
     },
-    annotations: { readOnlyHint: false },
+    // Not destructive: the timeout expires, and durationMinutes 0 lifts it. Not idempotent:
+    // the end time is counted from now, so a repeat moves it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       try {
         const { rest } = await getDiscordSession(ctx);

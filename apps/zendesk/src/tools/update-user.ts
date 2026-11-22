@@ -50,8 +50,11 @@ export function registerUpdateUserTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Setting the fields again undoes it; destructiveHint is for changes the app cannot undo.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { userId, name, email, role, phone, organizationId, tags, active } = args as {

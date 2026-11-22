@@ -29,9 +29,12 @@ export function registerUpdateDocumentTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
-      destructiveHint: false,
+      // A replaceAllText request: it overwrites every match (an empty replaceText deletes
+      // them), and the reverse replace cannot tell the new occurrences from the old ones.
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const clients = await initializeGoogleClients(ctx);

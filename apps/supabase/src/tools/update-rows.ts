@@ -28,7 +28,15 @@ export function registerUpdateRowsTool(app: AgentApp): void {
       },
       required: ['table', 'filter', 'data'],
     },
-    annotations: { readOnlyHint: false },
+    // Sets columns to given values on the rows matching the filter: repeating it changes nothing
+    // more. Treated as a field update (not destructive), although the old values are not kept.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const table = args.table as string;
       const filter = args.filter as string;

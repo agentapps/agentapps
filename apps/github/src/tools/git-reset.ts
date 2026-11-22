@@ -50,11 +50,12 @@ export function registerGitResetTool(app: AgentApp) {
       };
     },
     annotations: {
-      sensitive: true,
-      destructiveHint: true,
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: false,
-      openWorldHint: false,
+      // Runs the git CLI on the user's files.
+      openWorldHint: true,
+      sensitive: true,
     },
   });
 }

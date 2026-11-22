@@ -1,4 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
+import { safeAttachmentName } from '../lib/helpers.js';
 import { createGraphClient } from '../lib/index.js';
 
 /**
@@ -22,10 +23,14 @@ export function registerGetAttachmentTool(app: AgentApp): void {
       },
       required: ['messageId', 'attachmentId'],
     },
+    // Not read-only: with saveToFile it writes the attachment to /workspace/email-attachments on
+    // the machine, under the name the sender gave it, overwriting a file of the same name.
     annotations: {
-      readOnlyHint: true,
+      readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { graphRequest, email } = await createGraphClient(ctx);
@@ -45,7 +50,8 @@ export function registerGetAttachmentTool(app: AgentApp): void {
         const { join } = await import('node:path');
         const dir = '/workspace/email-attachments';
         mkdirSync(dir, { recursive: true });
-        const filePath = join(dir, attachment.name);
+        // The name comes from the email's sender.
+        const filePath = join(dir, safeAttachmentName(attachment.name));
         writeFileSync(filePath, Buffer.from(attachment.contentBytes, 'base64'));
         return { account: email, name: attachment.name, savedTo: filePath, size: attachment.size };
       }

@@ -3,7 +3,14 @@ import { githubRequest } from '../lib/github-client.js';
 
 export function registerCreatePrReviewTool(app: AgentApp) {
   app.tool('create-pr-review', {
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A submitted review stays, but GitHub lets it be dismissed; it deletes nothing.
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description:
       'Create a pull request review. `event` controls the verdict: APPROVE / REQUEST_CHANGES / COMMENT.',
     parameters: {

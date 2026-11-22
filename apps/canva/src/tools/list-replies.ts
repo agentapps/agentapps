@@ -24,7 +24,13 @@ export function registerListRepliesTool(app: AgentApp): void {
       },
       required: ['designId', 'threadId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { designId, threadId, limit, continuation, fields, includeRaw } = args as {
         designId: string;

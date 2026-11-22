@@ -27,7 +27,15 @@ export function registerEditTool(app: AgentApp): void {
       },
       required: ['filePath', 'oldString', 'newString'],
     },
-    annotations: { readOnlyHint: false },
+    // Rewrites one of the user's own files in place; the previous content is not kept.
+    // Annotated for the real write, although dryRun: true changes nothing.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args) => {
       const filePath = args.filePath as string;
       const oldString = args.oldString as string;

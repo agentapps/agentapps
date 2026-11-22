@@ -37,7 +37,14 @@ export function registerReadBatchTool(app: AgentApp): void {
       },
       required: ['paths'],
     },
-    annotations: { readOnlyHint: true },
+    // Read-only: the "read in this session" mark it leaves lives in the app's memory.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args) => {
       const rawPaths = args.paths;
       if (!Array.isArray(rawPaths) || rawPaths.length === 0)

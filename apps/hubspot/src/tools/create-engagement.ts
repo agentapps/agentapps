@@ -46,8 +46,12 @@ export function registerCreateEngagementTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // Logs a CRM record (an "email" engagement is a log entry, nothing is sent);
+      // delete-engagement removes it.
+      destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const {

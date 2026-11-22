@@ -3,7 +3,7 @@
  */
 
 import { createApp } from '@agentapps/sdk';
-import { describe } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { runConformanceTests } from '../src/index.js';
 
 function buildCompliantApp() {
@@ -44,4 +44,25 @@ describe('runConformanceTests — app without explicit health (SDK default)', ()
 
 describe('runConformanceTests — app without tools', () => {
   runConformanceTests(buildAppWithoutTools());
+});
+
+describe('runConformanceTests — an app whose tool has effects', () => {
+  let ran = 0;
+  const app = createApp({ id: 'app.effects', version: '1.0.0' });
+  app.tool('send', {
+    description: 'Sends something for real',
+    parameters: { type: 'object', properties: {} },
+    handler: async () => {
+      ran++;
+      return 'sent';
+    },
+  });
+  runConformanceTests(app.toFactory());
+
+  afterAll(() => {
+    if (ran > 0) throw new Error(`the conformance suite ran the app's tool ${ran} time(s)`);
+  });
+  it('[DEVX-AC-3] the suite does not run the tool', () => {
+    expect(ran).toBe(0);
+  });
 });

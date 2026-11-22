@@ -19,7 +19,13 @@ export function registerGetDealTool(app: AgentApp): void {
       },
       required: ['dealId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const dealId = args.dealId as number;
       return await pipedriveRequest('GET', `/deals/${dealId}`, {}, ctx);

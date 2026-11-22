@@ -27,7 +27,13 @@ export function registerAddEmojiTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name, url, aliasFor } = args as unknown as AddEmojiArgs;
       if (typeof name !== 'string' || !/^[a-z0-9_-]+$/i.test(name)) {

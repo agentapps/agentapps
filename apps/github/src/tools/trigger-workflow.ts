@@ -2,7 +2,14 @@ import type { AgentApp } from '@agentapps/sdk';
 import { githubRequest } from '../lib/github-client.js';
 export function registerTriggerWorkflowTool(app: AgentApp) {
   app.tool('trigger-workflow', {
-    annotations: { sensitive: true, readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      // A workflow run can deploy or publish and spends Actions minutes; the app cannot undo it.
+      destructiveHint: true,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     description: 'Trigger a workflow dispatch event',
     parameters: {
       type: 'object',

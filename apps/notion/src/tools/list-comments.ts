@@ -35,7 +35,15 @@ export function registerListCommentsTool(app: AgentApp): void {
       },
       required: ['blockId'],
     },
-    annotations: { readOnlyHint: true, version: '1.1.0', stability: 'stable' },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const { blockId, limit, startCursor, cursor, fields, includeRaw } = args as {

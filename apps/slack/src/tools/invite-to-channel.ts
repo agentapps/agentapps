@@ -27,7 +27,14 @@ export function registerInviteToChannelTool(app: AgentApp): void {
       },
       required: ['channelId', 'userIds'],
     },
-    annotations: { sensitive: true, readOnlyHint: false },
+    // Reversible with kick-from-channel.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, userIds } = args as unknown as InviteToChannelArgs;
       validateChannelId(channelId, 'channelId');

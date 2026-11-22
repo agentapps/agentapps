@@ -36,9 +36,11 @@ export function registerCreateFilterTool(app: AgentApp): void {
     },
     annotations: {
       readOnlyHint: false,
+      // A filter can forward future mail to another address; delete-filter removes it.
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);

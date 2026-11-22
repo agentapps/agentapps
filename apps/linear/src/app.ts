@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.linear',
-  version: '2.0.1',
+  version: '2.0.2',
   name: 'Linear',
   description:
     'Linear issue tracking - list, create, update issues, manage projects, labels, teams and users',

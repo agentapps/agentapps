@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.research",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "stdio demo — real child process Agent App with interactive host controller",
   "type": "module",

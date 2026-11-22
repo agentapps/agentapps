@@ -43,11 +43,12 @@ export function registerSendMessageTool(app: AgentApp): void {
       required: ['to', 'subject'],
     },
     annotations: {
-      sensitive: true,
       readOnlyHint: false,
-      destructiveHint: false,
+      // An email sent cannot be taken back.
+      destructiveHint: true,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);

@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { AgentApp } from '@agentapps/sdk';
 import { createGmailClient, getSecrets } from '../lib/gmail-client.js';
-import { findAttachments } from '../lib/helpers.js';
+import { findAttachments, safeAttachmentName } from '../lib/helpers.js';
 
 /**
  * store-attachment — Download and store an email attachment to the local filesystem.
@@ -29,10 +29,12 @@ export function registerStoreAttachmentTool(app: AgentApp): void {
       required: ['messageId', 'attachmentId'],
     },
     annotations: {
+      // Writes a new timestamped file on the user's machine on every call.
       readOnlyHint: false,
       destructiveHint: false,
-      idempotentHint: true,
+      idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);
@@ -66,7 +68,7 @@ export function registerStoreAttachmentTool(app: AgentApp): void {
       const allAttachments = findAttachments(messageResponse.data.payload);
       const originalFilename =
         allAttachments.length === 1 && allAttachments[0].filename
-          ? allAttachments[0].filename
+          ? safeAttachmentName(allAttachments[0].filename)
           : 'attachment';
 
       const now = new Date();

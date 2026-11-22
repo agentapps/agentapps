@@ -33,7 +33,14 @@ export function registerCreateResizeJobTool(app: AgentApp): void {
       },
       required: ['designId', 'designType'],
     },
-    annotations: { readOnlyHint: false },
+    // The resize produces a new design in the account; the source design is left as it was.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { designId, designType, width, height, fields, includeRaw } = args as {
         designId: string;

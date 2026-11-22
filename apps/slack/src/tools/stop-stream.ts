@@ -17,7 +17,13 @@ export function registerStopStreamTool(app: AgentApp): void {
       },
       required: ['streamId'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { streamId } = args as unknown as StopStreamArgs;
       if (typeof streamId !== 'string' || streamId.trim().length === 0) {

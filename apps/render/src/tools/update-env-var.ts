@@ -26,10 +26,14 @@ export function registerUpdateEnvVarTool(app: AgentApp): void {
       },
       required: ['serviceId', 'key', 'value'],
     },
+    // Overwrites the current value, which the app cannot read back in full (list-env-vars masks
+    // and truncates), so it cannot restore it.
     annotations: {
       readOnlyHint: false,
+      destructiveHint: true,
       idempotentHint: true,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const { serviceId, key, value } = args as { serviceId: string; key: string; value: string };

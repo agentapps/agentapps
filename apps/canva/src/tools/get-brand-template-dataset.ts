@@ -13,7 +13,13 @@ export function registerGetBrandTemplateDatasetTool(app: AgentApp): void {
       },
       required: ['brandTemplateId'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { brandTemplateId } = args as { brandTemplateId: string };
       validateNonEmpty(brandTemplateId, 'brandTemplateId');

@@ -46,7 +46,13 @@ export function registerCreatePersonTool(app: AgentApp): void {
       },
       required: ['firstName', 'lastName', 'roleId'],
     },
-    annotations: { readOnlyHint: false, openWorldHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const raw = args as {
         firstName: string;

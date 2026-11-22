@@ -44,7 +44,16 @@ export function registerUpdatePageTool(app: AgentApp): void {
       },
       required: ['pageId'],
     },
-    annotations: { readOnlyHint: false, version: '1.1.0', stability: 'stable' },
+    // `archived: true` moves the page to the trash and `archived: false` restores it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+      version: '1.1.0',
+      stability: 'stable',
+    },
     handler: async (args: any, ctx) => {
       const client = await getNotionClient(ctx);
       const {

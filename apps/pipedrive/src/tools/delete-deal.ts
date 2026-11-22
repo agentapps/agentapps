@@ -18,7 +18,13 @@ export function registerDeleteDealTool(app: AgentApp): void {
       },
       required: ['dealId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const dealId = args.dealId as number;
       return await pipedriveRequest('DELETE', `/deals/${dealId}`, {}, ctx);

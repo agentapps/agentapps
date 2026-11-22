@@ -27,7 +27,14 @@ export function registerUpdateInventoryLevelTool(app: AgentApp): void {
       },
       required: ['inventoryItemId', 'locationId', 'available'],
     },
-    annotations: { readOnlyHint: false, idempotentHint: true },
+    // Sets a quantity; setting the previous value again undoes it.
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       return await shopifyRequest(
         'POST',

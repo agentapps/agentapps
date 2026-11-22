@@ -9,6 +9,7 @@ import { dirname, resolve } from 'node:path';
 import { AgentAppHost } from '@agentapps/host';
 import { createInProcessTransportPair } from '@agentapps/protocol';
 import { AppStation, InProcessRuntime, resolveMountPath } from '@agentapps/station';
+import { workspaceDataPath } from './data-paths.js';
 import { createCliHostRequestHandlers } from './host.js';
 import { getInstallationById, unapprovedPermissions } from './state.js';
 import type { CliContext, ResolvedApp } from './types.js';
@@ -62,7 +63,7 @@ export async function openAppSession(
       resolveMountPath({
         mountVolume,
         permissions,
-        volumesBasePath: resolve(dirname(resolve(ctx.configPath)), '.agentapps/data'),
+        volumesBasePath: workspaceDataPath(ctx.configPath),
         workspaceId: 'default',
       }),
   });

@@ -46,7 +46,13 @@ export function registerCreateChannelTool(app: AgentApp): void {
       },
       required: ['name'],
     },
-    annotations: { readOnlyHint: false },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: false,
+      idempotentHint: false,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { name, isPrivate, topic, fields, includeRaw } = args as unknown as CreateChannelArgs;
       if (!NAME_RE.test(name)) {

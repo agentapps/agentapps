@@ -21,6 +21,7 @@ export function registerCreateLabelTool(app: AgentApp): void {
       destructiveHint: false,
       idempotentHint: false,
       openWorldHint: true,
+      sensitive: true,
     },
     handler: async (args, ctx) => {
       const secrets = await getSecrets(ctx);

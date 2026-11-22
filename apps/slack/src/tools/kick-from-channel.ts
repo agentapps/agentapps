@@ -20,7 +20,13 @@ export function registerKickFromChannelTool(app: AgentApp): void {
       },
       required: ['channelId', 'userId'],
     },
-    annotations: { sensitive: true, readOnlyHint: false, destructiveHint: true },
+    annotations: {
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: true,
+    },
     handler: async (args, ctx) => {
       const { channelId, userId } = args as unknown as KickFromChannelArgs;
       validateChannelId(channelId, 'channelId');

@@ -60,7 +60,13 @@ export function registerSearchFilesTool(app: AgentApp): void {
       },
       required: ['query'],
     },
-    annotations: { readOnlyHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+      sensitive: false,
+    },
     handler: async (args, ctx) => {
       const { query, sort, sortDirection, count, page, highlight, fields, includeRaw } =
         args as unknown as SearchFilesArgs;

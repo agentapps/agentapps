@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.intercom',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Intercom',
   description:
     'Intercom customer support integration — manage conversations, tickets, contacts, and teams via the Intercom API.',

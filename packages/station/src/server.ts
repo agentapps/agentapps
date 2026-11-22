@@ -111,10 +111,24 @@ export interface StationEndpoint {
   token?: string;
 }
 
+/** Whether a peer address is this machine: 127.0.0.0/8, ::1, or either mapped into IPv6. */
+function isLoopback(address: string | undefined): boolean {
+  if (!address) return false;
+  const plain = address.startsWith('::ffff:') ? address.slice(7) : address;
+  return plain === '::1' || plain.startsWith('127.');
+}
+
 export interface StationServerOptions {
   apps?: AppEntry[];
   port?: number;
   host?: string;
+  /**
+   * While the Station is open (no credential configured), accept requests
+   * without one only from the machine itself; any other peer is refused.
+   *
+   * @spec CLI-REQ-12
+   */
+  openToLoopbackOnly?: boolean;
   token?: string;
   stationId?: string;
   idleTimeoutMs?: number;
@@ -262,6 +276,7 @@ export class StationServer {
   private readonly idleTimeoutMs: number;
   private readonly defaultPort: number;
   private readonly defaultHost: string;
+  private readonly openToLoopbackOnly: boolean;
   private readonly stations: StationEndpoint[];
   private readonly secrets?: SecretsManager;
   private readonly documentStore: DocumentStore;
@@ -298,6 +313,7 @@ export class StationServer {
     this.idleTimeoutMs = options.idleTimeoutMs ?? 10 * 60 * 1000;
     this.defaultPort = options.port ?? 4100;
     this.defaultHost = options.host ?? '0.0.0.0';
+    this.openToLoopbackOnly = options.openToLoopbackOnly ?? false;
     this.stations = options.stations ?? [];
     this.secrets = options.secrets;
     this.resolveInstallation = options.resolveInstallation;
@@ -1458,6 +1474,33 @@ export class StationServer {
       const args = msg.arguments ?? {};
       const principalId = authResult?.principalId ?? ADMIN_PRINCIPAL_ID;
       const policy = await policyFor(this.policyStore, principalId);
+      // POLICY-REQ-16: Rules on Annotations cannot be evaluated without them.
+      const known = await this.ensureToolAnnotations(managed, message);
+      if (known !== true && known !== false) {
+        // The App refused the listing (an unknown Session, for example): the
+        // caller gets that answer for its call, which is not relayed.
+        json(res, 200, { ...known, id: message.id });
+        return;
+      }
+      if (!known) {
+        const reason = `The tools of ${managed.entry.id} could not be listed, so ${principalId}'s Policy cannot be evaluated for '${toolName}'`;
+        // eslint-disable-next-line no-console
+        console.error(
+          `[policy] deny: principal=${principalId} app=${managed.entry.id} tool=${toolName} rule=annotations-unknown at=${new Date().toISOString()}`,
+        );
+        json(res, 403, {
+          id: message.id,
+          type: 'error',
+          timestamp: new Date().toISOString(),
+          version: '2.0',
+          error: {
+            code: ErrorCode.PERMISSION_DENIED,
+            message: reason,
+            details: { layer: 'policy', rule: 'annotations-unknown', reason },
+          },
+        });
+        return;
+      }
       const decision = evaluatePolicy(policy, {
         app: managed.entry.id,
         tool: toolName,
@@ -1600,13 +1643,15 @@ export class StationServer {
     // active API key exists. An empty (or fully revoked/expired) key store
     // keeps the station open — creating the first key switches auth on.
     if (!this.token) {
-      if (!this.apiKeyStore) return null;
+      // CLI-REQ-12: an open Station is open to this machine only.
+      const open = this.openToLoopbackOnly && !isLoopback(req.socket.remoteAddress) ? false : null;
+      if (!this.apiKeyStore) return open;
       const keys = await this.apiKeyStore.list();
       const now = new Date();
       const hasActiveKey = keys.some(
         (k) => !k.revokedAt && (!k.expiresAt || new Date(k.expiresAt) > now),
       );
-      if (!hasActiveKey) return null;
+      if (!hasActiveKey) return open;
     }
 
     const authHeader = req.headers.authorization;
@@ -1646,6 +1691,44 @@ export class StationServer {
     if (!tools) return undefined;
     const tool = tools.find((t) => t.name === toolName);
     return tool?.annotations;
+  }
+
+  /**
+   * Make sure the App's tools, and so their Annotations, are known before a
+   * Policy is evaluated for a call: a Station that has not relayed a
+   * `list_tools` for the App yet (after a restart, for example) lists them
+   * itself in the caller's Session. Returns the App's error when it refuses the
+   * listing, and false when it does not answer.
+   *
+   * @spec POLICY-REQ-16
+   */
+  private async ensureToolAnnotations(
+    managed: ManagedApp,
+    call: MessageBase,
+  ): Promise<boolean | MessageBase> {
+    if (this.toolsCache.has(managed.entry.id)) return true;
+    const sessionId = (call as Record<string, unknown>).sessionId;
+    if (typeof sessionId !== 'string') return false;
+    try {
+      const listed = await this.sendAndWait(
+        managed,
+        {
+          id: `annotations-${++idCounter}`,
+          type: 'list_tools',
+          timestamp: new Date().toISOString(),
+          version: '2.0',
+          sessionId,
+        } as MessageBase,
+        10_000,
+      );
+      if (listed.type === 'error') return listed;
+      const tools = (listed as Record<string, unknown>).tools;
+      if (!Array.isArray(tools)) return false;
+      this.cacheTools(managed.entry.id, tools);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /** Populate tool cache for an app (called after auto-init or announce). */

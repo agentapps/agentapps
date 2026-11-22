@@ -1,5 +1,12 @@
 # @agentapps/sdk
 
+## 0.2.3
+
+### Patch Changes
+
+- ab95c6b: Messages say Installation and Installation secret where they said instance and user secret, and the help lists `installations` instead of a command that does not exist.
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

@@ -95,7 +95,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.kelify',
-    appVersion: '2.0.0',
+    appVersion: '2.0.1',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -154,7 +154,7 @@ describe('Kelify Agent App', () => {
     // The Kelify health handler returns { status: 'ready' } when the API key is
     // present and valid. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('2.0.0');
+    expect(health.version).toBe('2.0.1');
   });
 
   it('create-conversation returns a conversation id', async () => {

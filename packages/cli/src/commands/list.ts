@@ -40,7 +40,7 @@ export async function handleList(
   return {
     success: true,
     data: rows,
-    message: `${instances.length} instance${instances.length === 1 ? '' : 's'} installed`,
+    message: `${instances.length} Installation${instances.length === 1 ? '' : 's'}`,
     exitCode: 0,
   };
 }

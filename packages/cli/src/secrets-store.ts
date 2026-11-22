@@ -6,7 +6,15 @@
  * across all installations of the same app.
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 const SECRETS_DIR = '.secrets';
@@ -39,6 +47,17 @@ export function loadAppSecrets(configPath: string, appId: string): Record<string
   }
 }
 
+/**
+ * Write a file that holds secrets so that only its owner can read it, also
+ * when the file already existed with wider permissions.
+ *
+ * @spec CLI-REQ-13
+ */
+export function writeSecretFile(path: string, value: unknown): void {
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 });
+  chmodSync(path, 0o600);
+}
+
 /** Save system secrets for an app, merging with existing values. */
 export function saveAppSecrets(
   configPath: string,
@@ -49,8 +68,7 @@ export function saveAppSecrets(
   mkdirSync(dir, { recursive: true });
   const current = loadAppSecrets(configPath, appId);
   const next = { ...current, ...secrets };
-  const path = appSecretsPath(configPath, appId);
-  writeFileSync(path, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+  writeSecretFile(appSecretsPath(configPath, appId), next);
 }
 
 /** List all app IDs that have stored system secrets. */

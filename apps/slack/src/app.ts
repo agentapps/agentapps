@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.slack',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Slack',
   description: 'Full Slack workspace integration via Web API with OAuth 2.0',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

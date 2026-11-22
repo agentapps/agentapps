@@ -18,7 +18,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.zapier',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Zapier',
   description:
     'Zapier automation — list and execute Zapier actions via Natural Language Actions API.',

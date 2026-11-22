@@ -1,6 +1,6 @@
 {
   "id": "app.sendgrid",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "SendGrid",
   "description": "SendGrid email delivery — send emails, manage contacts, lists, templates, and view statistics.",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

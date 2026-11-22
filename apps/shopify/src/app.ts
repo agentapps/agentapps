@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.shopify',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Shopify',
   description:
     'Shopify store management — manage products, orders, customers, inventory, collections, fulfillments, discounts, pages, and webhooks.',

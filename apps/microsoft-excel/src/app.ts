@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // same app and must not be hand-edited out of sync with each other.
 export const app = createApp({
   id: 'app.microsoft.excel',
-  version: '1.0.0',
+  version: '1.0.1',
   name: 'Excel',
   description:
     'Microsoft Excel workbook automation — read and write ranges, formulas, tables, and charts via the Microsoft Graph workbook API.',

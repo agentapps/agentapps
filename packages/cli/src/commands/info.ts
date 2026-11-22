@@ -191,10 +191,11 @@ function formatManifestData(manifest: Record<string, unknown>): ResultValue {
     License: (manifest.license as string) ?? 'unknown',
     Category: (manifest.category as string) ?? 'unknown',
     Keywords: keywords?.join(', ') ?? '',
-    Capabilities: enabledCaps.join(', ') || 'none',
+    // DIST-REQ-2: a catalog entry does not say these; they show once downloaded.
+    ...(capabilities ? { Capabilities: enabledCaps.join(', ') || 'none' } : {}),
     Auth: authType,
     'System secrets': systemSecrets.length > 0 ? systemSecrets.join(', ') : 'none',
-    Entrypoint: entrypointStr,
+    ...(entrypoint ? { Entrypoint: entrypointStr } : {}),
   };
 
   return data;

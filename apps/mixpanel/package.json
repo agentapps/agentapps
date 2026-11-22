@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.mixpanel",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Mixpanel Agent App — track events, query funnels, retention, user profiles, and export data.",
   "type": "module",

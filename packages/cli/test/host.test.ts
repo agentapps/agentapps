@@ -385,7 +385,7 @@ describe('createCliHostRequestHandlers', () => {
       configPath,
     });
     await expect(requests.onRefreshToken?.('sess', 'req')).rejects.toThrow(
-      'Missing user secret: REFRESH_TOKEN',
+      'Missing Installation secret: REFRESH_TOKEN',
     );
   });
 

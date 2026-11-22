@@ -32,7 +32,7 @@ export async function handleBind(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown instance: ${alias}`,
+        message: `Unknown Installation: ${alias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };
@@ -44,7 +44,7 @@ export async function handleBind(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown target instance: ${targetAlias}`,
+        message: `Unknown target Installation: ${targetAlias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };

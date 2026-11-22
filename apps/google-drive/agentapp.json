@@ -1,7 +1,7 @@
 {
   "id": "app.google.drive",
   "name": "Google Drive",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Manage Google Drive files and folders - upload, download, share, search, read content",
   "tagline": "Browse, upload, share, and organize Drive files, read Sheets and Slides, and edit Docs",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

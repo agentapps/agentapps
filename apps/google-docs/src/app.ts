@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.docs',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Google Docs',
   description:
     'Create, read, and edit Google Docs documents - create, read content, insert text, append text, delete content, insert tables, insert images, find & replace, text styling, named ranges, batch updates. To delete a document, use the Google Drive app.',

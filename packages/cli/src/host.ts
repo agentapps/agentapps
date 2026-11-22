@@ -21,7 +21,7 @@ import {
   toObjectInfo,
 } from '@agentapps/station';
 import { BOLD, CYAN, GREEN, RESET } from './render/colors.js';
-import { loadAppSecrets } from './secrets-store.js';
+import { loadAppSecrets, writeSecretFile } from './secrets-store.js';
 import type { AppConfigEntry, ResolvedApp } from './types.js';
 
 const INSTALLATION_SECRETS_DIR = '.agentapps';
@@ -276,7 +276,7 @@ export class InstallationSecretsStore {
     const current = this.read();
     const next = { ...current, ...secrets };
     mkdirSync(dirname(this.path), { recursive: true });
-    writeFileSync(this.path, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+    writeSecretFile(this.path, next);
   }
 
   /** Delete all stored installation secrets (e.g. OAuth tokens on logout). */
@@ -318,7 +318,7 @@ async function refreshToken(
   const installationSecrets = installationSecretsStore.read();
   const refreshTokenValue = installationSecrets.REFRESH_TOKEN;
   if (!refreshTokenValue) {
-    throw new Error('Missing user secret: REFRESH_TOKEN');
+    throw new Error('Missing Installation secret: REFRESH_TOKEN');
   }
 
   const body = new URLSearchParams({

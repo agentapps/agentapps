@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.google.search-console',
   name: 'Google Search Console',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     'Google Search Console: query search performance (clicks, impressions, CTR, position by query, page, country, device, date), compare periods, inspect URL index status, and manage sitemaps and properties through the Search Console API.',
   tagline: 'SEO performance, URL inspection and sitemaps from Google Search Console',

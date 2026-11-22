@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.bash",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Bash",
   "description": "Execute bash commands on the system. Provides shell access for automation and system tasks.",
   "tagline": "Run shell commands and automate system tasks",

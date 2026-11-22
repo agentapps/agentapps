@@ -12,7 +12,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.notion',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Notion',
   description: 'Notion workspace - pages, databases, blocks, search, comments, file uploads',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

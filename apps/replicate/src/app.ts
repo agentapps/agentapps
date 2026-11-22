@@ -19,7 +19,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.replicate',
-  version: '1.0.0',
+  version: '1.0.1',
   name: 'Replicate',
   description:
     'Run any AI model on Replicate. Discover models, start async predictions, poll for results, and manage running jobs.',

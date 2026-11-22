@@ -1,7 +1,7 @@
 {
   "id": "app.microsoft.onenote",
   "name": "OneNote",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Microsoft OneNote automation — browse notebooks and sections, read and write pages as markdown, and search notes via the Microsoft Graph OneNote API.",
   "tagline": "Read, write, and search OneNote notebooks, sections, and pages",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -31,7 +31,7 @@ export async function handleListBindings(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown instance: ${alias}`,
+        message: `Unknown Installation: ${alias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };

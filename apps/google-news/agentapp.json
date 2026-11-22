@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.google-news",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Google News",
   "description": "Latest news headlines from Google News RSS. No API key required.",
   "tagline": "Browse the latest news headlines from Google News",

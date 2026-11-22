@@ -1,7 +1,7 @@
 {
   "id": "app.google.sheets",
   "name": "Google Sheets",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Create, read, write, append, format, and export Google Sheets spreadsheets - create, write data, append rows, batch update (formatting, formulas, conditional formatting), read data, ranges, list tabs, export to CSV/XLSX/PDF. To delete a spreadsheet, use the Google Drive app.",
   "tagline": "Create, read, write, format, and export Google Sheets spreadsheets",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

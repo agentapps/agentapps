@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.hubspot',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'HubSpot',
   description:
     'HubSpot CRM integration — manage contacts, companies, deals, tickets, engagements, lists, and conversations via HubSpot REST API v3 with OAuth2.',

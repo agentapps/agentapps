@@ -19,7 +19,7 @@ import { createApp } from '@agentapps/sdk';
 
 const app = createApp({
   id: 'app.hello',
-  version: '1.0.0',
+  version: '1.0.1',
   name: 'Hello',
   description:
     'Minimal example app with greet and countdown tools. Demonstrates tools, health checks, progress reporting, and cancellation.',

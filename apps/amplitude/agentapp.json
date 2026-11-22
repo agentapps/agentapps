@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.amplitude",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Amplitude",
   "description": "Amplitude analytics — query events, user activity, cohorts, charts, and retention data.",
   "tagline": "Query events, cohorts, retention, and funnels with Amplitude",

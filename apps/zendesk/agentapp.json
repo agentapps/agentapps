@@ -1,7 +1,7 @@
 {
   "id": "app.zendesk",
   "name": "Zendesk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Zendesk support integration — manage tickets, users, organizations, views, groups, triggers, automations, attachments, webhooks, and satisfaction ratings via the Zendesk REST API v2 with rate limiting.",
   "tagline": "Manage tickets, users, organizations, and support workflows in Zendesk",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

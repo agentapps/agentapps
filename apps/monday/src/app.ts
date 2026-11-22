@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.monday',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Monday.com',
   description: 'Monday.com work management - boards, items, groups, columns, updates',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

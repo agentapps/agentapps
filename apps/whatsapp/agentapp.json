@@ -1,7 +1,7 @@
 {
   "id": "app.whatsapp",
   "name": "WhatsApp",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Send and receive WhatsApp messages via WAHA (WhatsApp HTTP API). Manage sessions, send text/media, and handle incoming messages. Account linking is always done with a numeric pairing code (request-pairing-code) — QR authentication is not supported.",
   "tagline": "Send and receive WhatsApp messages, manage sessions, and share media via WAHA",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

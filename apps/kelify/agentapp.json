@@ -1,7 +1,7 @@
 {
   "id": "app.kelify",
   "name": "Kelify AI Property Search",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "AI-powered conversational property search API for real estate listings",
   "tagline": "Search real estate listings through AI-powered conversations",
   "author": { "name": "Kelify", "email": "contact@kelify.com" },

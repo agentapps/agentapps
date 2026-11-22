@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.elevenlabs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "ElevenLabs",
   "description": "Text-to-speech generation with multiple voices and models via the ElevenLabs API.",
   "tagline": "Generate lifelike speech with multiple voices and models",

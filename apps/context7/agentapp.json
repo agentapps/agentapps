@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.context7",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Context7",
   "description": "Up-to-date library and framework documentation via Context7 (Upstash). Resolves library identifiers and fetches structured doc snippets with code examples.",
   "tagline": "Up-to-date library docs with real code examples",

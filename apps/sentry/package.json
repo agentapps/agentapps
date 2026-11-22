@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.sentry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Sentry Agent App — error monitoring, issue tracking, and event inspection.",
   "type": "module",

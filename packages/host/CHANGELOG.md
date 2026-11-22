@@ -1,5 +1,12 @@
 # @agentapps/host
 
+## 0.2.3
+
+### Patch Changes
+
+- acf5979: Package descriptions use the current vocabulary (Station, not controllers or AppStation).
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

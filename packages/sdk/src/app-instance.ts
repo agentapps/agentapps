@@ -397,7 +397,7 @@ export class AppInstance {
         error: {
           code: ErrorCode.UNAUTHORIZED,
           message:
-            `Missing required user secret(s): ${missingSecrets.join(', ')}. ` +
+            `Missing required Installation secret(s): ${missingSecrets.join(', ')}. ` +
             `Configure them for this installation before using ${this.config.id}.`,
         },
         duration: 0,

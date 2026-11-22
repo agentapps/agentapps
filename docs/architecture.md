@@ -32,18 +32,18 @@ Every message is the same JSON whatever the topology. Only the cable between two
 └───────────────────────────────────────────────────────────────────┘
 ```
 
-**Claude Code using Notion.** `agentapps serve` listens on a port; the Gateway speaks MCP on one side and Agent Apps on the other; the Station starts Notion as a child process.
+**Claude Code using Notion.** `agentapps serve` listens on a port; the Gateway speaks MCP on one side and Agent Apps on the other; the Station loads Notion in its own process.
 
 ```
 ┌─────────────┐  MCP   ┌─────────┐  Agent Apps  ┌─────────┐  Agent Apps  ┌──────────┐
 │ Claude Code │ ─────▶ │ Gateway │ ───────────▶ │ Station │ ───────────▶ │  Notion  │
-│ (Agent      │ stdio  │ (Host)  │   over HTTP  │         │  over stdio  │ (Instance)│
+│ (Agent      │ stdio  │ (Host)  │   over HTTP  │         │  in memory   │ (Instance)│
 │  Platform)  │        │         │              │         │              │          │
 └─────────────┘        └─────────┘              └─────────┘              └──────────┘
     hop A                   hop B                    hop C
 ```
 
-Hop A is not our protocol. Hops B and C carry the same `tool_call`; B travels over HTTP, C over the child's stdin.
+Hop A is not our protocol. Hops B and C carry the same `tool_call`; B travels over HTTP, C in memory: the Station the CLI starts runs every app inside its own process.
 
 **WhatsApp in a container.** Same as above, but the Station cannot write to a container's stdin, so hop C is HTTP to the container's port.
 

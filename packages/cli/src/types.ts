@@ -28,6 +28,8 @@ export interface StationConfig {
   publicUrl?: string;
   /** Default port for `agentapps serve`. */
   port?: number;
+  /** Address the Station listens on; this machine only when not set (CLI-REQ-12). */
+  host?: string;
 }
 
 /** Parsed agentapps.json workspace configuration, keyed by manifest id. */

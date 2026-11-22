@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.twilio",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Twilio Agent App — send SMS, make calls, manage phone numbers, and check message status.",
   "type": "module",

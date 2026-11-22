@@ -12,24 +12,25 @@ Run and exercise Agent Apps locally from a workspace configured with agentapps.j
 
 Commands:
   apps [query]                       List available apps, filtered by name, tagline, description or keywords
-  instances                          List installed apps (installations)
+  installations                      List your Installations and their status
   info <app-id>                      Show app manifest details
   install <app-id> <alias>           Install an app
-  uninstall <alias>                  Remove an instance
-  rename <alias> <newAlias>          Rename an instance
-  status <alias>                     Show instance status
-  config <app-id> [key:value...]     Configure app system secrets
-  <alias> auth                       Authenticate an instance
-  <alias> auth logout                Remove the instance's stored tokens
+  uninstall <alias>                  Remove an Installation
+  rename <alias> <newAlias>          Change an Installation's alias
+  status <alias>                     Show an Installation's status
+  config <app-id> [key:value...]     Set an app's system secrets (shared by its Installations)
+  config <alias> [key:value...]      Set one Installation's secrets (its API key)
+  <alias> auth                       Sign an Installation in (OAuth)
+  <alias> auth logout                Remove the Installation's stored tokens
   <alias> auth reauth                Discard tokens and re-authenticate
-  <alias> info                       Show installed instance details
-  <alias> tools                      List instance tools
+  <alias> info                       Show the app behind an Installation
+  <alias> tools                      List an Installation's tools
   <alias> tool <name> [args...]      Invoke a tool
   <alias> subscribe <eventType...>   Watch events in the background
   <alias> unsubscribe                Stop the background watcher
-  bind <alias> <req> <target>        Bind a requirement to a target instance
+  bind <alias> <req> <target>        Bind a requirement to a target Installation
   unbind <alias> <req>               Remove a binding
-  list-bindings <alias>              Show bindings for an instance
+  list-bindings <alias>              Show the bindings of an Installation
   permissions <alias>                Show every tool's effective permission for the CLI (admin)
   permissions <alias> set <t> <e>    Override a tool for the admin (e = allow|ask|deny); keys: policy set
   permissions <alias> remove <t>     Clear the admin's override for a tool
@@ -69,7 +70,7 @@ Global flags:
 
 Examples:
   agentapps apps
-  agentapps install app.hello.example hello
+  agentapps install app.hello hello
   agentapps hello auth
   agentapps hello tools --verbose
   agentapps hello tool greet '{"name":"World"}'

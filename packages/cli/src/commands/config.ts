@@ -51,7 +51,7 @@ export async function handleConfig(
       success: false,
       exitCode: 2,
       error: {
-        message: `App or instance not found: ${appId}`,
+        message: `App or Installation not found: ${appId}`,
         suggestion: 'Run "apps" to see available apps, or "installations" for installed apps.',
       },
     };
@@ -126,7 +126,7 @@ async function handleUserSecrets(
     return {
       success: false,
       exitCode: 2,
-      error: { message: `App configuration missing for ${appId} (instance ${alias})` },
+      error: { message: `App configuration missing for ${appId} (Installation ${alias})` },
     };
   }
 
@@ -162,7 +162,7 @@ async function handleUserSecrets(
         success: false,
         exitCode: 2,
         error: {
-          message: `Unexpected user secret(s): ${unknown.join(', ')}`,
+          message: `Unexpected Installation secret(s): ${unknown.join(', ')}`,
           suggestion: `Expected keys: ${expectedKeys.join(', ')}`,
         },
       };
@@ -175,7 +175,7 @@ async function handleUserSecrets(
   return {
     success: true,
     exitCode: 0,
-    message: `Configured ${Object.keys(provided).length} user secret(s) for instance ${alias} (${appId})`,
+    message: `Configured ${Object.keys(provided).length} Installation secret(s) for ${alias} (${appId})`,
     data: {
       alias,
       appId,

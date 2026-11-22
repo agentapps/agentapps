@@ -1,6 +1,6 @@
 {
   "id": "app.asana",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Asana",
   "description": "Asana project management — manage tasks, projects, workspaces, sections, and users.",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

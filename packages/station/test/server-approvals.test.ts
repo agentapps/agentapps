@@ -35,6 +35,11 @@ describe('StationServer parked calls', () => {
         version: '2.0',
         sessionId: m.sessionId,
       };
+      // POLICY-REQ-16: the Station lists the tools before it evaluates the Policy.
+      if (m.type === 'list_tools') {
+        const tools = [{ name: 'risky' }, { name: 'safe' }];
+        transport.send({ ...base, type: 'tools_list', tools } as never);
+      }
       if (m.type === 'tool_call') {
         executed.push(m.tool as string);
         transport.send({ ...base, type: 'tool_result', result: 'ran' } as never);

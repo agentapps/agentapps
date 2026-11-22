@@ -88,7 +88,7 @@ export async function handlePermissions(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown instance: ${alias}`,
+        message: `Unknown Installation: ${alias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };
@@ -176,7 +176,7 @@ export async function handlePermissionsSet(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown instance: ${alias}`,
+        message: `Unknown Installation: ${alias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };
@@ -211,7 +211,7 @@ export async function handlePermissionsRemove(
       success: false,
       exitCode: 2,
       error: {
-        message: `Unknown instance: ${alias}`,
+        message: `Unknown Installation: ${alias}`,
         suggestion: 'Run "installations" to see installed apps.',
       },
     };

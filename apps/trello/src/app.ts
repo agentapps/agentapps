@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.trello',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Trello',
   description:
     'Trello project management — manage boards, lists, cards, labels, and search across your Trello workspace.',

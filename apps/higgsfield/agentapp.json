@@ -1,7 +1,7 @@
 {
   "id": "app.higgsfield",
   "name": "Higgsfield",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Generate AI images and videos with Higgsfield - text-to-image, image-to-video, and consistent character generation with Soul.",
   "tagline": "AI image and video generation with text-to-image, image-to-video, and Soul characters",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

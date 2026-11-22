@@ -24,7 +24,7 @@ const notesDb = new Map<string, { title: string; content: string; createdAt: str
 // Create the app
 // ---------------------------------------------------------------------------
 
-const app = createApp({ id: 'app.research', version: '1.0.0' });
+const app = createApp({ id: 'app.research', version: '1.0.1' });
 
 // ---------------------------------------------------------------------------
 // Tool: search

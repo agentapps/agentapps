@@ -1,7 +1,7 @@
 {
   "id": "app.odoo",
   "name": "Odoo",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Odoo ERP integration — manage partners, products, sales orders, invoices, projects, tasks, employees, leaves and timesheets via the Odoo JSON-RPC API using an API key.",
   "tagline": "Manage partners, sales, projects, HR and more in Odoo ERP",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

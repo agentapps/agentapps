@@ -1,5 +1,17 @@
 # @agentapps/testing
 
+## 0.2.3
+
+### Patch Changes
+
+- acf5979: Package descriptions use the current vocabulary (Station, not controllers or AppStation).
+- Updated dependencies [160b0bf]
+- Updated dependencies [acf5979]
+- Updated dependencies [2babe5d]
+  - @agentapps/station@0.2.3
+  - @agentapps/host@0.2.3
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

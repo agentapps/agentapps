@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.replicate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Replicate",
   "description": "Run any AI model on Replicate. Discover models, start async predictions, poll for results, and manage running jobs.",
   "tagline": "Run any AI model with async predictions and job management",

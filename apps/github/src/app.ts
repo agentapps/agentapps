@@ -12,7 +12,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.github',
-  version: '1.0.0',
+  version: '2.0.1',
   name: 'GitHub',
   description: 'GitHub REST API (user-to-server OAuth) + local git operations',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

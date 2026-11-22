@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.salesforce',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Salesforce',
   description:
     'Salesforce CRM — manage accounts, contacts, opportunities, leads, cases, and run SOQL queries.',

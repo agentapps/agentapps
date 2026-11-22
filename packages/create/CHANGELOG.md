@@ -1,5 +1,17 @@
 # @agentapps/create
 
+## 0.2.3
+
+### Patch Changes
+
+- Updated dependencies [160b0bf]
+- Updated dependencies [ab95c6b]
+- Updated dependencies [acf5979]
+- Updated dependencies [2babe5d]
+  - @agentapps/station@0.2.3
+  - @agentapps/sdk@0.2.3
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

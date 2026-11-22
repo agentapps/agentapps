@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.odoo',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Odoo',
   description:
     'Odoo ERP integration — manage partners, products, sales orders, invoices, projects, tasks, employees, leaves and timesheets via the Odoo JSON-RPC API using an API key.',

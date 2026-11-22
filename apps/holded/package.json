@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.holded",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Holded Agent App — manage invoices, contacts, products, and treasury via the Holded API.",
   "type": "module",

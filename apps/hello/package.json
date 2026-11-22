@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.hello",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Hello — minimal Agent App example (greet + countdown tools).",
   "type": "module",

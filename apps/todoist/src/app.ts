@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.todoist',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Todoist',
   description:
     'Todoist task management — create, update, complete and delete tasks, organize projects, sections, labels and comments.',

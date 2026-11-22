@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.youtube-analytics',
   name: 'YouTube Analytics',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     "Read YouTube channel analytics with the YouTube Analytics API and the YouTube Data API v3: views, watch time, subscribers, traffic sources, devices, geography, demographics, top videos, audience retention, and the channel's videos and playlists. Read-only; Google OAuth.",
   tagline:

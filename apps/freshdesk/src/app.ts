@@ -11,7 +11,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.freshdesk',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Freshdesk',
   description:
     'Freshdesk customer support — manage tickets, contacts, agents, companies, and ticket fields.',

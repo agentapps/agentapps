@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.twilio',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Twilio',
   description:
     'Twilio communications — send SMS, make calls, manage phone numbers, and check message status.',

@@ -166,8 +166,13 @@ describe('agentapps without the repository (step 1)', () => {
     const info = await agentapps(['info', 'app.hello']);
     expect(info.code).toBe(0);
     expect(info.out).toContain('Minimal example app with greet and countdown tools');
+    const github = (await agentapps(['info', 'app.github'])).out;
+    expect(github).toContain('github-app');
+    expect(github).toContain('GITHUB_APP_ID');
+    expect(github).toContain('MIT');
+    expect(github).not.toContain('Entrypoint');
     expect(existsSync(join(home, '.agentapps', 'workspace', '.agentapps', 'apps'))).toBe(false);
-  });
+  }, 60_000);
 
   it('[DIST-AC-3] install downloads the app; a failed download installs nothing', async () => {
     const missing = await registry(Buffer.from('unused'));
@@ -305,6 +310,29 @@ describe('publishing apps (step 4)', () => {
       mkdirSync(unpacked);
       expect(spawnSync('tar', ['-xzf', tarball, '-C', unpacked]).status).toBe(0);
       expect(() => assertSelfContained(join(unpacked, 'package'))).not.toThrow();
+    },
+    120_000,
+  );
+
+  it.skipIf(!hasBun)(
+    '[DIST-AC-14] the packed app says what it is: description, license, author, repository, README',
+    async () => {
+      const { packApp } = (await import(
+        pathToFileURL(join(CLI, 'scripts', 'pack-app.mjs')).href
+      )) as { packApp: (dir: string, out: string) => string };
+      const unpacked = join(root, 'unpacked');
+      mkdirSync(unpacked);
+      const tarball = packApp(HELLO, join(root, 'out'));
+      expect(spawnSync('tar', ['-xzf', tarball, '-C', unpacked]).status).toBe(0);
+      const pkg = JSON.parse(readFileSync(join(unpacked, 'package', 'package.json'), 'utf8'));
+      expect(pkg.description).toBeTruthy();
+      expect(pkg.license).toBe('MIT');
+      expect(pkg.author).toBeTruthy();
+      expect(pkg.keywords).toContain('agent-apps');
+      expect(pkg.repository.directory).toBe('apps/hello');
+      expect(readFileSync(join(unpacked, 'package', 'README.md'), 'utf8')).toContain(
+        'agentapps install app.hello',
+      );
     },
     120_000,
   );

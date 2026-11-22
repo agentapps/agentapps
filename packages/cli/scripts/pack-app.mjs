@@ -24,7 +24,7 @@ import {
 } from 'node:fs';
 import { builtinModules } from 'node:module';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const RUNTIME_DEPENDENCY_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependencies'];
@@ -67,6 +67,38 @@ function run(command, args, options = {}) {
   if (r.status !== 0) throw new Error(`${command} ${args[0]} failed (exit ${r.status})`);
 }
 
+/** Walk up from `dir` to the package.json that declares the repository an app lives in. */
+function repositoryOf(dir) {
+  for (let at = dirname(dir); at !== dirname(at); at = dirname(at)) {
+    const file = join(at, 'package.json');
+    if (!existsSync(file)) continue;
+    const { repository } = JSON.parse(readFileSync(file, 'utf8'));
+    if (!repository) continue;
+    const base = typeof repository === 'string' ? { type: 'git', url: repository } : repository;
+    return { ...base, directory: relative(at, dir).split(sep).join('/') };
+  }
+  return undefined;
+}
+
+/** The README of an app that does not have one: what it is and how to install it. */
+function defaultReadme(manifest) {
+  const alias = manifest.id.replace(/^app\./, '').replaceAll('.', '-');
+  return [
+    `# ${manifest.name ?? manifest.id}`,
+    '',
+    manifest.description ?? manifest.tagline ?? '',
+    '',
+    'An [Agent App](https://agentapps.tech). Install it with the Agent Apps CLI:',
+    '',
+    '```bash',
+    'npm install -g @agentapps/cli',
+    `agentapps install ${manifest.id} ${alias}`,
+    `agentapps ${alias} tools`,
+    '```',
+    '',
+  ].join('\n');
+}
+
 /** Pack `appDir` into `outDir`; returns the tarball's path. */
 export function packApp(appDir, outDir) {
   const source = resolve(appDir);
@@ -87,11 +119,23 @@ export function packApp(appDir, outDir) {
       join(pkgDir, 'dist', 'app.js'),
     ]);
     copyFileSync(join(source, 'agentapp.json'), join(pkgDir, 'agentapp.json'));
+    // DIST-REQ-14: what the registry shows comes from the manifest.
+    const manifest = JSON.parse(readFileSync(join(source, 'agentapp.json'), 'utf8'));
+    const author = manifest.author?.name
+      ? `${manifest.author.name}${manifest.author.email ? ` <${manifest.author.email}>` : ''}`
+      : undefined;
+    const readme = join(source, 'README.md');
+    writeFileSync(
+      join(pkgDir, 'README.md'),
+      existsSync(readme) ? readFileSync(readme, 'utf8') : defaultReadme(manifest),
+    );
     const pkg = {
       name: appPkg.name,
       version: appPkg.version,
-      description: appPkg.description,
-      license: appPkg.license,
+      description: manifest.tagline || manifest.description || appPkg.description,
+      license: manifest.license ?? appPkg.license,
+      ...(author ? { author } : {}),
+      keywords: [...new Set(['agent-apps', ...(manifest.keywords ?? [])])],
       type: 'module',
       main: './dist/app.js',
       exports: {
@@ -99,7 +143,7 @@ export function packApp(appDir, outDir) {
         './agentapp.json': './agentapp.json',
         './package.json': './package.json',
       },
-      ...(appPkg.repository ? { repository: appPkg.repository } : {}),
+      repository: appPkg.repository ?? repositoryOf(source),
     };
     writeFileSync(join(pkgDir, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`);
     assertSelfContained(pkgDir);

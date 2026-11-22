@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.microsoft.outlook',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Outlook',
   description:
     'Microsoft Outlook email management — send, read, search, and organize emails via Microsoft Graph API.',

@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.open-meteo',
   name: 'Open-Meteo',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     'Look up places by name and get weather from the free Open-Meteo APIs (no key): current conditions, daily and hourly forecasts up to 16 days, and historical weather back to 1940. Free tier is for non-commercial use only; data are CC BY 4.0.',
   tagline: 'Weather forecasts and historical weather for any place, from Open-Meteo',

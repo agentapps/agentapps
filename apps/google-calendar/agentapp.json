@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.google.calendar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Google Calendar",
   "description": "Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.",
   "tagline": "Manage Google Calendar events with full OAuth2 integration",

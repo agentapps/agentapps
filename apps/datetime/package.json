@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.datetime",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Conversation hook example — the current date and time in every turn.",
   "type": "module",

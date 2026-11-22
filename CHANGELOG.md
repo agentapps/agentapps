@@ -5,6 +5,29 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] — 2026-11-22
+
+A security release. Update with `npm install -g @agentapps/cli`, then `agentapps station restart`.
+
+### Security
+
+- **The Station listens on this machine only.** A Station started by the CLI listened on every network interface and, until the workspace had its first API key, answered requests that carried no credential as the admin: anyone on the same network could call the installed apps and approve waiting calls. It now listens on `127.0.0.1`, and without a key it answers only this machine. To serve another address on purpose, set `station.host` in `agentapps.json`.
+- **A destructive tool always waits for approval.** After a Station restart, a tool an app marks as destructive or sensitive could run without asking when it was called before the tools had been listed. The Station now learns an app's tools before it evaluates a Policy, and refuses the call when it cannot.
+- **Secret files are readable by their owner only.** The files that hold system secrets and Installation secrets are written with mode `0600`.
+
+### Changed
+
+- **Each app's npm package says what it is**: description, license, author, keywords, a link to its source and a README. Every app in the catalog has a new patch version with it; `posthog` and `whatsapp` are 2.1.0.
+- Messages say Installation and Installation secret where they said instance and user secret.
+
+### Fixed
+
+- `agentapps info <appId>` for an app that is not downloaded yet shows its real auth type, system secrets, author and license. It reported `Auth: none` for every app.
+- The help lists `installations`; it named a command that does not exist.
+- The README and the architecture page said apps run as child processes; the Station the CLI starts runs them in its own process.
+
+---
+
 ## [0.2.2] — 2026-11-22
 
 ### Added
@@ -45,7 +68,7 @@ The first version meant to be installed from npm: `npm install -g @agentapps/cli
 - **App packages.** Every app is published as `@agentapps/<appId>`, a self-contained package with no dependencies to resolve.
 - **`agentapps connect <name>`** connects any agent platform that speaks MCP: it creates an API key with that name and prints the MCP server entry to add. `connect claude-code` registers it for you. The gateway is `agentapps mcp <name>`.
 - **`npx @agentapps/cli`** runs the CLI by its package name.
-- **Policies by key name.** API key names are unique among active keys, and `agentapps policy` accepts the name: `agentapps policy set cursor app.github merge-pull-request ask`.
+- **Policies by key name.** API key names are unique among active keys, and `agentapps policy` accepts the name: `agentapps policy set cursor app.github merge-pull ask`.
 - **Gateways see only what their Policy allows.** A gateway lists the Installations its key may use.
 - A single executable per platform and a `curl | sh` installer, built by the release (not served yet).
 

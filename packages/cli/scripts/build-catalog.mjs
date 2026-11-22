@@ -24,6 +24,13 @@ const apps = publishableApps(appsDir).map(({ pkg, manifest }) => ({
   description: manifest.description ?? '',
   category: manifest.category ?? '',
   keywords: Array.isArray(manifest.keywords) ? manifest.keywords : [],
+  ...(manifest.author ? { author: manifest.author } : {}),
+  ...(manifest.license ? { license: manifest.license } : {}),
+  auth: {
+    type: manifest.auth?.type ?? 'none',
+    systemSecrets: manifest.auth?.systemSecrets ?? [],
+    installationSecrets: manifest.auth?.installationSecrets ?? [],
+  },
 }));
 
 mkdirSync(dirname(out), { recursive: true });

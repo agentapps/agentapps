@@ -48,7 +48,7 @@ export async function handleStatus(
 
   return {
     success: true,
-    data: { [`Instance: ${alias}`]: status } as unknown as ResultValue,
+    data: { [`Installation: ${alias}`]: status } as unknown as ResultValue,
     exitCode: 0,
   };
 }

@@ -12,7 +12,7 @@ const CANVA_API_BASE = 'https://api.canva.com/rest/v1';
 
 const app = createApp({
   id: 'app.canva',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Canva',
   description:
     'Canva design management — designs, exports, resizes, folders, assets, brand templates, autofill, and comments via the Canva Connect API.',

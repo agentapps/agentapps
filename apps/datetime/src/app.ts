@@ -10,7 +10,7 @@ import { createApp } from '@agentapps/sdk';
 
 const app = createApp({
   id: 'app.datetime',
-  version: '1.0.0',
+  version: '1.0.1',
   name: 'Date & Time',
   description: 'Tells the model the current date, time and timezone on every turn.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

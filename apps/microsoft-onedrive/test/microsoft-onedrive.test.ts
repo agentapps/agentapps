@@ -58,7 +58,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.0' },
+    host: { name: 'test', version: '1.0.1' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -115,7 +115,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.microsoft.onedrive',
-    appVersion: '1.0.0',
+    appVersion: '1.0.1',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -176,7 +176,7 @@ describe('Microsoft OneDrive Agent App', () => {
 
     expect(result.success).toBe(true);
     expect(manifest.id).toBe('app.microsoft.onedrive');
-    expect(manifest.version).toBe('1.0.0');
+    expect(manifest.version).toBe('1.0.1');
     expect(manifest.auth.scopes).toContain('Files.ReadWrite.All');
     expect(manifest.auth.scopes).toContain('Sites.Read.All');
   });

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.make',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Make',
   description:
     'Make.com automation — trigger scenarios via webhooks (no token needed) and manage scenarios via the account API: create, read, update, delete, clone, start, stop, list, run, and inspect blueprints.',

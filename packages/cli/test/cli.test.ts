@@ -1457,6 +1457,6 @@ describe('Permission commands', () => {
       { ctx, options: defaultOptions() },
     );
     expect(result.success).toBe(false);
-    expect(result.error?.message).toContain('Unknown instance');
+    expect(result.error?.message).toContain('Unknown Installation');
   });
 });

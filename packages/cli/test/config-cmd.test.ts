@@ -150,7 +150,7 @@ describe('config command', () => {
 
     expect(result.success).toBe(false);
     expect(result.exitCode).toBe(2);
-    expect(result.error?.message).toContain('App or instance not found');
+    expect(result.error?.message).toContain('App or Installation not found');
   });
 
   it('prompts interactively for missing secrets', async () => {

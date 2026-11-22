@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.meta-ads',
   name: 'Meta Ads',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     'Meta (Facebook and Instagram) ads through the Marketing API: list ad accounts, campaigns, ad sets, ads and creatives, run performance reports with breakdowns, pause or activate delivery, change budgets, and create campaigns and ad sets (always paused)',
   tagline: 'Report on Meta ad performance and manage campaigns, ad sets, ads and budgets',

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.factorial",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Factorial",
   "description": "Factorial HR — manage employees, time off, attendance, payroll, documents, contracts and teams via Factorial API with OAuth2",
   "tagline": "Manage employees, time off, attendance, and payroll in Factorial HR",

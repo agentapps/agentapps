@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.google.ads',
   name: 'Google Ads',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     'Google Ads API (REST, v26): list the accounts a Google user can reach (including through manager accounts), report on account, campaign, ad group, ad, keyword and search term performance, run read-only GAQL queries, pause or enable campaigns and ad groups, change campaign budgets and add negative keywords. Writes that can spend money are marked destructive.',
   tagline: 'Report on Google Ads performance and manage campaigns, budgets and negative keywords',

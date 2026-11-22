@@ -82,7 +82,7 @@ export async function handleWarm(
   const totalTools = succeeded.reduce((sum, r) => sum + r.tools, 0);
 
   const parts: string[] = [];
-  parts.push(`${instances.length} instance${instances.length === 1 ? '' : 's'}`);
+  parts.push(`${instances.length} Installation${instances.length === 1 ? '' : 's'}`);
   parts.push(`${succeeded.length} warmed`);
   parts.push(`${totalTools} tool${totalTools === 1 ? '' : 's'} cached`);
   if (failed.length > 0) {

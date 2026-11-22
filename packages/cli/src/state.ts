@@ -23,6 +23,7 @@ import {
 import { dirname, join, resolve } from 'node:path';
 import { ADMIN_PRINCIPAL_ID, type ApiKeyRecord, type Policy } from '@agentapps/protocol';
 import { defaultPolicy } from '@agentapps/station';
+import { writeSecretFile } from './secrets-store.js';
 
 export interface Installation {
   /** Unique, immutable identifier. Generated at install time (e.g. "ins_a7f3b2c1"). */
@@ -242,7 +243,7 @@ export function writeInstallationSecrets(
   const path = instanceSecretsPath(configPath, installationId);
   const current = readInstallationSecrets(configPath, installationId);
   const next = { ...current, ...secrets };
-  writeFileSync(path, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+  writeSecretFile(path, next);
 }
 
 /** Return true if the instance has any stored secrets. */

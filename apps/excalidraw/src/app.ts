@@ -10,7 +10,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.excalidraw',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Excalidraw',
   description:
     'Integrate with Excalidraw Plus to manage scenes, collections, workspaces, users, and invites programmatically.',

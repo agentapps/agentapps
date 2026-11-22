@@ -37,7 +37,7 @@ The vocabulary is defined in [`docs/glossary.md`](./docs/glossary.md) and the pi
 
 ```
 Agent Platform ── MCP ──▶ Gateway ── Agent Apps ──▶ Station ── Agent Apps ──▶ App instance
-(Claude Code)             (Host)     over HTTP                  over stdio
+(Claude Code)             (Host)     over HTTP                  in process
 ```
 
 - **App**: your code, built with `@agentapps/sdk`.
@@ -84,7 +84,7 @@ $ agentapps hello tool greet name:World
 
 For Tab completion of commands, apps, aliases and tools, run `agentapps completions install` once (bash and zsh).
 
-`agentapps apps` lists the catalog and `agentapps info <app id>` describes one app. Apps are downloaded when you install them. An app for a service needs that service's credentials: `agentapps github-work auth` after `agentapps install app.github github-work`, for example. You can install the same app more than once under different aliases, such as `github-work` and `github-personal`.
+`agentapps apps` lists the catalog and `agentapps info <app id>` describes one app. Apps are downloaded when you install them. An app for a service needs that service's credentials: most take an API key (`agentapps config linear API_KEY:"…"` after `agentapps install app.linear linear`), and the ones that sign in with OAuth need an OAuth client you register with the service first. The [documentation](https://docs.agentapps.tech/using/authenticate) covers both. You can install the same app more than once under different aliases, such as `github-work` and `github-personal`.
 
 ## Connecting an agent
 
@@ -122,7 +122,7 @@ Each connection has its own API key, so each agent is a Principal with its own P
 You decide what each agent may do. A rule allows a tool, denies it, or makes the call wait for your approval:
 
 ```bash
-agentapps policy set cursor app.github merge-pull-request ask
+agentapps policy set cursor app.linear linear-create-issue ask
 agentapps policy set claude-code app.todo-list delete-node deny
 ```
 

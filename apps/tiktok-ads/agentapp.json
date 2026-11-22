@@ -1,7 +1,7 @@
 {
   "id": "app.tiktok-ads",
   "name": "TikTok Ads",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TikTok Ads through the TikTok API for Business (Marketing API v1.3): list ad accounts, campaigns, ad groups and ads, run performance and audience reports, pause or enable delivery and change campaign or ad group budgets. Enabling delivery and budget changes affect spend and ask for approval.",
   "tagline": "Report on TikTok ad campaigns and pause, enable or re-budget them",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

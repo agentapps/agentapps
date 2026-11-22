@@ -1,7 +1,7 @@
 {
   "id": "app.microsoft.excel",
   "name": "Excel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Microsoft Excel workbook automation — read and write ranges, formulas, tables, and charts via the Microsoft Graph workbook API.",
   "tagline": "Read and write Excel ranges, formulas, tables, and charts via Microsoft Graph",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

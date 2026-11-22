@@ -1,5 +1,14 @@
 # @agentapps/controller
 
+## 0.2.3
+
+### Patch Changes
+
+- 160b0bf: Security: after a Station restart, a tool an app marks as destructive or sensitive could run without waiting for approval when it was called before the tools had been listed. The Station now lists an app's tools itself before evaluating a Policy, and refuses the call when it cannot (POLICY-REQ-16).
+- acf5979: Package descriptions use the current vocabulary (Station, not controllers or AppStation).
+- 2babe5d: Security: the Station started by the CLI listens on this machine only (`127.0.0.1`) instead of on every network interface, and while the workspace has no API key it serves requests without a credential only to this machine. Before, a freshly started Station could be called, and its pending calls approved, by anyone on the same network until the first key was created. `station.host` in `agentapps.json` names another address to listen on (CLI-REQ-12).
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

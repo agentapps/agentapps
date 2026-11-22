@@ -1,5 +1,21 @@
 # @agentapps/cli
 
+## 0.2.3
+
+### Patch Changes
+
+- bb153cf: The npm package of each app now says what it is: description, license, author, keywords, a link to its source and a README. Every app in the catalog gets a new patch version with it (DIST-REQ-14).
+- d77f84f: `agentapps info <appId>` for an app that is not downloaded yet shows its real auth type, system secrets, author and license. It reported `Auth: none` and `System secrets: none` for every app (DIST-REQ-2).
+- ab95c6b: Messages say Installation and Installation secret where they said instance and user secret, and the help lists `installations` instead of a command that does not exist.
+- c8dea59: Security: the files where the CLI keeps system and Installation secrets are now readable by their owner only (mode 0600). They were written with the default permissions before (CLI-REQ-13).
+- 2babe5d: Security: the Station started by the CLI listens on this machine only (`127.0.0.1`) instead of on every network interface, and while the workspace has no API key it serves requests without a credential only to this machine. Before, a freshly started Station could be called, and its pending calls approved, by anyone on the same network until the first key was created. `station.host` in `agentapps.json` names another address to listen on (CLI-REQ-12).
+- Updated dependencies [160b0bf]
+- Updated dependencies [acf5979]
+- Updated dependencies [2babe5d]
+  - @agentapps/station@0.2.3
+  - @agentapps/host@0.2.3
+  - @agentapps/protocol@0.2.3
+
 ## 0.2.2
 
 ### Patch Changes

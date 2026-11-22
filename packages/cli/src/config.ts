@@ -250,6 +250,7 @@ export function loadWorkspaceConfig(configPath: string): WorkspaceConfig {
     station = {
       ...(typeof c.publicUrl === 'string' ? { publicUrl: c.publicUrl } : {}),
       ...(typeof c.port === 'number' ? { port: c.port } : {}),
+      ...(typeof c.host === 'string' ? { host: c.host } : {}),
     };
   }
 

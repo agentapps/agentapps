@@ -1,7 +1,7 @@
 {
   "id": "app.render",
   "name": "Render",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Deploy and manage services on Render directly from your workspace. Supports web services, static sites, deployments, environment variables, custom domains, and more.",
   "tagline": "Deploy, manage, and monitor services on the Render cloud platform",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

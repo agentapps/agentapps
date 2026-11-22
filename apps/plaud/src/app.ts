@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.plaud',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'PLAUD',
   description:
     'Access your PLAUD voice recordings, transcripts, and AI summaries through the official Plaud MCP server. Search and retrieve notes from your PLAUD library.',

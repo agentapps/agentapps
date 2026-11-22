@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.kelify',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Kelify AI Property Search',
   description:
     'AI-powered conversational property search API for real estate listings — search properties through natural language conversations with follow-up questions and full chat history.',

@@ -1,7 +1,7 @@
 {
   "id": "app.microsoft.outlook",
   "name": "Outlook",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Microsoft Outlook email management — send, read, search, and organize emails via Microsoft Graph API.",
   "tagline": "Send, read, search, and organize Outlook emails via Microsoft Graph",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

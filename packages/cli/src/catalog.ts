@@ -17,6 +17,10 @@ export interface CatalogEntry {
   description: string;
   category: string;
   keywords: string[];
+  author?: { name: string; email?: string };
+  license?: string;
+  /** How the app authenticates and the secrets it needs, as its manifest declares them. */
+  auth?: { type: string; systemSecrets: string[]; installationSecrets: string[] };
 }
 
 let cached: CatalogEntry[] | undefined;

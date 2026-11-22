@@ -1,7 +1,7 @@
 {
   "id": "app.plaud",
   "name": "PLAUD",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Access your PLAUD voice recordings, transcripts, and AI summaries through the official Plaud MCP server. Search and retrieve notes from your PLAUD library.",
   "tagline": "Browse, search, and retrieve your PLAUD voice recordings and transcripts",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -1,7 +1,7 @@
 {
   "name": "@agentapps/host",
-  "version": "0.2.2",
-  "description": "Host side of the Agent Apps protocol — embed in a platform to consume agent apps via their controllers",
+  "version": "0.2.3",
+  "description": "Host side of the Agent Apps protocol: embed it in a platform to use Agent Apps through a Station",
   "license": "MIT",
   "type": "module",
   "exports": {

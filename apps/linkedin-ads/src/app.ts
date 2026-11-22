@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.linkedin-ads',
   name: 'LinkedIn Ads',
-  version: '1.0.0',
+  version: '1.0.1',
   description:
     'LinkedIn Marketing API (Advertising): list ad accounts, campaign groups, campaigns and creatives, report performance with adAnalytics, and pause, activate or re-budget campaigns.',
   tagline: 'Report on LinkedIn ad campaigns and pause, activate or re-budget them',

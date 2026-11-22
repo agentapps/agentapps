@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.homey',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Homey',
   description:
     'Homey smart home controller — control devices, manage flows, and monitor your home via Athom Cloud API.',

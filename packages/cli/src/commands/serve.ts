@@ -175,10 +175,9 @@ export async function handleServe(
   }
 
   // Public URL for OAuth callbacks. Priority:
-  //   1. CLI flag:    --publicUrl https://your-station.example.com
-  //   2. Env var:     PUBLIC_URL=https://your-station.example.com
-  //   3. Config file: agentapps.json → station.publicUrl
-  //   4. Auto-detect: http://localhost:{port}
+  //   1. Env var:     PUBLIC_URL=https://your-station.example.com
+  //   2. Config file: agentapps.json → station.publicUrl
+  //   3. Auto-detect: http://localhost:{port}
   const publicUrl =
     ((command as Record<string, unknown>).publicUrl as string | undefined) ??
     process.env.PUBLIC_URL ??
@@ -189,6 +188,10 @@ export async function handleServe(
   const server = new StationServer({
     apps,
     port,
+    // CLI-REQ-12: this machine only, unless the workspace names another address;
+    // and while no key exists, only this machine is served without a credential.
+    host: ctx.config.station?.host ?? '127.0.0.1',
+    openToLoopbackOnly: true,
     stations,
     publicUrl,
     stationId: `serve-${hostname()}-${port}`,

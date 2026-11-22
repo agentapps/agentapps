@@ -561,7 +561,7 @@ export interface ToolContext {
   readonly secrets: SecretsAccess;
   /** Read a single system secret by name. Returns `undefined` if not present. */
   systemSecret(name: string): Promise<string | undefined>;
-  /** Read a single user secret by name. Returns `undefined` if not present. */
+  /** Read a single Installation secret by name. Returns `undefined` if not present. */
   installationSecret(name: string): Promise<string | undefined>;
   /** Auth access via host requests. */
   readonly auth: AuthAccess;

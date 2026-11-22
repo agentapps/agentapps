@@ -1,7 +1,7 @@
 {
   "id": "app.notion",
   "name": "Notion",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Notion workspace - pages, databases, blocks, search, comments, file uploads",
   "tagline": "Manage Notion pages, databases, and content",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.contacts',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Google Contacts',
   description:
     'Manage Google Contacts — list, search, create, update, and delete contacts, plus organize them into groups and labels via the Google People API.',

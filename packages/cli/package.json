@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Agent Apps CLI — run and exercise Agent Apps locally from a workspace",
   "license": "MIT",
   "type": "module",
@@ -47,10 +47,18 @@
     "@agentapps/host": "workspace:*",
     "@agentapps/protocol": "workspace:*",
     "@agentapps/station": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  },
+  "peerDependencies": {
     "tsx": "^4.19.4"
   },
+  "peerDependenciesMeta": {
+    "tsx": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@agentapps/sdk": "workspace:*"
+    "@agentapps/sdk": "workspace:*",
+    "tsx": "^4.19.4"
   }
 }

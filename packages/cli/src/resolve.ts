@@ -7,7 +7,9 @@
  */
 
 import { existsSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import type { ResolvedApp } from './types.js';
 
 const MANIFEST_NAME = 'agentapp.json';
@@ -93,19 +95,29 @@ async function importFactory(
  * installs a single global hook that handles concurrent imports correctly.
  *
  * The registration is memoized on a promise so concurrent first-callers share
- * one `register()` and never stack multiple loaders. If tsx cannot be loaded we
- * swallow the error and fall back to Node's native dynamic import.
+ * one `register()` and never stack multiple loaders.
+ *
+ * tsx is a development tool and not a dependency of the CLI (DIST-REQ-12): it
+ * is looked for next to the CLI and then in the project of the app being
+ * loaded. When neither has it, loading TypeScript source fails saying so.
+ *
+ * @spec DIST-REQ-12
  */
 let tsxSetup: Promise<void> | undefined;
 
-function ensureTsxRegistered(): Promise<void> {
+function ensureTsxRegistered(modulePath: string): Promise<void> {
   if (!tsxSetup) {
     tsxSetup = import('tsx/esm/api')
+      .catch(() => import(pathToFileURL(createRequire(modulePath).resolve('tsx/esm/api')).href))
       .then(({ register }) => {
         register();
       })
       .catch(() => {
-        // tsx unavailable — native import is the fallback.
+        tsxSetup = undefined;
+        throw new Error(
+          `${modulePath} is TypeScript source, and loading it needs tsx, which is not installed. ` +
+            "Install it next to the CLI (npm install -g tsx) or in the app's project (npm install -D tsx).",
+        );
       });
   }
   return tsxSetup;
@@ -117,15 +129,14 @@ function ensureTsxRegistered(): Promise<void> {
  * Node's native type stripping loads a `.ts` entry but does NOT rewrite nested
  * `./x.js` import specifiers to `.ts`, so a multi-file TS app run from source
  * fails to resolve its own imports. tsx handles that rewriting, matching how
- * apps declare `runtime.command: tsx`. For built `.js` (and as a fallback when
- * tsx is unavailable) we use the native dynamic import.
+ * apps declare `runtime.command: tsx`. Built `.js` uses the native dynamic import.
  */
 async function importModule(modulePath: string, url: string): Promise<unknown> {
   if (modulePath.endsWith('.ts')) {
     // Ensure tsx's persistent loader is active before importing a TS source.
     // Once registered, its transform (including nested `./x.js` → `.ts`
     // rewriting) applies to the plain dynamic import below.
-    await ensureTsxRegistered();
+    await ensureTsxRegistered(modulePath);
   }
   return import(url);
 }

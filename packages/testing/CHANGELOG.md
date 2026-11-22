@@ -1,5 +1,14 @@
 # @agentapps/testing
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [5ac8330]
+  - @agentapps/station@0.2.1
+  - @agentapps/host@0.2.1
+  - @agentapps/protocol@0.2.1
+
 ## 0.2.0
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @agentapps/controller
 
+## 0.2.1
+
+### Patch Changes
+
+- 5ac8330: An app installed while the Station is running is available to agents without restarting it: its Installations are listed and its tools can be called (DIST-REQ-13).
+  - @agentapps/protocol@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

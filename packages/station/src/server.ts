@@ -145,6 +145,14 @@ export interface StationServerOptions {
    * and open sessions as them (POLICY-REQ-10).
    */
   installations?: () => StationInstallation[];
+  /**
+   * Apps that became available after the Station started, asked for before
+   * Installations are listed so a Gateway sees them without a restart. Returns
+   * only apps the Station does not have yet.
+   *
+   * @spec DIST-REQ-13
+   */
+  discoverApps?: () => Promise<AppEntry[]>;
   /** API key store. When provided, enables multi-key authentication. */
   apiKeys?: ApiKeyStore;
   /** Policy store, one Policy per Principal. When provided, tool calls are evaluated (POLICY-REQ-5). */
@@ -259,6 +267,7 @@ export class StationServer {
   private readonly documentStore: DocumentStore;
   private readonly resolveInstallation?: (installationId: string) => { appId: string } | undefined;
   private readonly installations?: () => StationInstallation[];
+  private readonly discoverApps?: () => Promise<AppEntry[]>;
   private readonly oauth = new OAuthManager();
   private readonly publicUrl?: string;
   private readonly apiKeyStore?: ApiKeyStore;
@@ -293,6 +302,7 @@ export class StationServer {
     this.secrets = options.secrets;
     this.resolveInstallation = options.resolveInstallation;
     this.installations = options.installations;
+    this.discoverApps = options.discoverApps;
     this.publicUrl = options.publicUrl;
     this.apiKeyStore = options.apiKeys;
     this.policyStore = options.policies;
@@ -656,6 +666,7 @@ export class StationServer {
       json(res, 401, { error: 'Unauthorized: GET /installations needs an API key' });
       return;
     }
+    await this.registerDiscoveredApps();
     const policy = this.policyStore ? await policyFor(this.policyStore, principalId) : undefined;
     const installations = (this.installations?.() ?? [])
       .filter((i) => this.managedApps.has(i.appId))
@@ -667,6 +678,21 @@ export class StationServer {
         name: this.managedApps.get(i.appId)?.entry.name ?? i.appId,
       }));
     json(res, 200, { installations });
+  }
+
+  /**
+   * Register and initialize the apps that appeared since the Station started.
+   *
+   * @spec DIST-REQ-13
+   */
+  private async registerDiscoveredApps(): Promise<void> {
+    if (!this.discoverApps) return;
+    for (const entry of await this.discoverApps()) {
+      if (this.managedApps.has(entry.id)) continue;
+      this.addApp(entry);
+      const managed = this.managedApps.get(entry.id);
+      if (managed) await this.autoInitialize(managed).catch(() => undefined);
+    }
   }
 
   /** The Principal a request's bearer credential names, checked even on an open Station. */

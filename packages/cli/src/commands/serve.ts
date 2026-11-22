@@ -19,7 +19,7 @@ import {
   type StationEndpoint,
   StationServer,
 } from '@agentapps/station';
-import { resolveSourcePath } from '../config.js';
+import { loadWorkspaceConfig, needsDownload, resolveSourcePath } from '../config.js';
 import { InstallationSecretsStore, workspaceStoragePath } from '../host.js';
 import { resolveApp } from '../resolve.js';
 import { loadAppSecrets } from '../secrets-store.js';
@@ -130,14 +130,18 @@ export async function handleServe(
 
   process.stdout.write('Loading apps...\n');
 
-  for (const [appId, entry] of appEntries) {
+  // Sources already looked at, loaded or failed, so each is tried once.
+  const seen = new Set<string>();
+  const loadApp = async (appId: string, source: string): Promise<AppEntry | undefined> => {
+    seen.add(source);
     try {
-      const source = resolveSourcePath(ctx.configPath, entry.source);
-      const resolved = await resolveApp(appId, source);
+      const resolved = await resolveApp(appId, resolveSourcePath(ctx.configPath, source));
       const manifest = resolved.manifest ?? {};
-      resolvedApps.push({ id: (manifest.id as string) ?? appId, app: resolved });
-      apps.push({
-        id: (manifest.id as string) ?? appId,
+      const id = (manifest.id as string) ?? appId;
+      resolvedApps.push({ id, app: resolved });
+      process.stdout.write(`  ✓ ${id}\n`);
+      return {
+        id,
         version: (manifest.version as string) ?? '0.0.0',
         factory: resolved.factory,
         name: resolved.name,
@@ -145,16 +149,24 @@ export async function handleServe(
         auth: manifest.auth as AppEntry['auth'],
         manifest,
         sourcePath: resolved.sourcePath,
-      });
-      process.stdout.write(`  ✓ ${(manifest.id as string) ?? appId}\n`);
+      };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       errors.push(`${appId}: ${message}`);
       process.stderr.write(`  ✗ ${appId}: ${message}\n`);
+      return undefined;
     }
+  };
+
+  for (const [appId, entry] of appEntries) {
+    // DIST-REQ-11: a catalog app that has not been downloaded is not a failure.
+    if (needsDownload(ctx.configPath, entry.source)) continue;
+    const app = await loadApp(appId, entry.source);
+    if (app) apps.push(app);
   }
 
-  if (apps.length === 0) {
+  // DIST-REQ-11: the Station starts with what there is, even with no app at all.
+  if (apps.length === 0 && errors.length > 0) {
     return {
       success: false,
       exitCode: 1,
@@ -186,6 +198,16 @@ export async function handleServe(
     resolveInstallation: (installationId) => {
       const instance = getInstallationById(ctx.configPath, installationId);
       return instance ? { appId: instance.appId } : undefined;
+    },
+    // DIST-REQ-13: apps downloaded, or added to the workspace, after the start.
+    discoverApps: async () => {
+      const found: AppEntry[] = [];
+      for (const [appId, entry] of Object.entries(loadWorkspaceConfig(ctx.configPath).apps)) {
+        if (seen.has(entry.source) || needsDownload(ctx.configPath, entry.source)) continue;
+        const app = await loadApp(appId, entry.source);
+        if (app) found.push(app);
+      }
+      return found;
     },
     // POLICY-REQ-10: Gateways discover and open sessions as these Installations.
     installations: () =>

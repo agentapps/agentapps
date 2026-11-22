@@ -1,5 +1,16 @@
 # @agentapps/cli
 
+## 0.2.1
+
+### Patch Changes
+
+- 8ea0056: The Station starts when no app has been downloaded yet, instead of failing on a fresh install, and no longer logs every catalog app as not found. `tsx` is no longer a dependency of the CLI: installing it brings fewer packages and no install-script warning. Loading an app from TypeScript source uses the `tsx` next to the CLI or in the app's project, and says how to install it when it is missing (DIST-REQ-11, DIST-REQ-12).
+- 5ac8330: An app installed while the Station is running is available to agents without restarting it: its Installations are listed and its tools can be called (DIST-REQ-13).
+- Updated dependencies [5ac8330]
+  - @agentapps/station@0.2.1
+  - @agentapps/host@0.2.1
+  - @agentapps/protocol@0.2.1
+
 ## 0.2.0
 
 ### Patch Changes

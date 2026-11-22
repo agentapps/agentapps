@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/sdk",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Agent Apps SDK — author apps: tools, lifecycle hooks, events, UI resources, storage, app agent",
   "license": "MIT",
   "type": "module",

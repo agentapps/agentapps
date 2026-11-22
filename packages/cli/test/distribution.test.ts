@@ -225,6 +225,48 @@ describe('agentapps without the repository (step 1)', () => {
   }, 120_000);
 });
 
+describe('the first minutes after installing (step 5)', () => {
+  it('[DIST-AC-11] the Station starts with nothing downloaded', async () => {
+    const probe = createServer();
+    await new Promise<void>((r) => probe.listen(0, '127.0.0.1', r));
+    const port = String((probe.address() as AddressInfo).port);
+    await new Promise((r) => probe.close(r));
+
+    // The Station's own process, as `station start` runs it in the background.
+    const env = { ...process.env, NODE_PATH: '', HOME: home, NO_COLOR: '1' };
+    const station = spawn(process.execPath, ['--import', TSX, BIN, 'serve', port, '--foreground'], {
+      cwd,
+      env,
+    });
+    let out = '';
+    const ready = new Promise<boolean>((done) => {
+      const seen = (c: Buffer) => {
+        out += c.toString();
+        if (out.includes('server ready')) done(true);
+      };
+      station.stdout.on('data', seen);
+      station.stderr.on('data', seen);
+      station.on('close', () => done(false));
+    });
+    try {
+      expect(await ready, out).toBe(true);
+      expect(out).not.toContain('not found');
+      expect(out).not.toContain('failed to load');
+    } finally {
+      station.kill();
+    }
+  }, 120_000);
+
+  it('[DIST-AC-12] the CLI does not depend on tsx', () => {
+    const pkg = JSON.parse(readFileSync(join(CLI, 'package.json'), 'utf8')) as {
+      dependencies: Record<string, string>;
+      peerDependenciesMeta?: Record<string, { optional?: boolean }>;
+    };
+    expect(Object.keys(pkg.dependencies)).not.toContain('tsx');
+    expect(pkg.peerDependenciesMeta?.tsx?.optional).toBe(true);
+  });
+});
+
 describe('publishing apps (step 4)', () => {
   it.skipIf(!hasBun)(
     '[DIST-AC-10] only apps named after their id and not opted out are published, packed',

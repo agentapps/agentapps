@@ -5,6 +5,18 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] — 2026-11-22
+
+Three fixes for the first minutes after `npm install -g @agentapps/cli`.
+
+### Fixed
+
+- **The Station starts on a fresh install.** `agentapps station start` failed when no app had been downloaded yet, and logged every catalog app as not found. It now starts with whatever is there.
+- **Apps installed while the Station is running reach your agents.** Before, an app installed after `station start` was invisible to agents until the Station was restarted.
+- **A lighter install, without the install-script warning.** `tsx` is no longer a dependency of the CLI, so npm does not bring `esbuild` or warn about its install script. It is only needed to load an app from TypeScript source, and the CLI says how to install it when it is missing.
+
+---
+
 ## [0.2.0] — 2026-11-22
 
 The first version meant to be installed from npm: `npm install -g @agentapps/cli`.
@@ -247,6 +259,7 @@ Initial pre-alpha release of the Agent Apps open SDK, controller, and protocol.
 - [ ] `mca.scheduler` — Scheduler & Reminders
 - [ ] `mca.webfetch` — Web Fetch
 
+[0.2.1]: https://github.com/agentapps/agentapps/releases/tag/v0.2.1
 [0.2.0]: https://github.com/agentapps/agentapps/releases/tag/v0.2.0
 [1.0.0]: https://github.com/agentapps/agentapps/releases/tag/v1.0.0
 [0.1.0]: https://github.com/agentapps/agentapps/commits/main

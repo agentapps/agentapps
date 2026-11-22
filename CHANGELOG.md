@@ -5,6 +5,24 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] — 2026-11-22
+
+### Added
+
+- **`agentapps completions install`** sets up Tab completion for bash or zsh: it writes the script under `~/.agentapps` and adds one guarded line to the shell's rc file. A new terminal does not start Node, and nothing breaks if the CLI is removed later. `agentapps completions uninstall` takes it away.
+- **`agentapps version`** prints the version, like `--version` and `-V`.
+
+### Changed
+
+- **The `aa` command is gone.** macOS ships its own `aa` (Apple Archive), and installing the CLI put a second one on the PATH. Use `agentapps`.
+- An unknown option or command now says what to run instead: `agentapps help`, or `agentapps` alone for the interactive mode.
+
+### Fixed
+
+- `agentapps help` prints the help. It printed nothing before.
+
+---
+
 ## [0.2.1] — 2026-11-22
 
 Three fixes for the first minutes after `npm install -g @agentapps/cli`.
@@ -259,6 +277,7 @@ Initial pre-alpha release of the Agent Apps open SDK, controller, and protocol.
 - [ ] `mca.scheduler` — Scheduler & Reminders
 - [ ] `mca.webfetch` — Web Fetch
 
+[0.2.2]: https://github.com/agentapps/agentapps/releases/tag/v0.2.2
 [0.2.1]: https://github.com/agentapps/agentapps/releases/tag/v0.2.1
 [0.2.0]: https://github.com/agentapps/agentapps/releases/tag/v0.2.0
 [1.0.0]: https://github.com/agentapps/agentapps/releases/tag/v1.0.0

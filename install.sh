@@ -204,46 +204,16 @@ JSON
 # Shell completions
 # ---------------------------------------------------------------------------
 
-setup_completions() {
-  local shell_name="$1"
-  local rc_file="$2"
-
-  # Guarded so a new shell stays quiet when agentapps (or node) is missing.
-  local line='if command -v agentapps >/dev/null 2>&1; then eval "$(agentapps completions '"$shell_name"' 2>/dev/null)"; fi'
-  # The unguarded line older versions of this script wrote.
-  local old_line='eval "$(agentapps completions '"$shell_name"')"'
-
-  if [ ! -f "$rc_file" ]; then
-    # rc file doesn't exist yet — create it
-    echo "$line" > "$rc_file"
-    info "Created $rc_file with completions"
-    return
-  fi
-
-  if grep -qxF "$old_line" "$rc_file" 2>/dev/null; then
-    # Replace the old line in place (cat > keeps the file's owner, mode and symlink)
-    local tmp
-    tmp="$(mktemp)"
-    awk -v old="$old_line" -v new="$line" '$0 == old { print new; next } { print }' "$rc_file" > "$tmp"
-    cat "$tmp" > "$rc_file"
-    rm -f "$tmp"
-    info "Updated the completions line in $rc_file"
-    return
-  fi
-
-  if grep -qF "agentapps completions" "$rc_file" 2>/dev/null; then
-    # Already configured — skip
-    return
-  fi
-
-  printf '\n# agentapps shell completions\n%s\n' "$line" >> "$rc_file"
-  info "Added completions to $rc_file"
-}
-
+# The CLI writes the script to ~/.agentapps and one guarded line to the rc file
+# (and replaces the eval line older versions of this script wrote).
 if [ -n "$RC_FILE" ]; then
-  setup_completions "$DETECTED_SHELL" "$RC_FILE"
+  if node "$BIN_TARGET" completions install "$DETECTED_SHELL" >/dev/null; then
+    info "Tab completion set up in $RC_FILE"
+  else
+    info "Could not set up completions; run 'agentapps completions install' later"
+  fi
 else
-  info "Unknown shell ($DETECTED_SHELL) — run 'agentapps completions bash' or 'agentapps completions zsh' manually"
+  info "Unknown shell ($DETECTED_SHELL) — completions are available for bash and zsh: 'agentapps completions install bash'"
 fi
 
 # ---------------------------------------------------------------------------

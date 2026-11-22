@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/station",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Agent App AppStation — instance lifecycle (spawn on-demand, idle teardown, watchdog), traffic proxy, runtime adapters",
   "license": "MIT",
   "type": "module",

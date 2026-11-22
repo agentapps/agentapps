@@ -1,5 +1,16 @@
 # @agentapps/cli
 
+## 0.2.2
+
+### Patch Changes
+
+- 86219ba: `agentapps completions install` sets up Tab completion: it writes the script to `~/.agentapps` and adds one guarded line to the shell's rc file that sources it, so a new terminal does not start Node and nothing breaks if the CLI is removed. `completions uninstall` takes it away. An older `eval "$(agentapps completions …)"` line is replaced (CLI-REQ-10).
+- c517f2c: The `aa` command is removed. macOS ships its own `aa` (Apple Archive), and installing the CLI put a second one on the PATH. Use `agentapps`.
+- 684ed1a: `agentapps version` prints the version and `agentapps help` prints the help (it printed nothing before). An unknown option or command now says what to run instead: `agentapps help`, or `agentapps` alone for the interactive mode (CLI-REQ-11).
+  - @agentapps/protocol@0.2.2
+  - @agentapps/station@0.2.2
+  - @agentapps/host@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

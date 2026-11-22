@@ -48,7 +48,11 @@ Commands:
   station <action>                   Control the station: start|status|stop|restart
   warm                               Warm the tool cache for all installations
   sync                               Install npm: app packages from agentapps.json
-  completions <bash|zsh>             Print shell completion script
+  help                               Show this help
+  version                            Print the version (also --version, -V)
+  completions install [bash|zsh]     Set up Tab completion for your shell
+  completions uninstall [bash|zsh]   Remove it
+  completions <bash|zsh>             Print the completion script
   help, ?                            Show this help
   exit, quit                         Leave the REPL
 
@@ -74,8 +78,7 @@ Examples:
   agentapps hello subscribe calendar_updated
   agentapps hello unsubscribe
   agentapps config app.google.calendar CLIENT_ID:"abc" CLIENT_SECRET:"xyz"
-  agentapps completions bash          # eval or append to ~/.bashrc
-  agentapps completions zsh           # eval or append to ~/.zshrc
+  agentapps completions install       # Tab completion for your shell
 `;
 
 /**

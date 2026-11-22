@@ -17,7 +17,7 @@ npm install -g @agentapps/cli
 npx @agentapps/cli
 ```
 
-Installed, the command is `agentapps` (or `aa`). Never use `npx agentapps`: the unscoped
+Installed, the command is `agentapps`. Never use `npx agentapps`: the unscoped
 `agentapps` package on npm is an unrelated project.
 
 ## Quick start
@@ -191,6 +191,5 @@ pnpm --filter @agentapps/cli test
 
 This is the REPL redesign. The following are not yet implemented:
 
-- `aa` alias.
 - Custom tool renderers (built-in human/yaml/json renderers only).
 - Remote/npm app sources, `serve` mode, Docker runtime selection.

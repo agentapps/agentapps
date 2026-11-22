@@ -14,10 +14,10 @@ function filesUnder(dir: string): string[] {
 }
 
 describe('the CLI runs by its scoped package name', () => {
-  it('[CLI-AC-8] cli, agentapps and aa are the same command, and no template or skill says npx agentapps', () => {
+  it('[CLI-AC-8] cli and agentapps are the same command, there is no aa, and no template or skill says npx agentapps', () => {
     const manifest = JSON.parse(readFileSync(join(packages, 'cli', 'package.json'), 'utf8'));
     expect(manifest.bin.cli).toBe(manifest.bin.agentapps);
-    expect(manifest.bin.aa).toBe(manifest.bin.agentapps);
+    expect(manifest.bin.aa).toBeUndefined();
 
     const offenders = [join(packages, 'create', 'templates'), join(packages, 'create', 'skill')]
       .flatMap(filesUnder)

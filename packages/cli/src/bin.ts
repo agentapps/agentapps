@@ -7,8 +7,8 @@
  *   agentapps                          Start the REPL
  *   agentapps <command> [args...]      Execute a single REPL command
  *
- * The package manifest also exposes this file as `aa` and as `cli`, the latter so that
- * `npx @agentapps/cli` finds a command named after the package.
+ * The package manifest also exposes this file as `cli`, so that `npx @agentapps/cli`
+ * finds a command named after the package.
  *
  * @spec CLI-REQ-8
  */
@@ -21,6 +21,11 @@ import { resolve } from 'node:path';
 import { parseGlobalArgs } from './args.js';
 import { buildVersion } from './build-info.js';
 import { bashCompletionScript, zshCompletionScript } from './completions.js';
+import {
+  completionShell,
+  installCompletions,
+  uninstallCompletions,
+} from './completions-install.js';
 import {
   ensureHomeWorkspace,
   findConfigPath,
@@ -64,23 +69,46 @@ function handleGetCompletions(partial: string): number {
   return 0;
 }
 
-/** Handle `completions bash|zsh` — print the shell completion script. */
+/**
+ * Handle `completions install|uninstall [shell]` and `completions bash|zsh`,
+ * which prints the script.
+ *
+ * @spec CLI-REQ-10
+ */
 function handleCompletionsCommand(args: string[]): number {
-  const shell = args[0];
-  if (shell === 'bash') {
+  const [action, given] = args;
+  if (action === 'install' || action === 'uninstall') {
+    const shell = completionShell(given);
+    if (!shell) {
+      console.error(`Completions are available for bash and zsh: completions ${action} <bash|zsh>`);
+      return 2;
+    }
+    if (action === 'install') {
+      const { file, rcFile } = installCompletions(shell);
+      console.log(`  ✓ Completions for ${shell} written to ${file}`);
+      console.log(`  ✓ ${rcFile} loads them; open a new terminal to use them.`);
+    } else {
+      const { file, rcFile } = uninstallCompletions(shell);
+      console.log(`  ✓ Removed ${file} and its line in ${rcFile}.`);
+    }
+    return 0;
+  }
+  if (action === 'bash') {
     process.stdout.write(bashCompletionScript());
     return 0;
   }
-  if (shell === 'zsh') {
+  if (action === 'zsh') {
     process.stdout.write(zshCompletionScript());
     return 0;
   }
-  console.error('Usage: agentapps completions <bash|zsh>');
-  console.error('');
-  console.error('  bash   Print bash completion script (eval or append to ~/.bashrc)');
-  console.error('  zsh    Print zsh completion script  (eval or append to ~/.zshrc)');
+  console.error('Usage: agentapps completions install|uninstall [bash|zsh]');
+  console.error('       agentapps completions <bash|zsh>     print the script');
   return 2;
 }
+
+/** What to try after a command line the CLI does not understand. @spec CLI-REQ-11 */
+const USAGE_HINT =
+  'Run "agentapps help" to see the commands, or "agentapps" alone to enter the interactive mode.';
 
 async function main(): Promise<number> {
   const argv = process.argv.slice(2);
@@ -92,8 +120,12 @@ async function main(): Promise<number> {
       return handleGetCompletions(argv[gcIdx + 1] ?? '');
     }
 
-    // DIST-REQ-4: the version of this build.
-    if (argv[0] === '--version' || argv[0] === '-V') {
+    // DIST-REQ-4, CLI-REQ-11: the version of this build.
+    if (
+      argv[0] === '--version' ||
+      argv[0] === '-V' ||
+      (argv[0] === 'version' && argv.length === 1)
+    ) {
       console.log(buildVersion());
       return 0;
     }
@@ -112,7 +144,9 @@ async function main(): Promise<number> {
 
     const { options, commandTokens } = parseGlobalArgs(argv);
 
-    if (options.help && commandTokens.length === 0) {
+    // CLI-REQ-11: `help` alone is the same as --help.
+    const helpCommand = commandTokens.length === 1 && commandTokens[0] === 'help';
+    if ((options.help && commandTokens.length === 0) || helpCommand) {
       printHelp();
       return 0;
     }
@@ -157,7 +191,7 @@ async function main(): Promise<number> {
           success: false,
           error: {
             message: command.token ? `Unknown command: ${command.token}` : 'Empty command',
-            suggestion: 'Run "agentapps --help" to see available commands.',
+            suggestion: USAGE_HINT,
           },
         }),
       );
@@ -173,6 +207,8 @@ async function main(): Promise<number> {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(message);
+    // CLI-REQ-11: an option the CLI does not know says what to run instead.
+    if (message.startsWith('Unknown option')) console.error(USAGE_HINT);
     return 2;
   }
 }

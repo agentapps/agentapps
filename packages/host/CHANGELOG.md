@@ -1,5 +1,11 @@
 # @agentapps/host
 
+## 0.2.2
+
+### Patch Changes
+
+- @agentapps/protocol@0.2.2
+
 ## 0.2.1
 
 ### Patch Changes

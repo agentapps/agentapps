@@ -1,12 +1,11 @@
 {
   "name": "@agentapps/cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Agent Apps CLI — run and exercise Agent Apps locally from a workspace",
   "license": "MIT",
   "type": "module",
   "bin": {
     "agentapps": "./dist/bin.js",
-    "aa": "./dist/bin.js",
     "cli": "./dist/bin.js",
     "agentapps-daemon": "./dist/daemon.js"
   },

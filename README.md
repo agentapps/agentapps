@@ -65,7 +65,7 @@ You need **Node 24 or 26**.
 npm install -g @agentapps/cli
 ```
 
-That gives you the `agentapps` command (`aa` for short). To try it without installing, use `npx @agentapps/cli`. The package is always `@agentapps/cli`: the unscoped `agentapps` package on npm is an unrelated project.
+That gives you the `agentapps` command. To try it without installing, use `npx @agentapps/cli`. The package is always `@agentapps/cli`: the unscoped `agentapps` package on npm is an unrelated project.
 
 Install an app under a name of your choice, the alias, and call one of its tools:
 
@@ -81,6 +81,8 @@ $ agentapps hello tool greet name:World
 
   ✓ greet succeeded
 ```
+
+For Tab completion of commands, apps, aliases and tools, run `agentapps completions install` once (bash and zsh).
 
 `agentapps apps` lists the catalog and `agentapps info <app id>` describes one app. Apps are downloaded when you install them. An app for a service needs that service's credentials: `agentapps github-work auth` after `agentapps install app.github github-work`, for example. You can install the same app more than once under different aliases, such as `github-work` and `github-personal`.
 

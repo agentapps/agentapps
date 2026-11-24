@@ -19,38 +19,28 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { handleConnect } from '../src/commands/connect.js';
 import { loadClientKey } from '../src/secrets-store.js';
 import { loadApiKeys } from '../src/state.js';
-import type { CliContext, GlobalOptions } from '../src/types.js';
+import type { CliContext } from '../src/types.js';
+import { options, startWorkspace, type TestWorkspace } from './support/workspace.js';
 
-const options: GlobalOptions = {
-  json: false,
-  yaml: false,
-  raw: false,
-  manualCode: false,
-  urlOnly: false,
-  yes: false,
-  verbose: false,
-  help: false,
-};
-
+let workspace: TestWorkspace;
 let dir: string;
 let ctx: CliContext;
 let log: string;
 const originalPath = process.env.PATH;
 
-beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), 'agentapps-connect-'));
-  const configPath = join(dir, 'agentapps.json');
-  writeFileSync(configPath, '{"apps":[]}\n');
-  ctx = { cwd: dir, config: { apps: {} }, configPath };
+beforeEach(async () => {
+  // The Station creates and revokes the keys; the CLI keeps their values.
+  workspace = await startWorkspace();
+  dir = workspace.dir;
+  ctx = workspace.ctx();
   log = join(dir, 'claude.log');
 });
 
-afterEach(() => {
+afterEach(async () => {
   process.env.PATH = originalPath;
-  rmSync(dir, { recursive: true, force: true });
+  await workspace.stop();
 });
 
-/** Put a fake `claude` first on the PATH; it appends its arguments to `log`. */
 function fakeClaude(): void {
   const bin = join(dir, 'bin');
   mkdirSync(bin);
@@ -62,7 +52,7 @@ function fakeClaude(): void {
 
 const calls = () => (existsSync(log) ? readFileSync(log, 'utf8').trim().split('\n') : []);
 const connect = (client: string, remove = false) =>
-  handleConnect({ type: 'connect', client, remove }, { ctx, options });
+  handleConnect({ type: 'connect', client, remove }, { ctx, options: options() });
 const active = (name = 'claude-code') =>
   loadApiKeys(ctx.configPath).filter((k) => k.name === name && !k.revokedAt);
 

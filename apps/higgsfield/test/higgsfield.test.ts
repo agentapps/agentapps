@@ -93,7 +93,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.higgsfield',
-    appVersion: '3.0.0',
+    appVersion: '3.0.1',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -165,7 +165,7 @@ describe('Higgsfield Agent App', () => {
     // The Higgsfield health handler returns { status: 'ready' } when credentials
     // are present and valid. The SDK correctly reports 'ready'.
     expect(health.status).toBe('ready');
-    expect(health.version).toBe('3.0.0');
+    expect(health.version).toBe('3.0.1');
   });
 
   it('list-models returns all models when no filter is applied', async () => {

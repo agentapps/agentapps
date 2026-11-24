@@ -3,13 +3,13 @@
  * (CLI-REQ-6). stdout carries the MCP protocol, so everything else goes to stderr.
  */
 
+import { userInfo } from 'node:os';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { loadWorkspaceConfig } from '../config.js';
 import { InstallationGateway } from '../mcp-gateway.js';
 import { loadClientKey } from '../secrets-store.js';
-import { loadApiKeys } from '../state.js';
-import { readStationMeta } from '../station-lifecycle.js';
 import type { HandlerResult } from '../types.js';
 
 /** How often the gateway re-reads the Installations (a station may start or restart). */
@@ -24,11 +24,12 @@ export async function runMcp(configPath: string, keyName: string): Promise<Handl
     return { success: false, exitCode: 2 };
   }
 
-  const userId =
-    loadApiKeys(configPath).find((k) => k.id === stored.keyId)?.identity.userId ?? 'local';
+  // CLIENT-REQ-1: the Station the workspace's CLI connects to, read again on
+  // every refresh so the gateway follows `station use`.
+  const userId = userInfo().username;
   const gateway = new InstallationGateway(() => {
-    const meta = readStationMeta(configPath);
-    return meta ? { url: meta.url, key: stored.key, userId } : undefined;
+    const url = loadWorkspaceConfig(configPath).cli?.stationUrl?.replace(/\/+$/, '');
+    return url ? { url, key: stored.key, userId } : undefined;
   }, log);
 
   const server = new Server(

@@ -11,7 +11,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.dropbox',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Dropbox',
   description:
     'Dropbox file storage — list, search, upload, download, and share files and folders.',
@@ -35,7 +35,7 @@ const app = createApp({
       'account_info.read',
     ],
     pkce: false,
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN'],
   },
 });

@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.google.search-console',
   name: 'Google Search Console',
-  version: '1.0.1',
+  version: '1.1.0',
   description:
     'Google Search Console: query search performance (clicks, impressions, CTR, position by query, page, country, device, date), compare periods, inspect URL index status, and manage sitemaps and properties through the Search Console API.',
   tagline: 'SEO performance, URL inspection and sitemaps from Google Search Console',
@@ -44,7 +44,7 @@ export const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'google',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     // Written by the host's OAuth flow; EXPIRY_DATE drives the host-side refresh.
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EXPIRY_DATE'],
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',

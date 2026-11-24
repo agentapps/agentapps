@@ -7,17 +7,24 @@ import { createApp } from '@agentapps/sdk';
 import { classifyFigmaError, FIGMA_API_BASE, loadFigmaSecrets } from './lib/index.js';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not only wrapped in `factory`) so the tests can compare `app.toManifest()` with
+// agentapp.json: both describe the same app and must not drift apart.
+export const app = createApp({
   id: 'app.figma',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Figma',
   description:
-    'Access Figma design files, extract styles, components, design tokens, and export assets',
+    'Access Figma design files, extract styles, components, design tokens, and export assets. Works directly with files via file key. Perfect for design-to-code workflows.',
+  tagline: 'Inspect Figma files, extract design tokens, and export assets',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'design',
-  keywords: ['figma', 'design', 'ui', 'ux', 'styles', 'components', 'tokens'],
-  runtime: { transport: 'stdio', command: 'node', args: ['dist/app.js'] },
+  keywords: ['figma', 'design', 'ui', 'ux', 'styles', 'components', 'tokens', 'css', 'tailwind'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
+  runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: {
     type: 'oauth2',

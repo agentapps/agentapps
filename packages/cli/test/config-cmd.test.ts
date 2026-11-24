@@ -1,123 +1,118 @@
 /**
- * @agentapps/cli — config command tests
+ * @agentapps/cli — config command tests.
  *
- * Covers one-shot and interactive system-secret configuration for apps.
+ * The command sets and removes secrets through the Station; the tests look at
+ * what the Station's Secret Store ends up holding.
  */
 
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Readable, Writable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { handleConfig } from '../src/commands/config.js';
+import { handleInstall } from '../src/commands/install.js';
 import { appSecretsPath } from '../src/secrets-store.js';
-import type { CliContext, GlobalOptions, WorkspaceConfig } from '../src/types.js';
+import { options, startWorkspace, type TestWorkspace, writeApp } from './support/workspace.js';
 
-function makeCtx(tmpDir: string, config: WorkspaceConfig): CliContext {
-  const configPath = join(tmpDir, 'agentapps.json');
-  writeFileSync(configPath, JSON.stringify(config), 'utf8');
-  return { cwd: tmpDir, config, configPath };
+const APP = 'app.example';
+
+function lines(...answers: string[]): Readable {
+  const input = new Readable({ read() {} });
+  for (const answer of answers) input.push(`${answer}\n`);
+  input.push(null);
+  return input;
 }
 
-function defaultOptions(): GlobalOptions {
+function sink(): { stream: Writable; text: () => string } {
+  const chunks: string[] = [];
   return {
-    json: false,
-    yaml: false,
-    raw: false,
-    manualCode: false,
-    urlOnly: false,
-    yes: false,
-    verbose: false,
-    help: false,
+    stream: new Writable({
+      write(chunk, _encoding, done) {
+        chunks.push(chunk.toString());
+        done();
+      },
+    }),
+    text: () => chunks.join(''),
   };
-}
-
-function createAppSource(tmpDir: string, appId: string, systemSecrets?: string[]): string {
-  const source = join(tmpDir, appId);
-  mkdirSync(source, { recursive: true });
-  const manifest: Record<string, unknown> = {
-    id: appId,
-    version: '1.0.0',
-    auth: systemSecrets ? { type: 'oauth2', provider: 'google', systemSecrets } : false,
-  };
-  writeFileSync(join(source, 'agentapp.json'), JSON.stringify(manifest), 'utf8');
-  return source;
 }
 
 describe('config command', () => {
-  let tmpDir: string;
-  let ctx: CliContext;
+  let workspace: TestWorkspace;
 
-  beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'agentapps-config-cmd-'));
+  afterEach(async () => {
+    await workspace?.stop();
   });
 
-  afterEach(() => {
-    rmSync(tmpDir, { recursive: true, force: true });
+  /** A workspace whose one App declares these secrets. */
+  async function withApp(auth: Record<string, unknown> | undefined): Promise<void> {
+    workspace = await startWorkspace();
+    await workspace.stop();
+    const source = writeApp(join(workspace.dir, APP), {
+      id: APP,
+      version: '1.0.0',
+      name: 'Example',
+      ...(auth ? { auth } : {}),
+    });
+    workspace = await startWorkspace({ dir: workspace.dir, sources: [source] });
+  }
+
+  const oauth = (systemSecrets: string[]) => ({
+    type: 'oauth2',
+    provider: 'google',
+    authorizeUrl: 'https://accounts.example.com/authorize',
+    tokenUrl: 'https://accounts.example.com/token',
+    scopes: ['email'],
+    systemSecrets,
+  });
+
+  const stored = (): Record<string, string> =>
+    JSON.parse(readFileSync(appSecretsPath(workspace.configPath, APP), 'utf8'));
+
+  const config = (args: string[], io: { input?: Readable; output?: Writable } = {}) =>
+    handleConfig(
+      { type: 'config', appId: APP, args },
+      { ctx: workspace.ctx(), options: options(), ...io },
+    );
+
+  beforeEach(() => {
+    workspace = undefined as unknown as TestWorkspace;
   });
 
   it('configures all expected secrets in one-shot mode', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID', 'CLIENT_SECRET']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
+    await withApp(oauth(['CLIENT_ID', 'CLIENT_SECRET']));
+    const result = await config(['CLIENT_ID:"abc"', 'CLIENT_SECRET:"xyz"']);
 
-    const result = await handleConfig(
-      { type: 'config', appId, args: ['CLIENT_ID:"abc"', 'CLIENT_SECRET:"xyz"'] },
-      { ctx, options: defaultOptions() },
-    );
-
-    expect(result.success).toBe(true);
+    expect(result.error).toBeUndefined();
     expect(result.exitCode).toBe(0);
-    expect(result.data).toMatchObject({ appId, keys: ['CLIENT_ID', 'CLIENT_SECRET'] });
-
-    const stored = JSON.parse(readFileSync(appSecretsPath(ctx.configPath, appId), 'utf8'));
-    expect(stored).toEqual({ CLIENT_ID: 'abc', CLIENT_SECRET: 'xyz' });
+    expect(result.data).toMatchObject({ appId: APP, keys: ['CLIENT_ID', 'CLIENT_SECRET'] });
+    expect(stored()).toEqual({ CLIENT_ID: 'abc', CLIENT_SECRET: 'xyz' });
+    // What a command answers never carries a value.
+    expect(JSON.stringify(result)).not.toContain('xyz');
   });
 
   it('rejects unknown keys in one-shot mode', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: ['CLIENT_ID:"abc"', 'UNKNOWN:"xyz"'] },
-      { ctx, options: defaultOptions() },
-    );
+    await withApp(oauth(['CLIENT_ID']));
+    const result = await config(['CLIENT_ID:"abc"', 'UNKNOWN:"xyz"']);
 
     expect(result.success).toBe(false);
     expect(result.exitCode).toBe(2);
     expect(result.error?.message).toContain('Unexpected secret(s): UNKNOWN');
+    expect(result.error?.suggestion).toContain('Expected keys: CLIENT_ID');
+    expect(existsSync(appSecretsPath(workspace.configPath, APP))).toBe(false);
   });
 
   it('allows partial updates in one-shot mode', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID', 'CLIENT_SECRET']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: ['CLIENT_ID:"abc"'] },
-      { ctx, options: defaultOptions() },
-    );
+    await withApp(oauth(['CLIENT_ID', 'CLIENT_SECRET']));
+    await config(['CLIENT_SECRET:"kept"']);
+    const result = await config(['CLIENT_ID:"abc"']);
 
     expect(result.success).toBe(true);
-    expect(result.exitCode).toBe(0);
-    const stored = JSON.parse(readFileSync(appSecretsPath(ctx.configPath, appId), 'utf8'));
-    expect(stored.CLIENT_ID).toBe('abc');
+    expect(stored()).toEqual({ CLIENT_ID: 'abc', CLIENT_SECRET: 'kept' });
   });
 
   it('rejects invalid key:value arguments', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: ['CLIENT_ID'] },
-      { ctx, options: defaultOptions() },
-    );
+    await withApp(oauth(['CLIENT_ID']));
+    const result = await config(['CLIENT_ID']);
 
     expect(result.success).toBe(false);
     expect(result.exitCode).toBe(2);
@@ -125,27 +120,18 @@ describe('config command', () => {
   });
 
   it('reports no system secrets when the app does not declare any', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: [] },
-      { ctx, options: defaultOptions() },
-    );
+    await withApp(undefined);
+    const result = await config([]);
 
     expect(result.success).toBe(true);
-    expect(result.exitCode).toBe(0);
     expect(result.message).toContain('does not declare any system secrets');
   });
 
-  it('returns an error when the app is not configured', async () => {
-    ctx = makeCtx(tmpDir, { apps: {} });
-
+  it('returns an error when neither an app nor an Installation has that name', async () => {
+    await withApp(undefined);
     const result = await handleConfig(
       { type: 'config', appId: 'app.missing', args: [] },
-      { ctx, options: defaultOptions() },
+      { ctx: workspace.ctx(), options: options() },
     );
 
     expect(result.success).toBe(false);
@@ -153,81 +139,79 @@ describe('config command', () => {
     expect(result.error?.message).toContain('App or Installation not found');
   });
 
-  it('prompts interactively for missing secrets', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID', 'CLIENT_SECRET']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
+  it('prompts interactively for missing secrets, and never for a redirect URI', async () => {
+    await withApp(oauth(['CLIENT_ID', 'CLIENT_SECRET']));
+    const output = sink();
+    const result = await config([], { input: lines('abc', 'xyz'), output: output.stream });
 
-    // OAuth apps also get REDIRECT_URI as an infrastructure key, so 3 prompts.
-    const input = new Readable({ read() {} });
-    input.push('abc\n');
-    input.push('xyz\n');
-    input.push('http://localhost:8765/callback\n');
-    input.push(null);
-
-    const outputChunks: string[] = [];
-    const output = new Writable({
-      write(chunk, _encoding, request) {
-        outputChunks.push(chunk.toString());
-        request();
-      },
-    });
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: [] },
-      { ctx, options: defaultOptions(), input, output },
-    );
-
-    expect(result.success).toBe(true);
-    expect(result.exitCode).toBe(0);
-
-    const stored = JSON.parse(readFileSync(appSecretsPath(ctx.configPath, appId), 'utf8'));
-    expect(stored.CLIENT_ID).toBe('abc');
-    expect(stored.CLIENT_SECRET).toBe('xyz');
-    expect(stored.REDIRECT_URI).toBe('http://localhost:8765/callback');
-
-    const outputText = outputChunks.join('');
-    expect(outputText).toContain('Enter CLIENT_ID:');
-    expect(outputText).toContain('Enter CLIENT_SECRET:');
-    expect(outputText).toContain('Enter REDIRECT_URI:');
+    expect(result.error).toBeUndefined();
+    expect(stored()).toEqual({ CLIENT_ID: 'abc', CLIENT_SECRET: 'xyz' });
+    expect(output.text()).toContain('Enter CLIENT_ID:');
+    expect(output.text()).toContain('Enter CLIENT_SECRET:');
+    expect(output.text()).not.toContain('REDIRECT_URI');
   });
 
   it('merges interactive secrets with existing stored secrets', async () => {
-    const appId = 'app.example';
-    const source = createAppSource(tmpDir, appId, ['CLIENT_ID', 'CLIENT_SECRET']);
-    const config: WorkspaceConfig = { apps: { [appId]: { source } } };
-    ctx = makeCtx(tmpDir, config);
-
-    mkdirSync(dirname(appSecretsPath(ctx.configPath, appId)), { recursive: true });
-    writeFileSync(
-      appSecretsPath(ctx.configPath, appId),
-      JSON.stringify({ CLIENT_ID: 'old' }),
-      'utf8',
-    );
-
-    // 3 prompts: CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
-    const input = new Readable({ read() {} });
-    input.push('new\n');
-    input.push('secret\n');
-    input.push('http://localhost/cb\n');
-    input.push(null);
-
-    const output = new Writable({
-      write(_chunk, _encoding, request) {
-        request();
-      },
-    });
-
-    const result = await handleConfig(
-      { type: 'config', appId, args: [] },
-      { ctx, options: defaultOptions(), input, output },
-    );
+    await withApp(oauth(['CLIENT_ID', 'CLIENT_SECRET']));
+    await config(['CLIENT_ID:"old"']);
+    const result = await config([], { input: lines('new', 'secret'), output: sink().stream });
 
     expect(result.success).toBe(true);
-    const stored = JSON.parse(readFileSync(appSecretsPath(ctx.configPath, appId), 'utf8'));
-    expect(stored.CLIENT_ID).toBe('new');
-    expect(stored.CLIENT_SECRET).toBe('secret');
-    expect(stored.REDIRECT_URI).toBe('http://localhost/cb');
+    expect(stored()).toEqual({ CLIENT_ID: 'new', CLIENT_SECRET: 'secret' });
+  });
+
+  it('[STADMIN-AC-12] unset removes a secret without a trace, also one the app no longer declares', async () => {
+    await withApp(oauth(['CLIENT_ID', 'CLIENT_SECRET']));
+    await config(['CLIENT_SECRET:"x"']);
+    // What an older version of the app left in the Station's Secret Store.
+    await workspace.stop();
+    const { writeFileSync } = await import('node:fs');
+    writeFileSync(
+      appSecretsPath(workspace.configPath, APP),
+      JSON.stringify({ CLIENT_SECRET: 'x', REDIRECT_URI: 'y' }),
+    );
+    workspace = await startWorkspace({
+      dir: workspace.dir,
+      sources: [join(workspace.dir, APP)],
+    });
+
+    const removed = await config(['unset', 'REDIRECT_URI']);
+    expect(removed.exitCode).toBe(0);
+    expect(removed.message).toContain('Removed REDIRECT_URI');
+    expect(stored()).toEqual({ CLIENT_SECRET: 'x' });
+    expect(Object.hasOwn(stored(), 'REDIRECT_URI')).toBe(false);
+
+    const again = await config(['unset', 'REDIRECT_URI']);
+    expect(again.exitCode).toBe(0);
+    expect(again.message).toContain('REDIRECT_URI was not set');
+
+    expect((await config(['unset'])).exitCode).toBe(2);
+    expect((await config(['unset', 'KEY:value'])).exitCode).toBe(2);
+  });
+
+  it('[STADMIN-AC-12] unset removes a secret of an Installation', async () => {
+    await withApp({ type: 'api-key', installationSecrets: ['ACCESS_TOKEN'] });
+    const ctx = workspace.ctx();
+    const installed = await handleInstall(
+      { type: 'install', appId: APP, alias: 'example' },
+      { ctx, options: options({ yes: true }) },
+    );
+    expect(installed.error).toBeUndefined();
+
+    const byAlias = (args: string[]) =>
+      handleConfig({ type: 'config', appId: 'example', args }, { ctx, options: options() });
+    const set = await byAlias(['ACCESS_TOKEN:"t"']);
+    expect(set.message).toContain('Configured 1 Installation secret(s) for example');
+    const dir = join(workspace.dir, '.agentapps', 'installation-secrets');
+    const { readdirSync } = await import('node:fs');
+    const file = join(dir, readdirSync(dir)[0] as string);
+    expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual({ ACCESS_TOKEN: 't' });
+
+    const unset = await byAlias(['unset', 'ACCESS_TOKEN']);
+    expect(unset.message).toContain('Removed ACCESS_TOKEN from example');
+    expect(existsSync(file)).toBe(false);
+    expect((await byAlias(['OTHER:"x"'])).error?.message).toContain(
+      'Unexpected Installation secret(s): OTHER',
+    );
   });
 });

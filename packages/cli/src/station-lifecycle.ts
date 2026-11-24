@@ -39,10 +39,14 @@ export interface StationMeta {
 /** Whether a port is free, already serving a station, or held by something else. */
 export type PortState = 'free' | 'station' | 'busy';
 
+const SELF = fileURLToPath(import.meta.url);
+/** Run from TypeScript source under a loader, as the tests do, not from the build. */
+const RUNNING_FROM_SOURCE = SELF.endsWith('.ts');
+
 /** Path to the built CLI entry, so the detached worker re-invokes this binary. */
 function resolveBinPath(): string {
-  // dist/station-lifecycle.js → dist/bin.js
-  return resolve(dirname(fileURLToPath(import.meta.url)), 'bin.js');
+  // dist/station-lifecycle.js → dist/bin.js; run from source, src/bin.ts.
+  return resolve(dirname(SELF), RUNNING_FROM_SOURCE ? 'bin.ts' : 'bin.js');
 }
 
 export function stationMetaPath(configPath: string): string {
@@ -138,6 +142,8 @@ export async function launchDetachedStation(
   configPath: string,
   port: number,
   stationUrl?: string,
+  /** `--public-url`, handed on to the worker; otherwise it reads the config (SETUP-REQ-11). */
+  publicUrl?: string,
 ): Promise<HandlerResult> {
   mkdirSync(stateDir(configPath), { recursive: true });
   const logPath = stationLogPath(configPath);
@@ -145,11 +151,15 @@ export async function launchDetachedStation(
 
   const args = ['--config', configPath, 'serve', '--foreground', String(port)];
   if (stationUrl) args.push(stationUrl);
+  if (publicUrl) args.push('--public-url', publicUrl);
 
   // POLICY-REQ-7: a per-launch local admin token, known only to this CLI and the station.
   const adminToken = randomBytes(32).toString('hex');
   // The single executable is its own entry; a Node build re-runs dist/bin.js.
-  const command = isExecutable ? [...args] : [resolveBinPath(), ...args];
+  // From source, the worker needs the same loader this process was started with.
+  const command = isExecutable
+    ? [...args]
+    : [...(RUNNING_FROM_SOURCE ? process.execArgv : []), resolveBinPath(), ...args];
   const child = spawn(process.execPath, command, {
     detached: true,
     stdio: ['ignore', logFd, logFd],

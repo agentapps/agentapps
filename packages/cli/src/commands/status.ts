@@ -2,11 +2,12 @@
  * @agentapps/cli — status command.
  */
 
-import { authStatusLabel, getAuthInfo } from '../auth-helper.js';
-import { getInstallation } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { authStatusLabel, findInstallation } from '../station-session.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** @spec STADMIN-REQ-6 */
 export async function handleStatus(
   command: ReplCommand,
   context: HandlerContext,
@@ -20,9 +21,15 @@ export async function handleStatus(
   }
 
   const { alias } = command;
-  const { ctx } = context;
-  const instance = getInstallation(ctx.configPath, alias);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
+  let instance: Awaited<ReturnType<typeof findInstallation>>;
+  try {
+    instance = await findInstallation(station, alias);
+  } catch (err) {
+    return station.failure(err);
+  }
   if (!instance) {
     return {
       success: false,
@@ -34,16 +41,15 @@ export async function handleStatus(
     };
   }
 
-  const auth = await getAuthInfo(instance.installationId, instance.appId, ctx);
-
+  const auth = instance.auth;
   const status: Record<string, ResultValue | undefined> = {
     App: instance.appId,
     Status: authStatusLabel(auth),
-    Auth: auth.kind === 'none' ? undefined : auth.kind,
-    Provider: auth.provider,
-    Scopes: auth.scopes?.join(', '),
-    Expires: auth.expiresAt,
-    Missing: auth.missingSecrets?.length ? auth.missingSecrets.join(', ') : undefined,
+    Auth: !auth || auth.kind === 'none' ? undefined : auth.kind,
+    Provider: auth?.provider,
+    Scopes: auth?.scopes?.join(', '),
+    Expires: auth?.expiresAt,
+    Missing: auth?.missingSecrets?.length ? auth.missingSecrets.join(', ') : undefined,
   };
 
   return {

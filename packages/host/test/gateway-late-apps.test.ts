@@ -6,7 +6,12 @@
 
 import { createEnvelope } from '@agentapps/protocol';
 import { createApp } from '@agentapps/sdk';
-import { type AppEntry, StationServer } from '@agentapps/station';
+import {
+  type AppEntry,
+  InMemoryDataStore,
+  InMemorySecretStore,
+  StationServer,
+} from '@agentapps/station';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const ADMIN_TOKEN = 'local-admin-token';
@@ -50,6 +55,11 @@ describe('apps that arrive after the Station started', () => {
     const available: AppEntry[] = [];
     const installed: Array<{ installationId: string; alias: string; appId: string }> = [];
     server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [],
       adminToken: ADMIN_TOKEN,
       installations: () => installed,

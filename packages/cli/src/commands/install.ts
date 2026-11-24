@@ -2,19 +2,10 @@
  * @agentapps/cli — install command.
  */
 
-import { AppIdRegex } from '@agentapps/protocol';
-import { downloadAppPackages } from '../app-store.js';
-import { requiresAuth } from '../auth-helper.js';
-import { addAppSource, loadWorkspaceConfig, needsDownload, resolveSourcePath } from '../config.js';
-import { readLine } from '../host.js';
-import { resolveApp } from '../resolve.js';
-import { loadAppSecrets } from '../secrets-store.js';
-import {
-  addInstallation,
-  getInstallation,
-  setInstallationPermissions,
-  unapprovedPermissions,
-} from '../state.js';
+import { sourceMetadata } from '../config.js';
+import { readLine } from '../prompt.js';
+import { isResult, StationError, stationOf } from '../station-client.js';
+import { findInstallation } from '../station-session.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
@@ -82,10 +73,23 @@ function formatPermissions(permissions: Record<string, unknown>): string[] {
 // Install handler
 // ---------------------------------------------------------------------------
 
+/** The Permissions of a Manifest that an Installation has not been approved for yet. */
+function unapproved(
+  requested: Record<string, unknown> | undefined,
+  approved: Record<string, unknown> | undefined,
+): string[] {
+  return Object.keys(requested ?? {}).filter(
+    (key) => JSON.stringify(requested?.[key]) !== JSON.stringify(approved?.[key]),
+  );
+}
+
 /**
+ * Install an App the Station has available. Installing never makes an App
+ * available: the Station Operator does, with `station apps add`.
+ *
  * @spec POLICY-REQ-9
- * @spec DIST-REQ-3
- * @spec DIST-REQ-9
+ * @spec STADMIN-REQ-6
+ * @spec STADMIN-REQ-9
  */
 export async function handleInstall(
   command: ReplCommand,
@@ -101,159 +105,139 @@ export async function handleInstall(
 
   const { appId, alias } = command;
   const { ctx, options } = context;
-  const notFound: HandlerResult = {
-    success: false,
-    exitCode: 2,
-    error: {
-      message: `App not found: ${appId}`,
-      suggestion: 'Run "apps" to see available apps.',
-    },
-  };
-  let entry = ctx.config.apps[appId];
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  // DIST-REQ-9: an app the workspace does not know is looked up in the registry
-  // by its name, `@agentapps/<appId>`, and added to the workspace when found.
-  if (!entry) {
-    if (!AppIdRegex.test(appId)) return notFound;
-    const pkg = `@agentapps/${appId}`;
-    console.error(`  Downloading ${appId}…`);
-    const { code, stderr } = await downloadAppPackages(ctx.configPath, [pkg]);
-    if (code !== 0) {
-      if (stderr.includes('is not in the registry')) return notFound;
-      const reason = stderr.replace(/^ERR /, '').trim();
-      return {
-        success: false,
-        exitCode: 1,
-        error: { message: `Could not download ${appId} (${pkg}): ${reason}` },
-      };
-    }
-    addAppSource(ctx.configPath, `npm:${pkg}`);
-    ctx.config = loadWorkspaceConfig(ctx.configPath);
-    entry = ctx.config.apps[appId];
-    if (!entry) return notFound;
-  }
-
-  // DIST-REQ-3: download a catalog app before installing it; no Installation
-  // is created when the download fails.
-  if (needsDownload(ctx.configPath, entry.source)) {
-    console.error(`  Downloading ${appId}…`);
-    const spec = entry.source.slice('npm:'.length);
-    const { code, stderr } = await downloadAppPackages(ctx.configPath, [spec]);
-    if (code !== 0 || needsDownload(ctx.configPath, entry.source)) {
-      const reason = stderr.replace(/^ERR /, '').trim();
-      return {
-        success: false,
-        exitCode: 1,
-        error: { message: `Could not download ${appId} (${spec})${reason ? `: ${reason}` : ''}` },
-      };
-    }
-  }
-
-  // Resolve the app to inspect its manifest.
-  let app: { manifest?: Record<string, unknown> };
   try {
-    const source = resolveSourcePath(ctx.configPath, entry.source);
-    app = await resolveApp(appId, source);
-  } catch {
-    app = {};
-  }
-
-  // POLICY-REQ-9: the Approver approves the requested Permissions before the
-  // installation exists. `-y` answers yes up front; otherwise the CLI asks and
-  // refuses to install without an answer.
-  const permissions = app.manifest?.permissions as Record<string, unknown> | undefined;
-  const existing = getInstallation(ctx.configPath, alias);
-  const reapproval = existing?.appId === appId;
-  const toApprove = reapproval
-    ? unapprovedPermissions(permissions, existing?.permissions)
-    : Object.keys(permissions ?? {});
-
-  if (reapproval && toApprove.length === 0) {
-    return { success: true, message: `${alias} (${appId}) is already installed`, exitCode: 0 };
-  }
-
-  const permissionLines = permissions
-    ? formatPermissions(Object.fromEntries(toApprove.map((k) => [k, permissions[k]])))
-    : [];
-  if (permissionLines.length > 0 && !options.yes) {
-    console.error(
-      `\n  ${appId} ${reapproval ? 'now also requests' : 'requests'} the following permissions:\n`,
-    );
-    for (const line of permissionLines) console.error(line);
-    if (permissionLines.some((l) => l.includes('[!]'))) {
-      console.error('\n  [!] = elevated privilege (review carefully)');
+    // The Manifest, to show what the App requests: from the Station when it
+    // has the App loaded, otherwise what the workspace or the catalog knows.
+    let manifest: Record<string, unknown> | undefined;
+    try {
+      manifest = await station.api('GET', `/apps/${encodeURIComponent(appId)}/manifest`);
+    } catch (err) {
+      if (!(err instanceof StationError)) throw err;
+      const listed = ctx.config.apps[appId];
+      manifest = listed ? sourceMetadata(ctx.configPath, listed.source) : undefined;
     }
-    process.stderr.write('\n  Approve and install? [y/N] ');
-    const answer = await readLine(process.stdin);
-    if (!/^y(es)?$/i.test(answer)) {
-      return {
-        success: false,
-        exitCode: answer === '' ? 2 : 1,
-        error: {
-          message:
-            answer === ''
-              ? `Installing ${appId} needs the Approver to approve its permissions, and no answer was given.`
-              : 'Not installed: the permissions were not approved.',
-          suggestion: 'Run it in a terminal and answer y, or pass -y to approve.',
+
+    // POLICY-REQ-9: the Approver approves the requested Permissions before the
+    // installation exists. `-y` answers yes up front; otherwise the CLI asks and
+    // refuses to install without an answer.
+    const permissions = manifest?.permissions as Record<string, unknown> | undefined;
+    const existing = await findInstallation(station, alias);
+    const reapproval = existing?.appId === appId;
+    const toApprove = reapproval
+      ? unapproved(permissions, existing?.permissions)
+      : Object.keys(permissions ?? {});
+
+    if (reapproval && toApprove.length === 0) {
+      return { success: true, message: `${alias} (${appId}) is already installed`, exitCode: 0 };
+    }
+
+    const permissionLines = permissions
+      ? formatPermissions(Object.fromEntries(toApprove.map((k) => [k, permissions[k]])))
+      : [];
+    if (permissionLines.length > 0 && !options.yes) {
+      console.error(
+        `\n  ${appId} ${reapproval ? 'now also requests' : 'requests'} the following permissions:\n`,
+      );
+      for (const line of permissionLines) console.error(line);
+      if (permissionLines.some((l) => l.includes('[!]'))) {
+        console.error('\n  [!] = elevated privilege (review carefully)');
+      }
+      process.stderr.write('\n  Approve and install? [y/N] ');
+      const answer = await readLine(process.stdin);
+      if (!/^y(es)?$/i.test(answer)) {
+        return {
+          success: false,
+          exitCode: answer === '' ? 2 : 1,
+          error: {
+            message:
+              answer === ''
+                ? `Installing ${appId} needs the Approver to approve its permissions, and no answer was given.`
+                : 'Not installed: the permissions were not approved.',
+            suggestion: 'Run it in a terminal and answer y, or pass -y to approve.',
+          },
+        };
+      }
+    }
+
+    if (reapproval && existing) {
+      await station.api(
+        'PATCH',
+        `/api/installations/${encodeURIComponent(existing.installationId)}`,
+        {
+          permissions: permissions ?? {},
         },
+      );
+      return {
+        success: true,
+        message: `Approved the new permissions of ${alias} (${appId})`,
+        exitCode: 0,
       };
     }
-  }
 
-  if (reapproval) {
-    setInstallationPermissions(ctx.configPath, alias, permissions ?? {});
+    let installed: Awaited<ReturnType<typeof findInstallation>>;
+    try {
+      // The approved Permissions become the Installation's Effective Permissions
+      // (VOL-REQ-2, POLICY-REQ-9).
+      installed = await station.api('POST', '/api/installations', {
+        appId,
+        alias,
+        ...(permissions ? { permissions } : {}),
+      });
+    } catch (err) {
+      if (!(err instanceof StationError)) throw err;
+      if (err.code === 'APP_NOT_AVAILABLE') {
+        // STADMIN-REQ-9: installing never adds an App; whoever operates the
+        // Station is told the command that does.
+        return {
+          success: false,
+          exitCode: 2,
+          error: {
+            message: `App not found: ${appId}. It is not available on this Station; the Station Operator has to add it.`,
+            suggestion:
+              err.body.operator === true
+                ? `Add it with:\n  agentapps station apps add ${appId}\nthen install it again.`
+                : 'Run "apps" to see available apps.',
+          },
+        };
+      }
+      if (err.code === 'APP_DOWNLOAD_FAILED') {
+        return { success: false, exitCode: 1, error: { message: err.message } };
+      }
+      if (err.code === 'ALIAS_TAKEN') {
+        return {
+          success: false,
+          exitCode: 2,
+          error: {
+            message: err.message,
+            suggestion: `Use a different alias, or run: uninstall ${alias}`,
+          },
+        };
+      }
+      throw err;
+    }
+
+    const auth = installed?.auth;
+    const hints: string[] = [];
+    if (auth && auth.kind !== 'none' && auth.kind !== 'api-key' && !auth.authenticated) {
+      hints.push(`Authentication required. Run:\n  ${alias} auth`);
+    }
+    const missingSecrets = auth?.missingSecrets ?? [];
+    if (missingSecrets.length > 0) {
+      hints.push(
+        `Missing system secrets: ${missingSecrets.join(', ')}. Run: agentapps config ${appId}`,
+      );
+    }
+
     return {
       success: true,
-      message: `Approved the new permissions of ${alias} (${appId})`,
+      message: `Installed ${alias} (${appId})`,
+      data: hints.length > 0 ? { hint: hints.join('\n') } : undefined,
       exitCode: 0,
     };
-  }
-
-  try {
-    // The approved Permissions become the Installation's Effective Permissions
-    // (VOL-REQ-2, POLICY-REQ-9).
-    addInstallation(ctx.configPath, alias, appId, permissions);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message,
-        suggestion: `Use a different alias, or run: uninstall ${alias}`,
-      },
-    };
+    return station.failure(err);
   }
-
-  let authRequired = false;
-  let missingSecrets: string[] = [];
-  try {
-    authRequired = requiresAuth(app);
-
-    const auth = app.manifest?.auth as Record<string, unknown> | undefined;
-    const systemSecrets = (auth?.systemSecrets ?? []) as string[];
-    if (systemSecrets.length > 0) {
-      const stored = loadAppSecrets(ctx.configPath, appId);
-      missingSecrets = systemSecrets.filter((k) => !(k in stored));
-    }
-  } catch {
-    authRequired = false;
-  }
-
-  const hints: string[] = [];
-  if (authRequired) {
-    hints.push(`Authentication required. Run:\n  ${alias} auth`);
-  }
-  if (missingSecrets.length > 0) {
-    hints.push(
-      `Missing system secrets: ${missingSecrets.join(', ')}. Run: agentapps config ${appId}`,
-    );
-  }
-
-  return {
-    success: true,
-    message: `Installed ${alias} (${appId})`,
-    data: hints.length > 0 ? { hint: hints.join('\n') } : undefined,
-    exitCode: 0,
-  };
 }

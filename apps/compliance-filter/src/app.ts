@@ -48,7 +48,7 @@ function detectPii(text: string): PiiMatch[] {
 
 const app = createApp({
   id: 'app.compliance-filter',
-  version: '1.0.2',
+  version: '1.0.3',
   name: 'Compliance Filter',
   description: 'Scans messages for PII and blocks them before they reach the agent.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

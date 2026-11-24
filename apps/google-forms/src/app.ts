@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.forms',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Google Forms',
   description:
     'Manage Google Forms — create forms, add questions, and read responses via Google Forms API.',

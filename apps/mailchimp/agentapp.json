@@ -1,8 +1,9 @@
 {
   "id": "app.mailchimp",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Mailchimp",
   "description": "Mailchimp email marketing — manage audiences, campaigns, subscribers, templates, and automations.",
+  "tagline": "Manage Mailchimp audiences, subscribers, campaigns, templates, and automations",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",

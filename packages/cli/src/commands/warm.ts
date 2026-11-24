@@ -1,15 +1,12 @@
 /**
  * @agentapps/cli — warm command.
  *
- * Iterates every installed instance, opens a session, lists its tools, and
- * persists the result to the tool cache so that tab completion is immediately
- * available without having to run each tool first.
+ * Lists the tools of every Installation through the Station and caches them
+ * for Tab completion.
  */
 
-import { resolveSourcePath } from '../config.js';
-import { resolveApp } from '../resolve.js';
-import { openAppSession } from '../session.js';
-import { loadInstallations } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { listInstallations, withSession } from '../station-session.js';
 import { writeCachedTools } from '../tools-cache.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
@@ -21,6 +18,7 @@ interface WarmResult {
   error?: string;
 }
 
+/** @spec CLIENT-REQ-1 */
 export async function handleWarm(
   command: ReplCommand,
   context: HandlerContext,
@@ -34,7 +32,15 @@ export async function handleWarm(
   }
 
   const { ctx } = context;
-  const instances = loadInstallations(ctx.configPath);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+
+  let instances: Awaited<ReturnType<typeof listInstallations>>;
+  try {
+    instances = await listInstallations(station);
+  } catch (err) {
+    return station.failure(err);
+  }
 
   if (instances.length === 0) {
     return {
@@ -45,32 +51,13 @@ export async function handleWarm(
   }
 
   const results: WarmResult[] = [];
-
   for (const instance of instances) {
-    const entry = ctx.config.apps[instance.appId];
-    if (!entry) {
-      results.push({
-        alias: instance.alias,
-        appId: instance.appId,
-        tools: 0,
-        error: 'App configuration missing',
-      });
-      continue;
-    }
-
     try {
-      const source = resolveSourcePath(ctx.configPath, entry.source);
-      const app = await resolveApp(instance.appId, source);
-      const { session, shutdown } = await openAppSession(app, ctx, instance.installationId);
-
-      try {
-        const tools = await session.listTools();
-        writeCachedTools(ctx.configPath, instance.appId, tools);
-        results.push({ alias: instance.alias, appId: instance.appId, tools: tools.length });
-      } finally {
-        await session.close();
-        await shutdown();
-      }
+      const tools = await withSession(station, instance, undefined, (session) =>
+        session.listTools(),
+      );
+      writeCachedTools(ctx.configPath, instance.appId, tools as never);
+      results.push({ alias: instance.alias, appId: instance.appId, tools: tools.length });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       results.push({ alias: instance.alias, appId: instance.appId, tools: 0, error: message });

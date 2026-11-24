@@ -22,6 +22,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { freePort, stationSettings } from './support/spawned.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CLI = resolve(here, '..');
@@ -113,6 +114,23 @@ function sourceHelloTarball(id = 'app.hello'): Buffer {
   return tarball(pkg);
 }
 
+type Runner = (args: string[], env?: NodeJS.ProcessEnv) => Promise<Run>;
+
+/**
+ * Give the home workspace a config with these apps and start its Station on a
+ * free port, with `env` (the Station is the one that downloads apps).
+ */
+async function homeStation(
+  run: Runner,
+  apps: Array<{ source: string }>,
+  env: Record<string, string>,
+): Promise<void> {
+  mkdirSync(dirname(homeConfig()), { recursive: true });
+  writeFileSync(homeConfig(), JSON.stringify({ ...stationSettings(await freePort()), apps }));
+  const started = await run(['station', 'start'], env);
+  if (started.code !== 0) throw new Error(`station start failed: ${started.out}`);
+}
+
 /** A local npm registry serving one version of `@agentapps/app.hello`. */
 async function registry(
   bytes: Buffer,
@@ -177,54 +195,61 @@ describe('agentapps without the repository (step 1)', () => {
   it('[DIST-AC-3] install downloads the app; a failed download installs nothing', async () => {
     const missing = await registry(Buffer.from('unused'));
     try {
-      // The registry has no such version.
-      mkdirSync(dirname(homeConfig()), { recursive: true });
-      writeFileSync(
-        homeConfig(),
-        JSON.stringify({ apps: [{ source: 'npm:@agentapps/app.hello@9.9.9' }] }),
-      );
-      const failed = await agentapps(['install', 'app.hello', 'hello', '-y'], {
+      // The registry has no such version. The Station is the one that downloads.
+      await homeStation(agentapps, [{ source: 'npm:@agentapps/app.hello@9.9.9' }], {
         npm_config_registry: missing.url,
       });
+      const failed = await agentapps(['install', 'app.hello', 'hello', '-y']);
       expect(failed.code).not.toBe(0);
       expect(failed.out).toContain('Could not download app.hello');
       expect((await agentapps(['installations'])).out).not.toContain('hello');
     } finally {
+      await agentapps(['station', 'stop']);
       missing.close();
     }
 
-    rmSync(homeConfig());
     const reg = await registry(sourceHelloTarball());
     try {
-      const env = { npm_config_registry: reg.url };
-      expect((await agentapps(['install', 'app.hello', 'hello', '-y'], env)).code).toBe(0);
-      expect((await agentapps(['hello', 'tool', 'greet', 'name:World'], env)).out).toContain(
+      await homeStation(agentapps, [{ source: `npm:@agentapps/app.hello@${HELLO_VERSION}` }], {
+        npm_config_registry: reg.url,
+      });
+      expect((await agentapps(['install', 'app.hello', 'hello', '-y'])).code).toBe(0);
+      expect((await agentapps(['hello', 'tool', 'greet', 'name:World'])).out).toContain(
         'Hello, World!',
       );
     } finally {
+      await agentapps(['station', 'stop']);
       reg.close();
     }
   }, 120_000);
 
-  it('[DIST-AC-9] install finds an app outside the catalog by its name in the registry', async () => {
+  it('[STADMIN-AC-11] an app outside the catalog is added by its name with station apps add, and install never adds one', async () => {
     // A package published after this CLI was built: not in its catalog.
     const reg = await registry(sourceHelloTarball('app.newer'), { id: 'app.newer' });
     try {
-      const env = { npm_config_registry: reg.url };
       // The workspace knows no apps at all; the registry has the package.
-      mkdirSync(dirname(homeConfig()), { recursive: true });
-      writeFileSync(homeConfig(), JSON.stringify({ apps: [] }));
-      const installed = await agentapps(['install', 'app.newer', 'newer', '-y'], env);
-      expect(installed.code).toBe(0);
-      expect(readFileSync(homeConfig(), 'utf8')).toContain('npm:@agentapps/app.newer');
-      expect((await agentapps(['installations'], env)).out).toContain('newer');
+      await homeStation(agentapps, [], { npm_config_registry: reg.url });
 
-      const absent = await agentapps(['install', 'app.absent', 'absent', '-y'], env);
+      // Installing does not add it: whoever operates the Station is told how to.
+      const refused = await agentapps(['install', 'app.newer', 'newer', '-y']);
+      expect(refused.code).not.toBe(0);
+      expect(refused.out).toContain('Station Operator');
+      expect(refused.out).toContain('agentapps station apps add app.newer');
+      expect(readFileSync(homeConfig(), 'utf8')).not.toContain('app.newer');
+
+      const added = await agentapps(['station', 'apps', 'add', 'app.newer']);
+      expect(added.code, added.out).toBe(0);
+      expect(readFileSync(homeConfig(), 'utf8')).toContain('npm:@agentapps/app.newer');
+      const installed = await agentapps(['install', 'app.newer', 'newer', '-y']);
+      expect(installed.code, installed.out).toBe(0);
+      expect((await agentapps(['installations'])).out).toContain('newer');
+
+      const absent = await agentapps(['station', 'apps', 'add', 'app.absent']);
       expect(absent.code).not.toBe(0);
       expect(absent.out).toContain('App not found: app.absent');
-      expect((await agentapps(['installations'], env)).out).not.toContain('absent');
       expect(readFileSync(homeConfig(), 'utf8')).not.toContain('app.absent');
     } finally {
+      await agentapps(['station', 'stop']);
       reg.close();
     }
   }, 120_000);
@@ -396,26 +421,28 @@ describe.skipIf(!hasBun)('the single executable (step 2)', () => {
 
   it('[DIST-AC-6] installs from the registry without npm; a tarball with the wrong hash is refused', async () => {
     const bad = await registry(packed, { badHash: true });
+    const catalogHello = [{ source: `npm:@agentapps/app.hello@${HELLO_VERSION}` }];
     try {
-      const refused = await executable(['install', 'app.hello', 'hello', '-y'], {
-        npm_config_registry: bad.url,
-      });
+      await homeStation(executable, catalogHello, { npm_config_registry: bad.url });
+      const refused = await executable(['install', 'app.hello', 'hello', '-y']);
       expect(refused.code).not.toBe(0);
       expect(refused.out).toContain('integrity');
       expect((await executable(['installations'])).out).not.toContain('hello');
     } finally {
+      await executable(['station', 'stop']);
       bad.close();
     }
 
     const reg = await registry(packed);
     try {
-      const env = { npm_config_registry: reg.url };
-      const installed = await executable(['install', 'app.hello', 'hello', '-y'], env);
+      await homeStation(executable, catalogHello, { npm_config_registry: reg.url });
+      const installed = await executable(['install', 'app.hello', 'hello', '-y']);
       expect(installed.code).toBe(0);
-      expect((await executable(['hello', 'tool', 'greet', 'name:World'], env)).out).toContain(
+      expect((await executable(['hello', 'tool', 'greet', 'name:World'])).out).toContain(
         'Hello, World!',
       );
     } finally {
+      await executable(['station', 'stop']);
       reg.close();
     }
   }, 120_000);

@@ -8,7 +8,9 @@ import { createApp } from '@agentapps/sdk';
 import {
   generateApiKey,
   InMemoryApiKeyStore,
+  InMemoryDataStore,
   InMemoryPolicyStore,
+  InMemorySecretStore,
   StationServer,
 } from '@agentapps/station';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -73,6 +75,11 @@ async function start(options?: { askTimeoutMs?: number }): Promise<Running> {
     logs.push(args.map(String).join(' '));
   };
   server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore: new InMemorySecretStore(),
+    dataStore: new InMemoryDataStore(),
+    publicUrl: 'http://station.test',
     apps: [{ id: 'app.mail', version: '1.0.0', factory }],
     apiKeys,
     policies,

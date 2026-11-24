@@ -120,3 +120,57 @@ export function writeCachedTools(
     // Completion suggestions are a convenience — ignore cache write failures.
   }
 }
+
+// ── Installations seen ──────────────────────────────────────────────────────
+// What the Station last listed, kept so Tab completion can suggest aliases
+// without asking the Station on every key press. A convenience of the CLI: the
+// Station is the one that has the Installations.
+
+function installationsCachePath(configPath: string): string {
+  return resolve(stateDir(configPath), 'installations-cache.json');
+}
+
+/**
+ * The Installations the Station last listed to this CLI, or [] when it never did.
+ *
+ * @spec STADMIN-REQ-6
+ */
+export function readCachedInstallations(
+  configPath: string,
+): Array<{ alias: string; appId: string }> {
+  try {
+    const parsed = JSON.parse(readFileSync(installationsCachePath(configPath), 'utf8')) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (i): i is { alias: string; appId: string } =>
+        typeof i?.alias === 'string' && typeof i?.appId === 'string',
+    );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Remember what the Station listed. Best-effort: never throws.
+ *
+ * @spec STADMIN-REQ-6
+ */
+export function writeCachedInstallations(
+  configPath: string,
+  installations: Array<{ alias: string; appId: string }>,
+): void {
+  try {
+    ensureStateDir(configPath);
+    writeFileSync(
+      installationsCachePath(configPath),
+      `${JSON.stringify(
+        installations.map((i) => ({ alias: i.alias, appId: i.appId })),
+        null,
+        2,
+      )}\n`,
+      'utf8',
+    );
+  } catch {
+    // Completion suggestions are a convenience — ignore cache write failures.
+  }
+}

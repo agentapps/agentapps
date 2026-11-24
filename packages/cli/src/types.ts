@@ -22,9 +22,14 @@ export interface AppConfigEntry {
   name?: string;
 }
 
-/** Station-level settings from agentapps.json → "station". */
+/** Settings of the Station this workspace starts, from agentapps.json → "station". */
 export interface StationConfig {
-  /** Public base URL for OAuth callbacks (e.g. "https://your-station.example.com"). */
+  /** Stable identifier of the Station, written when the CLI creates the config (SETUP-REQ-12). */
+  id?: string;
+  /**
+   * Public base URL of the Station (e.g. "https://your-station.example.com").
+   * A Station does not start without one (SETUP-REQ-11).
+   */
   publicUrl?: string;
   /** Default port for `agentapps serve`. */
   port?: number;
@@ -32,11 +37,21 @@ export interface StationConfig {
   host?: string;
 }
 
+/** The CLI's own settings, from agentapps.json → "cli". */
+export interface CliConfig {
+  /** The Station the CLI connects to (SETUP-REQ-6). Distinct from the `station` block. */
+  stationUrl?: string;
+}
+
 /** Parsed agentapps.json workspace configuration, keyed by manifest id. */
 export interface WorkspaceConfig {
   apps: Record<string, AppConfigEntry>;
-  /** Station infrastructure settings. */
+  /** Settings of the Station this workspace starts. */
   station?: StationConfig;
+  /** The CLI's own settings. */
+  cli?: CliConfig;
+  /** The Workspace this config is of; its id is the same on every Station it uses. */
+  workspace?: { id?: string };
   /** `npm:` sources referenced but not yet installed (recover with `sync`). */
   missing?: string[];
 }
@@ -74,6 +89,8 @@ export interface GlobalOptions {
    * detaches by spawning a worker with this flag set. Not shown in help.
    */
   foreground?: boolean;
+  /** `--public-url`: the public URL of the Station being started (SETUP-REQ-11). */
+  publicUrl?: string;
 }
 
 export type { ResultValue } from './render/types.js';

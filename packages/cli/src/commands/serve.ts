@@ -1,70 +1,29 @@
 /**
  * @agentapps/cli — serve command.
  *
- * Starts a production StationServer that loads all apps from the workspace
- * config and serves the Agent Apps v2.0 protocol over HTTP.
- *
- * Usage:
- *   agentapps serve [port] [stationUrl]
- *
- * The optional stationUrl tells the app station where to announce its apps
- * on startup so the station discovers them automatically.
+ * Starts the workspace's Station. The public command launches it detached, so
+ * it outlives the terminal; the detached worker runs this same code with the
+ * internal `--foreground` flag and blocks.
  */
 
-import { hostname } from 'node:os';
-import {
-  type AppEntry,
-  FileDocumentStore,
-  type SecretsManager,
-  type StationEndpoint,
-  StationServer,
-} from '@agentapps/station';
-import { loadWorkspaceConfig, needsDownload, resolveSourcePath } from '../config.js';
-import { workspaceDataPath, workspaceStationSecret } from '../data-paths.js';
-import { InstallationSecretsStore, workspaceStoragePath } from '../host.js';
-import { resolveApp } from '../resolve.js';
-import { loadAppSecrets } from '../secrets-store.js';
-import { getInstallationById, loadApiKeys, loadInstallations } from '../state.js';
+import type { StationEndpoint } from '@agentapps/station';
+import { loadApiKeys } from '../state.js';
 import { detectPortState, launchDetachedStation } from '../station-lifecycle.js';
-import { createLocalApiKeyStore, createLocalPolicyStore } from '../station-stores.js';
+import { stationPublicUrl } from '../station-url.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
-import { CLAUDE_CODE_EVENTS, ClaudeCodeBridge, claudeCodeRoute } from './hooks-claude-code.js';
+import {
+  createWorkspaceStation,
+  MissingStationSetting,
+  type WorkspaceStation,
+  workspaceStationIds,
+} from '../workspace-station.js';
 import type { HandlerContext } from './types.js';
 
 /**
- * Build a SecretsManager backed by the CLI's local stores, so served apps can
- * resolve `ctx.systemSecret()` / `ctx.installationSecret()` exactly like the REPL does:
- *   - system secrets: `.secrets/apps/<appId>.json` (shared per app)
- *   - installation secrets:   `.agentapps/installation-secrets/<alias>.json` (per installed instance)
- *
- * Serve sessions are keyed by appId, so installation secrets resolve through the first
- * installed instance of that app.
+ * @spec SETUP-REQ-11
+ * @spec STADMIN-REQ-11
+ * @spec CLIENT-REQ-10
  */
-function createLocalSecretsManager(configPath: string): SecretsManager {
-  /** Resolve the appId for an installationId by querying the instance registry. */
-  const resolveAppId = (installationId: string): string | undefined =>
-    getInstallationById(configPath, installationId)?.appId;
-
-  return {
-    async getSystemSecrets({ installationId }) {
-      // System secrets are shared per app type, so resolve installationId → appId.
-      const appId = resolveAppId(installationId) ?? installationId;
-      const secrets = loadAppSecrets(configPath, appId);
-      return Object.keys(secrets).length > 0 ? secrets : null;
-    },
-    async getInstallationSecrets({ installationId }) {
-      const store = new InstallationSecretsStore(configPath, installationId);
-      const secrets = store.read();
-      return Object.keys(secrets).length > 0 ? secrets : null;
-    },
-    async updateInstallationSecrets({ installationId }, secrets) {
-      const store = new InstallationSecretsStore(configPath, installationId);
-      store.merge(secrets);
-      return true;
-    },
-  };
-}
-
 export async function handleServe(
   command: ReplCommand,
   context: HandlerContext,
@@ -78,17 +37,26 @@ export async function handleServe(
   }
 
   const { ctx } = context;
-  const appEntries = Object.entries(ctx.config.apps);
-
-  if (appEntries.length === 0) {
-    return {
-      success: false,
-      exitCode: 1,
-      error: { message: 'No apps found in workspace config. Add apps to agentapps.json.' },
-    };
-  }
-
+  // CLIENT-REQ-10: the `station` block describes the Station started here; the
+  // CLI's own `cli.stationUrl` is not read.
   const port = command.port ?? ctx.config.station?.port ?? 4100;
+
+  // SETUP-REQ-11, STADMIN-REQ-11: no public URL or no ids, no Station. Checked
+  // before any port is touched.
+  const publicUrl = stationPublicUrl(context.options, ctx.config);
+  if (typeof publicUrl !== 'string') return publicUrl;
+  try {
+    workspaceStationIds(ctx.configPath);
+  } catch (err) {
+    if (err instanceof MissingStationSetting) {
+      return {
+        success: false,
+        exitCode: 2,
+        error: { message: err.message, suggestion: err.suggestion },
+      };
+    }
+    throw err;
+  }
 
   // `serve` always runs the station detached so it outlives the CLI/terminal.
   // The public command spawns a worker (this same code re-invoked with the
@@ -116,12 +84,13 @@ export async function handleServe(
         },
       };
     }
-    return launchDetachedStation(ctx.configPath, port, command.stationUrl);
+    return launchDetachedStation(
+      ctx.configPath,
+      port,
+      command.stationUrl,
+      context.options.publicUrl,
+    );
   }
-
-  const apps: AppEntry[] = [];
-  const errors: string[] = [];
-  const resolvedApps: Array<{ id: string; app: Awaited<ReturnType<typeof resolveApp>> }> = [];
 
   // Build station endpoints from the stationUrl argument
   const stations: StationEndpoint[] = [];
@@ -130,119 +99,36 @@ export async function handleServe(
   }
 
   process.stdout.write('Loading apps...\n');
-
-  // Sources already looked at, loaded or failed, so each is tried once.
-  const seen = new Set<string>();
-  const loadApp = async (appId: string, source: string): Promise<AppEntry | undefined> => {
-    seen.add(source);
-    try {
-      const resolved = await resolveApp(appId, resolveSourcePath(ctx.configPath, source));
-      const manifest = resolved.manifest ?? {};
-      const id = (manifest.id as string) ?? appId;
-      resolvedApps.push({ id, app: resolved });
-      process.stdout.write(`  ✓ ${id}\n`);
-      return {
-        id,
-        version: (manifest.version as string) ?? '0.0.0',
-        factory: resolved.factory,
-        name: resolved.name,
-        description: manifest.description as string | undefined,
-        auth: manifest.auth as AppEntry['auth'],
-        manifest,
-        sourcePath: resolved.sourcePath,
-      };
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      errors.push(`${appId}: ${message}`);
-      process.stderr.write(`  ✗ ${appId}: ${message}\n`);
-      return undefined;
-    }
-  };
-
-  for (const [appId, entry] of appEntries) {
-    // DIST-REQ-11: a catalog app that has not been downloaded is not a failure.
-    if (needsDownload(ctx.configPath, entry.source)) continue;
-    const app = await loadApp(appId, entry.source);
-    if (app) apps.push(app);
-  }
-
-  // DIST-REQ-11: the Station starts with what there is, even with no app at all.
-  if (apps.length === 0 && errors.length > 0) {
+  let station: WorkspaceStation;
+  try {
+    station = await createWorkspaceStation(ctx.configPath, {
+      port,
+      host: ctx.config.station?.host ?? '127.0.0.1',
+      publicUrl,
+      stations,
+      adminToken: process.env.AGENTAPPS_ADMIN_TOKEN,
+      log: (line) => (line.includes('✗') ? process.stderr : process.stdout).write(`${line}\n`),
+    });
+  } catch (err) {
     return {
       success: false,
       exitCode: 1,
-      error: { message: `All apps failed to load:\n${errors.join('\n')}` },
+      error: { message: err instanceof Error ? err.message : String(err) },
     };
   }
 
-  // Public URL for OAuth callbacks. Priority:
-  //   1. Env var:     PUBLIC_URL=https://your-station.example.com
-  //   2. Config file: agentapps.json → station.publicUrl
-  //   3. Auto-detect: http://localhost:{port}
-  const publicUrl =
-    ((command as Record<string, unknown>).publicUrl as string | undefined) ??
-    process.env.PUBLIC_URL ??
-    ctx.config.station?.publicUrl ??
-    undefined;
+  // DIST-REQ-11: the Station starts with what there is, even with no app at all.
+  if (station.apps.length === 0 && station.errors.length > 0) {
+    return {
+      success: false,
+      exitCode: 1,
+      error: { message: `All apps failed to load:\n${station.errors.join('\n')}` },
+    };
+  }
 
-  const hookBridge = new ClaudeCodeBridge(ctx.configPath, resolvedApps);
-  const server = new StationServer({
-    apps,
-    port,
-    // CLI-REQ-12: this machine only, unless the workspace names another address;
-    // and while no key exists, only this machine is served without a credential.
-    host: ctx.config.station?.host ?? '127.0.0.1',
-    openToLoopbackOnly: true,
-    stations,
-    publicUrl,
-    stationId: `serve-${hostname()}-${port}`,
-    secrets: createLocalSecretsManager(ctx.configPath),
-    // CLI-REQ-14: the same Volume, Objects and link-signing secret as the CLI.
-    volumesBasePath: workspaceDataPath(ctx.configPath),
-    stationSecret: workspaceStationSecret(ctx.configPath),
-    // CLI-REQ-3: the same on-disk Storage the CLI uses, not process memory.
-    documentStore: new FileDocumentStore(workspaceStoragePath(ctx.configPath)),
-    resolveInstallation: (installationId) => {
-      const instance = getInstallationById(ctx.configPath, installationId);
-      return instance ? { appId: instance.appId } : undefined;
-    },
-    // DIST-REQ-13: apps downloaded, or added to the workspace, after the start.
-    discoverApps: async () => {
-      const found: AppEntry[] = [];
-      for (const [appId, entry] of Object.entries(loadWorkspaceConfig(ctx.configPath).apps)) {
-        if (seen.has(entry.source) || needsDownload(ctx.configPath, entry.source)) continue;
-        const app = await loadApp(appId, entry.source);
-        if (app) found.push(app);
-      }
-      return found;
-    },
-    // POLICY-REQ-10: Gateways discover and open sessions as these Installations.
-    installations: () =>
-      loadInstallations(ctx.configPath).map((i) => ({
-        installationId: i.installationId,
-        alias: i.alias,
-        appId: i.appId,
-        ...(i.permissions ? { permissions: i.permissions } : {}),
-      })),
-    // Permissions and API keys are backed by the CLI state files, so `permission` /
-    // `key` commands apply to this running station without a restart. While
-    // no active key exists the station stays open (no auth required).
-    policies: createLocalPolicyStore(ctx.configPath),
-    apiKeys: createLocalApiKeyStore(ctx.configPath),
-    // POLICY-REQ-7: the CLI that launched this station answers its approvals.
-    adminToken: process.env.AGENTAPPS_ADMIN_TOKEN,
-    // HOOK-REQ-26: the Claude Code adapter's events, answered by the apps hosted here.
-    adminRoutes: Object.fromEntries(
-      CLAUDE_CODE_EVENTS.map((event) => [
-        claudeCodeRoute(event),
-        (body: unknown) => hookBridge.handle(event, body as Record<string, unknown>),
-      ]),
-    ),
-  });
-
-  let info: Awaited<ReturnType<typeof server.start>>;
+  let info: Awaited<ReturnType<typeof station.server.start>>;
   try {
-    info = await server.start();
+    info = await station.server.start();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     // Covers the narrow race where the port was free at the pre-check but got
@@ -260,14 +146,14 @@ export async function handleServe(
     throw err;
   }
 
-  const authBase = publicUrl ?? info.url;
   const now = new Date();
   const activeKeys = loadApiKeys(ctx.configPath).filter(
     (k) => !k.revokedAt && (!k.expiresAt || new Date(k.expiresAt) > now),
   );
   process.stdout.write(`\n✓ AppStation server ready: ${info.url}\n`);
+  process.stdout.write(`  Station: ${info.stationId}\n`);
   process.stdout.write(`  Apps: ${info.apps.join(', ')}\n`);
-  process.stdout.write(`  OAuth callback: ${authBase}/auth/callback\n`);
+  process.stdout.write(`  OAuth callback: ${info.oauthCallbackUrl}\n`);
   process.stdout.write(
     activeKeys.length > 0
       ? `  Auth: ${activeKeys.length} active API key(s) — Bearer token required\n`
@@ -276,15 +162,14 @@ export async function handleServe(
   if (stations.length > 0) {
     process.stdout.write(`  Announcing to: ${stations.map((s) => s.url).join(', ')}\n`);
   }
-  if (errors.length > 0) {
-    process.stdout.write(`  Failed: ${errors.length}\n`);
+  if (station.errors.length > 0) {
+    process.stdout.write(`  Failed: ${station.errors.length}\n`);
   }
   process.stdout.write('\nPress Ctrl+C to stop.\n');
 
   const shutdown = async () => {
     process.stdout.write('\nShutting down...\n');
-    await hookBridge.stop();
-    await server.stop();
+    await station.stop();
     process.exit(0);
   };
 

@@ -1,0 +1,35 @@
+{
+  "id": "app.postiz",
+  "name": "Postiz",
+  "version": "1.0.0",
+  "description": "Draft, schedule and publish social posts through a Postiz account (cloud or self-hosted), list what is scheduled, delete posts, import media by URL and read channel and post analytics.",
+  "tagline": "Draft, schedule and publish social posts across the channels connected in Postiz",
+  "author": {
+    "name": "Pablo López Torres",
+    "email": "pablolopeztorres@gmail.com"
+  },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "marketing",
+  "keywords": ["postiz", "social media", "publishing", "scheduling", "linkedin", "x", "instagram"],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["POSTIZ_API_KEY", "POSTIZ_API_URL"]
+  }
+}

@@ -26,6 +26,15 @@ export {
   DEFAULT_APPROVAL_TIMEOUT_MS,
   type PendingApprovalInfo,
 } from './approval-manager.js';
+export {
+  type DataStore,
+  type DocumentsStore,
+  InMemoryDataStore,
+  type InstallationDataScope,
+  LocalDataStore,
+  type LocalDataStoreOptions,
+} from './data-store.js';
+export { type DataStoreContractCase, dataStoreContract } from './data-store-contract.js';
 // Storage (document store)
 export {
   type DocumentStore,
@@ -42,10 +51,14 @@ export {
 export {
   generateObjectId,
   handleObjectRequest,
+  InMemoryObjectsStore,
+  LocalObjectsStore,
   type ObjectRequestScope,
+  type ObjectScope,
   type ObjectServeResult,
   ObjectStore,
   type ObjectStoreOptions,
+  type ObjectsStore,
   type StoredObjectMeta,
   toObjectInfo,
 } from './file-handlers/object-store.js';
@@ -61,10 +74,14 @@ export {
   buildVolumeRoot,
   getVolumesBasePath,
   handleVolumeRequest,
+  InMemoryVolumeStore,
+  LocalVolumeStore,
   resolveMountPath,
   resolveVolumePath,
   VOLUME_REQUEST_TYPES,
   type VolumeHandlerContext,
+  type VolumeResult,
+  type VolumeStore,
   volumeMkdir,
 } from './file-handlers/volume-handlers.js';
 // Runtime adapters
@@ -94,17 +111,40 @@ export {
 } from './permission-enforcer.js';
 export { InMemoryPolicyStore, type PolicyStore, policyFor } from './policy-store.js';
 // Secrets manager
-export type { SecretsContext, SecretsManager } from './secrets-manager.js';
+export {
+  InMemorySecretStore,
+  type InstallationSecretScope,
+  LocalSecretStore,
+  type LocalSecretStoreOptions,
+  type SecretStore,
+  type StationSecretScope,
+  type SystemSecretScope,
+} from './secret-store.js';
+export { type SecretStoreContractCase, secretStoreContract } from './secret-store-contract.js';
 // Server
 export {
+  type AppCatalog,
   type AppEntry,
+  requireId,
+  requirePublicUrl,
   type ServerInfo,
+  type StationCaller,
   type StationEndpoint,
-  type StationInstallation,
   StationServer,
   type StationServerOptions,
   serve,
 } from './server.js';
+export {
+  type BindingStore,
+  generateInstallationId,
+  InMemoryBindingStore,
+  InMemoryInstallationStore,
+  InMemoryWorkspaceStore,
+  type InstallationStore,
+  type StationBinding,
+  type StationInstallation,
+  type WorkspaceStore,
+} from './station-state.js';
 // Telemetry
 export {
   NOOP_TELEMETRY,

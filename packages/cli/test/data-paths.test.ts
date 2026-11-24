@@ -2,12 +2,13 @@
  * The CLI and its Station keep a workspace's files in one place (CLI-REQ-14).
  */
 
-import { mkdtempSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ObjectStore, StationServer } from '@agentapps/station';
+import { LocalObjectsStore, ObjectStore } from '@agentapps/station';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { workspaceDataPath, workspaceStationSecret } from '../src/data-paths.js';
+import { workspaceDataPath } from '../src/data-paths.js';
+import { startWorkspace } from './support/workspace.js';
 
 let dir: string;
 let configPath: string;
@@ -31,50 +32,45 @@ afterEach(() => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-/** A Station as `station start` builds it, as far as Objects are concerned. */
-async function station(): Promise<{ url: string; stop: () => Promise<void> }> {
-  const server = new StationServer({
-    apps: [],
-    volumesBasePath: workspaceDataPath(configPath),
-    stationSecret: workspaceStationSecret(configPath),
-  });
-  const { url } = await server.start(0, '127.0.0.1');
-  return { url, stop: () => server.stop() };
-}
-
 describe('workspace data', () => {
-  it('[CLI-AC-14] a link made by the CLI is served by its Station, before and after a restart', async () => {
-    // What the CLI's Host does when an app stores a private Object and asks for a link.
-    const store = new ObjectStore({
-      volumesBasePath: workspaceDataPath(configPath),
-      stationSecret: workspaceStationSecret(configPath),
-      publicUrl: 'http://station.invalid',
-    });
-    const scope = { workspaceId: 'default', installationId: 'ins_1' };
-    const meta = await store.put(scope, Buffer.from('hello'), {
-      contentType: 'text/plain',
-      visibility: 'private',
-    });
-    const link = await store.link(scope, meta.objectId, 600);
-    const path = new URL(link?.url ?? '').pathname + new URL(link?.url ?? '').search;
-
-    const first = await station();
-    const served = await fetch(first.url + path);
-    expect(served.status).toBe(200);
-    expect(await served.text()).toBe('hello');
-    expect((await fetch(`${first.url}/objects/${meta.objectId}`)).status).not.toBe(200);
-    await first.stop();
-
-    const second = await station();
+  it('[CLI-AC-14] a link to a private Object is served by the workspace’s Station, before and after a restart', async () => {
+    const workspace = await startWorkspace({ dir });
     try {
-      expect((await fetch(second.url + path)).status).toBe(200);
-    } finally {
-      await second.stop();
-    }
+      // Asking for any Object makes the Station create its link-signing secret,
+      // in the workspace's Secret Store.
+      await fetch(`${workspace.url}/objects/obj_${'0'.repeat(32)}`);
+      const file = join(dir, '.agentapps', 'station-secret');
+      const secret = readFileSync(file, 'utf8').trim();
+      expect(secret.length).toBeGreaterThanOrEqual(32);
+      if (process.platform !== 'win32') expect(statSync(file).mode & 0o777).toBe(0o600);
 
-    const file = join(dir, '.agentapps', 'station-secret');
-    if (process.platform !== 'win32') expect(statSync(file).mode & 0o777).toBe(0o600);
-    expect(workspaceStationSecret(configPath)).toBe(workspaceStationSecret(configPath));
-    expect(workspaceDataPath(configPath)).toBe(join(dir, '.agentapps', 'data'));
+      // An Object and a link as the Station makes them for an app, in the
+      // workspace's data directory.
+      expect(workspaceDataPath(configPath)).toBe(join(dir, '.agentapps', 'data'));
+      const store = new ObjectStore({
+        objects: new LocalObjectsStore(() => workspaceDataPath(configPath)),
+        stationId: 'stn_test',
+        stationSecret: secret,
+        publicUrl: 'http://station.invalid',
+      });
+      const scope = { workspaceId: 'default', installationId: 'ins_1' };
+      const meta = await store.put(scope, Buffer.from('hello'), {
+        contentType: 'text/plain',
+        visibility: 'private',
+      });
+      const link = await store.link(scope, meta.objectId, 600);
+      const path = new URL(link?.url ?? '').pathname + new URL(link?.url ?? '').search;
+
+      const served = await fetch(workspace.url + path);
+      expect(served.status).toBe(200);
+      expect(await served.text()).toBe('hello');
+      expect((await fetch(`${workspace.url}/objects/${meta.objectId}`)).status).not.toBe(200);
+
+      await workspace.restart();
+      expect((await fetch(workspace.url + path)).status).toBe(200);
+      expect(readFileSync(file, 'utf8').trim()).toBe(secret);
+    } finally {
+      await workspace.stop();
+    }
   });
 });

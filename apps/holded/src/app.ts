@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.holded',
-  version: '3.0.0',
+  version: '3.0.1',
   name: 'Holded',
   description:
     'Holded ERP — manage invoices, contacts, products, documents, and treasury via the Holded API.',

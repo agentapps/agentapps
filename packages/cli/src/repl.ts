@@ -28,7 +28,8 @@ import { CYAN, RESET } from './render/colors.js';
 import { formatCompletionColumns } from './render/completions.js';
 import { createRenderer } from './render/index.js';
 import { getCompletionCandidates, parseReplLine, tokenize } from './repl-parser.js';
-import { SessionPool } from './session-pool.js';
+import { offerStation } from './station-offer.js';
+import { StationSessions } from './station-session.js';
 import type { CliContext, GlobalOptions } from './types.js';
 
 type ParsedCommand = ReturnType<typeof parseReplLine>;
@@ -75,6 +76,9 @@ export async function startRepl(options: ReplOptions): Promise<void> {
 
   const prompt = isTTY && !noColor ? `${CYAN}agentapps>${RESET} ` : 'agentapps> ';
 
+  // CLIENT-REQ-6: a Station that is not running is said before the first prompt.
+  await offerStation({ ctx, options: globalOptions, input, output });
+
   let server: LineEditor | undefined;
   let finishRepl: (() => void) | undefined;
   // Tracks the in-flight command so teardown (e.g. EOF on piped stdin) waits
@@ -82,7 +86,7 @@ export async function startRepl(options: ReplOptions): Promise<void> {
   let pending: Promise<void> = Promise.resolve();
   // One live session per alias for the whole REPL run (stateful apps keep
   // their state across commands). Closed on exit.
-  const sessions = new SessionPool();
+  const sessions = new StationSessions();
 
   const completer = (line: string): [string[], string] => {
     const candidates = getCompletionCandidates(line, {

@@ -1,11 +1,16 @@
 {
   "name": "@agentapps/app.linear",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
   "main": "src/app.ts",
   "dependencies": {
     "@agentapps/sdk": "workspace:*",
     "@linear/sdk": "^29.0.0"
+  },
+  "devDependencies": {
+    "@agentapps/station": "workspace:*",
+    "@agentapps/protocol": "workspace:*",
+    "vitest": "^3.2.0"
   }
 }

@@ -69,13 +69,11 @@ Analytics API has its own separate quota.
 
 ```bash
 agentapps config app.youtube-analytics CLIENT_ID:"<client id>" CLIENT_SECRET:"<client secret>"
-# Only if agentapps.json has no "station": { "publicUrl": ... }:
-agentapps config app.youtube-analytics REDIRECT_URI:"https://your-station.example.com/auth/callback"
 ```
 
 The station uses them for the code exchange and for refreshing tokens; the app process never
-reads the client secret. `agentapps install` lists `REDIRECT_URI` as missing until it is set;
-with a station `publicUrl` it is not needed for the OAuth flow.
+reads the client secret. The redirect URI registered with the OAuth client is the station's own,
+`{station URL}/auth/callback`; it is not a secret and is not configured here.
 
 ### 3. Install and connect an account (per user)
 

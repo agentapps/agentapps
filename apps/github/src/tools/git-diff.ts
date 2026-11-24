@@ -3,6 +3,7 @@ import {
   assertIsRepo,
   type GitDiffStat,
   parseGitDiffNumstat,
+  positional,
   resolveRepoPath,
   runGit,
 } from '../lib/git-local.js';
@@ -62,7 +63,11 @@ export function registerGitDiffTool(app: AgentApp) {
       const pathArg = a.path ? ['--', a.path] : [];
 
       const targetArgs: string[] =
-        from === 'working' ? [] : from === 'staged' ? ['--cached'] : [from, a.to ?? 'HEAD'];
+        from === 'working'
+          ? []
+          : from === 'staged'
+            ? ['--cached']
+            : [positional(from, 'from'), positional(a.to ?? 'HEAD', 'to')];
 
       const patchResult = runGit(repoPath, ['diff', contextFlag, ...targetArgs, ...pathArg]);
       if (patchResult.code !== 0) throwClassifiedGitError(patchResult);

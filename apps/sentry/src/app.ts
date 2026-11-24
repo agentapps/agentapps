@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.sentry',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Sentry',
   description: 'Monitor errors and issues in your applications via the Sentry API.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

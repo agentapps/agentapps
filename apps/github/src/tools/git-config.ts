@@ -9,8 +9,6 @@ const ALLOWED_KEYS = new Set([
   'commit.gpgsign',
   'commit.template',
   'core.autocrlf',
-  'core.editor',
-  'core.pager',
   'core.eol',
   'core.ignorecase',
   'init.defaultbranch',

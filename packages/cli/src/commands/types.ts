@@ -3,7 +3,7 @@
  */
 
 import type { ReplCommand } from '../repl-parser.js';
-import type { SessionPool } from '../session-pool.js';
+import type { StationSessions } from '../station-session.js';
 import type { CliContext, GlobalOptions } from '../types.js';
 
 export interface HandlerContext {
@@ -16,7 +16,7 @@ export interface HandlerContext {
    * reuse one live session per instance instead of opening and closing one
    * per invocation — stateful apps keep their state across commands.
    */
-  sessions?: SessionPool;
+  sessions?: StationSessions;
 }
 
 export type CommandHandler = (

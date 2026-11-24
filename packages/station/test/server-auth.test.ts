@@ -10,6 +10,7 @@
 import type { ApiKeyRecord } from '@agentapps/protocol';
 import { afterEach, describe, expect, it } from 'vitest';
 import { generateApiKey, InMemoryApiKeyStore } from '../src/api-key-store.js';
+import { InMemoryDataStore, InMemorySecretStore } from '../src/index.js';
 import { InMemoryPolicyStore } from '../src/policy-store.js';
 import { StationServer } from '../src/server.js';
 
@@ -38,6 +39,11 @@ describe('StationServer auth gating', () => {
 
   async function startServer(apiKeys: InMemoryApiKeyStore): Promise<string> {
     server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [],
       apiKeys,
       policies: new InMemoryPolicyStore(),

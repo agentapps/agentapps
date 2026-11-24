@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.zendesk',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Zendesk',
   description:
     'Zendesk support integration — manage tickets, users, organizations, views, groups, triggers, automations, attachments, webhooks, and satisfaction ratings via the Zendesk REST API v2 with rate limiting.',

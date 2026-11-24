@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { resolveUserToken } from '../lib/github-user-token.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
@@ -60,8 +60,9 @@ export function registerGitPullTool(app: AgentApp) {
       if (a.ff === 'no') flags.push('--no-ff');
 
       const argv = ['pull', ...flags];
-      if (a.remote) argv.push(a.remote);
-      if (a.branch) argv.push(a.branch);
+      // `git pull <branch>` would read the branch as the remote: a branch needs a remote first.
+      if (a.remote || a.branch) argv.push(positional(a.remote ?? 'origin', 'remote'));
+      if (a.branch) argv.push(positional(a.branch, 'branch'));
 
       const result = runGit(repoPath, [...cfgFlags, ...argv]);
       if (result.code !== 0) throwClassifiedGitError(result);

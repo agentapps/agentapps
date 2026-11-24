@@ -8,7 +8,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.quickbooks',
-  version: '3.0.0',
+  version: '3.1.0',
   name: 'QuickBooks',
   description:
     'QuickBooks Online accounting — manage invoices, customers, payments, accounts, items, and reports.',
@@ -25,7 +25,7 @@ const app = createApp({
     tokenUrl: 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',
     scopes: ['com.intuit.quickbooks.accounting'],
     pkce: false,
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'REALM_ID'],
   },
 });

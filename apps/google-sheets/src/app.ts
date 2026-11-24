@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.sheets',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Google Sheets',
   description:
     'Create, read, write, append, clear, format, and export Google Sheets spreadsheets - create spreadsheets, get metadata, add/delete/copy sheet tabs, write data, append rows, batch update values and formatting (formulas, conditional formatting), clear ranges, read data, list tabs, export to CSV/XLSX/PDF. To delete a spreadsheet, use the Google Drive app.',

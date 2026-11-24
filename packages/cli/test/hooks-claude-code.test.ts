@@ -7,7 +7,7 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync, unlinkSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createApp } from '@agentapps/sdk';
-import { StationServer } from '@agentapps/station';
+import { InMemoryDataStore, InMemorySecretStore, StationServer } from '@agentapps/station';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   factory as complianceFactory,
@@ -111,6 +111,11 @@ async function startDaemon() {
   ]);
   const b = bridge;
   server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore: new InMemorySecretStore(),
+    dataStore: new InMemoryDataStore(),
+    publicUrl: 'http://station.test',
     apps: [],
     adminToken: 'admin-secret',
     adminRoutes: Object.fromEntries(
@@ -121,6 +126,8 @@ async function startDaemon() {
     ),
   });
   const info = await server.start(0, '127.0.0.1');
+  // The command finds the Station where the workspace's CLI does: cli.stationUrl.
+  writeFileSync(configPath, JSON.stringify({ apps: [], cli: { stationUrl: info.url } }));
   writeFileSync(
     stationMetaPath(configPath),
     JSON.stringify({

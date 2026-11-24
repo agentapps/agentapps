@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import type { AgentApp } from '@agentapps/sdk';
 import { resolveUserToken } from '../lib/github-user-token.js';
@@ -35,21 +35,41 @@ export function registerCloneRepoTool(app: AgentApp) {
       const destination = (args as { destination?: string }).destination || `/workspace/${repo}`;
       if (fs.existsSync(destination))
         throw new Error(`Destination path already exists: ${destination}`);
+      // These go to git as separate arguments, never through a shell, and are checked first:
+      // a value such as `x"; rm -rf ~; "` must not be able to run anything.
+      if (
+        !/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(owner) ||
+        !/^[A-Za-z0-9._-]+$/.test(repo)
+      ) {
+        throw new Error('owner and repo must be a GitHub owner and repository name');
+      }
+      if (branch !== undefined && (!/^[A-Za-z0-9._/-]+$/.test(branch) || branch.startsWith('-'))) {
+        throw new Error('branch is not a valid branch name');
+      }
       const token = await resolveUserToken(ctx);
-      const cloneUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`;
-      const branchFlag = branch ? `--branch ${branch}` : '';
-      const cmd = `git clone ${branchFlag} "${cloneUrl}" "${destination}" 2>&1`;
+      // The token travels in a header for this one command, as in git-fetch, git-pull and
+      // git-push. In the URL it would be saved in the clone's .git/config for good.
+      const authHeader = `AUTHORIZATION: basic ${Buffer.from(`x-access-token:${token}`).toString('base64')}`;
+      const cloneArgs = [
+        '-c',
+        `http.extraheader=${authHeader}`,
+        'clone',
+        ...(branch ? ['--branch', branch] : []),
+        '--',
+        `https://github.com/${owner}/${repo}.git`,
+        destination,
+      ];
+      const git = (args: string[], timeout?: number) =>
+        execFileSync('git', args, {
+          encoding: 'utf-8',
+          timeout,
+          stdio: ['ignore', 'pipe', 'pipe'],
+        });
       try {
-        const output = execSync(cmd, { encoding: 'utf-8', timeout: 120_000 });
-        const logOutput = execSync(`git -C "${destination}" log --oneline -5 2>&1`, {
-          encoding: 'utf-8',
-        }).trim();
-        const branchOutput = execSync(`git -C "${destination}" branch --show-current 2>&1`, {
-          encoding: 'utf-8',
-        }).trim();
-        const shaOutput = execSync(`git -C "${destination}" rev-parse HEAD 2>&1`, {
-          encoding: 'utf-8',
-        }).trim();
+        const output = git(cloneArgs, 120_000);
+        const logOutput = git(['-C', destination, 'log', '--oneline', '-5']).trim();
+        const branchOutput = git(['-C', destination, 'branch', '--show-current']).trim();
+        const shaOutput = git(['-C', destination, 'rev-parse', 'HEAD']).trim();
         return {
           success: true,
           path: destination,
@@ -59,8 +79,11 @@ export function registerCloneRepoTool(app: AgentApp) {
           output: output.trim(),
         };
       } catch (error: unknown) {
-        const message = (error as { message?: string })?.message ?? String(error);
-        const sanitized = message.replace(token, '<TOKEN>');
+        const e = error as { message?: string; stderr?: string };
+        const message = `${e?.message ?? String(error)}${e?.stderr ? `\n${e.stderr}` : ''}`;
+        const sanitized = message
+          .replaceAll(token, '<TOKEN>')
+          .replaceAll(authHeader, 'AUTHORIZATION: <REDACTED>');
         throw new Error(`Clone failed: ${sanitized}`);
       }
     },

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.excalidraw",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Excalidraw",
   "description": "Integrate with Excalidraw Plus to manage scenes, collections, workspaces, users, and invites programmatically. Create and update diagrams, wireframes, and whiteboards via the Excalidraw Plus REST API.",
   "tagline": "Manage Excalidraw Plus scenes, collections, and workspaces",

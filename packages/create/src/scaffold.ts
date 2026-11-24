@@ -168,7 +168,22 @@ export const OAUTH_PROVIDERS: Record<string, { authorizeUrl: string; tokenUrl: s
 };
 
 /** What the host's OAuth flow reads (system) and writes (user) for an `oauth2` app. */
-const OAUTH_SYSTEM_SECRETS = ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'];
+/** The OAuth client. Never a redirect URI: the Station supplies it (SETUP-REQ-9). */
+const OAUTH_SYSTEM_SECRETS = ['CLIENT_ID', 'CLIENT_SECRET'];
+
+/**
+ * The `auth.setup` a scaffolded OAuth app starts with: the steps to register
+ * its OAuth client, with the redirect URI as a variable the Station fills in.
+ *
+ * @spec SETUP-REQ-9
+ */
+export function oauthSetupInstructions(provider: string): string {
+  return [
+    `1. Register an OAuth client with ${provider} (TODO: where, and which test users or app review it needs).`,
+    '2. Add this redirect URI to the client: {{redirectUri}}',
+    '3. Copy the client id and the client secret of that client.',
+  ].join('\n');
+}
 const OAUTH_USER_SECRETS = ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EXPIRY_DATE'];
 
 export function validateProjectName(name: string): string | null {
@@ -273,7 +288,15 @@ export function tsLiteral(value: unknown, indent = 0): string {
     });
     return `{\n${lines.join('\n')}\n${pad}}`;
   }
-  if (typeof value === 'string') return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+  if (typeof value === 'string') {
+    // Line breaks are escaped too: a setup text (auth.setup) has several lines.
+    const escaped = value
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\r/g, '\\r')
+      .replace(/\n/g, '\\n');
+    return `'${escaped}'`;
+  }
   return String(value);
 }
 
@@ -485,6 +508,7 @@ export async function scaffoldApp(options: ScaffoldOptions): Promise<ScaffoldRes
     oauth = {
       type: 'oauth2',
       provider,
+      setup: oauthSetupInstructions(provider),
       systemSecrets: OAUTH_SYSTEM_SECRETS,
       installationSecrets: OAUTH_USER_SECRETS,
       authorizeUrl,
@@ -569,7 +593,6 @@ export async function scaffoldApp(options: ScaffoldOptions): Promise<ScaffoldRes
       ? {
           CLIENT_ID: 'fake-client-id',
           CLIENT_SECRET: 'fake-client-secret',
-          REDIRECT_URI: 'https://station.example.com/auth/callback',
         }
       : Object.fromEntries(systemSecrets.map((s) => [s, `fake-${s.toLowerCase()}`]));
   const vars: Record<string, string> = {
@@ -728,8 +751,8 @@ function secretsHelp(
       `The app signs in with ${provider} OAuth. Register an OAuth client with ${provider} (TODO: where,`,
       'and which test users or app review it needs). Its id and secret are *system* secrets, shared',
       `by every installation: set them once on \`${appId}\`. The redirect URI to register is the`,
-      "station's `/auth/callback` (`station.publicUrl` in agentapps.json, or `REDIRECT_URI` on the",
-      `app id). \`agentapps ${alias} auth\` then opens the consent page; the station stores this`,
+      `station's own; \`agentapps config ${appId}\` shows it with the steps of \`auth.setup\` before it`,
+      `asks for them. \`agentapps ${alias} auth\` then opens the consent page; the station stores this`,
       `installation's tokens and refreshes them (\`agentapps ${alias} auth reauth\` starts over).`,
       '',
       `Scopes: ${scopes.map((s) => `\`${s}\``).join(', ')}. TODO: why each one is needed.`,

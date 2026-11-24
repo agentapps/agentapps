@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.minio',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'MinIO',
   description:
     'MinIO S3-compatible object storage — manage buckets, upload/download objects, generate presigned URLs.',

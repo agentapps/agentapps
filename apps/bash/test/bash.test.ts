@@ -253,7 +253,9 @@ describe('Bash on the Workspace Volume', () => {
     const { mkdtemp, rm } = await import('node:fs/promises');
     const { tmpdir } = await import('node:os');
     const { join } = await import('node:path');
-    const { handleVolumeRequest, resolveMountPath } = await import('@agentapps/station');
+    const { handleVolumeRequest, LocalVolumeStore, resolveMountPath } = await import(
+      '@agentapps/station'
+    );
     const manifest = (await import('../agentapp.json', { with: { type: 'json' } })).default as {
       runtime: { mountVolume?: boolean };
       permissions?: { volume?: boolean };
@@ -264,7 +266,7 @@ describe('Bash on the Workspace Volume', () => {
       // Another app writes notes.md through API mode (VOL-REQ-3).
       const written = await handleVolumeRequest(
         {
-          volumesBasePath: base,
+          volume: new LocalVolumeStore(base),
           workspaceId: 'hexagon',
           sessionId: 'writer',
           permissions: { volume: true },
@@ -289,7 +291,7 @@ describe('Bash on the Workspace Volume', () => {
           resolveMountPath({
             mountVolume: manifest.runtime.mountVolume,
             permissions: manifest.permissions,
-            volumesBasePath: base,
+            volume: new LocalVolumeStore(base),
             workspaceId: 'hexagon',
           }),
       });

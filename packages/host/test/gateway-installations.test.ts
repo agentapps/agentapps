@@ -13,6 +13,8 @@ import {
   generateApiKey,
   InMemoryApiKeyStore,
   InMemoryPolicyStore,
+  InMemorySecretStore,
+  LocalDataStore,
   StationServer,
 } from '@agentapps/station';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -55,7 +57,6 @@ afterEach(async () => {
 
 async function start(opts: { withKey: boolean }) {
   dir = mkdtempSync(join(tmpdir(), 'agentapps-gateway-'));
-  const documentStore = new FileDocumentStore(dir);
   // What the CLI wrote earlier for the `todo` Installation.
   await new FileDocumentStore(dir).put('ins_todo', 'notes', 'n1', { text: 'from the CLI' });
 
@@ -78,6 +79,17 @@ async function start(opts: { withKey: boolean }) {
     key = raw;
   }
   server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore: new InMemorySecretStore(),
+    // The Station's local Data Store on the directory the CLI wrote to.
+    dataStore: new LocalDataStore({
+      stationId: 'stn_test',
+      storageDir: dir,
+      dataDir: join(dir, 'data'),
+      otherStationsDir: join(dir, 'stations'),
+    }),
+    publicUrl: 'http://station.test',
     apps: [
       { id: 'app.todo-list', version: '1.0.0', name: 'Todo', factory: todoApp() },
       { id: 'app.storage-test', version: '1.0.0', name: 'Storage', factory: storageApp() },
@@ -85,7 +97,6 @@ async function start(opts: { withKey: boolean }) {
     apiKeys,
     policies,
     adminToken: ADMIN_TOKEN,
-    documentStore,
     installations: () => [
       { installationId: 'ins_todo', alias: 'todo', appId: 'app.todo-list' },
       { installationId: 'ins_storage', alias: 'storage', appId: 'app.storage-test' },

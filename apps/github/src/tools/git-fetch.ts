@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { resolveUserToken } from '../lib/github-user-token.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
@@ -66,8 +66,8 @@ export function registerGitFetchTool(app: AgentApp) {
       if (a.tags === true) flags.push('--tags');
       if (a.tags === false) flags.push('--no-tags');
 
-      const argv = ['fetch', ...flags, remote];
-      if (a.refspec) argv.push(a.refspec);
+      const argv = ['fetch', ...flags, positional(remote, 'remote')];
+      if (a.refspec) argv.push(positional(a.refspec, 'refspec'));
 
       const result = runGit(repoPath, [...cfgFlags, ...argv]);
       if (result.code !== 0) throwClassifiedGitError(result);

@@ -199,7 +199,6 @@ async function waitForType(type: string, timeoutMs = 5000): Promise<Record<strin
 const SYSTEM_SECRETS = {
   CLIENT_ID: 'test-client-id',
   CLIENT_SECRET: 'test-client-secret',
-  REDIRECT_URI: '["https://localhost/callback"]',
 };
 
 const USER_SECRETS = {

@@ -2,7 +2,7 @@
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.google.contacts",
   "name": "Google Contacts",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Manage Google Contacts — list, search, create, update, and delete contacts, plus organize them into groups and labels via the Google People API.",
   "tagline": "List, search, create, update, and delete contacts and contact groups in Google Contacts",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

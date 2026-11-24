@@ -12,6 +12,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
   generateObjectId,
   handleObjectRequest,
+  LocalObjectsStore,
   ObjectStore,
   toObjectInfo,
 } from '../../src/file-handlers/object-store.js';
@@ -31,7 +32,8 @@ const stranger = { workspaceId: 'ws_b', installationId: 'inst_3' };
 beforeAll(async () => {
   tempBase = await mkdtemp(join(tmpdir(), 'agentapps-objects-'));
   store = new ObjectStore({
-    volumesBasePath: tempBase,
+    objects: new LocalObjectsStore(() => tempBase),
+    stationId: 'stn_test',
     stationSecret: SECRET,
     publicUrl: PUBLIC_URL,
   });

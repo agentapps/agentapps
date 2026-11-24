@@ -2,10 +2,11 @@
  * @agentapps/cli — rename command.
  */
 
-import { renameInstallation } from '../state.js';
+import { isResult, StationError, stationOf } from '../station-client.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** @spec STADMIN-REQ-6 */
 export async function handleRename(
   command: ReplCommand,
   context: HandlerContext,
@@ -19,20 +20,21 @@ export async function handleRename(
   }
 
   const { alias, newAlias } = command;
-  const { ctx } = context;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  // A pooled session is keyed by alias — close it so the old key can't leak.
+  // A kept session is keyed by alias — close it so the old key can't leak.
   await context.sessions?.release(alias);
 
   try {
-    renameInstallation(ctx.configPath, alias, newAlias);
+    await station.api('PATCH', `/api/installations/${encodeURIComponent(alias)}`, {
+      alias: newAlias,
+    });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message },
-    };
+    if (err instanceof StationError && err.status === 404) {
+      return { success: false, exitCode: 2, error: { message: `Alias "${alias}" not found` } };
+    }
+    return station.failure(err);
   }
 
   return {

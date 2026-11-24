@@ -14,6 +14,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   buildVolumeRoot,
   handleVolumeRequest,
+  LocalVolumeStore,
   resolveVolumePath,
   type VolumeHandlerContext,
 } from '../src/file-handlers/volume-handlers.js';
@@ -38,7 +39,7 @@ function makeCtx(
   sessionId = 'sess_test',
 ): VolumeHandlerContext {
   return {
-    volumesBasePath: tempBase,
+    volume: new LocalVolumeStore(tempBase),
     workspaceId,
     sessionId,
     permissions: { volume: true },

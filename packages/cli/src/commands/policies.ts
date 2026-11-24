@@ -1,50 +1,41 @@
 /**
- * @agentapps/cli — Policy commands (one Policy per Principal).
+ * @agentapps/cli — policy commands.
  *
- * Usage:
- *   policy list                                         — every Principal's Policy
- *   policy show <principal>                             — one Policy (default if none stored)
- *   policy set <principal> <app> <tool> <effect> [when] — add or replace a Rule
- *   policy unset <principal> <ruleId>                   — remove a Rule
- *   policy delete <principal>                           — back to the default Policy
- *
- * `<principal>` is a Principal id (`admin`, or the one `key create` printed) or
- * the name of an active API key; names are unique among active keys.
- *
- * `app` and `tool` accept `*`; `when` is the Rule's condition as JSON, e.g.
- * `{"to":{"endsWith":"@hexagon.sh"}}` or `{"annotation":"sensitive"}`.
+ * One Policy per Principal (POLICY-REQ-2), kept by the Station. A Principal
+ * is named by its id, `admin`, or the name of an active API Key
+ * (POLICY-REQ-15); the Station resolves it among those of the Workspace.
  */
 
-import { type Rule, RuleConditionSchema } from '@agentapps/protocol';
-import { getPolicy, loadApiKeys, loadPolicies, putPolicy, savePolicies } from '../state.js';
+import { type Policy, type Rule, RuleConditionSchema } from '@agentapps/protocol';
+import { isResult, type StationClient, StationError, stationOf } from '../station-client.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
-/**
- * The Principal a `policy` command names: an id as given, or the Principal
- * behind a key name. A value that is neither is refused, so a Rule is never
- * stored for a Principal that does not exist.
- *
- * @spec POLICY-REQ-15
- */
-function resolvePrincipal(
-  configPath: string,
+/** The Policy of a Principal as the Station answers it, or the result for one that does not exist. */
+async function policyOf(
+  station: StationClient,
   given: string,
-): { id: string; label: string } | { error: string; suggestion?: string } {
-  const keys = loadApiKeys(configPath);
-  if (
-    given === 'admin' ||
-    keys.some((k) => k.principalId === given) ||
-    loadPolicies(configPath).some((p) => p.principalId === given)
-  ) {
-    return { id: given, label: given };
+): Promise<{ policy: Policy; label: string } | HandlerResult> {
+  try {
+    const policy = await station.api<Policy>('GET', `/api/policies/${encodeURIComponent(given)}`);
+    const label = policy.principalId === given ? given : `${given} (${policy.principalId})`;
+    return { policy, label };
+  } catch (err) {
+    if (err instanceof StationError && err.status === 404) {
+      // POLICY-REQ-15: a Rule is never kept for a Principal that does not exist.
+      return invalid(
+        `No Principal is called ${given}`,
+        'Use admin, a Principal id, or the name of an active API key (see: key list).',
+      );
+    }
+    throw err;
   }
-  const named = keys.find((k) => k.name === given && !k.revokedAt);
-  if (named) return { id: named.principalId, label: `${given} (${named.principalId})` };
-  return {
-    error: `No Principal is called ${given}`,
-    suggestion: 'Use admin, a Principal id, or the name of an active API key (see: key list).',
-  };
+}
+
+function putRules(station: StationClient, policy: Policy, rules: Rule[]): Promise<Policy> {
+  return station.api<Policy>('PUT', `/api/policies/${encodeURIComponent(policy.principalId)}`, {
+    rules,
+  });
 }
 
 function describeRule(r: Rule): Record<string, ResultValue> {
@@ -61,51 +52,65 @@ export async function handlePolicyList(
   _command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
-  const policies = loadPolicies(context.ctx.configPath);
-  if (policies.length === 0) {
-    return {
-      success: true,
-      message: 'No policies stored: every Principal uses the default Policy.',
-      exitCode: 0,
-    };
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    const { policies } = await station.api<{ policies: Array<Policy & { stored: boolean }> }>(
+      'GET',
+      '/api/policies',
+    );
+    const stored = policies.filter((p) => p.stored);
+    if (stored.length === 0) {
+      return {
+        success: true,
+        message: 'No policies stored: every Principal uses the default Policy.',
+        exitCode: 0,
+      };
+    }
+    const data: Record<string, ResultValue> = {};
+    for (const p of stored) {
+      data[p.principalId] = {
+        default: p.defaultEffect,
+        rules: p.rules.length,
+        approver: p.approver,
+      };
+    }
+    return { success: true, data: { Policies: data } as unknown as ResultValue, exitCode: 0 };
+  } catch (err) {
+    return station.failure(err);
   }
-  const data: Record<string, ResultValue> = {};
-  for (const p of policies) {
-    data[p.principalId] = { default: p.defaultEffect, rules: p.rules.length, approver: p.approver };
-  }
-  return { success: true, data: { Policies: data } as unknown as ResultValue, exitCode: 0 };
 }
 
-/**
- * @spec POLICY-REQ-2
- * @spec POLICY-REQ-15
- */
+/** @spec POLICY-REQ-2 */
 export async function handlePolicyShow(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-show') return internal();
-  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
-  if ('error' in who) return invalid(who.error, who.suggestion);
-  const policy = getPolicy(context.ctx.configPath, who.id);
-  const rules: Record<string, ResultValue> = {};
-  for (const r of policy.rules) rules[r.id] = describeRule(r);
-  return {
-    success: true,
-    data: {
-      principal: policy.principalId,
-      approver: policy.approver,
-      default: policy.defaultEffect,
-      rules,
-    } as unknown as ResultValue,
-    exitCode: 0,
-  };
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    const who = await policyOf(station, command.principalId);
+    if (!('policy' in who)) return who;
+    const { policy } = who;
+    const rules: Record<string, ResultValue> = {};
+    for (const r of policy.rules) rules[r.id] = describeRule(r);
+    return {
+      success: true,
+      data: {
+        principal: policy.principalId,
+        approver: policy.approver,
+        default: policy.defaultEffect,
+        rules,
+      } as unknown as ResultValue,
+      exitCode: 0,
+    };
+  } catch (err) {
+    return station.failure(err);
+  }
 }
 
-/**
- * @spec POLICY-REQ-3
- * @spec POLICY-REQ-15
- */
+/** @spec POLICY-REQ-3 */
 export async function handlePolicySet(
   command: ReplCommand,
   context: HandlerContext,
@@ -123,70 +128,79 @@ export async function handlePolicySet(
     if (!result.success) return invalid(`Invalid condition: ${result.error.message}`);
     when = result.data;
   }
-  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
-  if ('error' in who) return invalid(who.error, who.suggestion);
-  const policy = getPolicy(context.ctx.configPath, who.id);
-  const id = when
-    ? `${command.app}/${command.tool}#${JSON.stringify(when)}`
-    : `${command.app}/${command.tool}`;
-  const rules = policy.rules.filter((r) => r.id !== id);
-  rules.push({
-    id,
-    app: command.app,
-    tool: command.tool,
-    effect: command.effect,
-    ...(when ? { when } : {}),
-  });
-  putPolicy(context.ctx.configPath, { ...policy, rules });
-  return {
-    success: true,
-    message: `${who.label}: ${command.app}/${command.tool} → ${command.effect}${when ? ` when ${JSON.stringify(when)}` : ''} (rule ${id})`,
-    exitCode: 0,
-  };
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    const who = await policyOf(station, command.principalId);
+    if (!('policy' in who)) return who;
+    const id = when
+      ? `${command.app}/${command.tool}#${JSON.stringify(when)}`
+      : `${command.app}/${command.tool}`;
+    const rules = who.policy.rules.filter((r) => r.id !== id);
+    rules.push({
+      id,
+      app: command.app,
+      tool: command.tool,
+      effect: command.effect,
+      ...(when ? { when } : {}),
+    });
+    await putRules(station, who.policy, rules);
+    return {
+      success: true,
+      message: `${who.label}: ${command.app}/${command.tool} → ${command.effect}${when ? ` when ${JSON.stringify(when)}` : ''} (rule ${id})`,
+      exitCode: 0,
+    };
+  } catch (err) {
+    return station.failure(err);
+  }
 }
 
-/**
- * @spec POLICY-REQ-3
- * @spec POLICY-REQ-15
- */
+/** @spec POLICY-REQ-3 */
 export async function handlePolicyUnset(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-unset') return internal();
-  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
-  if ('error' in who) return invalid(who.error, who.suggestion);
-  const policy = getPolicy(context.ctx.configPath, who.id);
-  const rules = policy.rules.filter((r) => r.id !== command.ruleId);
-  if (rules.length === policy.rules.length) {
-    return invalid(`No rule ${command.ruleId} in ${who.label}'s Policy`);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    const who = await policyOf(station, command.principalId);
+    if (!('policy' in who)) return who;
+    const rules = who.policy.rules.filter((r) => r.id !== command.ruleId);
+    if (rules.length === who.policy.rules.length) {
+      return invalid(`No rule ${command.ruleId} in ${who.label}'s Policy`);
+    }
+    await putRules(station, who.policy, rules);
+    return { success: true, message: `Removed rule ${command.ruleId}`, exitCode: 0 };
+  } catch (err) {
+    return station.failure(err);
   }
-  putPolicy(context.ctx.configPath, { ...policy, rules });
-  return { success: true, message: `Removed rule ${command.ruleId}`, exitCode: 0 };
 }
 
-/**
- * @spec POLICY-REQ-2
- * @spec POLICY-REQ-15
- */
+/** @spec POLICY-REQ-2 */
 export async function handlePolicyDelete(
   command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
   if (command.type !== 'policy-delete') return internal();
-  const who = resolvePrincipal(context.ctx.configPath, command.principalId);
-  if ('error' in who) return invalid(who.error, who.suggestion);
-  const policies = loadPolicies(context.ctx.configPath);
-  const kept = policies.filter((p) => p.principalId !== who.id);
-  if (kept.length === policies.length) {
-    return invalid(`No stored Policy for ${who.label}`);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    const who = await policyOf(station, command.principalId);
+    if (!('policy' in who)) return who;
+    const { removed } = await station.api<{ removed: boolean }>(
+      'DELETE',
+      `/api/policies/${encodeURIComponent(who.policy.principalId)}`,
+    );
+    if (!removed) return invalid(`No stored Policy for ${who.label}`);
+    return {
+      success: true,
+      message: `${who.label} is back to the default Policy`,
+      exitCode: 0,
+    };
+  } catch (err) {
+    return station.failure(err);
   }
-  savePolicies(context.ctx.configPath, kept);
-  return {
-    success: true,
-    message: `${who.label} is back to the default Policy`,
-    exitCode: 0,
-  };
 }
 
 function internal(): HandlerResult {

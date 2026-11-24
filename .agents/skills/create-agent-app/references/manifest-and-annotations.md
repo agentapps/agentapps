@@ -68,9 +68,16 @@ The scaffold writes this; you fill in the TODOs.
 fill in the endpoints; other providers add `--authorize-url` and `--token-url`):
 
 - `auth`: `provider`, `authorizeUrl`, `tokenUrl`, least-privilege `scopes`, `pkce`,
-  `systemSecrets` `CLIENT_ID`, `CLIENT_SECRET`, `REDIRECT_URI` (the OAuth client, set once on the
-  app id) and `installationSecrets` `ACCESS_TOKEN`, `REFRESH_TOKEN`, `EXPIRY_DATE`, which the host's
-  OAuth flow writes.
+  `systemSecrets` `CLIENT_ID`, `CLIENT_SECRET` (the OAuth client, set once on the app id) and
+  `installationSecrets` `ACCESS_TOKEN`, `REFRESH_TOKEN`, `EXPIRY_DATE`, which the host's OAuth
+  flow writes. The redirect URI is not a secret and is never declared: the station supplies it,
+  and `check-app` rejects an app that declares one among its secrets.
+- `auth.setup`: the steps to obtain and register what the system secrets need, as plain text
+  (it is shown as written, with no markup). `agentapps config app.<id>` prints it before asking
+  for the values. Write `{{redirectUri}}` where the redirect URI goes and the station fills it
+  in; it is the only variable, and any other `{{name}}` fails validation. Replace the scaffold's
+  TODO with where the client is registered for this provider. `api-key` and `github-app` apps
+  may declare `auth.setup` too; it is unrelated to `setupUrl` of `github-app`.
 - A client that requires only `ACCESS_TOKEN`. The SDK checks no OAuth installation secret, and the host
   does not write every declared one for every provider (some send no refresh token), so a client
   that requires them all breaks every tool right after a successful sign-in.

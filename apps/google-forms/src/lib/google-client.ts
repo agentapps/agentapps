@@ -61,7 +61,6 @@ export async function initializeGoogleClients(ctx: GoogleSecretsContext): Promis
   // Load credentials
   const clientId = systemSecrets.CLIENT_ID || systemSecrets.client_id;
   const clientSecret = systemSecrets.CLIENT_SECRET || systemSecrets.client_secret;
-  const redirectUrisRaw = systemSecrets.REDIRECT_URI || systemSecrets.redirect_uris;
 
   if (!clientId || !clientSecret) {
     throw new Error(
@@ -71,21 +70,8 @@ export async function initializeGoogleClients(ctx: GoogleSecretsContext): Promis
     );
   }
 
-  // Parse redirect URI
-  // Placeholder callback — the station overrides it with its own reachable
-  // domain via the REDIRECT_URI system secret ({publicUrl}/auth/callback).
-  let redirectUri = 'https://your-station.example.com/auth/callback';
-  if (redirectUrisRaw) {
-    try {
-      const uris = JSON.parse(redirectUrisRaw);
-      redirectUri = Array.isArray(uris) ? uris[0] : redirectUrisRaw;
-    } catch {
-      redirectUri = redirectUrisRaw;
-    }
-  }
-
   // Create OAuth2 client
-  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
   // Set user credentials if available
   if (installationSecrets.ACCESS_TOKEN) {

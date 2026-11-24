@@ -18,10 +18,11 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.zapier',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Zapier',
   description:
     'Zapier automation — list and execute Zapier actions via Natural Language Actions API.',
+  tagline: 'List and execute Zapier actions via the Natural Language Actions API',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
   category: 'automation',

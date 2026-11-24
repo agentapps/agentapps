@@ -97,19 +97,27 @@ export function buildVolumeRoot(volumesBasePath: string, workspaceId: string): s
  * Returns the absolute Volume root when the App declares
  * `runtime.mountVolume: true` AND the Installation holds the `volume`
  * Permission; `undefined` otherwise, so no mount is provided without the
- * Permission (VOL-REQ-2, VOL-REQ-4).
+ * Permission (VOL-REQ-2, VOL-REQ-4). Throws when the mount is due but the
+ * Data Store cannot provide the Volume as a directory (DATASTORE-REQ-8).
  *
  * @spec VOL-REQ-5
+ * @spec DATASTORE-REQ-8
  */
 export function resolveMountPath(options: {
   mountVolume: boolean | undefined;
   permissions: { volume?: boolean } | undefined;
-  volumesBasePath: string;
+  volume: VolumeStore;
   workspaceId: string;
 }): string | undefined {
   if (options.mountVolume !== true) return undefined;
   if (options.permissions?.volume !== true) return undefined;
-  return resolve(buildVolumeRoot(options.volumesBasePath, options.workspaceId));
+  const path = options.volume.mountPath(options.workspaceId);
+  if (path === null) {
+    throw new Error(
+      'Mount mode is not available: the Data Store of this Station cannot provide the Volume as a directory',
+    );
+  }
+  return resolve(path);
 }
 
 // ---------------------------------------------------------------------------
@@ -118,8 +126,8 @@ export function resolveMountPath(options: {
 
 /** Context passed to every volume handler. */
 export interface VolumeHandlerContext {
-  /** Physical base path for all volumes. */
-  volumesBasePath: string;
+  /** The Volume part of the Station's Data Store. */
+  volume: VolumeStore;
   /** Workspace ID from the session. */
   workspaceId: string;
   /** Session ID from the request message. */
@@ -133,7 +141,7 @@ export interface VolumeHandlerContext {
 // ---------------------------------------------------------------------------
 
 /** Result wrapper — either success with data or failure with error code. */
-interface VolumeResult<T> {
+export interface VolumeResult<T> {
   success: boolean;
   data?: T;
   error?: string;
@@ -141,216 +149,480 @@ interface VolumeResult<T> {
 }
 
 /**
- * List directory entries.
+ * The Volume part of a Data Store: the operations of API mode, per Workspace,
+ * and whether the Volume exists as a real directory for mount mode.
  *
- * `path` is relative to the volume root. An empty string lists the root.
+ * Paths are relative to the Volume root. An implementation refuses absolute
+ * paths, `..` segments and anything that escapes the root with
+ * `INVALID_ARGUMENTS` (VOL-REQ-3).
  *
- * @spec VOL-REQ-3
+ * @spec DATASTORE-REQ-3
  */
-export async function volumeReadDir(
+export interface VolumeStore {
+  readDir(workspaceId: string, path: string): Promise<VolumeResult<DirEntry[]>>;
+  readFile(
+    workspaceId: string,
+    path: string,
+  ): Promise<VolumeResult<{ data: string; size: number; modifiedAt: string }>>;
+  writeFile(workspaceId: string, path: string, dataBase64: string): Promise<VolumeResult<void>>;
+  delete(workspaceId: string, path: string, recursive: boolean): Promise<VolumeResult<void>>;
+  stat(workspaceId: string, path: string): Promise<VolumeResult<FileStat>>;
+  mkdir(workspaceId: string, path: string): Promise<VolumeResult<void>>;
+  /**
+   * The Workspace's Volume as a directory on the machine where Instances run,
+   * or `null` when this store cannot provide one. The directory is the Volume
+   * itself, never a copy (DATASTORE-REQ-8).
+   */
+  mountPath(workspaceId: string): string | null;
+}
+
+/**
+ * A Volume kept in a directory: `{basePath}/ws_{workspaceId}/workspace/`.
+ *
+ * @spec VOL-REQ-1
+ * @spec DATASTORE-REQ-7
+ */
+export class LocalVolumeStore implements VolumeStore {
+  private readonly basePath: string;
+
+  constructor(basePath: string) {
+    this.basePath = resolve(basePath);
+  }
+
+  mountPath(workspaceId: string): string {
+    return resolve(buildVolumeRoot(this.basePath, workspaceId));
+  }
+
+  async readDir(workspaceId: string, path: string): Promise<VolumeResult<DirEntry[]>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path || '.');
+
+      const entries = await readdir(absPath, { withFileTypes: true });
+      const result: DirEntry[] = [];
+
+      for (const entry of entries) {
+        let size = 0;
+        let mtime: Date;
+        try {
+          const s = await stat(join(absPath, entry.name));
+          size = entry.isDirectory() ? 0 : s.size;
+          mtime = s.mtime;
+        } catch {
+          // Broken symlink or race — skip
+          continue;
+        }
+        result.push({
+          name: entry.name,
+          type: entry.isDirectory() ? 'directory' : 'file',
+          size,
+          modifiedAt: mtime.toISOString(),
+        });
+      }
+
+      return { success: true, data: result };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async readFile(
+    workspaceId: string,
+    path: string,
+  ): Promise<VolumeResult<{ data: string; size: number; modifiedAt: string }>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path);
+
+      const s = await stat(absPath);
+      if (s.isDirectory()) {
+        return {
+          success: false,
+          error: 'Path is a directory, not a file',
+          errorCode: FileErrorCode.INVALID_PATH,
+        };
+      }
+
+      const buf = await readFile(absPath);
+      return {
+        success: true,
+        data: {
+          data: buf.toString('base64'),
+          size: buf.length,
+          modifiedAt: s.mtime.toISOString(),
+        },
+      };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async writeFile(
+    workspaceId: string,
+    path: string,
+    dataBase64: string,
+  ): Promise<VolumeResult<void>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path);
+
+      // Ensure the volume root exists
+      await mkdir(volumeRoot, { recursive: true });
+
+      // Create parent directories
+      const parentDir = join(absPath, '..');
+      await mkdir(parentDir, { recursive: true });
+
+      const buf = Buffer.from(dataBase64, 'base64');
+      await writeFile(absPath, buf);
+
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async delete(workspaceId: string, path: string, recursive: boolean): Promise<VolumeResult<void>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path);
+
+      // Prevent deleting the volume root itself
+      if (absPath === resolve(volumeRoot)) {
+        return {
+          success: false,
+          error: 'Cannot delete the volume root',
+          errorCode: FileErrorCode.INVALID_PATH,
+        };
+      }
+
+      const s = await stat(absPath);
+
+      if (s.isDirectory() && !recursive) {
+        // Check if directory is empty
+        const entries = await readdir(absPath);
+        if (entries.length > 0) {
+          return {
+            success: false,
+            error: 'Directory is not empty — use recursive: true to delete',
+            errorCode: FileErrorCode.INVALID_PATH,
+          };
+        }
+        // Use rmdir for empty directories (rm with recursive:false fails on dirs)
+        await rmdir(absPath);
+      } else {
+        await rm(absPath, { recursive });
+      }
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async stat(workspaceId: string, path: string): Promise<VolumeResult<FileStat>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path || '.');
+
+      const s = await stat(absPath);
+      const isDir = s.isDirectory();
+
+      // Compute the relative path for the response
+      // Use substring instead of path.relative to avoid '..' normalisation
+      const rootStr = resolve(volumeRoot);
+      const relPath = absPath === rootStr ? '.' : absPath.slice(rootStr.length + 1); // +1 for the separator
+      // Normalise to forward slashes (container-side convention)
+      const normalisedPath = relPath.split(sep).join('/') || '.';
+
+      return {
+        success: true,
+        data: {
+          path: normalisedPath,
+          type: isDir ? 'directory' : 'file',
+          size: isDir ? 0 : s.size,
+          createdAt: s.birthtime.toISOString(),
+          modifiedAt: s.mtime.toISOString(),
+        },
+      };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async mkdir(workspaceId: string, path: string): Promise<VolumeResult<void>> {
+    try {
+      const volumeRoot = buildVolumeRoot(this.basePath, workspaceId);
+      const absPath = resolveVolumePath(volumeRoot, path);
+      await mkdir(absPath, { recursive: true });
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+}
+
+interface MemoryNode {
+  type: 'file' | 'directory';
+  data: Buffer;
+  createdAt: string;
+  modifiedAt: string;
+}
+
+/**
+ * A Volume kept in process memory, with no directory to mount. For tests, and
+ * the model of a Data Store that cannot offer mount mode.
+ *
+ * @spec DATASTORE-NFR-2
+ */
+export class InMemoryVolumeStore implements VolumeStore {
+  private readonly volumes = new Map<string, Map<string, MemoryNode>>();
+
+  mountPath(_workspaceId: string): null {
+    return null;
+  }
+
+  private nodes(workspaceId: string): Map<string, MemoryNode> {
+    let nodes = this.volumes.get(workspaceId);
+    if (!nodes) {
+      nodes = new Map();
+      this.volumes.set(workspaceId, nodes);
+    }
+    return nodes;
+  }
+
+  /** The path as a key: validated like a real one, `''` for the root. */
+  private static key(path: string): string {
+    const abs = resolveVolumePath('/volume', path || '.');
+    return abs === '/volume' ? '' : abs.slice('/volume/'.length).split(sep).join('/');
+  }
+
+  private static missing(path: string): VolumeResult<never> {
+    return {
+      success: false,
+      error: `ENOENT: no such file or directory, '${path}'`,
+      errorCode: FileErrorCode.FILE_NOT_FOUND,
+    };
+  }
+
+  private ensureDirs(nodes: Map<string, MemoryNode>, key: string): void {
+    const parts = key.split('/').filter(Boolean);
+    const now = new Date().toISOString();
+    for (let i = 1; i <= parts.length; i++) {
+      const dir = parts.slice(0, i).join('/');
+      if (!nodes.has(dir)) {
+        nodes.set(dir, {
+          type: 'directory',
+          data: Buffer.alloc(0),
+          createdAt: now,
+          modifiedAt: now,
+        });
+      }
+    }
+  }
+
+  private static children(nodes: Map<string, MemoryNode>, key: string): string[] {
+    const prefix = key === '' ? '' : `${key}/`;
+    return [...nodes.keys()].filter(
+      (k) => k !== key && k.startsWith(prefix) && !k.slice(prefix.length).includes('/'),
+    );
+  }
+
+  async readDir(workspaceId: string, path: string): Promise<VolumeResult<DirEntry[]>> {
+    try {
+      const nodes = this.nodes(workspaceId);
+      const key = InMemoryVolumeStore.key(path);
+      const dir = nodes.get(key);
+      if (key !== '' && dir?.type !== 'directory') return InMemoryVolumeStore.missing(path);
+      if (key === '' && nodes.size === 0) return InMemoryVolumeStore.missing(path);
+      const prefix = key === '' ? '' : `${key}/`;
+      return {
+        success: true,
+        data: InMemoryVolumeStore.children(nodes, key).map((k) => {
+          const node = nodes.get(k) as MemoryNode;
+          return {
+            name: k.slice(prefix.length),
+            type: node.type,
+            size: node.type === 'directory' ? 0 : node.data.length,
+            modifiedAt: node.modifiedAt,
+          };
+        }),
+      };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async readFile(
+    workspaceId: string,
+    path: string,
+  ): Promise<VolumeResult<{ data: string; size: number; modifiedAt: string }>> {
+    try {
+      const node = this.nodes(workspaceId).get(InMemoryVolumeStore.key(path));
+      if (!node) return InMemoryVolumeStore.missing(path);
+      if (node.type === 'directory') {
+        return {
+          success: false,
+          error: 'Path is a directory, not a file',
+          errorCode: FileErrorCode.INVALID_PATH,
+        };
+      }
+      return {
+        success: true,
+        data: {
+          data: node.data.toString('base64'),
+          size: node.data.length,
+          modifiedAt: node.modifiedAt,
+        },
+      };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async writeFile(
+    workspaceId: string,
+    path: string,
+    dataBase64: string,
+  ): Promise<VolumeResult<void>> {
+    try {
+      const nodes = this.nodes(workspaceId);
+      const key = InMemoryVolumeStore.key(path);
+      if (key === '' || nodes.get(key)?.type === 'directory') {
+        return {
+          success: false,
+          error: 'Path is a directory, not a file',
+          errorCode: FileErrorCode.INVALID_PATH,
+        };
+      }
+      this.ensureDirs(nodes, key.split('/').slice(0, -1).join('/'));
+      const now = new Date().toISOString();
+      nodes.set(key, {
+        type: 'file',
+        data: Buffer.from(dataBase64, 'base64'),
+        createdAt: nodes.get(key)?.createdAt ?? now,
+        modifiedAt: now,
+      });
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async delete(workspaceId: string, path: string, recursive: boolean): Promise<VolumeResult<void>> {
+    try {
+      const nodes = this.nodes(workspaceId);
+      const key = InMemoryVolumeStore.key(path);
+      if (key === '') {
+        return {
+          success: false,
+          error: 'Cannot delete the volume root',
+          errorCode: FileErrorCode.INVALID_PATH,
+        };
+      }
+      const node = nodes.get(key);
+      if (!node) return InMemoryVolumeStore.missing(path);
+      if (node.type === 'directory') {
+        const inside = [...nodes.keys()].filter((k) => k.startsWith(`${key}/`));
+        if (inside.length > 0 && !recursive) {
+          return {
+            success: false,
+            error: 'Directory is not empty — use recursive: true to delete',
+            errorCode: FileErrorCode.INVALID_PATH,
+          };
+        }
+        for (const k of inside) nodes.delete(k);
+      }
+      nodes.delete(key);
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async stat(workspaceId: string, path: string): Promise<VolumeResult<FileStat>> {
+    try {
+      const nodes = this.nodes(workspaceId);
+      const key = InMemoryVolumeStore.key(path);
+      const node = nodes.get(key);
+      if (key === '') {
+        if (nodes.size === 0) return InMemoryVolumeStore.missing(path);
+        const now = new Date().toISOString();
+        return {
+          success: true,
+          data: { path: '.', type: 'directory', size: 0, createdAt: now, modifiedAt: now },
+        };
+      }
+      if (!node) return InMemoryVolumeStore.missing(path);
+      return {
+        success: true,
+        data: {
+          path: key,
+          type: node.type,
+          size: node.type === 'directory' ? 0 : node.data.length,
+          createdAt: node.createdAt,
+          modifiedAt: node.modifiedAt,
+        },
+      };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+
+  async mkdir(workspaceId: string, path: string): Promise<VolumeResult<void>> {
+    try {
+      this.ensureDirs(this.nodes(workspaceId), InMemoryVolumeStore.key(path));
+      return { success: true };
+    } catch (err) {
+      return toErrorResult(err);
+    }
+  }
+}
+
+/** List directory entries. @spec VOL-REQ-3 */
+export function volumeReadDir(
   ctx: VolumeHandlerContext,
   path: string,
 ): Promise<VolumeResult<DirEntry[]>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path || '.');
-
-    const entries = await readdir(absPath, { withFileTypes: true });
-    const result: DirEntry[] = [];
-
-    for (const entry of entries) {
-      let size = 0;
-      let mtime: Date;
-      try {
-        const s = await stat(join(absPath, entry.name));
-        size = entry.isDirectory() ? 0 : s.size;
-        mtime = s.mtime;
-      } catch {
-        // Broken symlink or race — skip
-        continue;
-      }
-      result.push({
-        name: entry.name,
-        type: entry.isDirectory() ? 'directory' : 'file',
-        size,
-        modifiedAt: mtime.toISOString(),
-      });
-    }
-
-    return { success: true, data: result };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+  return ctx.volume.readDir(ctx.workspaceId, path);
 }
 
-/**
- * Read a file as base64-encoded bytes.
- *
- * @spec VOL-REQ-3
- */
-export async function volumeReadFile(
+/** Read a file as base64-encoded bytes. @spec VOL-REQ-3 */
+export function volumeReadFile(
   ctx: VolumeHandlerContext,
   path: string,
 ): Promise<VolumeResult<{ data: string; size: number; modifiedAt: string }>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path);
-
-    const s = await stat(absPath);
-    if (s.isDirectory()) {
-      return {
-        success: false,
-        error: 'Path is a directory, not a file',
-        errorCode: FileErrorCode.INVALID_PATH,
-      };
-    }
-
-    const buf = await readFile(absPath);
-    return {
-      success: true,
-      data: {
-        data: buf.toString('base64'),
-        size: buf.length,
-        modifiedAt: s.mtime.toISOString(),
-      },
-    };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+  return ctx.volume.readFile(ctx.workspaceId, path);
 }
 
-/**
- * Write base64-encoded bytes to a file. Creates parent directories.
- *
- * @spec VOL-REQ-3
- */
-export async function volumeWriteFile(
+/** Write base64-encoded bytes to a file, creating parent directories. @spec VOL-REQ-3 */
+export function volumeWriteFile(
   ctx: VolumeHandlerContext,
   path: string,
   dataBase64: string,
 ): Promise<VolumeResult<void>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path);
-
-    // Ensure the volume root exists
-    await mkdir(volumeRoot, { recursive: true });
-
-    // Create parent directories
-    const parentDir = join(absPath, '..');
-    await mkdir(parentDir, { recursive: true });
-
-    const buf = Buffer.from(dataBase64, 'base64');
-    await writeFile(absPath, buf);
-
-    return { success: true };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+  return ctx.volume.writeFile(ctx.workspaceId, path, dataBase64);
 }
 
-/**
- * Delete a file or directory. If the target is a directory and
- * `recursive` is false, the delete fails.
- *
- * @spec VOL-REQ-3
- */
-export async function volumeDelete(
+/** Delete a file or directory; a non-empty directory needs `recursive`. @spec VOL-REQ-3 */
+export function volumeDelete(
   ctx: VolumeHandlerContext,
   path: string,
   recursive: boolean,
 ): Promise<VolumeResult<void>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path);
-
-    // Prevent deleting the volume root itself
-    if (absPath === resolve(volumeRoot)) {
-      return {
-        success: false,
-        error: 'Cannot delete the volume root',
-        errorCode: FileErrorCode.INVALID_PATH,
-      };
-    }
-
-    const s = await stat(absPath);
-
-    if (s.isDirectory() && !recursive) {
-      // Check if directory is empty
-      const entries = await readdir(absPath);
-      if (entries.length > 0) {
-        return {
-          success: false,
-          error: 'Directory is not empty — use recursive: true to delete',
-          errorCode: FileErrorCode.INVALID_PATH,
-        };
-      }
-      // Use rmdir for empty directories (rm with recursive:false fails on dirs)
-      await rmdir(absPath);
-    } else {
-      await rm(absPath, { recursive });
-    }
-    return { success: true };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+  return ctx.volume.delete(ctx.workspaceId, path, recursive);
 }
 
-/**
- * Stat a path — returns type, size, createdAt, modifiedAt.
- *
- * @spec VOL-REQ-3
- */
-export async function volumeStat(
+/** Stat a path: type, size, createdAt, modifiedAt. @spec VOL-REQ-3 */
+export function volumeStat(
   ctx: VolumeHandlerContext,
   path: string,
 ): Promise<VolumeResult<FileStat>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path || '.');
-
-    const s = await stat(absPath);
-    const isDir = s.isDirectory();
-
-    // Compute the relative path for the response
-    // Use substring instead of path.relative to avoid '..' normalisation
-    const rootStr = resolve(volumeRoot);
-    const relPath = absPath === rootStr ? '.' : absPath.slice(rootStr.length + 1); // +1 for the separator
-    // Normalise to forward slashes (container-side convention)
-    const normalisedPath = relPath.split(sep).join('/') || '.';
-
-    return {
-      success: true,
-      data: {
-        path: normalisedPath,
-        type: isDir ? 'directory' : 'file',
-        size: isDir ? 0 : s.size,
-        createdAt: s.birthtime.toISOString(),
-        modifiedAt: s.mtime.toISOString(),
-      },
-    };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+  return ctx.volume.stat(ctx.workspaceId, path);
 }
 
-/**
- * Create a directory and any missing parents.
- *
- * @spec VOL-REQ-3
- */
-export async function volumeMkdir(
-  ctx: VolumeHandlerContext,
-  path: string,
-): Promise<VolumeResult<void>> {
-  try {
-    const volumeRoot = buildVolumeRoot(ctx.volumesBasePath, ctx.workspaceId);
-    const absPath = resolveVolumePath(volumeRoot, path);
-    await mkdir(absPath, { recursive: true });
-    return { success: true };
-  } catch (err) {
-    return toErrorResult(err);
-  }
+/** Create a directory and any missing parents. @spec VOL-REQ-3 */
+export function volumeMkdir(ctx: VolumeHandlerContext, path: string): Promise<VolumeResult<void>> {
+  return ctx.volume.mkdir(ctx.workspaceId, path);
 }
 
 // ---------------------------------------------------------------------------

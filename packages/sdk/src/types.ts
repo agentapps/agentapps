@@ -171,6 +171,14 @@ export interface AppNoAuth {
 
 export interface AppApiKeyAuth {
   type: 'api-key';
+  /**
+   * Plain-text steps to obtain and register what the app's system secrets
+   * need, shown by the host before it asks for them. `{{redirectUri}}` is
+   * replaced by the Station with its redirect URI.
+   *
+   * @spec SETUP-REQ-3
+   */
+  setup?: string;
   systemSecrets?: string[];
   installationSecrets?: string[];
   /** @deprecated Has no effect: the app builds its own request headers. */
@@ -181,6 +189,14 @@ export interface AppApiKeyAuth {
 
 export interface AppOAuth2Auth {
   type: 'oauth2';
+  /**
+   * Plain-text steps to obtain and register what the app's system secrets
+   * need, shown by the host before it asks for them. `{{redirectUri}}` is
+   * replaced by the Station with its redirect URI.
+   *
+   * @spec SETUP-REQ-3
+   */
+  setup?: string;
   provider: string;
   authorizeUrl: string;
   tokenUrl: string;
@@ -202,6 +218,14 @@ export interface AppOAuth2Auth {
 
 export interface AppGitHubAppAuth {
   type: 'github-app';
+  /**
+   * Plain-text steps to obtain and register what the app's system secrets
+   * need, shown by the host before it asks for them. `{{redirectUri}}` is
+   * replaced by the Station with its redirect URI.
+   *
+   * @spec SETUP-REQ-3
+   */
+  setup?: string;
   provider: 'github';
   appSlug: string;
   setupUrl: string;

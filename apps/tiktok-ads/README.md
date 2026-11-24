@@ -117,12 +117,6 @@ is rate limited per app and advertiser; when TikTok answers with code 40100 the 
 | File | Source | Changes |
 |---|---|---|
 | assets/logo.png | TikTok for Developers logo pack, linked from the [design guidelines](https://developers.tiktok.com/doc/getting-started-design-guidelines) (`logo-pack.zip`), `TikTok Logo Pack/TikTok – Icons/TikTok_Icon_Black_Square.png` (1200x1200) | none (renamed) |
+| assets/logo-mono.svg | TikTok logo pack, <https://cdn.sanity.io/files/w9oq2e5b/production/c52c0b8c2124c002ca7e1052bd5faec463ec80c8.zip>, linked from <https://www.tiktokbrandhub.com/downloads>, the simplified note in black | removed the XML declaration and the `<style>` element; the one colour replaced by `currentColor` so a host can tint it |
 
-TODO: no official one-colour SVG found yet for `assets/logo-mono.svg`. Searched: the TikTok for
-Developers logo pack above (SVGs only for the "Continue with TikTok" buttons, which contain text;
-the icon itself is PNG and Adobe Illustrator only), the
-[TikTok Brand Hub](https://tiktokbrandhub.com/) linked from the developer site (pages rendered
-by JavaScript with no downloadable files; its favicon SVG is the note on a coloured square
-badge, which leaves a solid block once the fills are removed), the TikTok for Developers site
-header (a multi-colour layered "TikTok for Developers" wordmark), and the tiktok.com and
-TikTok for Business home pages (no SVG logo in the served HTML).
+TikTok's [brand terms](https://www.tiktokbrandhub.com/legal) say its logos need prior written permission; nobody has asked.

@@ -1,7 +1,7 @@
 {
   "id": "app.browserbase",
   "name": "Browserbase",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Cloud browser automation at scale. Anti-bot bypass, CAPTCHA solving, residential proxies, session recording, and parallel browsers. Includes Live View to watch the browser in real time.",
   "tagline": "Cloud browser automation with stealth, CAPTCHA solving, and Live View",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

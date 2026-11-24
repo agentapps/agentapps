@@ -34,8 +34,9 @@ import {
   type HookToolCall,
 } from '@agentapps/protocol';
 import { AppStation, InProcessRuntime } from '@agentapps/station';
+import { loadWorkspaceConfig } from '../config.js';
 import { loadInstallations, stateDir } from '../state.js';
-import { readStationMeta } from '../station-lifecycle.js';
+import { stationCredential } from '../station-client.js';
 import type { HandlerResult, ResolvedApp } from '../types.js';
 
 /** The Claude Code events the adapter handles. */
@@ -414,19 +415,23 @@ export async function runClaudeCodeHook(
       },
     };
   }
-  const meta = readStationMeta(configPath);
-  if (!meta) {
-    process.stderr.write('agentapps: no station is running; start one with `agentapps serve`\n');
+  // CLIENT-REQ-1: the Station the workspace's CLI connects to, with its credential.
+  const url = loadWorkspaceConfig(configPath).cli?.stationUrl?.replace(/\/+$/, '');
+  if (!url) {
+    process.stderr.write(
+      'agentapps: this workspace names no Station; set one with `agentapps station use <url>`\n',
+    );
     return { success: true, exitCode: 0 };
   }
+  const token = stationCredential(configPath, url)?.token;
   // SessionEnd allows Claude Code about 1.5 s; the daemon answers notify events at once.
   const timeoutMs = event === 'SessionEnd' ? 1_000 : NOTIFY_EVENTS.has(event) ? 3_000 : 8_000;
   try {
-    const res = await fetch(`${meta.url}${claudeCodeRoute(event)}`, {
+    const res = await fetch(`${url}${claudeCodeRoute(event)}`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        ...(meta.adminToken ? { authorization: `Bearer ${meta.adminToken}` } : {}),
+        ...(token ? { authorization: `Bearer ${token}` } : {}),
       },
       body: stdin || '{}',
       signal: AbortSignal.timeout(timeoutMs),

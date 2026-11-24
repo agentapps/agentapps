@@ -422,6 +422,16 @@ importers:
       '@agentapps/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/filesystem:
     dependencies:
@@ -490,6 +500,16 @@ importers:
       '@octokit/auth-app':
         specifier: ^8.2.0
         version: 8.2.0
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/google-ads:
     dependencies:
@@ -954,6 +974,16 @@ importers:
       '@linear/sdk':
         specifier: ^29.0.0
         version: 29.0.0
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/linkedin-ads:
     dependencies:
@@ -1004,6 +1034,22 @@ importers:
         version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/meta-ads:
+    dependencies:
+      '@agentapps/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
+
+  apps/metricool:
     dependencies:
       '@agentapps/sdk':
         specifier: workspace:*
@@ -1342,6 +1388,22 @@ importers:
         specifier: ^3.2.0
         version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
+  apps/postiz:
+    dependencies:
+      '@agentapps/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
+
   apps/pushcut:
     dependencies:
       '@agentapps/sdk':
@@ -1538,6 +1600,16 @@ importers:
       '@slack/web-api':
         specifier: ^7.8.0
         version: 7.19.0
+    devDependencies:
+      '@agentapps/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
+      '@agentapps/station':
+        specifier: workspace:*
+        version: link:../../packages/station
+      vitest:
+        specifier: ^3.2.0
+        version: 3.2.6(@types/node@26.6.6)(tsx@4.22.4)(yaml@2.9.0)
 
   apps/stdio-demo:
     dependencies:

@@ -3,6 +3,7 @@ import {
   assertIsRepo,
   LOG_PRETTY_FORMAT,
   parseGitLogPretty,
+  positional,
   resolveRepoPath,
   runGit,
 } from '../lib/git-local.js';
@@ -61,7 +62,7 @@ export function registerGitLogTool(app: AgentApp) {
       if (a.author) argv.push(`--author=${a.author}`);
       if (a.since) argv.push(`--since=${a.since}`);
       if (a.until) argv.push(`--until=${a.until}`);
-      if (a.ref) argv.push(a.ref);
+      if (a.ref) argv.push(positional(a.ref, 'ref'));
       if (a.path) argv.push('--', a.path);
 
       const result = runGit(repoPath, argv);

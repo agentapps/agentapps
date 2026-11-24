@@ -1,72 +1,64 @@
 /**
- * @agentapps/cli — permissions command (per-tool).
+ * @agentapps/cli — permissions commands.
  *
- * Usage:
- *   permissions <alias>                          — show every tool's effective permission
- *   permissions <alias> set <tool> <allow|ask|deny> — override one tool
- *   permissions <alias> remove <tool>            — clear a tool's override
- *
- * Each tool's effective permission is what the local admin's Policy decides
- * for it. An override is a per-tool Rule on that Policy, so it applies to the
- * CLI only: an API Key is another Principal with its own Policy, changed with
- * `policy set <principal> <app> <tool> <effect>`.
+ * `permissions <alias>` shows what the CLI's own Policy gives each tool of an
+ * Installation; `set` and `remove` change the per-tool Rules of that Policy.
+ * The Policy is the Station's: these are shortcuts over `policy`.
  */
 
-import { ADMIN_PRINCIPAL_ID } from '@agentapps/protocol';
+import type { Policy, Rule } from '@agentapps/protocol';
 import { evaluatePolicy } from '@agentapps/station';
-import { resolveSourcePath } from '../config.js';
 import { color, GREEN, RED, YELLOW } from '../render/colors.js';
-import { resolveApp } from '../resolve.js';
-import { openAppSession } from '../session.js';
-import {
-  getInstallation,
-  getPolicy,
-  getToolOverridesForInstallation,
-  removeToolPermission,
-  setToolPermission,
-} from '../state.js';
+import { isResult, type StationClient, stationOf } from '../station-client.js';
+import { findInstallation, type InstallationInfo, withSession } from '../station-session.js';
 import { writeCachedTools } from '../tools-cache.js';
-import type { AppConfigEntry, CliContext, HandlerResult, ReplCommand } from '../types.js';
+import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
-interface ToolInfo {
-  name: string;
-  annotations?: { sensitive?: boolean };
+function unknownInstallation(alias: string): HandlerResult {
+  return {
+    success: false,
+    exitCode: 2,
+    error: {
+      message: `Unknown Installation: ${alias}`,
+      suggestion: 'Run "installations" to see installed apps.',
+    },
+  };
 }
 
-/** List an instance's tools, reusing the pooled REPL session when available. */
-async function fetchTools(
-  ctx: CliContext,
-  context: HandlerContext,
-  alias: string,
-  installationId: string,
-  appId: string,
-  entry: AppConfigEntry,
-): Promise<ToolInfo[]> {
-  const pooled = context.sessions ? await context.sessions.acquire(alias, appId, ctx) : undefined;
-  const ephemeral = pooled
-    ? undefined
-    : await (async () => {
-        const source = resolveSourcePath(ctx.configPath, entry.source);
-        const app = await resolveApp(appId, source);
-        return openAppSession(app, ctx, installationId);
-      })();
-  const session = (pooled ?? ephemeral!).session;
-  try {
-    const tools = await session.listTools();
-    writeCachedTools(ctx.configPath, appId, tools);
-    return tools as ToolInfo[];
-  } catch (err) {
-    if (pooled) await context.sessions?.release(alias);
-    throw err;
-  } finally {
-    if (ephemeral) {
-      await session.close();
-      await ephemeral.shutdown();
-    }
+/** The Policy of the Principal the CLI is to its Station. */
+async function ownPolicy(station: StationClient): Promise<Policy> {
+  const { principalId } = await station.whoami();
+  return station.api<Policy>('GET', `/api/policies/${encodeURIComponent(principalId)}`);
+}
+
+function toolRuleId(appId: string, tool: string): string {
+  return `${appId}/${tool}`;
+}
+
+/** Per-tool Rules of a Policy for an App, by tool name. Rules with a condition are not overrides. */
+function overridesOf(policy: Policy, appId: string): Record<string, Rule['effect']> {
+  const out: Record<string, Rule['effect']> = {};
+  for (const r of policy.rules) {
+    if (r.app === appId && r.tool !== '*' && !r.when) out[r.tool] = r.effect;
   }
+  return out;
 }
 
+async function changeRules(
+  station: StationClient,
+  instance: InstallationInfo,
+  change: (rules: Rule[], id: string) => Rule[] | undefined,
+  tool: string,
+): Promise<boolean> {
+  const policy = await ownPolicy(station);
+  const rules = change(policy.rules, toolRuleId(instance.appId, tool));
+  if (!rules) return false;
+  await station.api('PUT', `/api/policies/${encodeURIComponent(policy.principalId)}`, { rules });
+  return true;
+}
+
+/** @spec POLICY-REQ-3 */
 export async function handlePermissions(
   command: ReplCommand,
   context: HandlerContext,
@@ -80,81 +72,66 @@ export async function handlePermissions(
   }
 
   const { alias } = command;
-  const { ctx } = context;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  const instance = getInstallation(ctx.configPath, alias);
-  if (!instance) {
+  try {
+    const instance = await findInstallation(station, alias);
+    if (!instance) return unknownInstallation(alias);
+
+    const tools = await withSession(station, instance, context.sessions, (session) =>
+      session.listTools(),
+    );
+    writeCachedTools(context.ctx.configPath, instance.appId, tools as never);
+    const policy = await ownPolicy(station);
+    const overrides = overridesOf(policy, instance.appId);
+
+    // Two columns: the tool and its effective permission. A permission that comes
+    // from an explicit override is colorized (by effect) so it stands out from the
+    // uncolored defaults. Match the renderer's color gating so --json / --no-color
+    // / piped output stays plain.
+    const noColor = process.env.NO_COLOR !== undefined && process.env.NO_COLOR !== '';
+    const useColor =
+      (process.stdout.isTTY ?? false) &&
+      !noColor &&
+      !context.options.json &&
+      !context.options.yaml &&
+      !context.options.raw;
+    const EFFECT_COLOR = { allow: GREEN, ask: YELLOW, deny: RED } as const;
+
+    const rows = tools
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((t) => {
+        // What the Policy gives a call without arguments; Rules with
+        // argument conditions decide per call (POLICY-REQ-3).
+        const override = overrides[t.name];
+        const effective = evaluatePolicy(policy, {
+          app: instance.appId,
+          tool: t.name,
+          args: {},
+          annotations: t.annotations,
+        }).effect;
+        const permission =
+          override !== undefined
+            ? color(EFFECT_COLOR[override], effective, { enabled: useColor })
+            : effective;
+        return { Tool: t.name, Permission: permission };
+      });
+
+    const overrideCount = Object.keys(overrides).length;
     return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown Installation: ${alias}`,
-        suggestion: 'Run "installations" to see installed apps.',
-      },
+      success: true,
+      data: rows,
+      message: `${tools.length} tool${tools.length === 1 ? '' : 's'} · ${overrideCount} override${overrideCount === 1 ? '' : 's'} for ${alias}`,
+      exitCode: 0,
     };
+  } catch (err) {
+    return station.failure(err);
   }
-  const entry = ctx.config.apps[instance.appId];
-  if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: `App configuration missing for ${instance.appId}` },
-    };
-  }
-
-  const tools = await fetchTools(
-    ctx,
-    context,
-    alias,
-    instance.installationId,
-    instance.appId,
-    entry,
-  );
-  const overrides = getToolOverridesForInstallation(ctx.configPath, instance.installationId);
-  const policy = getPolicy(ctx.configPath, ADMIN_PRINCIPAL_ID);
-
-  // Two columns: the tool and its effective permission. A permission that comes
-  // from an explicit override is colorized (by effect) so it stands out from the
-  // uncolored defaults. Match the renderer's color gating so --json / --no-color
-  // / piped output stays plain.
-  const noColor = process.env.NO_COLOR !== undefined && process.env.NO_COLOR !== '';
-  const useColor =
-    (process.stdout.isTTY ?? false) &&
-    !noColor &&
-    !context.options.json &&
-    !context.options.yaml &&
-    !context.options.raw;
-  const EFFECT_COLOR = { allow: GREEN, ask: YELLOW, deny: RED } as const;
-
-  const rows = tools
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .map((t) => {
-      // What the admin's Policy gives a call without arguments; Rules with
-      // argument conditions decide per call (POLICY-REQ-3).
-      const override = overrides[t.name];
-      const effective = evaluatePolicy(policy, {
-        app: instance.appId,
-        tool: t.name,
-        args: {},
-        annotations: t.annotations as Record<string, unknown> | undefined,
-      }).effect;
-      const permission =
-        override !== undefined
-          ? color(EFFECT_COLOR[override], effective, { enabled: useColor })
-          : effective;
-      return { Tool: t.name, Permission: permission };
-    });
-
-  const overrideCount = Object.keys(overrides).length;
-  return {
-    success: true,
-    data: rows,
-    message: `${tools.length} tool${tools.length === 1 ? '' : 's'} · ${overrideCount} override${overrideCount === 1 ? '' : 's'} for ${alias}`,
-    exitCode: 0,
-  };
 }
 
+/** @spec POLICY-REQ-3 */
 export async function handlePermissionsSet(
   command: ReplCommand,
   context: HandlerContext,
@@ -168,28 +145,32 @@ export async function handlePermissionsSet(
   }
 
   const { alias, tool, effect } = command;
-  const { ctx } = context;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  const instance = getInstallation(ctx.configPath, alias);
-  if (!instance) {
+  try {
+    const instance = await findInstallation(station, alias);
+    if (!instance) return unknownInstallation(alias);
+    await changeRules(
+      station,
+      instance,
+      (rules, id) => [
+        ...rules.filter((r) => r.id !== id),
+        { id, app: instance.appId, tool, effect },
+      ],
+      tool,
+    );
     return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown Installation: ${alias}`,
-        suggestion: 'Run "installations" to see installed apps.',
-      },
+      success: true,
+      message: `Override set: ${tool} → ${effect} for ${alias}`,
+      exitCode: 0,
     };
+  } catch (err) {
+    return station.failure(err);
   }
-
-  setToolPermission(ctx.configPath, instance.installationId, tool, effect);
-  return {
-    success: true,
-    message: `Override set: ${tool} → ${effect} for ${alias}`,
-    exitCode: 0,
-  };
 }
 
+/** @spec POLICY-REQ-3 */
 export async function handlePermissionsRemove(
   command: ReplCommand,
   context: HandlerContext,
@@ -203,32 +184,34 @@ export async function handlePermissionsRemove(
   }
 
   const { alias, tool } = command;
-  const { ctx } = context;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  const instance = getInstallation(ctx.configPath, alias);
-  if (!instance) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown Installation: ${alias}`,
-        suggestion: 'Run "installations" to see installed apps.',
+  try {
+    const instance = await findInstallation(station, alias);
+    if (!instance) return unknownInstallation(alias);
+    const removed = await changeRules(
+      station,
+      instance,
+      (rules, id) => {
+        const kept = rules.filter((r) => r.id !== id);
+        return kept.length === rules.length ? undefined : kept;
       },
-    };
-  }
-
-  const removed = removeToolPermission(ctx.configPath, instance.installationId, tool);
-  if (!removed) {
+      tool,
+    );
+    if (!removed) {
+      return {
+        success: false,
+        exitCode: 2,
+        error: { message: `No override for ${tool} on ${alias}.` },
+      };
+    }
     return {
-      success: false,
-      exitCode: 2,
-      error: { message: `No override for ${tool} on ${alias}.` },
+      success: true,
+      message: `Override removed: ${tool} for ${alias} (back to its default)`,
+      exitCode: 0,
     };
+  } catch (err) {
+    return station.failure(err);
   }
-
-  return {
-    success: true,
-    message: `Override removed: ${tool} for ${alias} (back to its default)`,
-    exitCode: 0,
-  };
 }

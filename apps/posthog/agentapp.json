@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.posthog",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "name": "PostHog",
   "description": "PostHog product analytics — events, persons, feature flags, insights, cohorts, and annotations.",
   "tagline": "Product analytics, feature flags, and insights with PostHog",

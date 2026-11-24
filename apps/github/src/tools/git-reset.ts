@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitResetTool(app: AgentApp) {
@@ -34,7 +34,7 @@ export function registerGitResetTool(app: AgentApp) {
       const target = a.target ?? 'HEAD';
       const mode = a.mode ?? 'mixed';
 
-      const result = runGit(repoPath, ['reset', `--${mode}`, target]);
+      const result = runGit(repoPath, ['reset', `--${mode}`, positional(target, 'target')]);
       if (result.code !== 0) throwClassifiedGitError(result);
 
       const headResult = runGit(repoPath, ['rev-parse', 'HEAD']);

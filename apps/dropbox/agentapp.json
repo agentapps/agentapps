@@ -1,8 +1,9 @@
 {
   "id": "app.dropbox",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "name": "Dropbox",
   "description": "Dropbox file storage — list, search, upload, download, and share files and folders.",
+  "tagline": "List, search, organize, and share files and folders in Dropbox",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
@@ -10,6 +11,7 @@
   "terms": "https://agentapps.tech/terms",
   "category": "storage",
   "keywords": ["dropbox", "files", "storage", "cloud", "sharing"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
   "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
   "capabilities": { "tools": true, "health": true },
   "auth": {
@@ -26,7 +28,7 @@
       "account_info.read"
     ],
     "pkce": false,
-    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
     "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN"]
   }
 }

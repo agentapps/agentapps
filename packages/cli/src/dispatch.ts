@@ -29,6 +29,10 @@ import {
   handleRename,
   handleServe,
   handleStation,
+  handleStationApps,
+  handleStationLogin,
+  handleStationLogout,
+  handleStationUse,
   handleStatus,
   handleSubscribe,
   handleSync,
@@ -124,6 +128,18 @@ export async function dispatchCommand(
       return handleServe(command, context);
     case 'station':
       return handleStation(command, context);
+    // @spec CLIENT-REQ-9
+    case 'station-use':
+      return handleStationUse(command, context);
+    // @spec CLIENT-REQ-8
+    case 'station-login':
+      return handleStationLogin(command, context);
+    // @spec CLIENT-REQ-8
+    case 'station-logout':
+      return handleStationLogout(command, context);
+    // @spec STADMIN-REQ-9
+    case 'station-apps':
+      return handleStationApps(command, context);
     case 'warm':
       return handleWarm(command, context);
     case 'sync':

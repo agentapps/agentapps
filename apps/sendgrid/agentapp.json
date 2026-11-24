@@ -1,8 +1,9 @@
 {
   "id": "app.sendgrid",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "SendGrid",
   "description": "SendGrid email delivery — send emails, manage contacts, lists, templates, and view statistics.",
+  "tagline": "Send emails and manage contacts, lists, and templates with SendGrid",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",
@@ -10,6 +11,7 @@
   "terms": "https://agentapps.tech/terms",
   "category": "communication",
   "keywords": ["sendgrid", "email", "delivery", "marketing", "transactional"],
+  "entrypoint": { "type": "module", "path": "src/app.ts", "export": "factory" },
   "runtime": { "transport": "stdio", "command": "tsx", "args": ["src/app.ts"] },
   "capabilities": { "tools": true, "health": true },
   "auth": {

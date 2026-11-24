@@ -11,7 +11,7 @@
 
 import { type SpawnSyncOptions, spawnSync } from 'node:child_process';
 import { existsSync, statSync } from 'node:fs';
-import { isAbsolute, resolve, sep } from 'node:path';
+import { isAbsolute, relative, resolve, sep } from 'node:path';
 
 export interface GitResult {
   stdout: string;
@@ -72,6 +72,28 @@ export function resolveRepoPath(args: ResolveRepoPathArgs): string {
 /**
  * Verify that `repoPath` is a git repository.
  */
+/**
+ * A value the caller chose and that git receives as a positional argument: a ref, a remote,
+ * a tag name. One that starts with `-` would be read by git as an option (`--upload-pack=…`,
+ * `--output=…`), so it is refused.
+ */
+export function positional(value: string, name: string): string {
+  if (typeof value !== 'string' || value.startsWith('-')) {
+    throw new Error(`[GIT_INVALID_INPUT] \`${name}\` cannot start with "-".`);
+  }
+  return value;
+}
+
+/** A path the caller chose, resolved, that must stay inside the repository. */
+export function insideRepo(repoPath: string, path: string, name: string): string {
+  const abs = resolve(repoPath, path);
+  const rel = relative(repoPath, abs);
+  if (rel === '' || rel.startsWith('..') || isAbsolute(rel)) {
+    throw new Error(`[GIT_INVALID_INPUT] \`${name}\` must be a path inside the repository.`);
+  }
+  return abs;
+}
+
 export function assertIsRepo(repoPath: string): void {
   const gitDir = resolve(repoPath, '.git');
   if (!existsSync(gitDir)) {

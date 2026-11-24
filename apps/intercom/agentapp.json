@@ -1,7 +1,7 @@
 {
   "id": "app.intercom",
   "name": "Intercom",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Intercom customer support integration — manage conversations, tickets, contacts, and teams via the Intercom API.",
   "tagline": "Search and manage Intercom conversations, contacts, and teams",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

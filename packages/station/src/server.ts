@@ -13,18 +13,19 @@
  *   });
  */
 
+import { randomBytes } from 'node:crypto';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { hostname } from 'node:os';
 import { join, normalize, relative, resolve, sep } from 'node:path';
 import {
   ADMIN_PRINCIPAL_ID,
   type ApiKeyIdentity,
+  type ApiKeyRole,
   createInProcessTransportPair,
   ErrorCode,
   type MessageBase,
   OBJECT_REQUEST_TYPES,
-  type PermissionEffect,
+  resolveAuthSetup,
   STORAGE_REQUEST_TYPES,
   type Transport,
 } from '@agentapps/protocol';
@@ -32,15 +33,10 @@ import type { ApiKeyStore } from './api-key-store.js';
 import { hashApiKey } from './api-key-store.js';
 import { AppStation } from './app-station.js';
 import { ApprovalManager } from './approval-manager.js';
-import {
-  type DocumentStore,
-  handleStorageRequest,
-  InMemoryDocumentStore,
-} from './document-store.js';
+import { type DataStore, documentsOf } from './data-store.js';
+import { handleStorageRequest } from './document-store.js';
 import { handleObjectRequest, ObjectStore } from './file-handlers/object-store.js';
-import { getStationSecret } from './file-handlers/signed-url.js';
 import {
-  getVolumesBasePath,
   handleVolumeRequest,
   resolveMountPath,
   VOLUME_REQUEST_TYPES,
@@ -52,29 +48,95 @@ import { errorPage, successPage } from './oauth-pages.js';
 import { appVisible, evaluatePolicy, toolVisible } from './permission-enforcer.js';
 import type { PolicyStore } from './policy-store.js';
 import { policyFor } from './policy-store.js';
-import type { SecretsManager } from './secrets-manager.js';
+import type { InstallationSecretScope, SecretStore, SystemSecretScope } from './secret-store.js';
+import { StationAdminApi } from './station-admin.js';
+import type {
+  BindingStore,
+  InstallationStore,
+  StationInstallation,
+  WorkspaceStore,
+} from './station-state.js';
+
+export type { StationInstallation } from './station-state.js';
 
 const SERVER_VERSION = '1.0.0';
 
-/** Instance→host secret requests the server can answer via a SecretsManager. */
+/** `GET /apps/{appId}/setup` (SETUP-REQ-4). */
+const SETUP_ROUTE = /^\/apps\/([^/]+)\/setup$/;
+
+/**
+ * The Station's public URL without a trailing slash, or an error when it is
+ * missing or not an `http(s)` URL. A Station has no default public URL.
+ *
+ * @spec SETUP-REQ-11
+ */
+export function requirePublicUrl(publicUrl: string | undefined): string {
+  if (typeof publicUrl !== 'string' || publicUrl.trim() === '') {
+    throw new Error(
+      'A Station needs a public URL and has no default: pass `publicUrl` (for example "http://localhost:4100").',
+    );
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(publicUrl);
+  } catch {
+    throw new Error(`The Station's public URL is not a URL: ${publicUrl}`);
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error(`The Station's public URL must be http or https: ${publicUrl}`);
+  }
+  return publicUrl.trim().replace(/\/+$/, '');
+}
+
+/** Instance Requests for secrets, answered from the Secret Store (SECRETSTORE-REQ-5). */
 const SECRET_CALLBACK_TYPES = new Set([
   'get_system_secrets',
   'get_installation_secrets',
   'update_installation_secrets',
 ]);
 
+/** Instance Requests about sign-in, answered by the Station, which runs OAuth. */
+const AUTH_CALLBACK_TYPES = new Set(['auth_status', 'auth_url', 'refresh_token']);
+
+/** How long before its expiry a token is refreshed when an Instance reads it. */
+const REFRESH_SKEW_MS = 60_000;
+
+/**
+ * An identifier a Station was given, or an error naming what is missing: a
+ * Station computes neither its own id nor its Workspace's.
+ *
+ * @spec STADMIN-REQ-11
+ */
+export function requireId(value: string | undefined, what: string, option: string): string {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error(`A Station needs ${what} and does not compute one: pass \`${option}\`.`);
+  }
+  return value.trim();
+}
+
+/**
+ * How Apps are added to and removed from a Station that is running. The
+ * Station keeps the list; this is what knows how to load an App from a source.
+ *
+ * @spec STADMIN-REQ-9
+ */
+export interface AppCatalog {
+  /** Add the App at `source` (a path, an `npm:` source or an App id) and load it. */
+  add(source: string): Promise<AppEntry>;
+  /** Forget an App that was listed. */
+  remove(appId: string): Promise<void>;
+  /**
+   * Make ready an App that is listed but not loaded yet, such as a catalog
+   * App that was never downloaded (DIST-REQ-3). Undefined when it is not listed.
+   */
+  prepare?(appId: string): Promise<AppEntry | undefined>;
+  /** The source an available App came from, for listings. */
+  sourceOf?(appId: string): string | undefined;
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-/** One Installation as the Station knows it (POLICY-REQ-10). */
-export interface StationInstallation {
-  installationId: string;
-  alias: string;
-  appId: string;
-  /** The Installation's Effective Permissions. */
-  permissions?: Record<string, unknown>;
-}
 
 export interface AppEntry {
   id: string;
@@ -130,24 +192,34 @@ export interface StationServerOptions {
    */
   openToLoopbackOnly?: boolean;
   token?: string;
-  stationId?: string;
+  /**
+   * The Station's id. Required and stable: it does not change with the
+   * machine, the port or the public URL, because secrets and data are tied to
+   * it (STADMIN-REQ-11).
+   */
+  stationId: string;
+  /**
+   * The id of the Station's home Workspace: the one its admin credential owns.
+   * Required; whoever creates the Workspace decides it (STADMIN-REQ-11).
+   */
+  workspaceId: string;
+  /** Where every secret lives. Required (SECRETSTORE-REQ-4). */
+  secretStore: SecretStore;
+  /** Where app data lives. Required (DATASTORE-REQ-4). */
+  dataStore: DataStore;
   idleTimeoutMs?: number;
   /**
    * Public base URL of the station (e.g. "https://your-station.example.com").
    *
-   * Used to build the OAuth redirect URI (`{publicUrl}/auth/callback`)
-   * for all apps — so individual apps don't need a REDIRECT_URI secret.
-   * If omitted, auto-detected from `http://localhost:{port}`.
+   * Required: there is no default and it is never derived from a request or
+   * from the port. The OAuth redirect URI of every app is
+   * `{publicUrl}/auth/callback`.
+   *
+   * @spec SETUP-REQ-11
    */
-  publicUrl?: string;
+  publicUrl: string;
   /** Stations to announce to on startup. The station POSTs its app catalog so stations discover it automatically. */
   stations?: StationEndpoint[];
-  /**
-   * Host-side secret store. When provided, the server answers instance→host
-   * secret requests (get_system_secrets / get_installation_secrets / update_installation_secrets).
-   * Without it, those requests are rejected immediately instead of timing out.
-   */
-  secrets?: SecretsManager;
   /**
    * Resolve an installationId to its appId. Required for OAuth to find the
    * managed app. In CLI mode, this queries the instance registry.
@@ -158,7 +230,13 @@ export interface StationServerOptions {
    * without a restart. Gateways discover them through `GET /installations`
    * and open sessions as them (POLICY-REQ-10).
    */
-  installations?: () => StationInstallation[];
+  installations?: InstallationStore | (() => StationInstallation[]);
+  /** Where Bindings are kept. Without it, binding operations are refused. */
+  bindings?: BindingStore;
+  /** The Workspaces known besides the home one. Without it, none can be added. */
+  workspaces?: WorkspaceStore;
+  /** How Apps are added and removed while the Station runs (STADMIN-REQ-9). */
+  appCatalog?: AppCatalog;
   /**
    * Apps that became available after the Station started, asked for before
    * Installations are listed so a Gateway sees them without a restart. Returns
@@ -187,30 +265,6 @@ export interface StationServerOptions {
    * JSON body and returns the JSON answer.
    */
   adminRoutes?: Record<string, (body: unknown) => Promise<unknown>>;
-  /**
-   * Base path for volume storage. Each installation gets a physical
-   * directory under `{volumesBasePath}/ws_{workspaceId}/inst_{installationId}/workspace/`.
-   * Defaults to `~/.agentapps/data` or the `AGENTAPPS_VOLUMES_BASE_PATH` env var.
-   */
-  volumesBasePath?: string;
-  /**
-   * Secret that signs links to private Objects. Defaults to
-   * `AGENTAPPS_STATION_SECRET`, or a random one for this process.
-   *
-   * @spec CLI-REQ-14
-   */
-  stationSecret?: string;
-  /**
-   * Object store override. When omitted the server builds one on
-   * `volumesBasePath`, its secret and its public URL once it starts.
-   */
-  objectStore?: ObjectStore;
-  /**
-   * Where Installations' Storage lives. Defaults to process memory; the CLI's
-   * `serve` passes the workspace's on-disk store so it shares data with the
-   * CLI (CLI-REQ-3).
-   */
-  documentStore?: DocumentStore;
 }
 
 export interface ServerInfo {
@@ -233,9 +287,31 @@ type AuthResult =
       identity?: ApiKeyIdentity;
       /** The Principal the credential authenticates as (POLICY-REQ-1). */
       principalId: string;
+      /** The role of the API Key; absent for the admin credential (STADMIN-REQ-8). */
+      role?: ApiKeyRole;
+      /** The Workspace of the API Key; `null` for a Station Operator's. */
+      workspaceId?: string | null;
     }
   | false
   | null;
+
+/**
+ * Who is calling, as the Station's operations see it.
+ *
+ * @spec STADMIN-REQ-1
+ */
+export interface StationCaller {
+  principalId: string;
+  userId: string;
+  /** The admin credential, or an open local Station: operates and owns the home Workspace. */
+  admin: boolean;
+  /** Operates the Station. */
+  operator: boolean;
+  /** Owns `workspaceId`. */
+  owner: boolean;
+  /** The Workspace the caller belongs to; `null` for a Station Operator's key. */
+  workspaceId: string | null;
+}
 
 interface ManagedApp {
   entry: AppEntry;
@@ -285,23 +361,29 @@ export class StationServer {
   private readonly defaultHost: string;
   private readonly openToLoopbackOnly: boolean;
   private readonly stations: StationEndpoint[];
-  private readonly secrets?: SecretsManager;
-  private readonly documentStore: DocumentStore;
+  private readonly workspaceId: string;
+  private readonly secretStore: SecretStore;
+  private readonly dataStore: DataStore;
   private readonly resolveInstallation?: (installationId: string) => { appId: string } | undefined;
-  private readonly installations?: () => StationInstallation[];
+  private readonly installations?: InstallationStore | (() => StationInstallation[]);
+  private readonly bindings?: BindingStore;
+  private readonly workspaces?: WorkspaceStore;
+  private readonly appCatalog?: AppCatalog;
+  private readonly admin: StationAdminApi;
+  /** Open event streams per session: `GET /events?sessionId=…` (CLIENT-REQ-1). */
+  private readonly eventStreams = new Map<string, Set<ServerResponse>>();
+  /** The Workspace of each pending Approval, so its Owner answers it (STADMIN-REQ-1). */
+  private readonly approvalWorkspaces = new Map<string, string>();
   private readonly discoverApps?: () => Promise<AppEntry[]>;
   private readonly oauth = new OAuthManager();
-  private readonly publicUrl?: string;
+  private readonly publicUrl: string;
   private readonly apiKeyStore?: ApiKeyStore;
   private readonly policyStore?: PolicyStore;
   private readonly approvalManager?: ApprovalManager;
   private readonly adminToken?: string;
   private readonly adminRoutes: Record<string, (body: unknown) => Promise<unknown>>;
-  private readonly enableManagementApi: boolean;
-  private readonly volumesBasePath: string;
-  private readonly stationSecret: string;
   /** Objects: immutable blobs per Installation, served at GET /objects/{id}. */
-  private objectStore: ObjectStore | null;
+  private objectStore: Promise<ObjectStore> | null = null;
   /** Installation and Workspace of each open session, for scoping object Requests. */
   private readonly sessionScopes = new Map<
     string,
@@ -313,20 +395,31 @@ export class StationServer {
     Array<{ name: string; annotations?: Record<string, unknown> }>
   >();
 
-  constructor(options: StationServerOptions = {}) {
-    this.documentStore = options.documentStore ?? new InMemoryDocumentStore();
-    this.stationId = options.stationId ?? `station-${hostname()}-${options.port ?? 4100}`;
+  constructor(options: StationServerOptions) {
+    // STADMIN-REQ-11: neither id is computed. SECRETSTORE-REQ-4, DATASTORE-REQ-4: no default store.
+    this.stationId = requireId(options.stationId, 'an id', 'stationId');
+    this.workspaceId = requireId(options.workspaceId, "its Workspace's id", 'workspaceId');
+    if (!options.secretStore) {
+      throw new Error('A Station needs a Secret Store and has no default: pass `secretStore`.');
+    }
+    if (!options.dataStore) {
+      throw new Error('A Station needs a Data Store and has no default: pass `dataStore`.');
+    }
+    this.secretStore = options.secretStore;
+    this.dataStore = options.dataStore;
     this.token = options.token;
     this.idleTimeoutMs = options.idleTimeoutMs ?? 10 * 60 * 1000;
     this.defaultPort = options.port ?? 4100;
     this.defaultHost = options.host ?? '0.0.0.0';
     this.openToLoopbackOnly = options.openToLoopbackOnly ?? false;
     this.stations = options.stations ?? [];
-    this.secrets = options.secrets;
     this.resolveInstallation = options.resolveInstallation;
     this.installations = options.installations;
+    this.bindings = options.bindings;
+    this.workspaces = options.workspaces;
+    this.appCatalog = options.appCatalog;
     this.discoverApps = options.discoverApps;
-    this.publicUrl = options.publicUrl;
+    this.publicUrl = requirePublicUrl(options.publicUrl);
     this.apiKeyStore = options.apiKeys;
     this.policyStore = options.policies;
     this.approvalManager = options.policies
@@ -334,10 +427,26 @@ export class StationServer {
       : undefined;
     this.adminToken = options.adminToken;
     this.adminRoutes = options.adminRoutes ?? {};
-    this.enableManagementApi = options.enableManagementApi ?? false;
-    this.volumesBasePath = getVolumesBasePath(options.volumesBasePath);
-    this.stationSecret = getStationSecret(options.stationSecret);
-    this.objectStore = options.objectStore ?? null;
+    this.admin = new StationAdminApi({
+      stationId: this.stationId,
+      homeWorkspaceId: this.workspaceId,
+      secretStore: this.secretStore,
+      apiKeys: this.apiKeyStore,
+      policies: this.policyStore,
+      installations: this.installations,
+      bindings: this.bindings,
+      workspaces: this.workspaces,
+      appCatalog: this.appCatalog,
+      apps: () => [...this.managedApps.values()].map((m) => m.entry),
+      addApp: async (entry) => {
+        this.addApp(entry);
+        const managed = this.managedApps.get(entry.id);
+        if (managed) await this.autoInitialize(managed).catch(() => undefined);
+      },
+      removeApp: (appId) => this.removeApp(appId),
+      discover: () => this.registerDiscoveredApps(),
+      authStatus: (installation) => this.authStatusOf(installation),
+    });
 
     for (const app of options.apps ?? []) {
       this.addApp(app);
@@ -365,8 +474,8 @@ export class StationServer {
         resolveMountPath({
           mountVolume,
           permissions: open.effectivePermissions?.permissions,
-          volumesBasePath: this.volumesBasePath,
-          workspaceId: open.tenant.workspaceId ?? 'default',
+          volume: this.dataStore.volume,
+          workspaceId: open.tenant.workspaceId ?? this.workspaceId,
         }),
     });
 
@@ -399,6 +508,16 @@ export class StationServer {
 
       if (SECRET_CALLBACK_TYPES.has(msg.type as string)) {
         void this.handleSecretsCallback(managed, msg as unknown as Record<string, unknown>);
+        return;
+      }
+
+      if (msg.type === 'subscription_event' || msg.type === 'inbound_event') {
+        this.pushEvent(msg as unknown as Record<string, unknown>);
+        return;
+      }
+
+      if (AUTH_CALLBACK_TYPES.has(msg.type as string)) {
+        void this.handleAuthCallbackRequest(managed, msg as unknown as Record<string, unknown>);
         return;
       }
 
@@ -497,6 +616,9 @@ export class StationServer {
     this.managedApps.clear();
     this.sessionIndex.clear();
     this.oauth.dispose();
+    // Open event streams would keep the HTTP server from closing.
+    for (const streams of this.eventStreams.values()) for (const stream of streams) stream.end();
+    this.eventStreams.clear();
 
     if (this.httpServer) {
       await new Promise<void>((r) => this.httpServer?.close(() => r()));
@@ -600,80 +722,306 @@ export class StationServer {
     managed.initialized = resp.type === 'initialized';
   }
 
+  /** A reply to an Instance's Request, on the App's host side. */
+  private replyTo(
+    managed: ManagedApp,
+    msg: Record<string, unknown>,
+    type: string,
+    fields: Record<string, unknown>,
+  ): void {
+    managed.hostSide.send({
+      id: `reply-${++idCounter}`,
+      type,
+      timestamp: new Date().toISOString(),
+      version: '2.0',
+      sessionId: msg.sessionId as string,
+      requestId: msg.requestId as string,
+      ...fields,
+    } as unknown as MessageBase);
+  }
+
+  /** The Installation and Workspace a session's Requests are scoped to. */
+  private scopeOf(
+    managed: ManagedApp,
+    msg: Record<string, unknown>,
+  ): { installationId: string; workspaceId: string; permissions?: { volume?: boolean } } {
+    return (
+      this.sessionScopes.get(msg.sessionId as string) ?? {
+        installationId: (msg.installationId as string) ?? managed.entry.id,
+        workspaceId: this.workspaceId,
+      }
+    );
+  }
+
+  private secretScopes(
+    managed: ManagedApp,
+    msg: Record<string, unknown>,
+  ): { system: SystemSecretScope; installation: InstallationSecretScope } {
+    const scope = this.scopeOf(managed, msg);
+    return {
+      system: { stationId: this.stationId, appId: managed.entry.id },
+      installation: {
+        stationId: this.stationId,
+        workspaceId: scope.workspaceId,
+        installationId: scope.installationId,
+      },
+    };
+  }
+
   /**
-   * Answer an instance→host secret request using the configured SecretsManager.
+   * Answer an Instance's Request for secrets from the Secret Store. No Host
+   * is asked (SECRETSTORE-REQ-5).
    *
-   * Replies mirror the AgentAppHost wire format: `system_secrets` /
-   * `installation_secrets` / `update_installation_secrets_response` on success, and a
-   * `prompt_result` with `success: false` on failure — so the app's
-   * `ctx.systemSecret()` / `ctx.installationSecret()` resolve instead of timing out.
+   * Replies are `system_secrets` / `installation_secrets` /
+   * `update_installation_secrets_response` on success, and a `prompt_result`
+   * with `success: false` on failure, so the App's call resolves instead of
+   * timing out. No secrets at all answers `null`, as an App expects.
+   *
+   * @spec SECRETSTORE-REQ-5
    */
   private async handleSecretsCallback(
     managed: ManagedApp,
     msg: Record<string, unknown>,
   ): Promise<void> {
-    const sessionId = msg.sessionId as string;
-    const requestId = msg.requestId as string;
-
-    const reply = (type: string, fields: Record<string, unknown>): void => {
-      managed.hostSide.send({
-        id: `secrets-${++idCounter}`,
-        type,
-        timestamp: new Date().toISOString(),
-        version: '2.0',
-        sessionId,
-        requestId,
-        ...fields,
-      } as unknown as MessageBase);
-    };
-
-    const fail = (error: string): void => {
-      reply('prompt_result', { success: false, error });
-    };
-
-    if (!this.secrets) {
-      fail(`No secrets manager configured on this server (${msg.type as string})`);
-      return;
-    }
-
-    const installationId = (msg.installationId as string) ?? managed.entry.id;
-
-    const ctx = {
-      installationId,
-      tenant: { userId: 'station-server', workspaceId: 'local' },
-      sessionId,
-    };
-
+    const { system, installation } = this.secretScopes(managed, msg);
+    const orNull = (secrets: Record<string, string>): Record<string, string> | null =>
+      Object.keys(secrets).length > 0 ? secrets : null;
     try {
       switch (msg.type) {
         case 'get_system_secrets': {
-          const secrets = await this.secrets.getSystemSecrets(ctx);
-          reply('system_secrets', { secrets });
+          const secrets = await this.secretStore.getSystemSecrets(system);
+          this.replyTo(managed, msg, 'system_secrets', { secrets: orNull(secrets) });
           return;
         }
         case 'get_installation_secrets': {
-          const secrets = await this.secrets.getInstallationSecrets(ctx);
-          reply('installation_secrets', { secrets });
+          const secrets = await this.freshInstallationSecrets(managed, system, installation);
+          this.replyTo(managed, msg, 'installation_secrets', { secrets: orNull(secrets) });
           return;
         }
         case 'update_installation_secrets': {
-          const handler = this.secrets.updateInstallationSecrets?.bind(this.secrets);
-          if (!handler) {
-            fail('Secrets manager does not support updates');
-            return;
-          }
-          const success = await handler(ctx, msg.secrets as Record<string, string>);
-          reply('update_installation_secrets_response', { success });
+          await this.secretStore.setInstallationSecrets(
+            installation,
+            (msg.secrets as Record<string, string>) ?? {},
+          );
+          this.replyTo(managed, msg, 'update_installation_secrets_response', { success: true });
           return;
         }
       }
     } catch (err) {
-      fail(err instanceof Error ? err.message : String(err));
+      this.replyTo(managed, msg, 'prompt_result', {
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 
+  /** When the stored token expires, from either name a token's expiry was kept under. */
+  private static expiryOf(secrets: Record<string, string>): number {
+    const raw = secrets.EXPIRY_DATE ?? secrets.expiresAt;
+    return raw ? Date.parse(raw) : Number.NaN;
+  }
+
+  /**
+   * An Installation's secrets, with the access token refreshed first when it
+   * is about to expire and a refresh token is stored. A refresh that fails
+   * answers the stored secrets; the tool call then surfaces the auth error.
+   *
+   * @spec SECRETSTORE-REQ-5
+   */
+  private async freshInstallationSecrets(
+    managed: ManagedApp,
+    system: SystemSecretScope,
+    installation: InstallationSecretScope,
+  ): Promise<Record<string, string>> {
+    const secrets = await this.secretStore.getInstallationSecrets(installation);
+    const expiry = StationServer.expiryOf(secrets);
+    if (!Number.isFinite(expiry) || expiry > Date.now() + REFRESH_SKEW_MS) return secrets;
+    if (!secrets.REFRESH_TOKEN) return secrets;
+    try {
+      await this.refreshTokens(managed, system, installation);
+      return await this.secretStore.getInstallationSecrets(installation);
+    } catch {
+      return secrets;
+    }
+  }
+
+  /**
+   * Exchange the stored refresh token for a new access token and keep the
+   * result in the Secret Store.
+   *
+   * @spec SECRETSTORE-REQ-5
+   */
+  private async refreshTokens(
+    managed: ManagedApp,
+    system: SystemSecretScope,
+    installation: InstallationSecretScope,
+  ): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: string }> {
+    const systemSecrets = await this.secretStore.getSystemSecrets(system);
+    const tokenUrl = systemSecrets.tokenUrl ?? managed.entry.auth?.tokenUrl;
+    if (!tokenUrl) throw new Error(`${managed.entry.id} declares no token URL to refresh with`);
+    for (const name of ['CLIENT_ID', 'CLIENT_SECRET']) {
+      if (!systemSecrets[name]) throw new Error(`Missing system secret: ${name}`);
+    }
+    const stored = await this.secretStore.getInstallationSecrets(installation);
+    if (!stored.REFRESH_TOKEN) throw new Error('Missing Installation secret: REFRESH_TOKEN');
+
+    const response = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: stored.REFRESH_TOKEN,
+        client_id: systemSecrets.CLIENT_ID as string,
+        client_secret: systemSecrets.CLIENT_SECRET as string,
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) {
+      // The body of a failed refresh is not echoed: it may name the credentials sent.
+      throw new Error(`Token refresh failed: ${response.status}`);
+    }
+    const data = (await response.json()) as Record<string, unknown>;
+    const accessToken = data.access_token as string | undefined;
+    if (!accessToken) throw new Error('Token refresh response missing access_token');
+    const refreshToken = (data.refresh_token as string | undefined) ?? stored.REFRESH_TOKEN;
+    const expiresAt =
+      typeof data.expires_in === 'number'
+        ? new Date(Date.now() + data.expires_in * 1000).toISOString()
+        : undefined;
+
+    await this.secretStore.setInstallationSecrets(installation, {
+      ACCESS_TOKEN: accessToken,
+      REFRESH_TOKEN: refreshToken,
+      ...(expiresAt ? { EXPIRY_DATE: expiresAt } : {}),
+    });
+    // One name for the expiry from now on.
+    const stale = [...(expiresAt ? [] : ['EXPIRY_DATE']), 'expiresAt'];
+    await this.secretStore.removeInstallationSecrets(installation, stale);
+    return { accessToken, refreshToken, ...(expiresAt ? { expiresAt } : {}) };
+  }
+
+  /** Whether an Installation is signed in, from its stored secrets. */
+  private async authStatusOf(installation: {
+    installationId: string;
+    appId: string;
+    workspaceId?: string;
+  }): Promise<{
+    authenticated: boolean;
+    authRequired?: boolean;
+    provider?: string;
+    scopes?: string[];
+    expiresAt?: string;
+  }> {
+    const secrets = await this.secretStore.getInstallationSecrets({
+      stationId: this.stationId,
+      workspaceId: installation.workspaceId ?? this.workspaceId,
+      installationId: installation.installationId,
+    });
+    const auth = this.managedApps.get(installation.appId)?.entry.auth;
+    const expiry = StationServer.expiryOf(secrets);
+    const expired = Number.isFinite(expiry) && expiry <= Date.now();
+    // A stored refresh token mints a new access token on demand.
+    const authenticated = (!!secrets.ACCESS_TOKEN && !expired) || !!secrets.REFRESH_TOKEN;
+    return {
+      authenticated,
+      ...(authenticated ? {} : { authRequired: true }),
+      ...(auth?.provider ? { provider: auth.provider } : {}),
+      ...(auth?.scopes ? { scopes: auth.scopes } : {}),
+      ...(Number.isFinite(expiry) ? { expiresAt: new Date(expiry).toISOString() } : {}),
+    };
+  }
+
+  /**
+   * Answer an Instance's Request about sign-in: the Station runs OAuth and
+   * keeps the tokens, so it answers these itself.
+   *
+   * @spec SECRETSTORE-REQ-5
+   */
+  private async handleAuthCallbackRequest(
+    managed: ManagedApp,
+    msg: Record<string, unknown>,
+  ): Promise<void> {
+    const { system, installation } = this.secretScopes(managed, msg);
+    try {
+      switch (msg.type) {
+        case 'refresh_token': {
+          const tokens = await this.refreshTokens(managed, system, installation);
+          this.replyTo(managed, msg, 'refresh_token_response', tokens);
+          return;
+        }
+        case 'auth_status': {
+          const status = await this.authStatusOf({
+            installationId: installation.installationId,
+            appId: managed.entry.id,
+            workspaceId: installation.workspaceId,
+          });
+          this.replyTo(managed, msg, 'auth_status_result', status);
+          return;
+        }
+        case 'auth_url': {
+          const started = await this.startOAuth(installation.installationId, managed.entry.id, {
+            userId: 'anonymous',
+            workspaceId: installation.workspaceId,
+          });
+          if ('error' in started) throw new Error(started.error);
+          this.replyTo(managed, msg, 'auth_url_result', started);
+          return;
+        }
+      }
+    } catch (err) {
+      this.replyTo(managed, msg, 'prompt_result', {
+        success: false,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  /** Hand an App's event to whoever is listening to its session. */
+  private pushEvent(event: Record<string, unknown>): void {
+    for (const stream of this.eventStreams.get(event.sessionId as string) ?? []) {
+      stream.write(`data: ${JSON.stringify(event)}\n\n`);
+    }
+  }
+
+  /**
+   * `GET /events?sessionId=X`: the events an App emits on a session, as
+   * Server-Sent Events, for a Host that reaches the Station over HTTP. The
+   * caller must be of the session's Workspace.
+   *
+   * @spec CLIENT-REQ-1
+   */
+  private handleEvents(req: IncomingMessage, res: ServerResponse, caller: StationCaller): void {
+    const parsed = new URL(req.url ?? '/', 'http://station');
+    const sessionId = parsed.searchParams.get('sessionId') ?? '';
+    const scope = this.sessionScopes.get(sessionId);
+    if (!scope || (!caller.admin && scope.workspaceId !== caller.workspaceId)) {
+      json(res, 404, { error: 'Session not found' });
+      return;
+    }
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    });
+    res.write(': listening\n\n');
+    const streams = this.eventStreams.get(sessionId) ?? new Set<ServerResponse>();
+    streams.add(res);
+    this.eventStreams.set(sessionId, streams);
+    req.on('close', () => {
+      streams.delete(res);
+      if (streams.size === 0) this.eventStreams.delete(sessionId);
+    });
+  }
+
+  /** The Installations the Station knows. */
+  private listInstallations(): StationInstallation[] {
+    const source = this.installations;
+    if (!source) return [];
+    return typeof source === 'function' ? source() : source.list();
+  }
+
   private findInstallation(installationId: string): StationInstallation | undefined {
-    return this.installations?.().find((i) => i.installationId === installationId);
+    return this.listInstallations().find((i) => i.installationId === installationId);
   }
 
   /**
@@ -684,14 +1032,18 @@ export class StationServer {
    * @spec POLICY-REQ-12
    */
   private async handleInstallations(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const principalId = await this.identifyCredential(req);
-    if (!principalId) {
+    const credential = await this.credentialOf(req);
+    if (!credential) {
       json(res, 401, { error: 'Unauthorized: GET /installations needs an API key' });
       return;
     }
+    const caller = this.callerOf(credential);
+    const { principalId } = caller;
     await this.registerDiscoveredApps();
     const policy = this.policyStore ? await policyFor(this.policyStore, principalId) : undefined;
-    const installations = (this.installations?.() ?? [])
+    const installations = this.listInstallations()
+      // STADMIN-REQ-3: a key reaches only its Workspace's Installations.
+      .filter((i) => (i.workspaceId ?? this.workspaceId) === caller.workspaceId)
       .filter((i) => this.managedApps.has(i.appId))
       .filter((i) => !policy || appVisible(policy, i.appId))
       .map((i) => ({
@@ -718,18 +1070,68 @@ export class StationServer {
     }
   }
 
-  /** The Principal a request's bearer credential names, checked even on an open Station. */
-  private async identifyCredential(req: IncomingMessage): Promise<string | undefined> {
+  /**
+   * What a request's bearer credential is: an API Key with its role and
+   * Workspace, or the admin credential. Undefined when there is none or it is
+   * not valid. Checked even on an open Station.
+   *
+   * @spec STADMIN-REQ-8
+   */
+  private async credentialOf(
+    req: IncomingMessage,
+  ): Promise<Exclude<AuthResult, false | null> | undefined> {
     const header = req.headers.authorization;
     const bearer = header?.startsWith('Bearer ') ? header.slice(7) : undefined;
     if (!bearer) return undefined;
     if (this.apiKeyStore && bearer.startsWith('aak_')) {
       const record = await this.apiKeyStore.getByHash(hashApiKey(bearer));
-      return record?.principalId;
+      if (!record) return undefined;
+      const role = record.role ?? 'workspace-member';
+      return {
+        identity: record.identity,
+        principalId: record.principalId,
+        role,
+        // STADMIN-REQ-3: a Station Operator's key belongs to no Workspace.
+        workspaceId: role === 'station-operator' ? null : (record.workspaceId ?? this.workspaceId),
+      };
     }
-    if (this.adminToken && bearer === this.adminToken) return ADMIN_PRINCIPAL_ID;
-    if (this.token && bearer === this.token) return ADMIN_PRINCIPAL_ID;
+    // Legacy single-token auth, and the local admin credential handed to the
+    // CLI that launched the station.
+    if (this.token && bearer === this.token) {
+      return { identity: { userId: 'local' }, principalId: ADMIN_PRINCIPAL_ID };
+    }
+    if (this.adminToken && bearer === this.adminToken) {
+      return { identity: { userId: ADMIN_PRINCIPAL_ID }, principalId: ADMIN_PRINCIPAL_ID };
+    }
     return undefined;
+  }
+
+  /**
+   * Who is calling. The admin credential, and a caller an open local Station
+   * let in without one, operate the Station and own its home Workspace
+   * (STADMIN-REQ-2).
+   *
+   * @spec STADMIN-REQ-1
+   */
+  private callerOf(auth: AuthResult | undefined): StationCaller {
+    if (!auth || auth.principalId === ADMIN_PRINCIPAL_ID) {
+      return {
+        principalId: ADMIN_PRINCIPAL_ID,
+        userId: (auth || undefined)?.identity?.userId ?? ADMIN_PRINCIPAL_ID,
+        admin: true,
+        operator: true,
+        owner: true,
+        workspaceId: this.workspaceId,
+      };
+    }
+    return {
+      principalId: auth.principalId,
+      userId: auth.identity?.userId ?? auth.principalId,
+      admin: false,
+      operator: auth.role === 'station-operator',
+      owner: auth.role === 'workspace-owner',
+      workspaceId: auth.workspaceId === undefined ? this.workspaceId : auth.workspaceId,
+    };
   }
 
   private resolveApp(message: Record<string, unknown>): ManagedApp | undefined {
@@ -754,159 +1156,117 @@ export class StationServer {
   }
 
   // -------------------------------------------------------------------------
-  // Storage requests (in-memory, for standalone/dev mode)
+  // Data Requests: Storage, Volume and Objects, answered from the Data Store
   // -------------------------------------------------------------------------
 
   /**
-   * Answer an instance→host Storage request with the configured document
-   * store (in memory by default), scoped by installationId.
+   * Answer an Instance's Storage Request from the Data Store, scoped to the
+   * session's Installation. No Host is asked.
+   *
+   * @spec DATASTORE-REQ-5
    */
   private async handleStorageCallback(
     managed: ManagedApp,
     msg: Record<string, unknown>,
   ): Promise<void> {
-    const sessionId = msg.sessionId as string;
-    const requestId = msg.requestId as string;
-    const installationId =
-      this.sessionScopes.get(sessionId)?.installationId ??
-      (msg.installationId as string) ??
-      managed.entry.id;
-
-    const reply = (type: string, fields: Record<string, unknown>): void => {
-      managed.hostSide.send({
-        id: `storage-${++idCounter}`,
-        type,
-        timestamp: new Date().toISOString(),
-        version: '2.0',
-        sessionId,
-        requestId,
-        ...fields,
-      } as unknown as MessageBase);
-    };
-
+    const scope = this.scopeOf(managed, msg);
+    const documents = documentsOf(this.dataStore.documents, {
+      stationId: this.stationId,
+      workspaceId: scope.workspaceId,
+      installationId: scope.installationId,
+    });
     try {
-      const response = await handleStorageRequest(this.documentStore, installationId, msg);
-      reply(response.type, response.fields);
+      const response = await handleStorageRequest(documents, scope.installationId, msg);
+      this.replyTo(managed, msg, response.type, response.fields);
     } catch (err) {
       const error = err instanceof Error ? err.message : 'Storage error';
-      reply(`${msg.type as string}_response`, { success: false, error });
+      this.replyTo(managed, msg, `${msg.type as string}_response`, { success: false, error });
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Volume storage requests (file_volume_*)
-  // -------------------------------------------------------------------------
-
   /**
-   * Answer an instance→host volume storage request.
+   * Answer an Instance's Volume Request from the Data Store. The Workspace
+   * and the Effective Permissions come from the session this server opened
+   * (VOL-REQ-1, VOL-REQ-2).
    *
-   * Resolves the workspaceId + installationId from the message (or falls
-   * back to the managed app's id), then delegates to the volume handlers
-   * which operate on the physical `workspace/` directory.
+   * @spec DATASTORE-REQ-5
    */
   private async handleVolumeRequest(
     managed: ManagedApp,
     msg: Record<string, unknown>,
   ): Promise<void> {
     const sessionId = msg.sessionId as string;
-    const requestId = msg.requestId as string;
-    // VOL-REQ-1 / VOL-REQ-2: the Workspace and the Effective Permissions come
-    // from the session_open this server relayed.
     const scope = this.sessionScopes.get(sessionId);
     const ctx: VolumeHandlerContext = {
-      volumesBasePath: this.volumesBasePath,
-      workspaceId: scope?.workspaceId ?? 'default',
+      volume: this.dataStore.volume,
+      workspaceId: scope?.workspaceId ?? this.workspaceId,
       sessionId,
       permissions: scope?.permissions,
     };
-
+    const failed = (error: string): void =>
+      this.replyTo(managed, msg, `${msg.type as string}_result`, { success: false, error });
     try {
       const response = await handleVolumeRequest(ctx, msg);
-      if (response) {
-        managed.hostSide.send(response as unknown as MessageBase);
-      } else {
-        // Unknown request type — send error result
-        managed.hostSide.send({
-          id: `vol-err-${++idCounter}`,
-          type: `${msg.type as string}_result`,
-          timestamp: new Date().toISOString(),
-          version: '2.0',
-          sessionId,
-          requestId,
-          success: false,
-          error: `Unknown volume request: ${msg.type as string}`,
-        } as unknown as MessageBase);
-      }
+      if (response) managed.hostSide.send(response as unknown as MessageBase);
+      else failed(`Unknown volume request: ${msg.type as string}`);
     } catch (err) {
-      managed.hostSide.send({
-        id: `vol-err-${++idCounter}`,
-        type: `${msg.type as string}_result`,
-        timestamp: new Date().toISOString(),
-        version: '2.0',
-        sessionId,
-        requestId,
-        success: false,
-        error: err instanceof Error ? err.message : String(err),
-      } as unknown as MessageBase);
+      failed(err instanceof Error ? err.message : String(err));
     }
   }
 
-  // -------------------------------------------------------------------------
-  // Object Requests (object_put, object_get, object_delete, object_list, object_link)
-  // -------------------------------------------------------------------------
-
-  /** The object store, built lazily once the server knows its URL. */
-  private objects(): ObjectStore {
+  /**
+   * The Station's object rules over the Data Store, built once: they need
+   * the link-signing secret, which lives in the Secret Store and is created
+   * there the first time (SECRETSTORE-REQ-7).
+   *
+   * @spec SECRETSTORE-REQ-7
+   */
+  private objects(): Promise<ObjectStore> {
     if (!this.objectStore) {
-      this.objectStore = new ObjectStore({
-        volumesBasePath: this.volumesBasePath,
-        stationSecret: this.stationSecret,
-        publicUrl: this.publicUrl ?? this._info?.url ?? `http://localhost:${this.defaultPort}`,
+      this.objectStore = (async () => {
+        const scope = { stationId: this.stationId };
+        let secret = await this.secretStore.getLinkSigningSecret(scope);
+        if (!secret) {
+          secret = randomBytes(32).toString('hex');
+          await this.secretStore.setLinkSigningSecret(scope, secret);
+        }
+        return new ObjectStore({
+          objects: this.dataStore.objects,
+          stationId: this.stationId,
+          stationSecret: secret,
+          publicUrl: this.publicUrl,
+        });
+      })();
+      // A failure is not kept: the next Request tries again.
+      this.objectStore.catch(() => {
+        this.objectStore = null;
       });
     }
     return this.objectStore;
   }
 
   /**
-   * Answer an instance→host object Request. The Installation and Workspace
-   * come from the session that was opened over `/messages`; a session the
-   * server did not open itself falls back to the app id and `default`.
+   * Answer an Instance's object Request from the Data Store, scoped to the
+   * session's Installation and Workspace.
+   *
+   * @spec DATASTORE-REQ-5
    */
   private async handleObjectCallback(
     managed: ManagedApp,
     msg: Record<string, unknown>,
   ): Promise<void> {
-    const sessionId = msg.sessionId as string;
-    const requestId = msg.requestId as string;
-    const scope = this.sessionScopes.get(sessionId) ?? {
-      installationId: managed.entry.id,
-      workspaceId: 'default',
-    };
+    const failed = (error: string): void =>
+      this.replyTo(managed, msg, 'prompt_result', { success: false, error });
     try {
-      const response = await handleObjectRequest(this.objects(), scope, msg);
-      managed.hostSide.send(
-        (response ?? {
-          id: `obj-err-${++idCounter}`,
-          type: 'prompt_result',
-          timestamp: new Date().toISOString(),
-          version: '2.0',
-          sessionId,
-          requestId,
-          success: false,
-          error: `Unknown object request: ${msg.type as string}`,
-        }) as unknown as MessageBase,
+      const response = await handleObjectRequest(
+        await this.objects(),
+        this.scopeOf(managed, msg),
+        msg,
       );
+      if (response) managed.hostSide.send(response as unknown as MessageBase);
+      else failed(`Unknown object request: ${msg.type as string}`);
     } catch (err) {
-      managed.hostSide.send({
-        id: `obj-err-${++idCounter}`,
-        type: 'prompt_result',
-        timestamp: new Date().toISOString(),
-        version: '2.0',
-        sessionId,
-        requestId,
-        success: false,
-        error: err instanceof Error ? err.message : String(err),
-      } as unknown as MessageBase);
+      failed(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -1107,6 +1467,12 @@ export class StationServer {
       return;
     }
 
+    // @spec CLIENT-REQ-1
+    if (req.method === 'GET' && url.startsWith('/events')) {
+      this.handleEvents(req, res, this.callerOf(authResult));
+      return;
+    }
+
     // OAuth routes — start and callback
     if (req.method === 'GET' && url.startsWith('/auth/start')) {
       await this.handleAuthStart(req, res);
@@ -1144,18 +1510,25 @@ export class StationServer {
     // Management API (permissions, keys, approvals)
     // @spec POLICY-REQ-7
     if (url === '/approvals' || url.startsWith('/approvals/')) {
-      await this.handleApprovals(req, res, url, authResult || undefined);
+      await this.handleApprovals(req, res, url, this.callerOf(authResult));
       return;
     }
 
-    if (this.enableManagementApi && url.startsWith('/api/')) {
-      await this.handleManagementApi(req, res, url, authResult || undefined);
+    // @spec STADMIN-REQ-5
+    if (url.startsWith('/api/')) {
+      await this.admin.handle(req, res, url, this.callerOf(authResult));
       return;
     }
 
     // App discovery & static serving routes
     if (req.method === 'GET' && (url === '/apps' || url === '/apps/')) {
       this.handleAppCatalog(res);
+      return;
+    }
+
+    const setupMatch = url.match(SETUP_ROUTE);
+    if (req.method === 'GET' && setupMatch) {
+      this.handleAppSetup(res, decodeURIComponent(setupMatch[1] ?? ''), authResult);
       return;
     }
 
@@ -1192,26 +1565,43 @@ export class StationServer {
   // -------------------------------------------------------------------------
 
   /**
-   * Resolve the OAuth redirect URI for the app station.
+   * The OAuth redirect URI of this Station: its public URL followed by
+   * `/auth/callback`. The one value used in the authorize URL, in the token
+   * exchange and in resolved setup instructions; never derived from a
+   * request's headers or from the port.
    *
-   * Priority: explicit `publicUrl` option → auto-detect from request headers
-   * (supports X-Forwarded-Proto/Host behind a reverse proxy) → fallback to
-   * the server's own info.
+   * @spec SETUP-REQ-2
    */
-  private getOAuthRedirectUri(req?: IncomingMessage): string {
-    if (this.publicUrl) {
-      const base = this.publicUrl.replace(/\/+$/, '');
-      return `${base}/auth/callback`;
-    }
+  private getOAuthRedirectUri(): string {
+    return `${this.publicUrl}/auth/callback`;
+  }
 
-    if (req) {
-      const proto = req.headers['x-forwarded-proto'] ?? 'http';
-      const host = req.headers['x-forwarded-host'] ?? req.headers.host;
-      if (host) return `${proto}://${host}/auth/callback`;
+  /**
+   * GET /apps/{appId}/setup — the App's setup instructions with every
+   * variable replaced by its value, for the Station Operator only.
+   *
+   * Answers `{ instructions: null }` for an App that declares none. The only
+   * values injected are this Station's own URLs (SETUP-NFR-1).
+   *
+   * @spec SETUP-REQ-4
+   */
+  private handleAppSetup(res: ServerResponse, appId: string, authResult: AuthResult): void {
+    if (((authResult || undefined)?.principalId ?? ADMIN_PRINCIPAL_ID) !== ADMIN_PRINCIPAL_ID) {
+      json(res, 403, { error: 'Only the Station Operator may read setup instructions' });
+      return;
     }
-
-    const port = this._info?.port ?? this.defaultPort;
-    return `http://localhost:${port}/auth/callback`;
+    const managed = this.managedApps.get(appId);
+    if (!managed) {
+      json(res, 404, { error: `App not found: ${appId}` });
+      return;
+    }
+    const auth = managed.entry.manifest?.auth as { setup?: unknown } | undefined;
+    const setup = typeof auth?.setup === 'string' ? auth.setup : undefined;
+    json(res, 200, {
+      instructions: setup
+        ? resolveAuthSetup(setup, { redirectUri: this.getOAuthRedirectUri() })
+        : null,
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -1219,110 +1609,101 @@ export class StationServer {
   // -------------------------------------------------------------------------
 
   /**
-   * GET /auth/start?installationId=X[&userId=Z&workspaceId=W]
+   * Begin an OAuth flow for an Installation: read the App's auth config and
+   * its client from the Secret Store, and build the authorize URL with this
+   * Station's redirect URI.
+   */
+  private async startOAuth(
+    installationId: string,
+    appId: string,
+    tenant: { userId: string; workspaceId: string },
+  ): Promise<{ url: string; state: string } | { status: number; error: string }> {
+    const managed = this.managedApps.get(appId);
+    if (!managed) return { status: 404, error: `App not found: ${appId}` };
+
+    const authConfig = managed.entry.auth;
+    if (!authConfig?.authorizeUrl || !authConfig?.tokenUrl) {
+      return { status: 400, error: `App ${appId} does not support OAuth (missing auth config)` };
+    }
+
+    let systemSecrets: Record<string, string>;
+    try {
+      systemSecrets = await this.secretStore.getSystemSecrets({ stationId: this.stationId, appId });
+    } catch {
+      return { status: 500, error: 'Failed to read system secrets' };
+    }
+    const clientId = systemSecrets.CLIENT_ID;
+    const clientSecret = systemSecrets.CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      return { status: 500, error: `Missing CLIENT_ID or CLIENT_SECRET for ${appId}` };
+    }
+
+    const params: OAuthStartParams = {
+      installationId,
+      appId,
+      tenant,
+      provider: authConfig.provider ?? 'oauth2',
+      authorizeUrl: authConfig.authorizeUrl,
+      tokenUrl: authConfig.tokenUrl,
+      clientId,
+      clientSecret,
+      // SETUP-REQ-2: the Station's own redirect URI, the same for every App.
+      redirectUri: this.getOAuthRedirectUri(),
+      scopes: authConfig.scopes,
+    };
+    return this.oauth.startAuth(params);
+  }
+
+  /**
+   * GET /auth/start?installationId=X[&userId=Z]
    *
-   * Initiates an OAuth flow. Resolves the installationId to an appId, reads
-   * the app's auth config and system secrets, builds the authorize URL, and
-   * either redirects the browser (302) or returns JSON with the URL.
+   * Initiates an OAuth flow for an Installation, and either redirects the
+   * browser (302) or returns JSON with the URL. The tokens will belong to the
+   * Installation's own Workspace, whatever the caller says.
    */
   private async handleAuthStart(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const parsed = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
     const installationId = parsed.searchParams.get('installationId');
     const userId = parsed.searchParams.get('userId') ?? 'anonymous';
-    const workspaceId = parsed.searchParams.get('workspaceId') ?? 'local';
 
     if (!installationId) {
       json(res, 400, { error: 'Missing required query parameter: installationId' });
       return;
     }
 
-    // Resolve installationId → appId
-    if (!this.resolveInstallation) {
-      json(res, 500, {
-        error: 'No installation resolver configured — cannot map installationId to app',
-      });
-      return;
-    }
-    const resolved = this.resolveInstallation(installationId);
-    if (!resolved) {
+    const installation = this.findInstallation(installationId);
+    const appId = this.resolveInstallation?.(installationId)?.appId ?? installation?.appId;
+    if (!appId) {
       json(res, 404, { error: `Unknown installationId: ${installationId}` });
       return;
     }
-    const { appId } = resolved;
 
-    const managed = this.managedApps.get(appId);
-    if (!managed) {
-      json(res, 404, { error: `App not found: ${appId}` });
+    const started = await this.startOAuth(installationId, appId, {
+      userId,
+      workspaceId: installation?.workspaceId ?? this.workspaceId,
+    });
+    if ('error' in started) {
+      json(res, started.status, { error: started.error });
       return;
     }
-
-    const authConfig = managed.entry.auth;
-    if (!authConfig?.authorizeUrl || !authConfig?.tokenUrl) {
-      json(res, 400, { error: `App ${appId} does not support OAuth (missing auth config)` });
-      return;
-    }
-
-    // Resolve system secrets for client credentials
-    if (!this.secrets) {
-      json(res, 500, { error: 'No secrets manager configured — cannot read OAuth credentials' });
-      return;
-    }
-
-    const ctx = {
-      installationId,
-      tenant: { userId, workspaceId },
-    };
-
-    let systemSecrets: Record<string, string>;
-    try {
-      systemSecrets = (await this.secrets.getSystemSecrets(ctx)) ?? {};
-    } catch {
-      json(res, 500, { error: 'Failed to read system secrets' });
-      return;
-    }
-
-    const clientId = systemSecrets.CLIENT_ID;
-    const clientSecret = systemSecrets.CLIENT_SECRET;
-    if (!clientId || !clientSecret) {
-      json(res, 500, { error: `Missing CLIENT_ID or CLIENT_SECRET for ${appId}` });
-      return;
-    }
-
-    // Build the request URI from the app station's public URL — this is
-    // infrastructure-level, not per-app. All OAuth apps share the same
-    // request endpoint.
-    const redirectUri = this.getOAuthRedirectUri(req);
-
-    const params: OAuthStartParams = {
-      installationId,
-      appId,
-      tenant: { userId, workspaceId },
-      provider: authConfig.provider ?? 'oauth2',
-      authorizeUrl: authConfig.authorizeUrl,
-      tokenUrl: authConfig.tokenUrl,
-      clientId,
-      clientSecret,
-      redirectUri,
-      scopes: authConfig.scopes,
-    };
-
-    const { url, state } = this.oauth.startAuth(params);
 
     // If the browser wants HTML, redirect directly. Otherwise return JSON.
     const accept = req.headers.accept ?? '';
     if (accept.includes('text/html')) {
-      res.writeHead(302, { Location: url });
+      res.writeHead(302, { Location: started.url });
       res.end();
     } else {
-      json(res, 200, { url, state });
+      json(res, 200, started);
     }
   }
 
   /**
-   * GET /auth/callback?code=X&state=Y
+   * GET /auth/callback?code=…&state=…
    *
-   * Receives the OAuth provider's redirect. Exchanges the code for tokens,
-   * persists them via the SecretsManager, and shows a success/error page.
+   * The provider's redirect: exchanges the code for tokens, keeps them in the
+   * Secret Store as the Installation's secrets, and shows a result page.
+   *
+   * @spec SECRETSTORE-REQ-5
    */
   private async handleAuthCallback(_req: IncomingMessage, res: ServerResponse): Promise<void> {
     const parsed = new URL(_req.url ?? '/', `http://${_req.headers.host ?? 'localhost'}`);
@@ -1357,19 +1738,14 @@ export class StationServer {
 
     try {
       const result = await this.oauth.handleCallback(state, code);
-
-      // Persist tokens via the SecretsManager
-      if (this.secrets?.updateInstallationSecrets) {
-        const ctx = {
+      await this.secretStore.setInstallationSecrets(
+        {
+          stationId: this.stationId,
+          workspaceId: result.tenant?.workspaceId ?? this.workspaceId,
           installationId: result.installationId,
-          tenant: result.tenant ?? { userId: 'anonymous', workspaceId: 'local' },
-        };
-        await this.secrets.updateInstallationSecrets(
-          ctx,
-          result.tokens as unknown as Record<string, string>,
-        );
-      }
-
+        },
+        result.tokens as unknown as Record<string, string>,
+      );
       const appName = this.managedApps.get(result.appId)?.entry.name ?? result.installationId;
       html(200, successPage(appName));
     } catch (err) {
@@ -1381,9 +1757,8 @@ export class StationServer {
   /**
    * GET /auth/status?installationId=X
    *
-   * Returns the current authentication status for an installation.
-   * Used by the CLI to poll for completion after delegating OAuth
-   * to the station via /auth/start.
+   * Whether an Installation holds tokens. Polled by the CLI after it
+   * delegates OAuth to the station via /auth/start.
    */
   private async handleAuthStatus(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const parsed = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
@@ -1394,22 +1769,13 @@ export class StationServer {
       return;
     }
 
-    if (!this.secrets) {
-      json(res, 500, { error: 'No secrets manager configured' });
-      return;
-    }
-
-    const ctx = {
-      installationId,
-      tenant: { userId: 'anonymous', workspaceId: 'local' },
-    };
-
     try {
-      const installationSecrets = (await this.secrets.getInstallationSecrets(ctx)) ?? {};
-      const authenticated = !!(
-        installationSecrets.ACCESS_TOKEN || installationSecrets.REFRESH_TOKEN
-      );
-      json(res, 200, { authenticated });
+      const secrets = await this.secretStore.getInstallationSecrets({
+        stationId: this.stationId,
+        workspaceId: this.findInstallation(installationId)?.workspaceId ?? this.workspaceId,
+        installationId,
+      });
+      json(res, 200, { authenticated: !!(secrets.ACCESS_TOKEN || secrets.REFRESH_TOKEN) });
     } catch {
       json(res, 500, { error: 'Failed to read auth status' });
     }
@@ -1422,7 +1788,7 @@ export class StationServer {
   private async handleMessages(
     req: IncomingMessage,
     res: ServerResponse,
-    authResult?: { identity?: ApiKeyIdentity; principalId: string },
+    authResult?: Exclude<AuthResult, false | null>,
   ): Promise<void> {
     let body: string;
     try {
@@ -1431,6 +1797,7 @@ export class StationServer {
       json(res, 400, { error: 'Failed to read request body' });
       return;
     }
+    const caller = this.callerOf(authResult);
 
     let message: MessageBase;
     try {
@@ -1451,6 +1818,29 @@ export class StationServer {
           : undefined;
       if (installation) {
         open.effectivePermissions = { permissions: installation.permissions ?? {} };
+      }
+      // A session runs in its Installation's Workspace, never in the one the
+      // caller claims. Only the admin, who operates the Station, may name the
+      // Workspace of a session that is not an Installation's (STADMIN-REQ-3).
+      const tenant = (open.tenant ?? {}) as Record<string, unknown>;
+      const claimed = typeof tenant.workspaceId === 'string' ? tenant.workspaceId : undefined;
+      const workspaceId = installation
+        ? (installation.workspaceId ?? this.workspaceId)
+        : caller.admin
+          ? (claimed ?? this.workspaceId)
+          : caller.workspaceId;
+      if (workspaceId === null || (!caller.admin && caller.workspaceId !== workspaceId)) {
+        // The same answer as for something that does not exist (STADMIN-NFR-1).
+        json(res, 404, { error: 'No matching app found' });
+        return;
+      }
+      open.tenant = { ...tenant, workspaceId };
+    } else {
+      const sessionId = (message as Record<string, unknown>).sessionId;
+      const scope = typeof sessionId === 'string' ? this.sessionScopes.get(sessionId) : undefined;
+      if (scope && !caller.admin && scope.workspaceId !== caller.workspaceId) {
+        json(res, 404, { error: 'No matching app found' });
+        return;
       }
     }
 
@@ -1535,8 +1925,11 @@ export class StationServer {
         // POLICY-REQ-6: park until the Approver decides or the Approval expires.
         const answer = await approvals.park({ ...call, args, rule: decision.rule }, (info) => {
           approvalId = info.id;
+          // STADMIN-REQ-1: the Owner of the caller's Workspace answers it.
+          this.approvalWorkspaces.set(info.id, caller.workspaceId ?? this.workspaceId);
           if (res.destroyed) approvals.cancel(info.id);
         });
+        if (approvalId) this.approvalWorkspaces.delete(approvalId);
         res.off('close', onCallerGone);
         outcome = answer === 'approve' ? 'allow' : answer;
         if (answer === 'approve' && approvalId) approved = { id: approvalId, ...call };
@@ -1589,7 +1982,7 @@ export class StationServer {
         const tenant = open.tenant as { workspaceId?: string } | undefined;
         this.sessionScopes.set((response as Record<string, unknown>).sessionId as string, {
           installationId: (open.installationId as string) ?? managed.entry.id,
-          workspaceId: tenant?.workspaceId ?? 'default',
+          workspaceId: tenant?.workspaceId ?? this.workspaceId,
           permissions: (open.effectivePermissions as { permissions?: { volume?: boolean } })
             ?.permissions,
         });
@@ -1643,6 +2036,8 @@ export class StationServer {
       url.startsWith('/messages') ||
       url.startsWith('/api/') ||
       url.startsWith('/approvals') ||
+      url.startsWith('/events') ||
+      SETUP_ROUTE.test(url) ||
       url in this.adminRoutes;
     if (!needsAuth) return null;
 
@@ -1661,31 +2056,7 @@ export class StationServer {
       if (!hasActiveKey) return open;
     }
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return false;
-
-    const bearer = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (!bearer) return false;
-
-    // API key auth (aak_ prefix)
-    if (this.apiKeyStore && bearer.startsWith('aak_')) {
-      const hash = hashApiKey(bearer);
-      const record = await this.apiKeyStore.getByHash(hash);
-      if (!record) return false;
-      return { identity: record.identity, principalId: record.principalId };
-    }
-
-    // Legacy single-token auth
-    if (this.token && bearer === this.token) {
-      return { identity: { userId: 'local' }, principalId: ADMIN_PRINCIPAL_ID };
-    }
-
-    // The local admin credential handed to the CLI that launched the station.
-    if (this.adminToken && bearer === this.adminToken) {
-      return { identity: { userId: ADMIN_PRINCIPAL_ID }, principalId: ADMIN_PRINCIPAL_ID };
-    }
-
-    return false;
+    return (await this.credentialOf(req)) ?? false;
   }
 
   // -------------------------------------------------------------------------
@@ -2247,18 +2618,14 @@ ${cardsHtml}
     objectId: string,
     token?: string,
   ): Promise<void> {
-    const outcome = await this.objects().resolveForServing(objectId, token);
+    const outcome = await (await this.objects()).resolveForServing(objectId, token);
     if (outcome.status !== 200) {
       json(res, outcome.status, { error: outcome.error });
       return;
     }
-    if (!existsSync(outcome.path) || !statSync(outcome.path).isFile()) {
-      json(res, 404, { error: 'Object not found' });
-      return;
-    }
     const headers: Record<string, string | number> = {
       'Content-Type': outcome.meta.contentType,
-      'Content-Length': statSync(outcome.path).size,
+      'Content-Length': outcome.data.length,
       'Cache-Control': 'no-cache',
     };
     if (outcome.meta.filename) {
@@ -2266,7 +2633,7 @@ ${cardsHtml}
         `inline; filename="${outcome.meta.filename.replace(/["\\]/g, '')}"`;
     }
     res.writeHead(200, headers);
-    createReadStream(outcome.path).pipe(res);
+    res.end(outcome.data);
   }
 
   /**
@@ -2297,21 +2664,9 @@ ${cardsHtml}
     return target;
   }
 
-  /**
-   * Determine the base URL for building absolute links in the launcher.
-   * Uses `publicUrl` if configured, otherwise falls back to request headers.
-   */
-  private getBaseUrl(req: IncomingMessage): string {
-    if (this.publicUrl) {
-      return this.publicUrl.replace(/\/+$/, '');
-    }
-
-    const proto = req.headers['x-forwarded-proto'] ?? 'http';
-    const host = req.headers['x-forwarded-host'] ?? req.headers.host;
-    if (host) return `${proto}://${host}`;
-
-    const port = this._info?.port ?? this.defaultPort;
-    return `http://localhost:${port}`;
+  /** The base URL for absolute links in the launcher: the Station's public URL. */
+  private getBaseUrl(_req: IncomingMessage): string {
+    return this.publicUrl;
   }
 
   // -------------------------------------------------------------------------
@@ -2321,19 +2676,19 @@ ${cardsHtml}
   /**
    * Pending Approvals for the Approver (POLICY-REQ-7): `GET /approvals` lists
    * them and `POST /approvals/{id}` with `{ decision: 'approve' | 'deny' }`
-   * decides one. Only the `admin` Principal may answer; an open station has
-   * no other caller.
+   * decides one. The Approver of a Workspace is its Owner: nobody else sees
+   * or decides its Approvals, the Station Operator included.
    *
    * @spec POLICY-REQ-7
+   * @spec STADMIN-REQ-1
    */
   private async handleApprovals(
     req: IncomingMessage,
     res: ServerResponse,
     url: string,
-    authResult?: { principalId: string },
+    caller: StationCaller,
   ): Promise<void> {
-    const principalId = authResult?.principalId ?? ADMIN_PRINCIPAL_ID;
-    if (principalId !== ADMIN_PRINCIPAL_ID) {
+    if (!caller.owner && !caller.operator) {
       json(res, 403, { error: 'Only the Approver can answer approvals' });
       return;
     }
@@ -2341,10 +2696,12 @@ ${cardsHtml}
       json(res, 404, { error: 'Approvals not configured' });
       return;
     }
+    const mine = (id: string): boolean =>
+      caller.owner && this.approvalWorkspaces.get(id) === caller.workspaceId;
     const method = req.method ?? 'GET';
     // @spec POLICY-REQ-7
     if (url === '/approvals' && method === 'GET') {
-      json(res, 200, { approvals: this.approvalManager.listPending() });
+      json(res, 200, { approvals: this.approvalManager.listPending().filter((a) => mine(a.id)) });
       return;
     }
     const match = url.match(/^\/approvals\/([^/]+)$/);
@@ -2354,7 +2711,8 @@ ${cardsHtml}
         json(res, 400, { error: "Field 'decision' must be 'approve' or 'deny'" });
         return;
       }
-      if (!this.approvalManager.decide(match[1], body.decision, principalId)) {
+      const id = match[1] ?? '';
+      if (!mine(id) || !this.approvalManager.decide(id, body.decision, caller.principalId)) {
         json(res, 404, { error: 'Approval not found, already decided or expired' });
         return;
       }
@@ -2363,90 +2721,11 @@ ${cardsHtml}
     }
     json(res, 404, { error: `Not found: ${method} ${url}` });
   }
-
-  private async handleManagementApi(
-    req: IncomingMessage,
-    res: ServerResponse,
-    url: string,
-    _authResult?: { identity?: ApiKeyIdentity; principalId: string },
-  ): Promise<void> {
-    const method = req.method ?? 'GET';
-
-    // --- API Keys CRUD ---
-    if (url === '/api/keys' && method === 'GET') {
-      if (!this.apiKeyStore) {
-        json(res, 404, { error: 'API keys not configured' });
-        return;
-      }
-      const keys = await this.apiKeyStore.list();
-      json(res, 200, { keys });
-      return;
-    }
-
-    if (url === '/api/keys' && method === 'POST') {
-      if (!this.apiKeyStore) {
-        json(res, 404, { error: 'API keys not configured' });
-        return;
-      }
-      const body = JSON.parse(await readBody(req));
-      const { raw, hash, prefix } = generateApiKeyPair();
-      const now = new Date().toISOString();
-      const id = `ak_${randomId()}`;
-      const record = {
-        id,
-        name: body.name,
-        keyHash: hash,
-        prefix,
-        identity: body.identity ?? { userId: body.userId ?? 'anonymous' },
-        // POLICY-REQ-1: each key is its own Principal unless it names one.
-        principalId: (body.principalId as string | undefined) ?? id,
-        createdAt: now,
-        updatedAt: now,
-        expiresAt: body.expiresAt,
-      };
-      await this.apiKeyStore.create(record);
-      // Return raw key exactly once
-      json(res, 201, { ...record, key: raw });
-      return;
-    }
-
-    const keyMatch = url.match(/^\/api\/keys\/([^/]+)$/);
-    if (keyMatch && method === 'DELETE') {
-      if (!this.apiKeyStore) {
-        json(res, 404, { error: 'API keys not configured' });
-        return;
-      }
-      const revoked = await this.apiKeyStore.revoke(keyMatch[1]);
-      if (!revoked) {
-        json(res, 404, { error: 'Key not found' });
-        return;
-      }
-      json(res, 200, { revoked: true });
-      return;
-    }
-
-    json(res, 404, { error: `Not found: ${method} ${url}` });
-  }
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function randomId(): string {
-  const bytes = new Uint8Array(8);
-  crypto.getRandomValues(bytes);
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-function generateApiKeyPair(): { raw: string; hash: string; prefix: string } {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
-  const raw = `aak_${hex}`;
-  const hash = hashApiKey(raw);
-  return { raw, hash, prefix: raw.slice(0, 12) };
-}
 
 // ---------------------------------------------------------------------------
 // Static serving helpers

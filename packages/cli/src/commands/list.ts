@@ -1,21 +1,28 @@
 /**
- * @agentapps/cli — list command.
+ * @agentapps/cli — installations command.
  *
- * Lists installed apps with their auth status, resolved through the
- * shared auth helper (manifest auth declaration + stored tokens/secrets).
+ * Lists the Installations of the caller's Workspace, as the Station has them.
  */
 
-import { authStatusLabel, getAuthInfo } from '../auth-helper.js';
-import { loadInstallations } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { authStatusLabel, listInstallations } from '../station-session.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** @spec STADMIN-REQ-6 */
 export async function handleList(
   _command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
-  const { ctx } = context;
-  const instances = loadInstallations(ctx.configPath);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+
+  let instances: Awaited<ReturnType<typeof listInstallations>>;
+  try {
+    instances = await listInstallations(station);
+  } catch (err) {
+    return station.failure(err);
+  }
 
   if (instances.length === 0) {
     return {
@@ -26,20 +33,13 @@ export async function handleList(
     };
   }
 
-  const rows = await Promise.all(
-    instances.map(async (instance) => {
-      const status = await getAuthInfo(instance.installationId, instance.appId, ctx);
-      return {
-        Alias: instance.alias,
-        'App ID': instance.appId,
-        Status: authStatusLabel(status),
-      };
-    }),
-  );
-
   return {
     success: true,
-    data: rows,
+    data: instances.map((instance) => ({
+      Alias: instance.alias,
+      'App ID': instance.appId,
+      Status: authStatusLabel(instance.auth),
+    })),
     message: `${instances.length} Installation${instances.length === 1 ? '' : 's'}`,
     exitCode: 0,
   };

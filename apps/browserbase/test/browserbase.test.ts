@@ -140,7 +140,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.browserbase',
-    appVersion: '2.0.1',
+    appVersion: '2.0.2',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();

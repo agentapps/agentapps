@@ -19,7 +19,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.perplexity',
-  version: '1.0.2',
+  version: '1.0.3',
   name: 'Perplexity AI',
   description:
     'AI-powered web search and multi-turn chat via the Perplexity API. Provides real-time answers with source citations.',

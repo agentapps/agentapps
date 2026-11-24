@@ -5,6 +5,57 @@ All notable changes to the Agent Apps monorepo are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-11-24
+
+The CLI is now a client of one Station, and the Station keeps its secrets and its data behind two stores. **This changes how the CLI is set up**: read "Upgrading" before you update.
+
+### Upgrading
+
+- Update with `npm install -g @agentapps/cli`, then `agentapps station restart`. A CLI of this version does not work with a Station started by an earlier one.
+- **A Station has to be running.** Every command talks to it; none runs an app by itself any more. Start it with `agentapps station start`. A command says when it is not running, and the interactive mode offers to start it.
+- **A workspace config needs four settings**: `station.id`, `station.publicUrl`, `cli.stationUrl` and `workspace.id`. A new config has them. **One from an earlier version does not**, including the one in `~/.agentapps/workspace/agentapps.json`: add them by hand, once. Each command that misses one says which and what to write. For a Station on your own machine:
+
+  ```json
+  "station": { "id": "stn_home", "host": "127.0.0.1", "port": 4100, "publicUrl": "http://localhost:4100" },
+  "cli": { "stationUrl": "http://localhost:4100" },
+  "workspace": { "id": "ws_home" }
+  ```
+
+  The two ids are names of your choice; never change them afterwards.
+- **`REDIRECT_URI` is no longer a secret.** The Station supplies the redirect URI, built from its `publicUrl`. Register `<publicUrl>/auth/callback` with each OAuth service; `agentapps config <app-id>` shows it. The `PUBLIC_URL` environment variable is no longer read: set `station.publicUrl`, or pass `--public-url`.
+- **`install` installs only what the Station offers.** Add an app first with `agentapps station apps add <source|app-id>`.
+- **If you embed `StationServer`**: it requires `publicUrl`, `stationId`, `workspaceId`, `secretStore` and `dataStore`. `secrets`, `documentStore`, `objectStore`, `volumesBasePath` and `stationSecret` are gone, and so is `SecretsManager`.
+
+### Added
+
+- **Setup instructions.** An app can declare how to get its credentials (`auth.setup` in the manifest), with `{{redirectUri}}` filled in by the Station. `agentapps config <app-id>` shows them before asking for anything. Gmail has them; the scaffold writes them for a new OAuth app.
+- **Roles.** An API Key is a Station Operator, a Workspace Owner or a Workspace Member: `agentapps key create <name> <userId> role:<role>`. The operator runs the Station and decides which apps it offers; the owner installs apps and manages keys and Policies in its Workspace; a member uses what is installed.
+- **One CLI, any Station.** `station use <url>` points the CLI at a Station, and `station login` and `station logout` store and remove its API Key for it. `station apps`, `station apps add` and `station apps remove` manage what a Station offers.
+- `config <app-id|alias> unset <KEY>` removes a secret.
+- **Secret Store and Data Store.** `@agentapps/station` defines the two contracts a Station keeps things behind: secrets in one, what apps store (documents, Objects, the Volume) in the other, each tied to its Station and Workspace. It ships `LocalSecretStore` and `LocalDataStore`, in-memory ones for tests, and a contract suite for anyone writing their own.
+- The Station has operations for its own state (Installations, bindings, keys, Policies, apps, secrets) under `/api`, each checked against the caller's role.
+- Logos for the catalog, each from the service's own press kit, brand page or site, with the source recorded in the app's README. 93 of 96 apps have both a colour logo and a one-colour one.
+- Every app has a README: what it does, its tools and which ones ask first, the setup commands with its real secret names, and the service's terms. Eight apps that had no tests have them: Slack, GitHub, Linear, Notion, Playwright, Figma, Granola and Google News.
+
+### Changed
+
+- A tool called from the terminal takes the same path as one called from Claude Code, under the same Policy and Approvals.
+- The Station refreshes OAuth tokens itself, also for calls that come through a Gateway.
+- A Station does not start without a `publicUrl`; it no longer guesses one.
+- The 20 OAuth apps no longer declare `REDIRECT_URI`; each has a new minor version.
+
+### Security
+
+- **GitHub app, `clone-repo`.** The access token went in the clone URL, where it stayed in the clone's `.git/config`, and the git command was built as a shell string, so an `owner`, `repo` or `branch` such as `x"; rm -rf ~; "` ran as a command. The token now travels in a header for that one command and the arguments are checked and passed to git without a shell.
+- **GitHub app, git tools.** A ref, remote or tag name starting with `-` reached git as an option in 14 tools; `git-mv` could create directories outside the repository; `git-config` allowed `core.editor` and `core.pager`, which git runs as commands; `git-remote` accepted `ext::` and `file://` URLs. All refused now.
+- Granola: the note id is escaped in the request path.
+
+### Removed
+
+- The Station embedded in the CLI, and with it `SecretsManager` and the `StationServer` options named above.
+
+---
+
 ## [0.2.5] — 2026-11-22
 
 Tool names follow one rule across the catalog. **This renames tools in 31 apps**: update any Policy rule or prompt that names one.

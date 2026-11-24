@@ -8,7 +8,7 @@ by guessing colours. Only the user can lift this rule, explicitly.
 | Manifest field | File | Requirements |
 |---|---|---|
 | `logo` | `assets/logo.svg` (or `.png`) | Real brand colours. SVG preferred; PNG only at 1024x1024 or larger. |
-| `logoMono` | `assets/logo-mono.svg` | SVG only, with **no colours of its own and no `<style>`**: the host tints it (sidebar, dark mode). Remove every `fill`/`stroke` colour; `none`, `currentColor` and `inherit` may stay, since they let the tint through. |
+| `logoMono` | `assets/logo-mono.svg` | SVG only, with **no colours of its own and no `<style>`**: the host tints it (sidebar, dark mode). Remove every `fill`/`stroke` colour; `none`, `currentColor` and `inherit` may stay, since they let the tint through. Tones of transparency are allowed for a logo made of layers (see below). |
 
 ## Where to look, in this order
 
@@ -21,6 +21,15 @@ by guessing colours. Only the user can lift this rule, explicitly.
 Brand pages are often rendered by JavaScript, so a page-fetch tool sees an empty shell. `curl`
 the brand page and its per-asset subpages (`/logo`, `/icon`, `/<product>-icon`) and `grep` the
 HTML for `.zip`, `.svg` and `download`: the kit's download URL is usually in it.
+
+A press kit can be out of date. Compare its mark with the one the service's site shows today
+(header and `rel="icon"`); when they differ, the site's is the current logo: use it and say in
+the README that the kit carries the previous design.
+
+A logo the page carries inline (an `<svg>` or `<symbol>` in the HTML, not a file) counts as the
+site's logo: save it as a file of its own, adding `xmlns` and removing the page's `class` and
+`aria-*` attributes. Render it before keeping it: an inline logo that depends on the page's
+styles can lose its shape as a file, and then it is not usable.
 
 Not official, do not use: icon collections that redraw brands, encyclopedia redraws, icon
 fonts, logo aggregator sites, screenshots, anything you made.
@@ -38,8 +47,36 @@ it from a web framework component (Svelte, JSX), also remove the framework synta
 `class`, `{width}`) so it is a plain SVG. Keep the paths unchanged. Not allowed: redrawing,
 simplifying shapes, choosing which parts to keep.
 
-If the only official logo is a coloured badge (shapes on a coloured background), stripping the
-fills leaves a solid block: that is not a mono logo. Leave `logoMono` as a TODO instead.
+If the official logo is a badge (white shapes on a coloured background), stripping the fills
+leaves a solid block. Cut the shapes out of the background instead, so they become transparent:
+join the `d` of every path, background first, into one `<path fill="currentColor"
+fill-rule="evenodd">`. The path data stays as it is. A background that is a `<rect>` is written as
+the same rectangle in path form (`M0 0h400v400H0z`).
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <path fill="currentColor" fill-rule="evenodd" d="<background d> <shape d> <shape d>"/>
+</svg>
+```
+
+Render it next to the colour logo and compare: the shapes must read the same, as holes. It goes
+wrong when the white shapes overlap each other or already rely on their own fill rule; if the
+result differs from the logo, leave `logoMono` as a TODO. A logo whose colour is gradients over
+an embedded image cannot be cut this way either. Write "shapes cut out of the background with
+`fill-rule="evenodd"`" in the Changes column.
+
+A logo made of layers that only differ in shade (the bands of a page, the faces of a box) turns
+into one flat block when its colours go. Such a logo may keep its layers apart with transparency:
+every part is `fill="currentColor"` and carries a `fill-opacity`, darker in the logo meaning more
+opaque here. It is still one colour, so the host tints all of it at once.
+
+- No part below `0.4`: under that it vanishes at 16 px, and on a light surface.
+- One tone per layer of the logo, not a gradient. The main shape stays at full opacity.
+- Parts must not overlap, or their tones add up: cut from each part what a later one covers.
+- A flat mono logo is still the rule; use tones only when the flat one loses the logo's shape.
+- Look at it at 16, 20 and 32 px, on a dark and on a light surface, before keeping it.
+
+Write "layers kept apart with `fill-opacity`" and the tones in the Changes column.
 
 If the official asset is a vector in another format (PDF, AI, EPS), converting it to SVG
 without changing its paths is allowed: it is the same artwork in another container.

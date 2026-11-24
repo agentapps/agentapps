@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.jira",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Jira Agent App — search issues, create/update tickets, manage transitions, and track sprints.",
   "type": "module",

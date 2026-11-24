@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.elevenlabs',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'ElevenLabs',
   description: 'Text-to-speech generation with multiple voices and models via the ElevenLabs API.',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },

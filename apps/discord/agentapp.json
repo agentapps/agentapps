@@ -1,7 +1,7 @@
 {
   "id": "app.discord",
   "name": "Discord",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Full Discord integration: guilds, channels, messages, members, roles, webhooks, reactions, and moderation. Uses Discord REST API v10 with OAuth 2.0 / Bot Token.",
   "tagline": "Manage guilds, channels, messages, roles, and moderation in Discord",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

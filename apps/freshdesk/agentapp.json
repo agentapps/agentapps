@@ -1,8 +1,9 @@
 {
   "id": "app.freshdesk",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Freshdesk",
   "description": "Freshdesk customer support — manage tickets, contacts, agents, companies, and ticket fields.",
+  "tagline": "Manage tickets, contacts, agents, and companies in Freshdesk",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",

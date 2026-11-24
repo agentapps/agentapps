@@ -11,9 +11,9 @@
 import { spawnSync } from 'node:child_process';
 import { userInfo } from 'node:os';
 import { deleteClientKey, loadClientKey, saveClientKey } from '../secrets-store.js';
-import { loadApiKeys, saveApiKeys } from '../state.js';
+import { isResult, type StationClient, stationOf } from '../station-client.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
-import { createApiKey } from './keys.js';
+import { createStationKey, listKeys } from './keys.js';
 import type { HandlerContext } from './types.js';
 
 /** The one Agent Platform the CLI can register the gateway with by itself. */
@@ -70,13 +70,24 @@ export async function handleConnect(
       },
     };
   }
-  const configPath = context.ctx.configPath;
-  return command.remove ? disconnect(configPath, client) : connect(configPath, client);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    return command.remove
+      ? await disconnect(station, context.ctx.configPath, client)
+      : await connect(station, context.ctx.configPath, client);
+  } catch (err) {
+    return station.failure(err);
+  }
 }
 
-function connect(configPath: string, name: string): HandlerResult {
+async function connect(
+  station: StationClient,
+  configPath: string,
+  name: string,
+): Promise<HandlerResult> {
   const stored = loadClientKey(configPath, name);
-  const active = loadApiKeys(configPath).find((k) => k.name === name && !k.revokedAt);
+  const active = (await listKeys(station)).find((k) => k.name === name && !k.revokedAt);
 
   let keyId: string;
   let created = false;
@@ -92,7 +103,8 @@ function connect(configPath: string, name: string): HandlerResult {
       },
     };
   } else {
-    const { record, raw } = createApiKey(configPath, name, userInfo().username);
+    // The Station creates the key; the CLI keeps its value for the agent client (CLI-REQ-5).
+    const { record, raw } = await createStationKey(station, name, userInfo().username);
     saveClientKey(configPath, name, { keyId: record.id, key: raw });
     keyId = record.id;
     created = true;
@@ -152,7 +164,11 @@ function connect(configPath: string, name: string): HandlerResult {
   };
 }
 
-function disconnect(configPath: string, name: string): HandlerResult {
+async function disconnect(
+  station: StationClient,
+  configPath: string,
+  name: string,
+): Promise<HandlerResult> {
   const lines: string[] = [];
   if (name !== CLAUDE_CODE) {
     lines.push(`Remove the MCP server "${SERVER_NAME}" from the settings of ${name}.`);
@@ -168,11 +184,9 @@ function disconnect(configPath: string, name: string): HandlerResult {
   }
 
   const stored = loadClientKey(configPath, name);
-  const keys = loadApiKeys(configPath);
-  const key = keys.find((k) => k.id === stored?.keyId && !k.revokedAt);
+  const key = (await listKeys(station)).find((k) => k.id === stored?.keyId && !k.revokedAt);
   if (key) {
-    key.revokedAt = new Date().toISOString();
-    saveApiKeys(configPath, keys);
+    await station.api('DELETE', `/api/keys/${encodeURIComponent(key.id)}`);
     lines.push(`API key ${name} revoked (${key.id}).`);
   }
   deleteClientKey(configPath, name);

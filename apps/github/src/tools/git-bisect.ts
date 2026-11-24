@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitBisectTool(app: AgentApp) {
@@ -55,14 +55,14 @@ export function registerGitBisectTool(app: AgentApp) {
       switch (action) {
         case 'start':
           if (!a.bad) throw new Error('[GIT_INVALID_INPUT] `bad` is required for `action: start`.');
-          argv = ['bisect', 'start', a.bad];
-          if (a.good) argv.push(a.good);
+          argv = ['bisect', 'start', positional(a.bad, 'bad')];
+          if (a.good) argv.push(positional(a.good, 'good'));
           break;
         case 'good':
         case 'bad':
         case 'skip':
           argv = ['bisect', action];
-          if (a.ref) argv.push(a.ref);
+          if (a.ref) argv.push(positional(a.ref, 'ref'));
           break;
         case 'reset':
           argv = ['bisect', 'reset'];

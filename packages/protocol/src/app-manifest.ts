@@ -34,12 +34,83 @@ export type AppAuthor = z.infer<typeof AppAuthorSchema>;
 export const AppAuthTypeSchema = z.enum(['none', 'api-key', 'oauth2', 'github-app']);
 export type AppAuthType = z.infer<typeof AppAuthTypeSchema>;
 
+/**
+ * The variables an App may write as `{{name}}` in `auth.setup`. The Station
+ * replaces each with its value when it resolves the instructions.
+ *
+ * @spec SETUP-REQ-3
+ */
+export const AUTH_SETUP_VARIABLES = ['redirectUri'] as const;
+export type AuthSetupVariable = (typeof AUTH_SETUP_VARIABLES)[number];
+
+/** Matches one `{{name}}` in a setup text; group 1 is the name as written. */
+const AUTH_SETUP_VARIABLE_PATTERN = /\{\{([^{}]*)\}\}/g;
+
+/**
+ * The variable names an `auth.setup` text uses, in order and without repeats.
+ *
+ * @spec SETUP-REQ-3
+ */
+export function authSetupVariableNames(setup: string): string[] {
+  const names: string[] = [];
+  for (const match of setup.matchAll(AUTH_SETUP_VARIABLE_PATTERN)) {
+    const name = match[1] ?? '';
+    if (!names.includes(name)) names.push(name);
+  }
+  return names;
+}
+
+/**
+ * The variables an `auth.setup` text names that are not defined.
+ *
+ * @spec SETUP-REQ-3
+ */
+export function undefinedAuthSetupVariables(setup: string): string[] {
+  const defined: readonly string[] = AUTH_SETUP_VARIABLES;
+  return authSetupVariableNames(setup).filter((name) => !defined.includes(name));
+}
+
+/**
+ * Replaces every `{{name}}` of a setup text with its value.
+ *
+ * @spec SETUP-REQ-4
+ */
+export function resolveAuthSetup(setup: string, values: Record<AuthSetupVariable, string>): string {
+  return setup.replace(AUTH_SETUP_VARIABLE_PATTERN, (whole, name: string) =>
+    Object.hasOwn(values, name) ? values[name as AuthSetupVariable] : whole,
+  );
+}
+
+/**
+ * `auth.setup`: plain-text steps to obtain and register what the App's system
+ * secrets need. Shown as written; unrelated to `setupUrl` of `github-app`.
+ *
+ * @spec SETUP-REQ-3
+ */
+const AuthSetupSchema = z
+  .string()
+  .min(1, 'auth.setup must not be empty')
+  .superRefine((setup, ctx) => {
+    for (const name of undefinedAuthSetupVariables(setup)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `auth.setup names the undefined variable {{${name}}}; defined: ${AUTH_SETUP_VARIABLES.map((v) => `{{${v}}}`).join(', ')}`,
+      });
+    }
+  });
+
 export const AppAuthSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('none'),
+    /** An App with no auth has nothing to set up (SETUP-REQ-3). */
+    setup: z
+      .undefined({ message: 'auth.setup is not allowed when auth.type is "none"' })
+      .optional(),
   }),
   z.object({
     type: z.literal('api-key'),
+    /** Steps to obtain the App's system secrets (SETUP-REQ-3). */
+    setup: AuthSetupSchema.optional(),
     /** System-level secrets (shared API keys, service accounts). */
     systemSecrets: z.array(z.string()).optional(),
     /** Installation secrets (personal API keys, OAuth tokens). */
@@ -51,6 +122,8 @@ export const AppAuthSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('oauth2'),
+    /** Steps to obtain and register the OAuth client (SETUP-REQ-3). */
+    setup: AuthSetupSchema.optional(),
     /** OAuth provider identifier (e.g., 'google', 'microsoft'). */
     provider: z.string().min(1, 'OAuth2 provider is required'),
     /** OAuth2 authorization URL. */
@@ -86,6 +159,8 @@ export const AppAuthSchema = z.discriminatedUnion('type', [
   z
     .object({
       type: z.literal('github-app'),
+      /** Steps to register the GitHub App; not `setupUrl` (SETUP-REQ-3). */
+      setup: AuthSetupSchema.optional(),
       /** Provider — fixed to 'github' for now. */
       provider: z.literal('github'),
       /** Public slug of the App on github.com (`https://github.com/apps/<slug>`). */

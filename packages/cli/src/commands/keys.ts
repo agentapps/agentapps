@@ -1,25 +1,71 @@
 /**
- * @agentapps/cli — API key commands.
+ * @agentapps/cli — key commands.
  *
- * Usage:
- *   key list                                          — list all API keys
- *   key create <name> <userId> [workspaceId]           — create a key; it is a new Principal
- *   key revoke <keyId>                                — revoke a key
+ * API Keys are the Station's: it creates, lists and revokes them. A key is a
+ * Principal with the default Policy and a role (STADMIN-REQ-8).
  */
 
-import type { ApiKeyRecord } from '@agentapps/protocol';
-import { generateApiKey } from '@agentapps/station';
-import { loadApiKeys, saveApiKeys } from '../state.js';
+import { isResult, type StationClient, StationError, stationOf } from '../station-client.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** An API Key as the Station lists it: never its value. */
+export interface KeyInfo {
+  id: string;
+  name: string;
+  prefix: string;
+  principalId: string;
+  identity: { userId: string };
+  role: string;
+  workspaceId: string | null;
+  createdAt: string;
+  revokedAt?: string;
+}
+
+/**
+ * The keys the caller manages.
+ *
+ * @spec STADMIN-REQ-8
+ */
+export async function listKeys(station: StationClient): Promise<KeyInfo[]> {
+  return (await station.api<{ keys: KeyInfo[] }>('GET', '/api/keys')).keys;
+}
+
+/**
+ * Ask the Station for a new API Key. The key is its own Principal with the
+ * default Policy; its value is answered this once.
+ *
+ * @spec POLICY-REQ-1
+ * @spec STADMIN-REQ-8
+ */
+export async function createStationKey(
+  station: StationClient,
+  name: string,
+  userId: string,
+  role?: string,
+): Promise<{ record: KeyInfo; raw: string }> {
+  const { key, ...record } = await station.api<KeyInfo & { key: string }>('POST', '/api/keys', {
+    name,
+    userId,
+    ...(role ? { role } : {}),
+  });
+  return { record, raw: key };
+}
+
+/** @spec STADMIN-REQ-8 */
 export async function handleKeyList(
   _command: ReplCommand,
   context: HandlerContext,
 ): Promise<HandlerResult> {
-  const { ctx } = context;
-  const keys = loadApiKeys(ctx.configPath);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
+  let keys: KeyInfo[];
+  try {
+    keys = await listKeys(station);
+  } catch (err) {
+    return station.failure(err);
+  }
   if (keys.length === 0) {
     return { success: true, message: 'No API keys defined.', exitCode: 0 };
   }
@@ -29,56 +75,22 @@ export async function handleKeyList(
     data[k.id] = {
       name: k.name,
       prefix: k.prefix,
+      role: k.role,
       principalId: k.principalId,
       userId: k.identity.userId,
       status: k.revokedAt ? 'revoked' : 'active',
       createdAt: k.createdAt,
     };
   }
-
   return { success: true, data: { 'API Keys': data } as unknown as ResultValue, exitCode: 0 };
 }
 
 /**
- * Create and store an API key; the key is its own Principal with the default
- * Policy. Returns the record and the raw key, which is shown only once.
- *
- * Throws when an active key already has that name: names are unique among
- * active keys, which is what lets `policy` take a name (POLICY-REQ-15).
+ * `key create <name> <userId> [role:<role>]`
  *
  * @spec POLICY-REQ-1
- * @spec POLICY-REQ-15
+ * @spec STADMIN-REQ-8
  */
-export function createApiKey(
-  configPath: string,
-  name: string,
-  userId: string,
-  workspaceId?: string,
-): { record: ApiKeyRecord; raw: string } {
-  const keys = loadApiKeys(configPath);
-  const taken = keys.find((k) => k.name === name && !k.revokedAt);
-  if (taken) throw new Error(`An active API key is already named ${name} (${taken.id})`);
-
-  const { raw, hash, prefix } = generateApiKey();
-  const now = new Date().toISOString();
-  const id = `ak_${randomHex(8)}`;
-  const record: ApiKeyRecord = {
-    id,
-    name,
-    keyHash: hash,
-    prefix,
-    identity: { userId, ...(workspaceId ? { workspaceId } : {}) },
-    // POLICY-REQ-1: each key is its own Principal, with the default Policy (POLICY-REQ-2).
-    principalId: id,
-    createdAt: now,
-    updatedAt: now,
-  };
-  keys.push(record);
-  saveApiKeys(configPath, keys);
-  return { record, raw };
-}
-
-/** @spec POLICY-REQ-1 */
 export async function handleKeyCreate(
   command: ReplCommand,
   context: HandlerContext,
@@ -86,23 +98,24 @@ export async function handleKeyCreate(
   if (command.type !== 'key-create') {
     return { success: false, exitCode: 2, error: { message: 'Internal error' } };
   }
-  let created: ReturnType<typeof createApiKey>;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+
+  let created: Awaited<ReturnType<typeof createStationKey>>;
   try {
-    created = createApiKey(
-      context.ctx.configPath,
-      command.name,
-      command.userId,
-      command.workspaceId,
-    );
+    created = await createStationKey(station, command.name, command.userId, command.role);
   } catch (err) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: (err as Error).message,
-        suggestion: 'Pick another name, or revoke that key first with: key revoke <id>',
-      },
-    };
+    if (err instanceof StationError && err.code === 'NAME_TAKEN') {
+      return {
+        success: false,
+        exitCode: 2,
+        error: {
+          message: err.message,
+          suggestion: 'Pick another name, or revoke that key first with: key revoke <id>',
+        },
+      };
+    }
+    return station.failure(err);
   }
   const { record, raw } = created;
 
@@ -111,6 +124,7 @@ export async function handleKeyCreate(
     message: [
       `API key created: ${record.id}`,
       `Name: ${record.name}`,
+      `Role: ${record.role}`,
       `Principal: ${record.principalId} (default Policy; see: policy show ${record.principalId})`,
       `User: ${command.userId}`,
       ``,
@@ -122,6 +136,7 @@ export async function handleKeyCreate(
   };
 }
 
+/** @spec STADMIN-REQ-8 */
 export async function handleKeyRevoke(
   command: ReplCommand,
   context: HandlerContext,
@@ -129,27 +144,27 @@ export async function handleKeyRevoke(
   if (command.type !== 'key-revoke') {
     return { success: false, exitCode: 2, error: { message: 'Internal error' } };
   }
-  const { ctx } = context;
-  const keys = loadApiKeys(ctx.configPath);
-  const key = keys.find((k) => k.id === command.keyId);
-  if (!key) {
-    return { success: false, exitCode: 2, error: { message: `Key not found: ${command.keyId}` } };
-  }
-  if (key.revokedAt) {
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+
+  try {
+    const revoked = await station.api<{ id: string; name: string }>(
+      'DELETE',
+      `/api/keys/${encodeURIComponent(command.keyId)}`,
+    );
     return {
-      success: false,
-      exitCode: 2,
-      error: { message: `Key already revoked: ${command.keyId}` },
+      success: true,
+      message: `API key revoked: ${revoked.id} (${revoked.name})`,
+      exitCode: 0,
     };
+  } catch (err) {
+    if (err instanceof StationError && err.status === 404) {
+      return {
+        success: false,
+        exitCode: 2,
+        error: { message: `Key not found or already revoked: ${command.keyId}` },
+      };
+    }
+    return station.failure(err);
   }
-
-  key.revokedAt = new Date().toISOString();
-  saveApiKeys(ctx.configPath, keys);
-  return { success: true, message: `API key revoked: ${command.keyId} (${key.name})`, exitCode: 0 };
-}
-
-function randomHex(bytes: number): string {
-  const arr = new Uint8Array(bytes);
-  crypto.getRandomValues(arr);
-  return Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('');
 }

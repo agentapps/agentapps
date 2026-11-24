@@ -1,16 +1,17 @@
 /**
  * @agentapps/cli — tools command.
+ *
+ * Lists the tools of an Installation, as the Station shows them to the caller.
  */
 
-import { resolveSourcePath } from '../config.js';
-import { resolveApp } from '../resolve.js';
-import { openAppSession } from '../session.js';
-import { getInstallation } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { findInstallation, unknownAlias, withSession } from '../station-session.js';
 import { writeCachedTools } from '../tools-cache.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import { formatUsage } from './tool.js';
 import type { HandlerContext } from './types.js';
 
+/** @spec CLIENT-REQ-1 */
 export async function handleTools(
   command: ReplCommand,
   context: HandlerContext,
@@ -25,54 +26,28 @@ export async function handleTools(
 
   const { alias } = command;
   const { ctx, options } = context;
-  const instance = getInstallation(ctx.configPath, alias);
-
-  if (!instance) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown alias: ${alias}`,
-        suggestion: `Run "installations" to see installed apps, or "install <app-id> ${alias}" to create it.`,
-      },
-    };
-  }
-
-  const entry = ctx.config.apps[instance.appId];
-  if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: `App configuration missing for ${instance.appId}` },
-    };
-  }
-
-  // In the REPL, reuse the persistent per-alias session (see SessionPool).
-  const pooled = context.sessions
-    ? await context.sessions.acquire(alias, instance.appId, ctx)
-    : undefined;
-  const ephemeral = pooled
-    ? undefined
-    : await (async () => {
-        const source = resolveSourcePath(ctx.configPath, entry.source);
-        const app = await resolveApp(instance.appId, source);
-        return openAppSession(app, ctx, instance.installationId);
-      })();
-  const session = (pooled ?? ephemeral!).session;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
   try {
-    const tools = await session.listTools();
-    writeCachedTools(ctx.configPath, instance.appId, tools);
+    const instance = await findInstallation(station, alias);
+    if (!instance) return unknownAlias(alias);
+
+    const tools = await withSession(station, instance, context.sessions, (session) =>
+      session.listTools(),
+    );
+    writeCachedTools(ctx.configPath, instance.appId, tools as never);
+    const message = `${tools.length} tool${tools.length === 1 ? '' : 's'} available`;
 
     if (options.verbose) {
       return {
         success: true,
         data: tools.map((tool) => ({
           name: tool.name,
-          description: tool.description,
-          parameters: formatParameters(tool.parameters as Record<string, unknown> | undefined),
+          description: tool.description ?? '',
+          parameters: formatParameters(tool.parameters),
         })),
-        message: `${tools.length} tool${tools.length === 1 ? '' : 's'} available`,
+        message,
         exitCode: 0,
       };
     }
@@ -81,23 +56,15 @@ export async function handleTools(
       success: true,
       data: tools.map((tool) => ({
         Tool: tool.name,
-        Parameters: formatUsage(tool.parameters as Record<string, unknown> | undefined) || '—',
-        Description: tool.description,
+        Parameters: formatUsage(tool.parameters) || '—',
+        Description: tool.description ?? '',
       })),
       layout: 'entries',
-      message: `${tools.length} tool${tools.length === 1 ? '' : 's'} available`,
+      message,
       exitCode: 0,
     };
   } catch (err) {
-    if (pooled) {
-      await context.sessions?.release(alias);
-    }
-    throw err;
-  } finally {
-    if (ephemeral) {
-      await session.close();
-      await ephemeral.shutdown();
-    }
+    return station.failure(err);
   }
 }
 

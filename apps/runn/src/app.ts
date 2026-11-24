@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.runn',
-  version: '3.0.0',
+  version: '3.0.1',
   name: 'Runn',
   description:
     'Runn resource management — projects, people, assignments, timesheets and capacity planning through the Runn API.',

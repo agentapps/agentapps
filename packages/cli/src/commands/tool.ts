@@ -1,20 +1,33 @@
 /**
- * @agentapps/cli — tool invocation command.
+ * @agentapps/cli — tool command.
+ *
+ * Calls a tool of an Installation through the Station, on the route a
+ * Gateway uses, so the caller's Policy and Approvals apply to it.
  */
 
-import { ADMIN_PRINCIPAL_ID } from '@agentapps/protocol';
-import { evaluatePolicy } from '@agentapps/station';
-import { getAuthInfo } from '../auth-helper.js';
-import { resolveSourcePath } from '../config.js';
-import { readLine } from '../host.js';
-import { resolveApp } from '../resolve.js';
-import { openAppSession } from '../session.js';
-import { getInstallation, getPolicy } from '../state.js';
+import { userInfo } from 'node:os';
+import { readLine } from '../prompt.js';
+import { isResult, type StationClient, StationError, stationOf } from '../station-client.js';
+import {
+  errorOf,
+  findInstallation,
+  type InstallationInfo,
+  type StationSession,
+  unknownAlias,
+  withSession,
+} from '../station-session.js';
 import { parseToolArgs } from '../tool-args.js';
 import { writeCachedTools } from '../tools-cache.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+/** How long a tool call may take, an Approval included. */
+const TOOL_CALL_TIMEOUT_MS = 10 * 60 * 1000;
+
+/**
+ * @spec CLIENT-REQ-1
+ * @spec CLIENT-REQ-3
+ */
 export async function handleTool(
   command: ReplCommand,
   context: HandlerContext,
@@ -28,7 +41,6 @@ export async function handleTool(
   }
 
   const { alias, toolName, args: rawArgTokens } = command;
-  const { ctx } = context;
 
   // Accept `-y` / `--yes` to approve an `ask` call. In one-shot mode it is a
   // global flag (already in options.yes); in the REPL it arrives among the tool
@@ -36,28 +48,6 @@ export async function handleTool(
   const yesInArgs = rawArgTokens.some((t) => t === '-y' || t === '--yes');
   const argTokens = rawArgTokens.filter((t) => t !== '-y' && t !== '--yes');
   const confirmed = context.options.yes || yesInArgs;
-
-  const instance = getInstallation(ctx.configPath, alias);
-
-  if (!instance) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown alias: ${alias}`,
-        suggestion: `Run "installations" to see installed apps, or "install <app-id> ${alias}" to create it.`,
-      },
-    };
-  }
-
-  const entry = ctx.config.apps[instance.appId];
-  if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: `App configuration missing for ${instance.appId}` },
-    };
-  }
 
   let args: Record<string, unknown>;
   try {
@@ -74,145 +64,228 @@ export async function handleTool(
     };
   }
 
-  const auth = await getAuthInfo(instance.installationId, instance.appId, ctx);
-  if (!auth.authenticated) {
-    // System secrets are configured per app id; installation secrets per instance alias.
-    const missing = [...(auth.missingSecrets ?? []), ...(auth.missingUserSecrets ?? [])];
-    const lines = [
-      ...(auth.missingSecrets ?? []).map((n) => `  config ${instance.appId} ${n}:"<value>"`),
-      ...(auth.missingUserSecrets ?? []).map((n) => `  config ${alias} ${n}:"<value>"`),
-    ];
-    const suggestion =
-      auth.kind === 'api-key'
-        ? `Set the missing secret${missing.length > 1 ? 's' : ''} with:\n${lines.join('\n')}`
-        : `Run "${alias} auth" first.`;
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message:
-          auth.kind === 'api-key'
-            ? `${alias} is missing its API key (${missing.join(', ')})`
-            : `${alias} is not authenticated`,
-        suggestion,
-      },
-    };
-  }
-
-  // In the REPL, reuse a persistent session so stateful apps keep their
-  // state across commands; one-shot mode opens an ephemeral one.
-  const pooled = context.sessions
-    ? await context.sessions.acquire(alias, instance.appId, ctx)
-    : undefined;
-  const ephemeral = pooled
-    ? undefined
-    : await (async () => {
-        const source = resolveSourcePath(ctx.configPath, entry.source);
-        const app = await resolveApp(instance.appId, source);
-        return openAppSession(app, ctx, instance.installationId);
-      })();
-  const session = (pooled ?? ephemeral!).session;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
   try {
-    const tools = await session.listTools();
-    writeCachedTools(ctx.configPath, instance.appId, tools);
-    const tool = tools.find((t) => t.name === toolName);
-    if (!tool) {
-      return {
-        success: false,
-        exitCode: 2,
-        error: { message: `Tool not found: ${toolName}` },
-      };
-    }
+    const instance = await findInstallation(station, alias);
+    if (!instance) return unknownAlias(alias);
+    const notReady = authProblem(instance);
+    if (notReady) return notReady;
 
-    const missing = validateRequired(args, tool.parameters as Record<string, unknown> | undefined);
-    if (missing.length > 0) {
-      return {
-        success: false,
-        exitCode: 2,
-        error: {
-          message: `Missing required argument: ${missing[0]}`,
-          suggestion: `Usage:\n  ${alias} tool ${toolName} ${formatUsage(tool.parameters as Record<string, unknown> | undefined)}`,
-        },
-      };
-    }
-
-    // POLICY-REQ-5: the local admin's Policy decides; the CLI is that
-    // Principal's Host, so an `ask` is answered inline (POLICY-REQ-7): `-y`
-    // answers yes up front, a terminal is asked, anything else is refused.
-    const decision = evaluatePolicy(getPolicy(ctx.configPath, ADMIN_PRINCIPAL_ID), {
-      app: instance.appId,
-      tool: toolName,
-      args,
-      annotations: tool.annotations as Record<string, unknown> | undefined,
-    });
-
-    if (decision.effect === 'deny') {
-      return {
-        success: false,
-        exitCode: 2,
-        error: {
-          message: `Tool '${toolName}' is denied for ${alias} by rule '${decision.rule}'.`,
-          suggestion: `Allow it with: permissions ${alias} set ${toolName} allow`,
-        },
-      };
-    }
-    if (decision.effect === 'ask' && !confirmed) {
-      const approved = process.stdin.isTTY
-        ? /^y(es)?$/i.test(
-            await askLine(`  Approve ${toolName} on ${alias} (rule ${decision.rule})? [y/N] `),
-          )
-        : false;
-      if (!approved) {
+    return await withSession(station, instance, context.sessions, async (session) => {
+      const tools = await session.listTools();
+      writeCachedTools(context.ctx.configPath, instance.appId, tools as never);
+      // A tool the caller's Policy always denies is not listed (POLICY-REQ-11):
+      // it is still called, so the Station says which Rule denies it.
+      const tool = tools.find((t) => t.name === toolName);
+      const missing = tool ? validateRequired(args, tool.parameters) : [];
+      if (tool && missing.length > 0) {
         return {
           success: false,
           exitCode: 2,
           error: {
-            message: `Tool '${toolName}' needs approval (rule '${decision.rule}').`,
+            message: `Missing required argument: ${missing[0]}`,
+            suggestion: `Usage:\n  ${alias} tool ${toolName} ${formatUsage(tool.parameters)}`,
+          },
+        };
+      }
+
+      const { answer, declined } = await callAndApprove(
+        station,
+        session,
+        instance,
+        toolName,
+        args,
+        confirmed,
+      );
+      if (declined !== undefined) {
+        // The Approver at this terminal said no, or could not be asked.
+        return {
+          success: false,
+          exitCode: 2,
+          error: {
+            message: `Tool '${toolName}' needs approval (rule '${declined}').`,
             suggestion: `Re-run with -y to approve this call, or always allow it: permissions ${alias} set ${toolName} allow`,
           },
         };
       }
-    }
-
-    const result = await session.callTool(toolName, args, {
-      userId: 'developer',
-      installationId: instance.installationId,
+      const result = toResult(answer, alias, toolName, context.options.verbose);
+      if (!tool && !result.success && result.exitCode === 1) {
+        return { success: false, exitCode: 2, error: { message: `Tool not found: ${toolName}` } };
+      }
+      return result;
     });
+  } catch (err) {
+    return station.failure(err);
+  }
+}
 
-    if (result.success) {
-      // HOSTCAP-REQ-4: the CLI draws no UI Components, so it prints the
-      // Renderer's markdown or text variant when the app provides one.
-      const variant = result.renderer?.variants?.markdown ?? result.renderer?.variants?.text;
-      // CLI-REQ-2: a successful call prints only its result unless --verbose.
+/** The result for an Installation that is not signed in or lacks a secret, if so. */
+function authProblem(instance: InstallationInfo): HandlerResult | undefined {
+  const auth = instance.auth;
+  if (!auth || auth.authenticated) return undefined;
+  const { alias } = instance;
+  // System secrets are configured per app id; installation secrets per instance alias.
+  const missing = [...(auth.missingSecrets ?? []), ...(auth.missingUserSecrets ?? [])];
+  const lines = [
+    ...(auth.missingSecrets ?? []).map((n) => `  config ${instance.appId} ${n}:"<value>"`),
+    ...(auth.missingUserSecrets ?? []).map((n) => `  config ${alias} ${n}:"<value>"`),
+  ];
+  return {
+    success: false,
+    exitCode: 2,
+    error: {
+      message:
+        auth.kind === 'api-key'
+          ? `${alias} is missing its API key (${missing.join(', ')})`
+          : `${alias} is not authenticated`,
+      suggestion:
+        auth.kind === 'api-key'
+          ? `Set the missing secret${missing.length > 1 ? 's' : ''} with:\n${lines.join('\n')}`
+          : `Run "${alias} auth" first.`,
+    },
+  };
+}
+
+interface PendingApproval {
+  id: string;
+  app: string;
+  tool: string;
+  rule: string;
+  principalId: string;
+}
+
+/**
+ * Call the tool, and answer the Approval it parks on when the CLI is its
+ * Approver: `-y` approves up front, a terminal is asked, anything else denies
+ * (POLICY-REQ-7). A caller that is not the Approver waits for whoever is.
+ *
+ * @spec CLIENT-REQ-3
+ */
+async function callAndApprove(
+  station: StationClient,
+  session: StationSession,
+  instance: InstallationInfo,
+  toolName: string,
+  args: Record<string, unknown>,
+  confirmed: boolean,
+): Promise<{ answer: Record<string, unknown>; declined?: string }> {
+  let declined: string | undefined;
+  let settled = false;
+  const call = session
+    .send(
+      {
+        type: 'tool_call',
+        tool: toolName,
+        arguments: args,
+        // Who the call is for, as an App receives it.
+        context: { userId: userInfo().username, installationId: instance.installationId },
+      },
+      TOOL_CALL_TIMEOUT_MS,
+    )
+    .finally(() => {
+      settled = true;
+    });
+  // An unobserved rejection while the Approval is being answered must not end the process.
+  call.catch(() => {});
+
+  const me = await station.whoami().catch(() => undefined);
+  let approver = me?.owner === true;
+  const answered = new Set<string>();
+  for (let wait = 25; !settled; wait = Math.min(wait * 2, 400)) {
+    await Promise.race([call.catch(() => {}), new Promise((done) => setTimeout(done, wait))]);
+    if (settled || !approver) continue;
+    let pending: PendingApproval[];
+    try {
+      pending = (await station.api<{ approvals: PendingApproval[] }>('GET', '/approvals'))
+        .approvals;
+    } catch (err) {
+      if (err instanceof StationError && err.status === 403) approver = false;
+      continue;
+    }
+    const mine = pending.find(
+      (a) =>
+        a.app === instance.appId &&
+        a.tool === toolName &&
+        a.principalId === me?.principalId &&
+        !answered.has(a.id),
+    );
+    if (!mine) continue;
+    answered.add(mine.id);
+    const approve =
+      confirmed ||
+      (process.stdin.isTTY === true &&
+        /^y(es)?$/i.test(
+          await askLine(`  Approve ${toolName} on ${instance.alias} (rule ${mine.rule})? [y/N] `),
+        ));
+    if (!approve) declined = mine.rule;
+    await station
+      .api('POST', `/approvals/${encodeURIComponent(mine.id)}`, {
+        decision: approve ? 'approve' : 'deny',
+      })
+      .catch(() => {});
+  }
+  return { answer: await call, ...(declined !== undefined ? { declined } : {}) };
+}
+
+/** What the Station answered, as the command's result. */
+function toResult(
+  answer: Record<string, unknown>,
+  alias: string,
+  toolName: string,
+  verbose: boolean,
+): HandlerResult {
+  const error = errorOf(answer);
+  if (answer.type !== 'tool_result') {
+    const rule = error?.details?.rule;
+    if (error?.code === 'PERMISSION_DENIED' && error.details?.layer === 'policy') {
       return {
-        success: true,
-        ...(context.options.verbose ? { message: `${toolName} succeeded` } : {}),
-        data: result.result as ResultValue,
-        ...(variant !== undefined ? { variant } : {}),
-        exitCode: 0,
+        success: false,
+        exitCode: 2,
+        error: {
+          message: `Tool '${toolName}' is denied for ${alias} by rule '${String(rule)}'.`,
+          suggestion: `Allow it with: permissions ${alias} set ${toolName} allow`,
+        },
       };
     }
-
+    if (error?.code === 'APPROVAL_TIMEOUT') {
+      return {
+        success: false,
+        exitCode: 2,
+        error: {
+          message: `Tool '${toolName}' needs approval (rule '${String(rule)}').`,
+          suggestion: `Re-run with -y to approve this call, or always allow it: permissions ${alias} set ${toolName} allow`,
+        },
+      };
+    }
     return {
       success: false,
       exitCode: 1,
-      error: { message: result.error?.message ?? 'Tool execution failed' },
+      error: { message: error?.message ?? 'Tool execution failed' },
     };
-  } catch (err) {
-    // A thrown error (not a failed tool result) usually means the session
-    // transport is broken — drop the pooled session so the next command
-    // starts fresh instead of hitting a dead one.
-    if (pooled) {
-      await context.sessions?.release(alias);
-    }
-    throw err;
-  } finally {
-    if (ephemeral) {
-      await session.close();
-      await ephemeral.shutdown();
-    }
   }
+
+  if (answer.success === false) {
+    return {
+      success: false,
+      exitCode: 1,
+      error: { message: error?.message ?? 'Tool execution failed' },
+    };
+  }
+
+  // HOSTCAP-REQ-4: the CLI draws no UI Components, so it prints the
+  // Renderer's markdown or text variant when the app provides one.
+  const variants = (answer.renderer as { variants?: Record<string, string> } | undefined)?.variants;
+  const variant = variants?.markdown ?? variants?.text;
+  // CLI-REQ-2: a successful call prints only its result unless --verbose.
+  return {
+    success: true,
+    ...(verbose ? { message: `${toolName} succeeded` } : {}),
+    data: answer.result as ResultValue,
+    ...(variant !== undefined ? { variant } : {}),
+    exitCode: 0,
+  };
 }
 
 function validateRequired(

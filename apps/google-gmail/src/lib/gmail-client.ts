@@ -12,7 +12,6 @@ import { google } from 'googleapis';
 export interface GmailSecrets {
   CLIENT_ID?: string;
   CLIENT_SECRET?: string;
-  REDIRECT_URI?: string;
   ACCESS_TOKEN?: string;
   REFRESH_TOKEN?: string;
   EMAIL?: string;
@@ -50,15 +49,12 @@ export async function getSecrets(ctx: SecretsContext): Promise<GmailSecrets> {
 export async function createGmailClient(secrets: GmailSecrets) {
   const clientId = secrets.CLIENT_ID;
   const clientSecret = secrets.CLIENT_SECRET;
-  const redirectUri = secrets.REDIRECT_URI;
 
-  if (!clientId || !clientSecret || !redirectUri) {
-    throw new Error(
-      'Gmail OAuth credentials not configured. Missing CLIENT_ID, CLIENT_SECRET, or REDIRECT_URI.',
-    );
+  if (!clientId || !clientSecret) {
+    throw new Error('Gmail OAuth credentials not configured. Missing CLIENT_ID or CLIENT_SECRET.');
   }
 
-  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
   const accessToken = secrets.ACCESS_TOKEN;
   if (!accessToken) {

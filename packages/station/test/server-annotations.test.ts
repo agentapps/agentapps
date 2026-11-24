@@ -6,6 +6,7 @@
 import { ADMIN_PRINCIPAL_ID } from '@agentapps/protocol';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { AppFactory } from '../src/in-process-runtime.js';
+import { InMemoryDataStore, InMemorySecretStore } from '../src/index.js';
 import { defaultPolicy } from '../src/permission-enforcer.js';
 import { InMemoryPolicyStore } from '../src/policy-store.js';
 import { StationServer } from '../src/server.js';
@@ -59,6 +60,11 @@ describe('StationServer and Annotations it has not seen yet', () => {
     const policies = new InMemoryPolicyStore();
     await policies.put(defaultPolicy(ADMIN_PRINCIPAL_ID));
     server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [{ id: APP, version: '1.0.0', factory: app(listable) }],
       policies,
     });

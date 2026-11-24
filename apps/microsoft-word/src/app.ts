@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // must not be hand-edited out of sync.
 export const app = createApp({
   id: 'app.microsoft.word',
-  version: '1.0.2',
+  version: '1.1.0',
   name: 'Word',
   description:
     'Microsoft Word document automation — create documents, read their text and structure, and make surgical edits that leave the rest of the file untouched. Edits overwrite the stored file; recover earlier states through OneDrive version history.',
@@ -25,7 +25,7 @@ export const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'microsoft',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',

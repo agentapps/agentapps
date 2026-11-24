@@ -7,16 +7,24 @@ import { validateCredentials } from './lib/index.js';
 import { classifySlackApiError } from './tools/_slack-error.js';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not only wrapped in `factory`) so the tests can compare `app.toManifest()` with
+// agentapp.json: both describe the same app and must not drift apart.
+export const app = createApp({
   id: 'app.slack',
-  version: '3.0.0',
+  version: '3.1.0',
   name: 'Slack',
-  description: 'Full Slack workspace integration via Web API with OAuth 2.0',
+  description:
+    'Full Slack workspace integration: channels, messages, threads, reactions, files, users, search, and presence. Uses Slack Web API with OAuth 2.0.',
+  tagline: 'Manage channels, messages, files, and users in Slack',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'communication',
-  keywords: ['slack', 'messaging', 'chat', 'workspace', 'collaboration'],
-  runtime: { transport: 'stdio', command: 'node', args: ['dist/app.js'] },
+  keywords: ['slack', 'messaging', 'chat', 'workspace', 'collaboration', 'team'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
+  runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: {
     type: 'oauth2',
@@ -80,7 +88,7 @@ const app = createApp({
       'users:read.email',
     ],
     pkce: false,
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: [
       'ACCESS_TOKEN',
       'BOT_ACCESS_TOKEN',

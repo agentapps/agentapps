@@ -6,6 +6,7 @@
 import { ADMIN_PRINCIPAL_ID } from '@agentapps/protocol';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AppFactory } from '../src/in-process-runtime.js';
+import { InMemoryDataStore, InMemorySecretStore } from '../src/index.js';
 import { defaultPolicy } from '../src/permission-enforcer.js';
 import { InMemoryPolicyStore } from '../src/policy-store.js';
 import { StationServer } from '../src/server.js';
@@ -76,7 +77,15 @@ describe('StationServer parked calls', () => {
       ...base,
       rules: [...base.rules, { id: 'ask-risky', app: APP, tool: 'risky', effect: 'ask' }],
     });
-    server = new StationServer({ apps: [{ id: APP, version: '1.0.0', factory }], policies });
+    server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
+      apps: [{ id: APP, version: '1.0.0', factory }],
+      policies,
+    });
     url = (await server.start(0, '127.0.0.1')).url;
     return openSession('open-1');
   }

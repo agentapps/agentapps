@@ -9,7 +9,8 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getInstallation } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { findInstallation, unknownAlias } from '../station-session.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import {
   getWatcher,
@@ -35,16 +36,13 @@ export async function handleSubscribe(
   const { alias, eventTypes, unsubscribe } = command;
   const { ctx } = context;
 
-  const instance = getInstallation(ctx.configPath, alias);
-  if (!instance) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown alias: ${alias}`,
-        suggestion: `Run "installations" to see installed apps, or "install <app-id> ${alias}" to create it.`,
-      },
-    };
+  // The watcher talks to the Station; so does the check that the alias exists.
+  const station = stationOf(context);
+  if (isResult(station)) return station;
+  try {
+    if (!(await findInstallation(station, alias))) return unknownAlias(alias);
+  } catch (err) {
+    return station.failure(err);
   }
 
   if (unsubscribe) {

@@ -1,19 +1,17 @@
 #!/usr/bin/env node
 /**
- * @agentapps/cli — background event watcher daemon.
+ * @agentapps/cli — background watcher of an Installation's events.
  *
- * Self-contained entry point launched by the CLI's `subscribe` command.
- * Keeps a session open with an app, subscribes to the requested event types,
- * and prints each event as a JSON line to stdout.
+ * Started detached by `<alias> subscribe`. It subscribes through the Station
+ * and follows the session's event stream, printing one JSON line per event,
+ * until it is told to stop.
  *
- * Usage (internal):
- *   node daemon.js <configPath> <alias> <eventType1> [eventType2...]
+ * Usage: agentapps-daemon <configPath> <alias> <eventType...>
  */
 
-import { loadWorkspaceConfig, resolveSourcePath } from './config.js';
-import { resolveApp } from './resolve.js';
-import { openAppSession } from './session.js';
-import { getInstallation } from './state.js';
+import { loadWorkspaceConfig } from './config.js';
+import { StationClient, stationCredential } from './station-client.js';
+import { findInstallation, StationSession } from './station-session.js';
 
 async function main(): Promise<void> {
   const [, , configPath, alias, ...eventTypes] = process.argv;
@@ -24,46 +22,60 @@ async function main(): Promise<void> {
   }
 
   const config = loadWorkspaceConfig(configPath);
-  const instance = getInstallation(configPath, alias);
+  const station = StationClient.for({ cwd: process.cwd(), config, configPath });
+  if (!(station instanceof StationClient)) {
+    console.error(station.error?.message ?? 'No Station to connect to');
+    process.exit(2);
+  }
+  const instance = await findInstallation(station, alias);
   if (!instance) {
     console.error(`Unknown alias: ${alias}`);
     process.exit(2);
   }
 
-  const entry = config.apps[instance.appId];
-  if (!entry) {
-    console.error(`App configuration missing for ${instance.appId}`);
+  // The session, and with it the Instance, lives as long as this process.
+  const session = await StationSession.open(station, instance.installationId);
+  const subscribed = await session.send({ type: 'subscribe', eventTypes });
+  if (subscribed.success === false) {
+    console.error(String(subscribed.error ?? 'Subscribe failed'));
     process.exit(2);
   }
-
-  const source = resolveSourcePath(configPath, entry.source);
-  const app = await resolveApp(instance.appId, source);
-
-  const { session, shutdown } = await openAppSession(
-    app,
-    { cwd: process.cwd(), config, configPath },
-    instance.installationId,
+  console.log(
+    JSON.stringify({ type: 'subscribed', subscriptionId: subscribed.subscriptionId, eventTypes }),
   );
 
-  session.onEvent((event) => {
-    console.log(JSON.stringify({ type: 'event', ...event }));
-  });
-
-  const subscriptionId = await session.subscribe(eventTypes);
-  console.log(JSON.stringify({ type: 'subscribed', subscriptionId, eventTypes }));
-
-  // Keep the process alive until the session is closed or the process is killed.
-  process.on('SIGINT', async () => {
+  const stop = async (): Promise<void> => {
     await session.close();
-    await shutdown();
     process.exit(0);
-  });
+  };
+  process.on('SIGINT', stop);
+  process.on('SIGTERM', stop);
 
-  process.on('SIGTERM', async () => {
-    await session.close();
-    await shutdown();
-    process.exit(0);
+  const token = stationCredential(configPath, station.url)?.token;
+  const stream = await fetch(`${station.url}/events?sessionId=${encodeURIComponent(session.id)}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
+  if (!stream.ok || !stream.body) {
+    console.error(`The Station did not open the event stream (${stream.status})`);
+    process.exit(2);
+  }
+  const decoder = new TextDecoder();
+  let buffer = '';
+  for await (const chunk of stream.body) {
+    buffer += decoder.decode(chunk as Uint8Array, { stream: true });
+    let end = buffer.indexOf('\n\n');
+    while (end >= 0) {
+      const data = buffer
+        .slice(0, end)
+        .split('\n')
+        .filter((line) => line.startsWith('data: '))
+        .map((line) => line.slice('data: '.length))
+        .join('\n');
+      if (data) console.log(JSON.stringify({ ...JSON.parse(data), type: 'event' }));
+      buffer = buffer.slice(end + 2);
+      end = buffer.indexOf('\n\n');
+    }
+  }
 }
 
 main().catch((err) => {

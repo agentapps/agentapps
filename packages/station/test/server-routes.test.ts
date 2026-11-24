@@ -8,6 +8,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import { InMemoryDataStore, InMemorySecretStore } from '../src/index.js';
 import type { AppEntry } from '../src/server.js';
 import { StationServer } from '../src/server.js';
 
@@ -60,7 +61,14 @@ describe('StationServer HTTP routes', () => {
   });
 
   async function startServer(apps: AppEntry[]): Promise<string> {
-    server = new StationServer({ apps });
+    server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
+      apps,
+    });
     const info = await server.start(0, '127.0.0.1');
     return info.url;
   }
@@ -520,6 +528,11 @@ describe('StationServer HTTP routes', () => {
 
   it('GET /apps works without auth even when token is configured', async () => {
     server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [],
       token: 'secret-token',
     });
@@ -532,6 +545,11 @@ describe('StationServer HTTP routes', () => {
 
   it('GET /launcher works without auth even when token is configured', async () => {
     server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [],
       token: 'secret-token',
     });

@@ -5,8 +5,7 @@
  * against installed apps; app ids are resolved against the workspace config.
  */
 
-import { getInstallation, loadInstallations } from './state.js';
-import { type CachedTool, readCachedTools } from './tools-cache.js';
+import { type CachedTool, readCachedInstallations, readCachedTools } from './tools-cache.js';
 import type { WorkspaceConfig } from './types.js';
 
 export type ReplCommand =
@@ -49,7 +48,7 @@ export type ReplCommand =
   | { type: 'key-list' }
   | { type: 'connect'; client: string; remove: boolean }
   | { type: 'mcp'; keyName: string }
-  | { type: 'key-create'; name: string; userId: string; workspaceId?: string }
+  | { type: 'key-create'; name: string; userId: string; role?: string }
   | { type: 'hooks-claude-code'; event: string }
   | { type: 'hooks-claude-code-install'; settingsPath: string }
   | { type: 'approvals' }
@@ -62,6 +61,13 @@ export type ReplCommand =
       port?: number;
       stationUrl?: string;
     }
+  /** `station use <url>`: the Station the CLI connects to (CLIENT-REQ-9). */
+  | { type: 'station-use'; url: string }
+  /** `station login` and `station logout`: the CLI's credential for it (CLIENT-REQ-8). */
+  | { type: 'station-login' }
+  | { type: 'station-logout' }
+  /** `station apps [add <source> | remove <appId>]`: the Apps available (STADMIN-REQ-9). */
+  | { type: 'station-apps'; action: 'list' | 'add' | 'remove'; target?: string }
   | { type: 'warm' }
   | { type: 'sync' }
   | { type: 'help' }
@@ -122,7 +128,9 @@ const USAGE: Record<string, string> = {
   permissions: 'permissions <alias> [set <tool> <allow|ask|deny> | remove <tool>]',
   'permissions set': 'permissions <alias> set <tool> <allow|ask|deny>',
   'permissions remove': 'permissions <alias> remove <tool>',
-  station: 'station <start|status|stop|restart>',
+  station:
+    'station <start|status|stop|restart> | station use <url> | station login | station logout | station apps [add <source> | remove <app-id>]',
+  key: 'key create <name> <userId> [role:station-operator|role:workspace-owner|role:workspace-member]',
 };
 
 function usage(command: string): ReplCommand {
@@ -180,6 +188,22 @@ export function parseReplTokens(tokens: string[], options: ParseReplOptions): Re
     }
     if (first === 'station') {
       const action = second;
+      // CLIENT-REQ-9, CLIENT-REQ-8: words, not flags, and no key on the command line.
+      if (action === 'use') {
+        return third && rest.length === 0 ? { type: 'station-use', url: third } : usage('station');
+      }
+      if (action === 'login' || action === 'logout') {
+        if (third) return usage('station');
+        return { type: action === 'login' ? 'station-login' : 'station-logout' };
+      }
+      // STADMIN-REQ-9
+      if (action === 'apps') {
+        if (!third) return { type: 'station-apps', action: 'list' };
+        if ((third === 'add' || third === 'remove') && rest[0] && rest.length === 1) {
+          return { type: 'station-apps', action: third, target: rest[0] };
+        }
+        return usage('station');
+      }
       if (action !== 'start' && action !== 'status' && action !== 'stop' && action !== 'restart') {
         return usage('station');
       }
@@ -295,9 +319,12 @@ export function parseReplTokens(tokens: string[], options: ParseReplOptions): Re
       const args = [third, ...rest].filter((t): t is string => Boolean(t));
       if (!second || second === 'list') return { type: 'key-list' };
       if (second === 'create') {
-        // key create <name> <userId> [workspaceId]: the key is a new Principal.
-        if (!args[0] || !args[1]) return { type: 'unknown', token: 'key create' };
-        return { type: 'key-create', name: args[0], userId: args[1], workspaceId: args[2] };
+        // key create <name> <userId> [role:<role>]: the key is a new Principal (STADMIN-REQ-8).
+        if (!args[0] || !args[1] || args.length > 3) return usage('key');
+        if (args[2] === undefined) return { type: 'key-create', name: args[0], userId: args[1] };
+        const role = /^role:(station-operator|workspace-owner|workspace-member)$/.exec(args[2]);
+        if (!role) return usage('key');
+        return { type: 'key-create', name: args[0], userId: args[1], role: role[1] };
       }
       if (second === 'revoke') {
         if (!args[0]) return { type: 'unknown', token: 'key revoke' };
@@ -326,9 +353,12 @@ export function parseReplTokens(tokens: string[], options: ParseReplOptions): Re
     }
   }
 
-  // Alias subcommands.
-  const instance = getInstallation(options.configPath, first);
-  if (instance) {
+  // Alias subcommands. The Station has the Installations, and the parser does
+  // not ask it: a first word that is no command is taken as an alias when
+  // something follows it, and the Station says so if there is none by that
+  // name. A word alone is an alias only if the Station listed it before.
+  const known = readCachedInstallations(options.configPath).some((i) => i.alias === first);
+  if (second || known) {
     // A bare alias shows the instance info.
     if (!second) return { type: 'info', alias: first };
 
@@ -436,7 +466,8 @@ export function getCompletionCandidates(
   options: ParseReplOptions,
 ): CompletionCandidate[] {
   const rawTokens = tokenize(partial);
-  const instances = loadInstallations(options.configPath);
+  // What the Station last listed: Tab completion does not ask it on every key press.
+  const instances = readCachedInstallations(options.configPath);
   const aliases = instances.map((i) => i.alias);
   const appIds = Object.keys(options.config.apps);
 

@@ -67,7 +67,7 @@ async function initAndOpen(): Promise<string> {
   host.send({
     ...createEnvelope('initialize'),
     supportedVersions: [PROTOCOL_VERSION],
-    host: { name: 'test', version: '1.0.2' },
+    host: { name: 'test', version: '1.0.3' },
     capabilities: { directConnection: false },
   } as MessageBase);
   await waitForType('initialized');
@@ -116,7 +116,6 @@ beforeEach(() => {
   systemSecrets = {
     CLIENT_ID: 'test-client-id',
     CLIENT_SECRET: 'test-client-secret',
-    REDIRECT_URI: 'http://localhost/callback',
   };
   installationSecrets = {
     ACCESS_TOKEN: 'test-access-token',
@@ -131,7 +130,7 @@ beforeEach(() => {
   const runtime = new InProcessRuntime(factory);
   appStation = new AppStation({
     appId: 'app.microsoft.excel',
-    appVersion: '1.0.2',
+    appVersion: '1.1.0',
     runtime,
   });
   const [hostSide, ctrlSide] = createInProcessTransportPair();
@@ -192,7 +191,7 @@ describe('Microsoft Excel Agent App', () => {
 
     expect(result.success).toBe(true);
     expect(manifest.id).toBe('app.microsoft.excel');
-    expect(manifest.version).toBe('1.0.2');
+    expect(manifest.version).toBe('1.1.0');
     expect(manifest.auth.scopes).toContain('Files.ReadWrite.All');
     // Least privilege: SharePoint site access belongs to OneDrive alone.
     expect(manifest.auth.scopes).not.toContain('Sites.Read.All');

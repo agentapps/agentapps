@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.rentahuman',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'RentAHuman.ai',
   description:
     'Hire humans for physical-world tasks. Search 657,000+ verified humans in 50+ countries, create bookings, and manage tasks that require real-world presence.',

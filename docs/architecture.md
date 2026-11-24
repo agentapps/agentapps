@@ -18,7 +18,7 @@ Five roles. Two of them are defined by the protocol (Host and Station); the othe
 | **Station** | The running side: spawns and retires Instances, proxies traffic between Hosts and Instances, holds what apps may not hold (secrets, Storage, Policies). | `agentapps serve` |
 | **App** | The program itself: Tools plus whatever else it offers. | `app.github`, `app.google-gmail` |
 
-The **CLI** is a single-user Host with an embedded Station. It is how you install, configure, authenticate and exercise apps locally, and how you start a standalone Station.
+The **CLI** is a Host: every command talks to one Station. It is how you install, configure, authenticate and exercise apps, and how you start a Station on your machine.
 
 ## Topologies
 

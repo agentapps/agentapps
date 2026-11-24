@@ -139,6 +139,54 @@ describe('check-app: basics', () => {
   });
 });
 
+describe('check-app: setup instructions and the redirect URI', () => {
+  const oauth = {
+    type: 'oauth2',
+    provider: 'google',
+    authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenUrl: 'https://oauth2.googleapis.com/token',
+    scopes: ['email'],
+    installationSecrets: ['ACCESS_TOKEN'],
+  };
+
+  function oauthProject(auth: object) {
+    const manifest = { ...MANIFEST, auth };
+    createProject({
+      'agentapp.json': manifest,
+      'src/app.ts': appTs(tool('hello', READ_ONLY), '', manifest),
+    });
+  }
+
+  it('passes an app whose setup instructions use {{redirectUri}}', async () => {
+    oauthProject({
+      ...oauth,
+      systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
+      setup: 'Add this redirect URI: {{redirectUri}}',
+    });
+    const result = await check();
+    expect(result.errors).toEqual([]);
+    expect(result.valid).toBe(true);
+  });
+
+  it('[SETUP-AC-10] fails on an app that lists REDIRECT_URI in auth.systemSecrets', async () => {
+    oauthProject({ ...oauth, systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'] });
+    const result = await check();
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('declares REDIRECT_URI'))).toBe(true);
+  });
+
+  it('[SETUP-AC-10] fails on an app whose auth.setup names an undefined variable', async () => {
+    oauthProject({
+      ...oauth,
+      systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
+      setup: 'Add this redirect URI: {{callbackUrl}}',
+    });
+    const result = await check();
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('{{callbackUrl}}'))).toBe(true);
+  });
+});
+
 describe('check-app: tools, as the host sees them', () => {
   it('fails when a tool leaves annotations undeclared', async () => {
     createProject({ 'src/app.ts': appTs(tool('hello', '{ readOnlyHint: true }')) });

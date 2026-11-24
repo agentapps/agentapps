@@ -33,6 +33,8 @@ export interface Installation {
   /** App type (e.g. "app.google.gmail"). */
   appId: string;
   installedAt: string;
+  /** The Workspace it belongs to; absent means the Station's home Workspace. */
+  workspaceId?: string;
   /**
    * Effective Permissions: the Manifest Permissions approved at install
    * (VOL-REQ-2). Interactive approval is POLICY-REQ-9.

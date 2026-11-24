@@ -1,7 +1,7 @@
 {
   "id": "app.canva",
   "name": "Canva",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Canva design management — designs, exports, resizes, folders, assets, brand templates, autofill, and comments via the Canva Connect API.",
   "tagline": "Create, export, and manage Canva designs, folders, assets, and brand templates",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

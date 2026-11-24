@@ -6,13 +6,15 @@
  * `~/.agentapps/config.json` so the CLI works from any directory.
  */
 
+import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { catalogEntryForPackage, loadCatalog } from './catalog.js';
-import type { AppConfigEntry, StationConfig, WorkspaceConfig } from './types.js';
+import { LOCAL_STATION_HOST, LOCAL_STATION_PORT, LOCAL_STATION_URL } from './station-url.js';
+import type { AppConfigEntry, CliConfig, StationConfig, WorkspaceConfig } from './types.js';
 
 const CONFIG_NAME = 'agentapps.json';
 /**
@@ -143,18 +145,51 @@ export function rememberWorkspace(configPath: string, viaConfigFlag: boolean): v
 /** The workspace used outside any clone or saved workspace (DIST-REQ-1). */
 const HOME_WORKSPACE = join(GLOBAL_DIR, 'workspace');
 
+/** A new random identifier: a prefix and 128 random bits in hexadecimal. */
+function newId(prefix: string): string {
+  return `${prefix}_${randomBytes(16).toString('hex')}`;
+}
+
+/**
+ * The settings a workspace config is created with: the Station this
+ * workspace starts, the Station the CLI connects to, and the Workspace's id.
+ *
+ * @spec SETUP-REQ-12
+ */
+export function newWorkspaceSettings(): {
+  station: Required<StationConfig>;
+  cli: Required<CliConfig>;
+  workspace: { id: string };
+} {
+  return {
+    station: {
+      id: newId('stn'),
+      host: LOCAL_STATION_HOST,
+      port: LOCAL_STATION_PORT,
+      publicUrl: LOCAL_STATION_URL,
+    },
+    cli: { stationUrl: LOCAL_STATION_URL },
+    workspace: { id: newId('ws') },
+  };
+}
+
 /**
  * The home workspace's `agentapps.json`, created on first use with the
- * catalog's apps as `npm:` sources.
+ * catalog's apps as `npm:` sources and the settings of SETUP-REQ-12.
  *
  * @spec DIST-REQ-1
+ * @spec SETUP-REQ-12
  */
 export function ensureHomeWorkspace(): string {
   const configPath = join(HOME_WORKSPACE, CONFIG_NAME);
   if (!existsSync(configPath)) {
     mkdirSync(HOME_WORKSPACE, { recursive: true });
     const apps = loadCatalog().map((e) => ({ source: `npm:${e.package}@${e.version}` }));
-    writeFileSync(configPath, `${JSON.stringify({ apps }, null, 2)}\n`, 'utf8');
+    writeFileSync(
+      configPath,
+      `${JSON.stringify({ ...newWorkspaceSettings(), apps }, null, 2)}\n`,
+      'utf8',
+    );
   }
   return configPath;
 }
@@ -248,13 +283,35 @@ export function loadWorkspaceConfig(configPath: string): WorkspaceConfig {
   if (rawStation && typeof rawStation === 'object' && !Array.isArray(rawStation)) {
     const c = rawStation as Record<string, unknown>;
     station = {
+      ...(typeof c.id === 'string' ? { id: c.id } : {}),
       ...(typeof c.publicUrl === 'string' ? { publicUrl: c.publicUrl } : {}),
       ...(typeof c.port === 'number' ? { port: c.port } : {}),
       ...(typeof c.host === 'string' ? { host: c.host } : {}),
     };
   }
 
-  return { apps, station, ...(missing.length > 0 ? { missing } : {}) };
+  // The CLI's own settings: where its Station is (SETUP-REQ-6).
+  let cli: CliConfig | undefined;
+  const rawCli = parsed.cli;
+  if (rawCli && typeof rawCli === 'object' && !Array.isArray(rawCli)) {
+    const c = rawCli as Record<string, unknown>;
+    cli = { ...(typeof c.stationUrl === 'string' ? { stationUrl: c.stationUrl } : {}) };
+  }
+
+  // The Workspace's id, decided when the config was created (STADMIN-REQ-11).
+  const rawWorkspace = parsed.workspace;
+  const workspaceId =
+    rawWorkspace && typeof rawWorkspace === 'object' && !Array.isArray(rawWorkspace)
+      ? (rawWorkspace as Record<string, unknown>).id
+      : undefined;
+
+  return {
+    apps,
+    station,
+    ...(cli ? { cli } : {}),
+    ...(typeof workspaceId === 'string' ? { workspace: { id: workspaceId } } : {}),
+    ...(missing.length > 0 ? { missing } : {}),
+  };
 }
 
 /**
@@ -281,13 +338,40 @@ export function sourceMetadata(
 /**
  * Add a source to the workspace's `agentapps.json`, unless it is already listed.
  *
- * @spec DIST-REQ-9
+ * @spec STADMIN-REQ-9
  */
 export function addAppSource(configPath: string, source: string): void {
   const raw = JSON.parse(readFileSync(configPath, 'utf8')) as { apps?: { source?: string }[] };
   const apps = Array.isArray(raw.apps) ? raw.apps : [];
   if (apps.some((a) => a?.source === source)) return;
   raw.apps = [...apps, { source }];
+  writeFileSync(configPath, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
+}
+
+/** Remove a source from the workspace's `agentapps.json`. Answers whether it was listed. */
+export function removeAppSource(configPath: string, source: string): boolean {
+  const raw = JSON.parse(readFileSync(configPath, 'utf8')) as { apps?: { source?: string }[] };
+  const apps = Array.isArray(raw.apps) ? raw.apps : [];
+  const kept = apps.filter((a) => a?.source !== source);
+  if (kept.length === apps.length) return false;
+  raw.apps = kept;
+  writeFileSync(configPath, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
+  return true;
+}
+
+/**
+ * Write the Station the CLI connects to, `cli.stationUrl`, leaving everything
+ * else in the workspace config as it is.
+ *
+ * @spec CLIENT-REQ-9
+ */
+export function setCliStationUrl(configPath: string, stationUrl: string): void {
+  const raw = JSON.parse(readFileSync(configPath, 'utf8')) as Record<string, unknown>;
+  const cli =
+    raw.cli && typeof raw.cli === 'object' && !Array.isArray(raw.cli)
+      ? (raw.cli as Record<string, unknown>)
+      : {};
+  raw.cli = { ...cli, stationUrl };
   writeFileSync(configPath, `${JSON.stringify(raw, null, 2)}\n`, 'utf8');
 }
 

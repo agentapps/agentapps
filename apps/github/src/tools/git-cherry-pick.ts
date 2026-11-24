@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitCherryPickTool(app: AgentApp) {
@@ -62,7 +62,7 @@ export function registerGitCherryPickTool(app: AgentApp) {
         const flags: string[] = [];
         if (a.noCommit) flags.push('-n');
         if (typeof a.mainline === 'number') flags.push('-m', String(a.mainline));
-        argv = ['cherry-pick', ...flags, ...a.commits];
+        argv = ['cherry-pick', ...flags, ...a.commits.map((c) => positional(c, 'commits'))];
       }
 
       const result = runGit(repoPath, argv);

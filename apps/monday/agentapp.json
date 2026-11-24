@@ -1,7 +1,7 @@
 {
   "id": "app.monday",
   "name": "Monday.com",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Monday.com work management - boards, items, groups, columns, updates",
   "tagline": "Create and manage boards, items, groups, columns, and updates in Monday.com",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

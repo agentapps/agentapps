@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitRemoteTool(app: AgentApp) {
@@ -59,7 +59,7 @@ export function registerGitRemoteTool(app: AgentApp) {
       }
 
       if (action === 'remove') {
-        const result = runGit(repoPath, ['remote', 'remove', a.name]);
+        const result = runGit(repoPath, ['remote', 'remove', positional(a.name, 'name')]);
         if (result.code !== 0) throwClassifiedGitError(result);
         return { repoPath, action, name: a.name };
       }
@@ -68,8 +68,15 @@ export function registerGitRemoteTool(app: AgentApp) {
         throw new Error('[GIT_INVALID_INPUT] `url` is required for add/set-url.');
       }
 
+      // `ext::` and `file://` remotes make git run a local command or read local paths.
+      if (!/^(https:\/\/|ssh:\/\/|git@[A-Za-z0-9.-]+:)/.test(a.url)) {
+        throw new Error(
+          '[GIT_INVALID_INPUT] `url` must be an https://, ssh:// or git@host: remote.',
+        );
+      }
+      const name = positional(a.name, 'name');
       const cmd =
-        action === 'add' ? ['remote', 'add', a.name, a.url] : ['remote', 'set-url', a.name, a.url];
+        action === 'add' ? ['remote', 'add', name, a.url] : ['remote', 'set-url', name, a.url];
       const result = runGit(repoPath, cmd);
       if (result.code !== 0) throwClassifiedGitError(result);
       return { repoPath, action, name: a.name, url: a.url };

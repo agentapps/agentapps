@@ -260,6 +260,25 @@ function declaredSecrets(manifest: unknown): { user: string[]; system: string[] 
 }
 
 /**
+ * The error for an app that declares `REDIRECT_URI` as a secret, or undefined.
+ * The redirect URI is the Station's: an app writes `{{redirectUri}}` in
+ * `auth.setup` where it is needed. (An undefined variable in `auth.setup` is a
+ * Manifest schema error, reported with the others.) This is what keeps an app
+ * from declaring one again (SETUP-REQ-1).
+ *
+ * @spec SETUP-REQ-10
+ */
+export function redirectUriSecretProblem(manifest: unknown): string | undefined {
+  const secrets = declaredSecrets(manifest);
+  const kinds = [
+    ...(secrets.system.includes('REDIRECT_URI') ? ['auth.systemSecrets'] : []),
+    ...(secrets.user.includes('REDIRECT_URI') ? ['auth.installationSecrets'] : []),
+  ];
+  if (kinds.length === 0) return undefined;
+  return `agentapp.json: ${kinds.join(' and ')} declares REDIRECT_URI: the redirect URI is not a secret, the Station supplies it. Remove it, and write {{redirectUri}} in auth.setup where the setup steps need it`;
+}
+
+/**
  * Whether a hint that runs `agentapps config app.<id> ...` is setting installation secrets, which
  * belong on the installed alias. System secrets (an OAuth client) do belong on the app id,
  * so the hint is fine when it names no user secret and the app declares system secrets.
@@ -368,6 +387,8 @@ export async function validate(options: ValidationOptions = {}): Promise<Validat
   }
 
   const manifest = checkManifest(cwd, errors, warnings, logosSection);
+  const redirectUriError = redirectUriSecretProblem(readJson(join(cwd, 'agentapp.json')));
+  if (redirectUriError) errors.push(redirectUriError);
   const source = checkSource(cwd, errors, warnings, readJson(join(cwd, 'agentapp.json')));
 
   let sensitiveTools: string[] = [];

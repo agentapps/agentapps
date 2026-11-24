@@ -2,7 +2,8 @@
  * Object store for the Agent Apps Station.
  *
  * An Object is an immutable binary blob an App uploads once and gets a URL
- * for. Objects belong to one Installation and live on disk under
+ * for. Objects belong to one Installation; where their bytes live is the Data
+ * Store's business. The local one keeps them on disk under
  *
  *   {volumesBasePath}/ws_{workspaceId}/objects/{installationId}/{objectId}
  *   {volumesBasePath}/ws_{workspaceId}/objects/{installationId}/{objectId}.meta.json
@@ -43,19 +44,29 @@ export interface ObjectRequestScope {
   installationId: string;
 }
 
-export interface ObjectStoreOptions {
-  /** Physical base path (same root the Volume uses). */
-  volumesBasePath: string;
-  /** Station secret for signing temporary links. */
-  stationSecret: string;
-  /** Public base URL of the Station, used to build object URLs. */
-  publicUrl: string;
+/** Where an Object belongs in a Data Store: a Station, a Workspace and an Installation. */
+export interface ObjectScope extends ObjectRequestScope {
+  stationId: string;
 }
 
-/** Outcome of resolving an HTTP request for an object. */
-export type ObjectServeResult =
-  | { status: 200; path: string; meta: StoredObjectMeta }
-  | { status: 401 | 404; error: string };
+/**
+ * The Objects part of a Data Store: it keeps bytes and their metadata, and
+ * nothing else. URLs, visibility rules and link signing are the Station's.
+ *
+ * @spec DATASTORE-REQ-3
+ */
+export interface ObjectsStore {
+  /** Keep a new Object. `meta.objectId` is unique; there is no update. */
+  put(scope: ObjectScope, meta: StoredObjectMeta, data: Buffer): Promise<void>;
+  /** The metadata of an Object of that Station by its id, whatever Installation owns it. */
+  describe(stationId: string, objectId: string): Promise<StoredObjectMeta | null>;
+  /** The bytes of an Object of that Station by its id. */
+  read(stationId: string, objectId: string): Promise<Buffer | null>;
+  /** Remove an Object the Installation owns. Answers whether it did. */
+  delete(scope: ObjectScope, objectId: string): Promise<boolean>;
+  /** Every Object of the Installation, in no particular order. */
+  list(scope: ObjectScope): Promise<StoredObjectMeta[]>;
+}
 
 const ID_PREFIX = 'obj_';
 const META_SUFFIX = '.meta.json';
@@ -69,13 +80,199 @@ function isObjectId(value: string): boolean {
   return /^obj_[0-9a-f]{32}$/.test(value);
 }
 
+/**
+ * Objects kept in a directory:
+ *
+ *   {basePath}/ws_{workspaceId}/objects/{installationId}/{objectId}
+ *   {basePath}/ws_{workspaceId}/objects/{installationId}/{objectId}.meta.json
+ *   {basePath}/_objects/{objectId}.json  → { workspaceId, installationId }
+ *
+ * `basePath` answers the directory of a Station, so each Station has its own.
+ *
+ * @spec DATASTORE-REQ-7
+ */
+export class LocalObjectsStore implements ObjectsStore {
+  constructor(private readonly basePath: (stationId: string) => string) {}
+
+  private dirFor(stationId: string, scope: ObjectRequestScope): string {
+    return join(
+      this.basePath(stationId),
+      `ws_${scope.workspaceId}`,
+      'objects',
+      scope.installationId,
+    );
+  }
+
+  private indexPath(stationId: string, objectId: string): string {
+    return join(this.basePath(stationId), '_objects', `${objectId}.json`);
+  }
+
+  async put(scope: ObjectScope, meta: StoredObjectMeta, data: Buffer): Promise<void> {
+    const dir = this.dirFor(scope.stationId, scope);
+    await mkdir(dir, { recursive: true });
+    await mkdir(join(this.basePath(scope.stationId), '_objects'), { recursive: true });
+    await writeFile(join(dir, meta.objectId), data);
+    await writeFile(join(dir, `${meta.objectId}${META_SUFFIX}`), JSON.stringify(meta));
+    await writeFile(
+      this.indexPath(scope.stationId, meta.objectId),
+      JSON.stringify({ workspaceId: scope.workspaceId, installationId: scope.installationId }),
+    );
+  }
+
+  async describe(stationId: string, objectId: string): Promise<StoredObjectMeta | null> {
+    if (!isObjectId(objectId)) return null;
+    let owner: ObjectRequestScope;
+    try {
+      owner = JSON.parse(
+        await readFile(this.indexPath(stationId, objectId), 'utf8'),
+      ) as ObjectRequestScope;
+    } catch {
+      return null;
+    }
+    try {
+      const raw = await readFile(
+        join(this.dirFor(stationId, owner), `${objectId}${META_SUFFIX}`),
+        'utf8',
+      );
+      return JSON.parse(raw) as StoredObjectMeta;
+    } catch {
+      return null;
+    }
+  }
+
+  async read(stationId: string, objectId: string): Promise<Buffer | null> {
+    const meta = await this.describe(stationId, objectId);
+    if (!meta) return null;
+    try {
+      return await readFile(join(this.dirFor(stationId, meta), objectId));
+    } catch {
+      return null;
+    }
+  }
+
+  async delete(scope: ObjectScope, objectId: string): Promise<boolean> {
+    const meta = await this.describe(scope.stationId, objectId);
+    if (
+      !meta ||
+      meta.workspaceId !== scope.workspaceId ||
+      meta.installationId !== scope.installationId
+    ) {
+      return false;
+    }
+    const dir = this.dirFor(scope.stationId, meta);
+    await rm(join(dir, objectId), { force: true });
+    await rm(join(dir, `${objectId}${META_SUFFIX}`), { force: true });
+    await rm(this.indexPath(scope.stationId, objectId), { force: true });
+    return true;
+  }
+
+  async list(scope: ObjectScope): Promise<StoredObjectMeta[]> {
+    const dir = this.dirFor(scope.stationId, scope);
+    let names: string[];
+    try {
+      names = await readdir(dir);
+    } catch {
+      return [];
+    }
+    const metas: StoredObjectMeta[] = [];
+    for (const name of names) {
+      if (!name.endsWith(META_SUFFIX)) continue;
+      try {
+        metas.push(JSON.parse(await readFile(join(dir, name), 'utf8')) as StoredObjectMeta);
+      } catch {
+        // A half-written meta file is skipped.
+      }
+    }
+    return metas;
+  }
+}
+
+/**
+ * Objects kept in process memory. For tests.
+ *
+ * @spec DATASTORE-NFR-2
+ */
+export class InMemoryObjectsStore implements ObjectsStore {
+  private readonly objects = new Map<string, { meta: StoredObjectMeta; data: Buffer }>();
+
+  private static key(stationId: string, objectId: string): string {
+    return `${stationId}\u0000${objectId}`;
+  }
+
+  async put(scope: ObjectScope, meta: StoredObjectMeta, data: Buffer): Promise<void> {
+    this.objects.set(InMemoryObjectsStore.key(scope.stationId, meta.objectId), {
+      meta: { ...meta, workspaceId: scope.workspaceId, installationId: scope.installationId },
+      data: Buffer.from(data),
+    });
+  }
+
+  async describe(stationId: string, objectId: string): Promise<StoredObjectMeta | null> {
+    const found = this.objects.get(InMemoryObjectsStore.key(stationId, objectId));
+    return found ? { ...found.meta } : null;
+  }
+
+  async read(stationId: string, objectId: string): Promise<Buffer | null> {
+    const found = this.objects.get(InMemoryObjectsStore.key(stationId, objectId));
+    return found ? Buffer.from(found.data) : null;
+  }
+
+  async delete(scope: ObjectScope, objectId: string): Promise<boolean> {
+    const key = InMemoryObjectsStore.key(scope.stationId, objectId);
+    const found = this.objects.get(key);
+    if (
+      !found ||
+      found.meta.workspaceId !== scope.workspaceId ||
+      found.meta.installationId !== scope.installationId
+    ) {
+      return false;
+    }
+    return this.objects.delete(key);
+  }
+
+  async list(scope: ObjectScope): Promise<StoredObjectMeta[]> {
+    const prefix = `${scope.stationId}\u0000`;
+    return [...this.objects.entries()]
+      .filter(
+        ([key, { meta }]) =>
+          key.startsWith(prefix) &&
+          meta.workspaceId === scope.workspaceId &&
+          meta.installationId === scope.installationId,
+      )
+      .map(([, { meta }]) => ({ ...meta }));
+  }
+}
+
+export interface ObjectStoreOptions {
+  /** The Objects part of the Station's Data Store. */
+  objects: ObjectsStore;
+  /** The Station these Objects belong to. */
+  stationId: string;
+  /** The secret that signs temporary links, from the Secret Store. */
+  stationSecret: string;
+  /** Public base URL of the Station, used to build object URLs. */
+  publicUrl: string;
+}
+
+/** Outcome of resolving an HTTP request for an object. */
+export type ObjectServeResult =
+  | { status: 200; data: Buffer; meta: StoredObjectMeta }
+  | { status: 401 | 404; error: string };
+
+/**
+ * What a Station does with Objects: ids, URLs, who may read what, and signed
+ * links. The bytes and the metadata live in the Data Store.
+ *
+ * @spec DATASTORE-REQ-6
+ */
 export class ObjectStore {
-  private readonly basePath: string;
+  private readonly objects: ObjectsStore;
+  private readonly stationId: string;
   private readonly secret: string;
   private readonly publicUrl: string;
 
   constructor(options: ObjectStoreOptions) {
-    this.basePath = options.volumesBasePath;
+    this.objects = options.objects;
+    this.stationId = options.stationId;
     this.secret = options.stationSecret;
     this.publicUrl = options.publicUrl.replace(/\/+$/, '');
   }
@@ -85,12 +282,12 @@ export class ObjectStore {
     return `${this.publicUrl}/objects/${objectId}`;
   }
 
-  private dirFor(scope: ObjectRequestScope): string {
-    return join(this.basePath, `ws_${scope.workspaceId}`, 'objects', scope.installationId);
-  }
-
-  private indexPath(objectId: string): string {
-    return join(this.basePath, '_objects', `${objectId}.json`);
+  private scoped(scope: ObjectRequestScope): ObjectScope {
+    return {
+      stationId: this.stationId,
+      workspaceId: scope.workspaceId,
+      installationId: scope.installationId,
+    };
   }
 
   /** Store a new object and return its metadata. */
@@ -105,10 +302,6 @@ export class ObjectStore {
     },
   ): Promise<StoredObjectMeta> {
     const objectId = generateObjectId();
-    const dir = this.dirFor(scope);
-    await mkdir(dir, { recursive: true });
-    await mkdir(join(this.basePath, '_objects'), { recursive: true });
-
     const meta: StoredObjectMeta = {
       objectId,
       url: this.urlFor(objectId),
@@ -121,31 +314,13 @@ export class ObjectStore {
       workspaceId: scope.workspaceId,
       installationId: scope.installationId,
     };
-
-    await writeFile(join(dir, objectId), data);
-    await writeFile(join(dir, `${objectId}${META_SUFFIX}`), JSON.stringify(meta));
-    await writeFile(
-      this.indexPath(objectId),
-      JSON.stringify({ workspaceId: scope.workspaceId, installationId: scope.installationId }),
-    );
+    await this.objects.put(this.scoped(scope), meta, data);
     return meta;
   }
 
   /** Locate an object's metadata by id, whatever Installation owns it. */
-  async describe(objectId: string): Promise<StoredObjectMeta | null> {
-    if (!isObjectId(objectId)) return null;
-    let owner: ObjectRequestScope;
-    try {
-      owner = JSON.parse(await readFile(this.indexPath(objectId), 'utf8')) as ObjectRequestScope;
-    } catch {
-      return null;
-    }
-    try {
-      const raw = await readFile(join(this.dirFor(owner), `${objectId}${META_SUFFIX}`), 'utf8');
-      return JSON.parse(raw) as StoredObjectMeta;
-    } catch {
-      return null;
-    }
+  describe(objectId: string): Promise<StoredObjectMeta | null> {
+    return this.objects.describe(this.stationId, objectId);
   }
 
   /**
@@ -158,29 +333,13 @@ export class ObjectStore {
   ): Promise<{ meta: StoredObjectMeta; data: Buffer } | null> {
     const meta = await this.describe(objectId);
     if (!meta || meta.workspaceId !== scope.workspaceId) return null;
-    try {
-      const data = await readFile(join(this.dirFor(meta), objectId));
-      return { meta, data };
-    } catch {
-      return null;
-    }
+    const data = await this.objects.read(this.stationId, objectId);
+    return data ? { meta, data } : null;
   }
 
   /** Delete an object. Only the owning Installation may delete it. */
-  async delete(scope: ObjectRequestScope, objectId: string): Promise<boolean> {
-    const meta = await this.describe(objectId);
-    if (
-      !meta ||
-      meta.workspaceId !== scope.workspaceId ||
-      meta.installationId !== scope.installationId
-    ) {
-      return false;
-    }
-    const dir = this.dirFor(meta);
-    await rm(join(dir, objectId), { force: true });
-    await rm(join(dir, `${objectId}${META_SUFFIX}`), { force: true });
-    await rm(this.indexPath(objectId), { force: true });
-    return true;
+  delete(scope: ObjectRequestScope, objectId: string): Promise<boolean> {
+    return this.objects.delete(this.scoped(scope), objectId);
   }
 
   /** List the Installation's objects, newest first, with cursor pagination. */
@@ -188,22 +347,7 @@ export class ObjectStore {
     scope: ObjectRequestScope,
     options: { limit?: number; cursor?: string } = {},
   ): Promise<{ objects: StoredObjectMeta[]; nextCursor?: string }> {
-    const dir = this.dirFor(scope);
-    let names: string[];
-    try {
-      names = await readdir(dir);
-    } catch {
-      return { objects: [] };
-    }
-    const metas: StoredObjectMeta[] = [];
-    for (const name of names) {
-      if (!name.endsWith(META_SUFFIX)) continue;
-      try {
-        metas.push(JSON.parse(await readFile(join(dir, name), 'utf8')) as StoredObjectMeta);
-      } catch {
-        // A half-written meta file is skipped.
-      }
-    }
+    const metas = await this.objects.list(this.scoped(scope));
     metas.sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
 
     let start = 0;
@@ -247,7 +391,9 @@ export class ObjectStore {
         return { status: 401, error: check.reason ?? 'Invalid token' };
       }
     }
-    return { status: 200, path: join(this.dirFor(meta), objectId), meta };
+    const data = await this.objects.read(this.stationId, objectId);
+    if (!data) return { status: 404, error: 'Object not found' };
+    return { status: 200, data, meta };
   }
 }
 

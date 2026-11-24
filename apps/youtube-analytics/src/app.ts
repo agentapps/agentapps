@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.youtube-analytics',
   name: 'YouTube Analytics',
-  version: '1.0.1',
+  version: '1.1.0',
   description:
     "Read YouTube channel analytics with the YouTube Analytics API and the YouTube Data API v3: views, watch time, subscribers, traffic sources, devices, geography, demographics, top videos, audience retention, and the channel's videos and playlists. Read-only; Google OAuth.",
   tagline:
@@ -49,7 +49,7 @@ export const app = createApp({
     provider: 'google',
     // The host uses the client id and secret for the token exchange and refresh; the app
     // itself only ever reads the access token.
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',

@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 interface BlameLine {
@@ -52,7 +52,7 @@ export function registerGitBlameTool(app: AgentApp) {
 
       const argv: string[] = ['blame', '--porcelain'];
       if (a.range) argv.push('-L', a.range);
-      if (a.ref) argv.push(a.ref);
+      if (a.ref) argv.push(positional(a.ref, 'ref'));
       argv.push('--', a.path);
 
       const result = runGit(repoPath, argv);

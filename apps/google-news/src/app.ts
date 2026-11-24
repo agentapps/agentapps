@@ -11,15 +11,23 @@ import { registerTools } from './tools/index.js';
 // Create the app
 // ---------------------------------------------------------------------------
 
-const app = createApp({
+// Exported (not only wrapped in `factory`) so the tests can compare `app.toManifest()` with
+// agentapp.json: both describe the same app and must not drift apart.
+export const app = createApp({
   id: 'app.google-news',
-  version: '1.0.2',
+  version: '1.0.3',
   name: 'Google News',
   description: 'Latest news headlines from Google News RSS. No API key required.',
+  tagline: 'Browse the latest news headlines from Google News',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  icon: 'icon.svg',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'information',
   keywords: ['news', 'google', 'headlines', 'rss'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
 });

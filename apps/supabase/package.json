@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.supabase",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Supabase Agent App — query tables, manage rows, list buckets, and manage storage files.",
   "type": "module",

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.analytics',
-  version: '3.0.0',
+  version: '3.1.0',
   name: 'Google Analytics',
   description:
     'Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams',
@@ -26,7 +26,7 @@ const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'google',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',

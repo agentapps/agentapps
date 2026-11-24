@@ -175,7 +175,7 @@ export class GranolaClient {
     if (includeTranscript) {
       query.include = 'transcript';
     }
-    return request(this.apiKey, `/v1/notes/${noteId}`, query);
+    return request(this.apiKey, `/v1/notes/${encodeURIComponent(noteId)}`, query);
   }
 
   /** List folders with pagination. */

@@ -24,6 +24,12 @@ export {
 export { handleRename } from './rename.js';
 export { handleServe } from './serve.js';
 export { handleStation } from './station.js';
+export {
+  handleStationApps,
+  handleStationLogin,
+  handleStationLogout,
+  handleStationUse,
+} from './station-connection.js';
 export { handleStatus } from './status.js';
 export { handleSubscribe } from './subscribe.js';
 export { handleSync } from './sync.js';

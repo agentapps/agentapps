@@ -14,6 +14,8 @@ import {
   generateApiKey,
   InMemoryApiKeyStore,
   InMemoryPolicyStore,
+  InMemorySecretStore,
+  LocalDataStore,
   StationServer,
 } from '@agentapps/station';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -95,6 +97,17 @@ async function workspace(withStation: boolean): Promise<string> {
   await policies.put(policy);
 
   server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore: new InMemorySecretStore(),
+    // The Station's local Data Store, on the directory the documents are in.
+    dataStore: new LocalDataStore({
+      stationId: 'stn_test',
+      storageDir: storage,
+      dataDir: join(dir, 'data'),
+      otherStationsDir: join(dir, 'stations'),
+    }),
+    publicUrl: 'http://station.test',
     apps: [
       { id: 'app.todo-list', version: '1.0.0', name: 'Todo', factory: todoApp() },
       { id: 'app.storage-test', version: '1.0.0', name: 'Storage', factory: storageApp() },
@@ -102,13 +115,14 @@ async function workspace(withStation: boolean): Promise<string> {
     apiKeys,
     policies,
     adminToken: 'admin-token',
-    documentStore: new FileDocumentStore(storage),
     installations: () => [
       { installationId: 'ins_todo', alias: 'todo', appId: 'app.todo-list' },
       { installationId: 'ins_storage', alias: 'storage', appId: 'app.storage-test' },
     ],
   });
   const info = await server.start(0, '127.0.0.1');
+  // The gateway finds the Station where the workspace's CLI does: cli.stationUrl.
+  writeFileSync(configPath, `${JSON.stringify({ apps: [], cli: { stationUrl: info.url } })}\n`);
   mkdirSync(dirname(stationMetaPath(configPath)), { recursive: true });
   writeFileSync(
     stationMetaPath(configPath),

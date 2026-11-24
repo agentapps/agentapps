@@ -1,7 +1,7 @@
 {
   "id": "app.google.slides",
   "name": "Google Slides",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Create, read, update, and delete Google Slides presentations — full read/write support for slides, text, and batch operations",
   "tagline": "Create, read, update, and delete slides in Google Slides presentations",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -7,6 +7,8 @@ import { createEnvelope, createInProcessTransportPair, type HookHost } from '@ag
 import { createApp } from '@agentapps/sdk';
 import {
   AppStation,
+  InMemoryDataStore,
+  InMemorySecretStore,
   InProcessRuntime,
   LocalProcessRuntime,
   type RuntimeAdapter,
@@ -93,6 +95,11 @@ describe('Hooks through the Station', () => {
 
   it('[HOOK-AC-28] shaping and notify round trips are unchanged over the HTTP Station', async () => {
     const server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [{ id: 'app.hook-relay', version: '1.0.0', factory: relayApp().toFactory() }],
     });
     const { url } = await server.start(0, '127.0.0.1');

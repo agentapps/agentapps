@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.higgsfield',
-  version: '3.0.0',
+  version: '3.0.1',
   name: 'Higgsfield',
   description:
     'Generate AI images and videos with Higgsfield - text-to-image, image-to-video, and consistent character generation with Soul.',

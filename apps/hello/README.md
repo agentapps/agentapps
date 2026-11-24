@@ -30,5 +30,10 @@ The app calls no outside service, so no service's terms apply. The Agent Apps te
 
 ## Logos
 
-TODO: Hello has no logo. `assets/logo.svg` and `assets/logo-mono.svg` are named in the manifest
-and do not exist; there is no brand to source them from, and logos are never generated.
+This app is Agent Apps' own and not an outside brand's, so there is no press kit: its logo
+follows the format of the project's own apps (see `AGENTS.md`), and the project owner asked for it.
+
+| File | Source | Changes |
+|---|---|---|
+| assets/logo.svg | the hexagon and the solid face of `apps/bash/assets/logo.svg`, unchanged, with a symbol drawn for this app on 2026-11-23 cut out of the face: a speech bubble. In `#E69A0C`. | see Source |
+| assets/logo-mono.svg | the same drawing | `currentColor` in place of the colour |

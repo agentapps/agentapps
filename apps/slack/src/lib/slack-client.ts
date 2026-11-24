@@ -24,7 +24,6 @@ export interface SecretsContext {
 export interface SlackSecrets {
   CLIENT_ID?: string;
   CLIENT_SECRET?: string;
-  REDIRECT_URI?: string;
   /** User-scoped access token (`authed_user.access_token`, "xoxp-..."). Used by 95% of tools. */
   ACCESS_TOKEN?: string;
   /** Bot-scoped access token (`access_token`, "xoxb-..."). Used by tools requiring bot-only scopes

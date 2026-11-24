@@ -9,7 +9,12 @@ import { createServer } from 'node:net';
 import { networkInterfaces, tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { InMemoryApiKeyStore, StationServer } from '@agentapps/station';
+import {
+  InMemoryApiKeyStore,
+  InMemoryDataStore,
+  InMemorySecretStore,
+  StationServer,
+} from '@agentapps/station';
 import { describe, expect, it } from 'vitest';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -65,6 +70,11 @@ describe.skipIf(!LAN)('a Station with no key', () => {
 
   it('[CLI-AC-12] listening everywhere, serves only this machine without a credential', async () => {
     const server = new StationServer({
+      stationId: 'stn_test',
+      workspaceId: 'ws_test',
+      secretStore: new InMemorySecretStore(),
+      dataStore: new InMemoryDataStore(),
+      publicUrl: 'http://station.test',
       apps: [],
       host: '0.0.0.0',
       openToLoopbackOnly: true,

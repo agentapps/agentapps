@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/app.vercel",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "Vercel Agent App — manage projects, deployments, domains, environment variables, and check deployment logs.",
   "type": "module",

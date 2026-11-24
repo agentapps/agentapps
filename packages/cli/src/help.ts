@@ -20,6 +20,7 @@ Commands:
   status <alias>                     Show an Installation's status
   config <app-id> [key:value...]     Set an app's system secrets (shared by its Installations)
   config <alias> [key:value...]      Set one Installation's secrets (its API key)
+  config <app-id|alias> unset <KEY>  Remove a secret
   <alias> auth                       Sign an Installation in (OAuth)
   <alias> auth logout                Remove the Installation's stored tokens
   <alias> auth reauth                Discard tokens and re-authenticate
@@ -37,7 +38,9 @@ Commands:
   policy [list|show <principal>]     Policies, one per Principal (CLI = admin)
   policy set <p> <app> <tool> <e>    Add a Rule; optional JSON condition last
   policy unset <p> <ruleId>          Remove a Rule
-  key create <name> <userId>         New API key; it is a new Principal
+  key create <name> <userId> [role:<role>]
+                                     New API key; it is a new Principal. Roles: station-operator,
+                                     workspace-owner, workspace-member (the default)
   connect claude-code [--remove]     Give Claude Code its key and register the MCP server
   connect <name> [--remove]          Give any other agent platform its key; prints the MCP server entry
   mcp <keyName>                      MCP server over stdio (run by the agent client)
@@ -48,6 +51,11 @@ Commands:
   serve [port] [stationUrl]          Start the station in the background (detached); with stationUrl,
                                      announce its apps to that station
   station <action>                   Control the station: start|status|stop|restart
+  station use <url>                  The Station this CLI connects to
+  station login | logout             Store or remove this CLI's API key for that Station
+  station apps                       Apps available on the Station
+  station apps add <source|app-id>   Make an app available (Station Operator)
+  station apps remove <app-id>       Stop offering an app (Station Operator)
   warm                               Warm the tool cache for all installations
   sync                               Install npm: app packages from agentapps.json
   help                               Show this help
@@ -65,6 +73,7 @@ Global flags:
   --yaml              Output raw YAML
   --raw               Output raw tool result without human renderer
   --manual-code       Force manual OAuth code entry
+  --public-url <url>  Public URL of the Station that serve and station start launch
   --yes, -y           Skip confirmation prompts
   --verbose, -v       Show extra detail (e.g. tool schemas)
   --help, -h          Show this help

@@ -2,17 +2,24 @@ import { createApp } from '@agentapps/sdk';
 import { validateCredentials } from './lib/index.js';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not just wrapped in `factory`) so tests can compare `app.toManifest()`
+// with `agentapp.json`: the two describe the same app and must change together.
+export const app = createApp({
   id: 'app.linear',
-  version: '3.0.0',
+  version: '3.0.1',
   name: 'Linear',
   description:
     'Linear issue tracking - list, create, update issues, manage projects, labels, teams and users',
+  tagline: 'Manage issues, projects, and labels in Linear',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'productivity',
   keywords: ['linear', 'issues', 'tasks', 'project-management'],
-  runtime: { transport: 'stdio', command: 'node', args: ['dist/app.js'] },
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
+  runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: { type: 'api-key', installationSecrets: ['API_KEY'] },
 });

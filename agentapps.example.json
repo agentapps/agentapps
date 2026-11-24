@@ -1,8 +1,18 @@
 {
   "station": {
-    "port": 4100
+    "id": "stn_example",
+    "host": "127.0.0.1",
+    "port": 4100,
+    "publicUrl": "http://localhost:4100"
+  },
+  "cli": {
+    "stationUrl": "http://localhost:4100"
+  },
+  "workspace": {
+    "id": "ws_example"
   },
   "apps": [
+    { "source": "./apps/google-news" },
     { "source": "./apps/hello" },
     { "source": "./apps/datetime" },
     { "source": "./apps/compliance-filter" },
@@ -60,6 +70,7 @@
     { "source": "./apps/render" },
     { "source": "./apps/rentahuman" },
     { "source": "./apps/runn" },
+    { "source": "./apps/stdio-demo" },
     { "source": "./apps/todoist" },
     { "source": "./apps/trello" },
     { "source": "./apps/whatsapp" },
@@ -84,6 +95,7 @@
     { "source": "./apps/mixpanel" },
     { "source": "./apps/calendly" },
     { "source": "./apps/posthog" },
+    { "source": "./apps/postiz" },
     { "source": "./apps/mailchimp" },
     { "source": "./apps/zapier" },
     { "source": "./apps/freshdesk" },
@@ -94,6 +106,7 @@
     { "source": "./apps/open-meteo" },
     { "source": "./apps/linkedin-ads" },
     { "source": "./apps/youtube-analytics" },
-    { "source": "./apps/meta-ads" }
+    { "source": "./apps/meta-ads" },
+    { "source": "./apps/metricool" }
   ]
 }

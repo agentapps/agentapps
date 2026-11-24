@@ -19,6 +19,8 @@ export interface ParsedGlobalArgs {
     help: boolean;
     /** Internal: run `serve` in the foreground (used by the detached worker). */
     foreground?: boolean;
+    /** The public URL of the Station that `serve` and `station start` launch (SETUP-REQ-11). */
+    publicUrl?: string;
   };
   commandTokens: string[];
 }
@@ -62,6 +64,9 @@ export function parseGlobalArgs(argv: string[]): ParsedGlobalArgs {
     } else if (arg === '--foreground') {
       // Internal: used by the detached `serve` worker. Not documented in help.
       options.foreground = true;
+    } else if (arg === '--public-url') {
+      // SETUP-REQ-11: the Station's public URL, for `serve` and `station start`.
+      options.publicUrl = argv[++i];
     } else if (arg === '--remove') {
       // Belongs to `connect <client> --remove`; the command parser reads it.
       commandTokens.push(arg);

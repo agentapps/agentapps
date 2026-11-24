@@ -61,8 +61,6 @@ user then connects their own Google account.
 
 ```bash
 agentapps config app.google.search-console CLIENT_ID:"<client id>.apps.googleusercontent.com" CLIENT_SECRET:"<client secret>"
-# Only if agentapps.json has no station.publicUrl:
-agentapps config app.google.search-console REDIRECT_URI:"https://your-station.example.com/auth/callback"
 ```
 
 ### 2. Connect a Google account (each user)

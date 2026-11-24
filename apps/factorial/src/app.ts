@@ -25,7 +25,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.factorial',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Factorial',
   description:
     'Factorial HR — manage employees, time off, attendance, payroll, documents, contracts and teams via Factorial API with OAuth2',

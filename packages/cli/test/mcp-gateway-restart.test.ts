@@ -8,7 +8,9 @@ import { createApp } from '@agentapps/sdk';
 import {
   generateApiKey,
   InMemoryApiKeyStore,
+  InMemoryDataStore,
   InMemoryPolicyStore,
+  InMemorySecretStore,
   StationServer,
 } from '@agentapps/station';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -45,6 +47,11 @@ async function startStation(key: { hash: string; prefix: string }): Promise<stri
     updatedAt: now,
   });
   server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore: new InMemorySecretStore(),
+    dataStore: new InMemoryDataStore(),
+    publicUrl: 'http://station.test',
     apps: [
       { id: 'app.first', version: '1.0.0', factory: pingApp('app.first') },
       { id: 'app.second', version: '1.0.0', factory: pingApp('app.second') },

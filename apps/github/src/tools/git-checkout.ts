@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitCheckoutTool(app: AgentApp) {
@@ -55,7 +55,7 @@ export function registerGitCheckoutTool(app: AgentApp) {
       if (a.force) flags.push('--force');
       if (a.create) flags.push('-b');
 
-      const args2: string[] = ['checkout', ...flags, a.target];
+      const args2: string[] = ['checkout', ...flags, positional(a.target, 'target')];
       if (a.paths && a.paths.length > 0) {
         args2.push('--', ...a.paths);
       }

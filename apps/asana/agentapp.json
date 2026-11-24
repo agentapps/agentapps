@@ -1,8 +1,9 @@
 {
   "id": "app.asana",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Asana",
   "description": "Asana project management — manage tasks, projects, workspaces, sections, and users.",
+  "tagline": "Manage tasks, projects, sections, and tags in Asana",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",

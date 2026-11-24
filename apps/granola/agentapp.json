@@ -1,7 +1,6 @@
 {
-  "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.granola",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Granola",
   "description": "Access your Granola meeting notes, transcripts, AI summaries, and folders via the Granola public API.",
   "tagline": "Browse meeting notes, transcripts, and AI summaries from Granola",

@@ -8,13 +8,18 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.pipedrive',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Pipedrive',
   description: 'Pipedrive CRM — manage deals, persons, organizations, activities, and pipelines.',
+  tagline: 'Manage deals, persons, organizations, activities, and pipelines in Pipedrive',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'crm',
   keywords: ['pipedrive', 'crm', 'deals', 'sales', 'pipeline'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: {

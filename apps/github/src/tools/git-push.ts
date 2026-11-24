@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { resolveUserToken } from '../lib/github-user-token.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
@@ -79,7 +79,13 @@ export function registerGitPushTool(app: AgentApp) {
       if (a.forceUnsafe) flags.push('--force');
       else if (a.force) flags.push('--force-with-lease');
 
-      const result = runGit(repoPath, [...cfgFlags, 'push', ...flags, remote, branch]);
+      const result = runGit(repoPath, [
+        ...cfgFlags,
+        'push',
+        ...flags,
+        positional(remote, 'remote'),
+        positional(branch, 'branch'),
+      ]);
       if (result.code !== 0) throwClassifiedGitError(result);
 
       return {

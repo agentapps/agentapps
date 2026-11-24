@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitTagTool(app: AgentApp) {
@@ -50,7 +50,7 @@ export function registerGitTagTool(app: AgentApp) {
 
       if (action === 'list') {
         const argv = ['tag', '-l'];
-        if (a.pattern) argv.push(a.pattern);
+        if (a.pattern) argv.push(positional(a.pattern, 'pattern'));
         const result = runGit(repoPath, argv);
         if (result.code !== 0) throwClassifiedGitError(result);
         const tags = result.stdout.split('\n').filter(Boolean);
@@ -65,8 +65,8 @@ export function registerGitTagTool(app: AgentApp) {
         const flags: string[] = [];
         if (a.force) flags.push('-f');
         if (a.message) flags.push('-a', '-m', a.message);
-        const argv = ['tag', ...flags, a.name];
-        if (a.ref) argv.push(a.ref);
+        const argv = ['tag', ...flags, positional(a.name, 'name')];
+        if (a.ref) argv.push(positional(a.ref, 'ref'));
         const result = runGit(repoPath, argv);
         if (result.code !== 0) throwClassifiedGitError(result);
         return {
@@ -79,7 +79,7 @@ export function registerGitTagTool(app: AgentApp) {
       }
 
       // delete
-      const result = runGit(repoPath, ['tag', '-d', a.name]);
+      const result = runGit(repoPath, ['tag', '-d', positional(a.name, 'name')]);
       if (result.code !== 0) throwClassifiedGitError(result);
       return { repoPath, action: 'delete', name: a.name };
     },

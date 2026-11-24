@@ -1,8 +1,9 @@
 {
   "id": "app.calendly",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "name": "Calendly",
   "description": "Calendly scheduling — manage event types, scheduled events, invitees, and availability.",
+  "tagline": "Manage event types, scheduled events, invitees, and availability in Calendly",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
   "logo": "assets/logo.svg",

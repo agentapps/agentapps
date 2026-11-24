@@ -2,78 +2,57 @@
  * The CLI as the `admin` Principal's Host (docs/specs/policies.md).
  */
 
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const answers: string[] = [];
-vi.mock('../src/host.js', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../src/host.js')>();
+vi.mock('../src/prompt.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/prompt.js')>();
   return { ...actual, readLine: async () => answers.shift() ?? '' };
 });
 
 const { dispatchCommand } = await import('../src/dispatch.js');
 const { addInstallation, getInstallation, getPolicy, putPolicy } = await import('../src/state.js');
 
-import type { CliContext, GlobalOptions, WorkspaceConfig } from '../src/types.js';
+import type { CliContext } from '../src/types.js';
+import { options, startWorkspace, type TestWorkspace, writeApp } from './support/workspace.js';
 
-function options(extra?: Partial<GlobalOptions>): GlobalOptions {
-  return {
-    json: false,
-    yaml: false,
-    raw: false,
-    manualCode: false,
-    urlOnly: false,
-    yes: false,
-    verbose: false,
-    help: false,
-    ...extra,
-  };
-}
-
-let tmpDir: string;
+let workspace: TestWorkspace;
 let ctx: CliContext;
 const stdinTTY = process.stdin.isTTY;
 
-beforeEach(() => {
-  tmpDir = mkdtempSync(join(tmpdir(), 'agentapps-cli-policy-'));
-  const browser = join(tmpDir, 'browser');
-  mkdirSync(join(browser, 'dist'), { recursive: true });
-  writeFileSync(
-    join(browser, 'agentapp.json'),
-    JSON.stringify({
-      id: 'app.browser',
-      version: '1.0.0',
-      permissions: { profile: 'basic', volume: true },
-    }),
+beforeEach(async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'agentapps-cli-policy-'));
+  const browser = writeApp(
+    join(dir, 'browser'),
+    { id: 'app.browser', version: '1.0.0', permissions: { profile: 'basic', volume: true } },
+    'export function factory() {}',
   );
-  writeFileSync(join(browser, 'dist', 'app.js'), 'export function factory() {}');
-  const config: WorkspaceConfig = {
-    apps: {
-      hello: { source: resolve(__dirname, '../../../apps/hello') },
-      'app.browser': { source: browser },
-    },
-  };
-  const configPath = join(tmpDir, 'agentapps.json');
-  writeFileSync(configPath, JSON.stringify(config), 'utf8');
-  ctx = { cwd: tmpDir, config, configPath };
+  // The Station keeps the Policies and evaluates them; the CLI is its admin.
+  workspace = await startWorkspace({
+    dir,
+    sources: [resolve(__dirname, '../../../apps/hello'), browser],
+  });
+  ctx = workspace.ctx();
   answers.length = 0;
 });
 
-afterEach(() => {
+afterEach(async () => {
   process.stdin.isTTY = stdinTTY;
   vi.restoreAllMocks();
-  rmSync(tmpDir, { recursive: true, force: true });
+  await workspace.stop();
+  rmSync(workspace.dir, { recursive: true, force: true });
 });
 
 describe('Policies in the CLI', () => {
   it('[POLICY-AC-1] the CLI calls tools as the admin Principal', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const admin = getPolicy(ctx.configPath, 'admin');
     putPolicy(ctx.configPath, {
       ...admin,
-      rules: [{ id: 'no-greet', app: 'hello', tool: 'greet', effect: 'deny' }],
+      rules: [{ id: 'no-greet', app: 'app.hello', tool: 'greet', effect: 'deny' }],
     });
     // Another Principal's Policy does not apply to the CLI.
     putPolicy(ctx.configPath, { ...getPolicy(ctx.configPath, 'ak_other'), rules: [] });
@@ -149,11 +128,11 @@ describe('Policies in the CLI', () => {
   });
 
   it('[POLICY-AC-7] an ask prompts inline and the answer decides the call', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const admin = getPolicy(ctx.configPath, 'admin');
     putPolicy(ctx.configPath, {
       ...admin,
-      rules: [{ id: 'ask-greet', app: 'hello', tool: 'greet', effect: 'ask' }],
+      rules: [{ id: 'ask-greet', app: 'app.hello', tool: 'greet', effect: 'ask' }],
     });
     vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
     process.stdin.isTTY = true;

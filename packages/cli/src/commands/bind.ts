@@ -1,16 +1,26 @@
 /**
  * @agentapps/cli — bind command.
  *
- * Usage: bind <alias> <requirement> <target-alias>
- *
- * Creates or updates a binding that maps a consumer app's named requirement
- * to a specific target installation.
+ * Fulfils a requirement of one Installation with another.
  */
 
-import { addBinding, getInstallation } from '../state.js';
+import { isResult, stationOf } from '../station-client.js';
+import { findInstallation } from '../station-session.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
+function unknown(what: string, alias: string): HandlerResult {
+  return {
+    success: false,
+    exitCode: 2,
+    error: {
+      message: `Unknown ${what}: ${alias}`,
+      suggestion: 'Run "installations" to see installed apps.',
+    },
+  };
+}
+
+/** @spec STADMIN-REQ-6 */
 export async function handleBind(
   command: ReplCommand,
   context: HandlerContext,
@@ -24,47 +34,32 @@ export async function handleBind(
   }
 
   const { alias, bindingName, targetAlias } = command;
-  const { ctx } = context;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  const consumer = getInstallation(ctx.configPath, alias);
-  if (!consumer) {
+  try {
+    const consumer = await findInstallation(station, alias);
+    if (!consumer) return unknown('Installation', alias);
+    const target = await findInstallation(station, targetAlias);
+    if (!target) return unknown('target Installation', targetAlias);
+    if (alias === targetAlias) {
+      return {
+        success: false,
+        exitCode: 2,
+        error: { message: 'Cannot bind an app to itself.' },
+      };
+    }
+    await station.api(
+      'PUT',
+      `/api/installations/${encodeURIComponent(consumer.installationId)}/bindings/${encodeURIComponent(bindingName)}`,
+      { target: target.installationId },
+    );
     return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown Installation: ${alias}`,
-        suggestion: 'Run "installations" to see installed apps.',
-      },
+      success: true,
+      message: `Bound ${alias}/${bindingName} → ${targetAlias} (${target.appId})`,
+      exitCode: 0,
     };
+  } catch (err) {
+    return station.failure(err);
   }
-
-  const target = getInstallation(ctx.configPath, targetAlias);
-  if (!target) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown target Installation: ${targetAlias}`,
-        suggestion: 'Run "installations" to see installed apps.',
-      },
-    };
-  }
-
-  if (alias === targetAlias) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: 'Cannot bind an app to itself.' },
-    };
-  }
-
-  // Bindings are keyed by installationId (see getBindingsForInstallation /
-  // list-bindings), so resolve both aliases before storing.
-  addBinding(ctx.configPath, consumer.installationId, bindingName, target.installationId);
-
-  return {
-    success: true,
-    message: `Bound ${alias}/${bindingName} → ${targetAlias} (${target.appId})`,
-    exitCode: 0,
-  };
 }

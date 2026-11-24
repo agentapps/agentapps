@@ -1,6 +1,6 @@
 {
   "name": "@agentapps/create",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Scaffold an Agent App (npm create @agentapps) in the current conventions — templates, validation, health check, dev mode, packaging",
   "license": "MIT",
   "type": "module",

@@ -41,8 +41,9 @@ Agent Platform ── MCP ──▶ Gateway ── Agent Apps ──▶ Station 
 ```
 
 - **App**: your code, built with `@agentapps/sdk`.
-- **Station**: runs apps, proxies traffic, holds secrets and storage. `agentapps station start`.
-- **Host**: consumes apps on behalf of a user. The CLI is a single-user host with an embedded station.
+- **Station**: runs apps, proxies traffic, and keeps which apps and Installations there are. `agentapps station start`.
+- **Secret Store** and **Data Store**: where the Station keeps secrets, and what apps store (documents, files). A folder on your machine by default.
+- **Host**: consumes apps on behalf of a user. The CLI is a host: every command talks to the Station.
 - **Gateway**: a thin host that translates another protocol, such as MCP.
 
 ## Packages
@@ -67,9 +68,11 @@ npm install -g @agentapps/cli
 
 That gives you the `agentapps` command. To try it without installing, use `npx @agentapps/cli`. The package is always `@agentapps/cli`: the unscoped `agentapps` package on npm is an unrelated project.
 
-Install an app under a name of your choice, the alias, and call one of its tools:
+Start a Station, which runs your apps, then install an app under a name of your choice, the alias, and call one of its tools:
 
 ```console
+$ agentapps station start
+  ✓ Station running in the background at http://localhost:4100
 $ agentapps install app.hello hello
   Downloading app.hello…
   ✓ Installed hello (app.hello)
@@ -88,10 +91,9 @@ For Tab completion of commands, apps, aliases and tools, run `agentapps completi
 
 ## Connecting an agent
 
-Start a Station, which runs your installed apps, and connect the agent platform you use:
+With the Station running, connect the agent platform you use:
 
 ```console
-$ agentapps station start
 $ agentapps connect claude-code
   ✓ API key claude-code created (ak_…); its Policy: policy show ak_…
 Claude Code runs "agentapps mcp claude-code" as the MCP server "agentapps".

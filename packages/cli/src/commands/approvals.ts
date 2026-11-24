@@ -9,7 +9,7 @@
  * `.agentapps/station.json`, so the CLI answers as the `admin` Principal.
  */
 
-import { readStationMeta } from '../station-lifecycle.js';
+import { isResult, StationError, stationOf } from '../station-client.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
@@ -23,41 +23,27 @@ interface PendingApproval {
   expiresAt: string;
 }
 
+/** One request to the Station's approvals, as the Approver the CLI is. */
 async function callStation(
   context: HandlerContext,
   path: string,
   init?: { method: string; body: string },
 ): Promise<{ status: number; body: Record<string, unknown> } | HandlerResult> {
-  const meta = readStationMeta(context.ctx.configPath);
-  if (!meta) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: 'No station is running.', suggestion: 'Start one with: station start' },
-    };
-  }
-  let res: Response;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
   try {
-    res = await fetch(`${meta.url}${path}`, {
-      method: init?.method ?? 'GET',
-      headers: {
-        'content-type': 'application/json',
-        ...(meta.adminToken ? { authorization: `Bearer ${meta.adminToken}` } : {}),
-      },
-      ...(init ? { body: init.body } : {}),
-    });
-  } catch {
-    // station.json outlived its daemon (crash, reboot): nothing is listening.
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `No station is answering at ${meta.url}.`,
-        suggestion: 'Start one with: station start',
-      },
-    };
+    const body = await station.api<Record<string, unknown>>(
+      init?.method ?? 'GET',
+      path,
+      init ? JSON.parse(init.body) : undefined,
+    );
+    return { status: 200, body };
+  } catch (err) {
+    if (err instanceof StationError && err.status !== 401) {
+      return { status: err.status, body: err.body };
+    }
+    return station.failure(err);
   }
-  return { status: res.status, body: (await res.json()) as Record<string, unknown> };
 }
 
 /** @spec POLICY-REQ-7 */

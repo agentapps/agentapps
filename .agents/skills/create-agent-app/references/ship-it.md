@@ -93,7 +93,11 @@ Until third-party publishing exists, a standalone app is used as a **local sourc
 the workspace's `agentapps.json`, relative to that file.
 
 ```json
-{ "apps": [{ "source": "./my-app" }] }
+{
+  "station": { "publicUrl": "http://localhost:4100" },
+  "cli": { "stationUrl": "http://localhost:4100" },
+  "apps": [{ "source": "./my-app" }]
+}
 ```
 
 ```bash

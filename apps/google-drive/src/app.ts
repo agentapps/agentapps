@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.drive',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Google Drive',
   description:
     'Manage Google Drive files and folders - upload, download, share, search, read content',

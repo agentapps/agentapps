@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.compliance-filter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "Compliance Filter",
   "description": "Scans messages for PII and blocks them before they reach the agent.",
   "tagline": "Blocks messages that carry personal data before they reach the agent",

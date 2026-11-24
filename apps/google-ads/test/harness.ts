@@ -50,7 +50,6 @@ beforeEach(() => {
   systemSecrets = {
     CLIENT_ID: 'fake-client-id.apps.googleusercontent.com',
     CLIENT_SECRET: 'fake-client-secret',
-    REDIRECT_URI: 'http://localhost:3000/auth/callback',
     DEVELOPER_TOKEN: 'fake-developer-token',
   };
   refresh.accessToken = 'fake-refreshed-token';

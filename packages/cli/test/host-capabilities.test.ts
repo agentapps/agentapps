@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { freePort, stationSettings } from './support/spawned.js';
 
 const repo = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..');
 const bin = join(repo, 'packages/cli/dist/bin.js');
@@ -17,12 +18,16 @@ describe('CLI Host Capabilities', () => {
   it.skipIf(!existsSync(bin))(
     '[HOSTCAP-AC-4] the CLI prints the markdown variant of a renderer output',
     { timeout: 60_000 },
-    () => {
+    async () => {
       const ws = mkdtempSync(join(tmpdir(), 'hostcap-cli-'));
+      const port = await freePort();
       try {
         writeFileSync(
           join(ws, 'agentapps.json'),
-          JSON.stringify({ apps: [{ source: join(repo, 'apps/todo-list') }] }),
+          JSON.stringify({
+            ...stationSettings(port),
+            apps: [{ source: join(repo, 'apps/todo-list') }],
+          }),
         );
         // HOME points at the temp dir so the user's global CLI config is untouched.
         const run = (...args: string[]) =>
@@ -31,6 +36,9 @@ describe('CLI Host Capabilities', () => {
             env: { ...process.env, HOME: ws, NO_COLOR: '1' },
             encoding: 'utf8',
           });
+        // The CLI is a client of the workspace's Station.
+        const started = run('station', 'start');
+        expect(started.status, `${started.stdout}${started.stderr}`).toBe(0);
         expect(run('install', 'app.todo-list', 'todo').status).toBe(0);
         expect(run('todo', 'tool', 'add-node', 'text:Comprar pan').status).toBe(0);
         const out = run('todo', 'tool', 'get-tree');
@@ -40,6 +48,10 @@ describe('CLI Host Capabilities', () => {
         expect(text).toContain('○ Comprar pan');
         expect(text).not.toContain('nodeId');
       } finally {
+        spawnSync(process.execPath, [bin, 'station', 'stop'], {
+          cwd: ws,
+          env: { ...process.env, HOME: ws, NO_COLOR: '1' },
+        });
         rmSync(ws, { recursive: true, force: true });
       }
     },

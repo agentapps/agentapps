@@ -1,7 +1,7 @@
 {
   "id": "app.homey",
   "name": "Homey",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Homey smart home controller — control devices, manage flows, and monitor your home via Athom Cloud API.",
   "tagline": "Control devices, run automations, and monitor energy on your Homey smart home hub",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

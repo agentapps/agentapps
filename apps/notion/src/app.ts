@@ -10,16 +10,23 @@ import { validateCredentials } from './lib/notion-client.js';
 import { NotionApiError } from './lib/notion-error.js';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not just wrapped in `factory`) so tests can compare `app.toManifest()`
+// with `agentapp.json`: the two describe the same app and must change together.
+export const app = createApp({
   id: 'app.notion',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Notion',
   description: 'Notion workspace - pages, databases, blocks, search, comments, file uploads',
+  tagline: 'Manage Notion pages, databases, and content',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'productivity',
   keywords: ['notion', 'notes', 'wiki', 'documentation', 'knowledge-base', 'databases'],
-  runtime: { type: 'stdio' },
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
+  runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: {
     type: 'oauth2',

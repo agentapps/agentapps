@@ -7,18 +7,28 @@
 import { createApp } from '@agentapps/sdk';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not just wrapped in `factory`) so tests can compare `app.toManifest()`
+// with `agentapp.json`: the two describe the same app and must change together.
+export const app = createApp({
   id: 'app.playwright',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Playwright',
   description:
     'Browser automation and web scraping via Playwright. Navigate, interact, take screenshots, and extract data from web pages.',
+  tagline: 'Automate browsers and scrape web pages with Playwright',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
+  icon: 'icon.svg',
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
   category: 'development',
   keywords: ['browser', 'playwright', 'automation', 'web', 'scraping', 'screenshot'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
   runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
+  permissions: { volume: true },
+  auth: { type: 'none' },
 });
 
 app.health(async (ctx) => {

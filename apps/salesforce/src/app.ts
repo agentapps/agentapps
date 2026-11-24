@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.salesforce',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Salesforce',
   description:
     'Salesforce CRM — manage accounts, contacts, opportunities, leads, cases, and run SOQL queries.',
@@ -21,7 +21,7 @@ const app = createApp({
     tokenUrl: 'https://login.salesforce.com/services/oauth2/token',
     scopes: ['api', 'refresh_token'],
     pkce: false,
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'INSTANCE_URL'],
   },
 });

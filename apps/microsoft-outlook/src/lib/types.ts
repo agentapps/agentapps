@@ -1,7 +1,6 @@
 export interface OutlookSecrets {
   CLIENT_ID?: string;
   CLIENT_SECRET?: string;
-  REDIRECT_URI?: string;
   ACCESS_TOKEN?: string;
   REFRESH_TOKEN?: string;
   EMAIL?: string;

@@ -135,14 +135,6 @@ advertising agreement. Demographic pivots that use Microsoft Bing location data
 
 | File | Source | Changes |
 |---|---|---|
-| assets/logo-mono.svg | The `[in]` bug in the header of [linkedin.com](https://www.linkedin.com/) (`nav-logo--inbug` icon, served from `https://static.licdn.com/aero-v1/sc/h/4zqr0f9jf98vi2nkijyc3bex2`, fetched 2026-10-17) | removed the two `fill="currentColor"` attributes; paths unchanged |
+| assets/logo.svg | the blue [in] symbol (`inbug-blue-48`) that <https://brand.linkedin.com/in-logo> carries inline | saved as a file of its own: the `<symbol>` became an `<svg>` with `xmlns` and `viewBox="0 0 48 48"` |
 
-TODO: no official colour logo that meets the rules (SVG, or PNG of at least 1024x1024) was found,
-so `assets/logo.svg` is not shipped. Searched: the LinkedIn Brand Guidelines download page
-(https://brand.linkedin.com/downloads): `in-logo.zip` has only PNGs (`LI-In-Bug.png` 635x540,
-`InBug-Black.png` and `InBug-White.png` 840x779) and `linkedin-logo.zip` only wordmark PNGs
-(2212x540); the brand logo page (https://brand.linkedin.com/linkedin-logo) shows PNG previews
-only; linkedin.com's favicon is a 16-24 px ICO, its web manifest has no icons and its header
-SVGs carry no colour (the page styles them). Recolouring the header SVG would be guesswork,
-which the logo rules forbid. LinkedIn's brand guidelines also ask for written permission for
-uses outside them, so a colour logo needs a human decision.
+TODO: record the official source of `assets/logo-mono.svg`. It was in the repository before this README existed and its origin was not written down. LinkedIn's [downloads](https://brand.linkedin.com/downloads) are PNG only.

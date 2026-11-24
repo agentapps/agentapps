@@ -76,11 +76,11 @@ System secrets (shared by every installation, set on the app id):
 ```bash
 agentapps config app.google.ads CLIENT_ID:"<oauth client id>"
 agentapps config app.google.ads CLIENT_SECRET:"<oauth client secret>"
-agentapps config app.google.ads REDIRECT_URI:"https://your-station.example.com/auth/callback"
 agentapps config app.google.ads DEVELOPER_TOKEN:"<developer token>"
 ```
 
-`REDIRECT_URI` is only needed when `agentapps.json` has no `station.publicUrl`.
+The redirect URI to register with the OAuth client is the Station's own,
+`{station URL}/auth/callback`; it is not a secret and is not configured here.
 
 Then install an instance and connect a Google account (installation secrets belong to the alias;
 `ACCESS_TOKEN`, `REFRESH_TOKEN`, `EMAIL` and `EXPIRY_DATE` are written by the OAuth flow, not

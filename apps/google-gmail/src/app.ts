@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.gmail',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Gmail',
   description:
     'Gmail email management — send, read, search, label, and filter emails via Google Gmail API.',
@@ -17,6 +17,8 @@ const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'google',
+    setup:
+      'To configure Gmail:\n  1. In the Google Cloud console (https://console.cloud.google.com/apis/credentials), create or pick a project and enable the Gmail API.\n  2. Create an OAuth client ID of type Web application.\n  3. Add this redirect URI to the client: {{redirectUri}}\n  4. Copy the client ID and the client secret.',
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',
     scopes: [
@@ -26,7 +28,7 @@ const app = createApp({
       'https://www.googleapis.com/auth/userinfo.email',
     ],
     pkce: false,
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
   },
 });

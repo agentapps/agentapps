@@ -1,8 +1,8 @@
 import { mkdirSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { dirname } from 'node:path';
 import type { AgentApp } from '@agentapps/sdk';
 
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, insideRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitMvTool(app: AgentApp) {
@@ -49,11 +49,12 @@ export function registerGitMvTool(app: AgentApp) {
         throw new Error('[GIT_INVALID_INPUT] Both `from` and `to` are required.');
       }
 
-      const absTo = resolve(repoPath, a.to);
+      insideRepo(repoPath, a.from, 'from');
+      const absTo = insideRepo(repoPath, a.to, 'to');
       mkdirSync(dirname(absTo), { recursive: true });
 
       const flags = a.force ? ['-f'] : [];
-      const result = runGit(repoPath, ['mv', ...flags, a.from, a.to]);
+      const result = runGit(repoPath, ['mv', ...flags, '--', a.from, a.to]);
       if (result.code !== 0) throwClassifiedGitError(result);
 
       return {

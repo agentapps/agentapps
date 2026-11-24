@@ -1,0 +1,43 @@
+{
+  "id": "app.metricool",
+  "name": "Metricool",
+  "version": "1.0.0",
+  "description": "Schedule social posts and drafts through a Metricool account, list and delete what is scheduled, and read analytics: metric timelines, published posts with their metrics and the best times to post.",
+  "tagline": "Schedule social posts and read analytics for the brands of a Metricool account",
+  "author": {
+    "name": "Pablo López Torres",
+    "email": "pablolopeztorres@gmail.com"
+  },
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
+  "terms": "https://agentapps.tech/terms",
+  "category": "marketing",
+  "keywords": [
+    "metricool",
+    "social media",
+    "scheduling",
+    "analytics",
+    "instagram",
+    "linkedin",
+    "x"
+  ],
+  "entrypoint": {
+    "type": "module",
+    "path": "src/app.ts",
+    "export": "factory"
+  },
+  "runtime": {
+    "transport": "stdio",
+    "command": "tsx",
+    "args": ["src/app.ts"]
+  },
+  "capabilities": {
+    "tools": true,
+    "health": true
+  },
+  "auth": {
+    "type": "api-key",
+    "installationSecrets": ["METRICOOL_USER_TOKEN", "METRICOOL_USER_ID"]
+  }
+}

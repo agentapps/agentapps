@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitRebaseTool(app: AgentApp) {
@@ -53,7 +53,7 @@ export function registerGitRebaseTool(app: AgentApp) {
         const flags: string[] = [];
         if (a.autosquash) flags.push('--autosquash');
         if (a.strategyOption) flags.push('-X', a.strategyOption);
-        argv = ['rebase', ...flags, a.onto];
+        argv = ['rebase', ...flags, positional(a.onto, 'onto')];
       }
 
       const result = runGit(repoPath, argv);

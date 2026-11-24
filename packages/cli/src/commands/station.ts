@@ -16,6 +16,7 @@ import {
   readStationMeta,
   stopDetachedStation,
 } from '../station-lifecycle.js';
+import { stationPublicUrl } from '../station-url.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
@@ -113,6 +114,7 @@ async function stationStart(
   configPath: string,
   port: number,
   stationUrl: string | undefined,
+  publicUrl: string | undefined,
 ): Promise<HandlerResult> {
   const portState = await detectPortState(port);
   if (portState === 'station') {
@@ -135,7 +137,7 @@ async function stationStart(
       },
     };
   }
-  return launchDetachedStation(configPath, port, stationUrl);
+  return launchDetachedStation(configPath, port, stationUrl, publicUrl);
 }
 
 async function stationRestart(
@@ -143,14 +145,21 @@ async function stationRestart(
   requestedPort: number | undefined,
   defaultPort: number,
   stationUrl: string | undefined,
+  publicUrl: string | undefined,
 ): Promise<HandlerResult> {
   // Prefer the port the station was already on unless one was explicitly given.
   const prev = readStationMeta(configPath);
   const port = requestedPort ?? prev?.port ?? defaultPort;
   await stopDetachedStation(configPath);
-  return launchDetachedStation(configPath, port, stationUrl);
+  return launchDetachedStation(configPath, port, stationUrl, publicUrl);
 }
 
+/**
+ * `station start|status|stop|restart`: the Station this workspace starts.
+ * These work with no Station running; they are how one comes to run.
+ *
+ * @spec CLIENT-REQ-7
+ */
 export async function handleStation(
   command: ReplCommand,
   context: HandlerContext,
@@ -173,8 +182,19 @@ export async function handleStation(
     case 'stop':
       return stationStop(configPath);
     case 'start':
-      return stationStart(configPath, defaultPort, command.stationUrl);
-    case 'restart':
-      return stationRestart(configPath, command.port, defaultPort, command.stationUrl);
+    case 'restart': {
+      // SETUP-REQ-11: checked before anything is started or stopped.
+      const publicUrl = stationPublicUrl(context.options, ctx.config);
+      if (typeof publicUrl !== 'string') return publicUrl;
+      return command.action === 'start'
+        ? stationStart(configPath, defaultPort, command.stationUrl, context.options.publicUrl)
+        : stationRestart(
+            configPath,
+            command.port,
+            defaultPort,
+            command.stationUrl,
+            context.options.publicUrl,
+          );
+    }
   }
 }

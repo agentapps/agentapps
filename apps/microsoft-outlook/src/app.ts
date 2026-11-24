@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.microsoft.outlook',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Outlook',
   description:
     'Microsoft Outlook email management — send, read, search, and organize emails via Microsoft Graph API.',
@@ -17,7 +17,7 @@ const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'microsoft',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',

@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.activecampaign',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'ActiveCampaign',
   description:
     'ActiveCampaign CRM and email marketing — manage contacts, lists, campaigns, deals, and tags via the v3 API.',

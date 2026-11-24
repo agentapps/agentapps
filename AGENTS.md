@@ -33,7 +33,18 @@ Logos are a sensitive branding element. **Never generate logos automatically or 
 | Field | Format | Requirements |
 |---|---|---|
 | `logo` | SVG (preferred) or PNG | If PNG, minimum 1024×1024. Real brand colors per the brand's guidelines |
-| `logoMono` | SVG only | Single color, no fills — the host recolors it freely (sidebar, dark mode, etc.) |
+| `logoMono` | SVG only | Single color, no fills — the host recolors it freely (sidebar, dark mode, etc.). A logo made of layers may keep them apart with tones of transparency (`fill-opacity`), none below 0.4 |
+
+### Agent Apps' own apps
+
+An app that is Agent Apps' own and not an outside brand's (Bash, Filesystem, Hello, Datetime, Compliance Filter, the stdio demo) has no press kit to take a logo from. Its logo follows one format, the one those apps share:
+
+- The hexagon: a cube seen from a corner, drawn as a thin outline, 24x24.
+- One solid face, the right one, as a rounded four-sided shape.
+- The app's symbol cut out of that face, so it shows as transparent, sheared to lie on the face (`$_` for Bash, a folder for Filesystem, a clock for Datetime).
+- One colour of the app's own for `logo`; the same drawing with `currentColor` for `logoMono`.
+
+Start from `apps/filesystem/assets/logo.svg`: keep the hexagon and the face and replace only the symbol. This is the one case where a logo is drawn rather than sourced, and it still needs the owner to ask for it. Record it in the README's Logos section like any other.
 
 ## Manifest Schema
 

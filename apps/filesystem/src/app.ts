@@ -10,7 +10,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.filesystem',
-  version: '2.0.0',
+  version: '2.0.1',
   name: 'Filesystem',
   description:
     'Filesystem operations: read, write, edit, patch, search (glob/grep), list, tree, stat, hash, copy, move, delete, and mkdir.',

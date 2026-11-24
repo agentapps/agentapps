@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.mailchimp',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'Mailchimp',
   description:
     'Mailchimp email marketing — manage audiences, campaigns, subscribers, templates, and automations.',

@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 // same app and must not be hand-edited out of sync with each other.
 export const app = createApp({
   id: 'app.microsoft.onedrive',
-  version: '1.0.2',
+  version: '1.1.0',
   name: 'OneDrive',
   description:
     'Microsoft OneDrive file management — browse, upload, download, organize, and share files via Microsoft Graph API.',
@@ -25,7 +25,7 @@ export const app = createApp({
   auth: {
     type: 'oauth2',
     provider: 'microsoft',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     tokenUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',

@@ -2,7 +2,15 @@
  * Tests for scaffolding logic: rendering, both modes, and the generated files.
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { safeParseAppManifest } from '@agentapps/protocol';
@@ -10,6 +18,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   copyTemplate,
   findRepoRoot,
+  oauthSetupInstructions,
   registerInExampleConfig,
   renderTemplate,
   scaffoldApp,
@@ -178,7 +187,8 @@ describe('scaffoldApp', () => {
     expect(manifest.auth).toEqual({
       type: 'oauth2',
       provider: 'google',
-      systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+      setup: oauthSetupInstructions('google'),
+      systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
       installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EXPIRY_DATE'],
       authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
       tokenUrl: 'https://oauth2.googleapis.com/token',
@@ -198,8 +208,38 @@ describe('scaffoldApp', () => {
       'test/harness.ts',
       'test/tools.test.ts',
     ]) {
-      expect(readFileSync(join(result.destDir, file), 'utf-8'), file).not.toMatch(/\{\{|\}\}/);
+      // No template placeholder is left; `{{redirectUri}}` of auth.setup is not one.
+      expect(
+        readFileSync(join(result.destDir, file), 'utf-8').replaceAll('{{redirectUri}}', ''),
+        file,
+      ).not.toMatch(/\{\{|\}\}/);
     }
+  });
+
+  it('[SETUP-AC-9] an oauth2 app has no REDIRECT_URI anywhere and declares setup with {{redirectUri}}', async () => {
+    const result = await scaffoldApp({
+      projectName: 'search-console',
+      appId: 'app.google.search-console',
+      cwd: tmpDir,
+      mode: 'standalone',
+      auth: 'oauth2',
+      provider: 'google',
+      scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
+      skipInstall: true,
+      skipGit: true,
+    });
+
+    const files = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+        entry.isDirectory() ? files(join(dir, entry.name)) : [join(dir, entry.name)],
+      );
+    for (const file of files(result.destDir)) {
+      expect(readFileSync(file, 'utf-8'), file).not.toContain('REDIRECT_URI');
+    }
+
+    const manifest = JSON.parse(readFileSync(join(result.destDir, 'agentapp.json'), 'utf-8'));
+    expect(manifest.auth.setup).toContain('{{redirectUri}}');
+    expect(safeParseAppManifest(manifest).success).toBe(true);
   });
 
   it('checks api-key system secrets in the client and documents them on the app id', async () => {

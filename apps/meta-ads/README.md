@@ -151,14 +151,9 @@ two years; this app pins v26.0 (released July 2026).
 
 ## Logos
 
-TODO: no logo shipped yet; `assets/logo.svg` and `assets/logo-mono.svg` are placeholders.
-Searched: the [Meta brand resource center](https://www.meta.com/brand/resources/meta/company-brand/)
-has the official Meta company lockup (four colour variants, including mono), but the download
-sits behind accepting Meta's brand terms, and the page says "All usage of the Meta logo
-requires approval" through Meta's Brand Review process, which a person at the company has to
-request. The meta.com site icon (`static.xx.fbcdn.net`, gradient symbol) is under the same
-terms, and the guidelines say the Meta logo must not stand for Facebook. Icon collections
-(Bootstrap Icons, logo aggregators) are not official sources. Next step: a person accepts the
-terms (or gets Brand Review approval), downloads the lockup zip from the brand page, and adds
-the primary symbol as `assets/logo.svg` and the mono symbol, with fills removed, as
-`assets/logo-mono.svg`.
+| File | Source | Changes |
+|---|---|---|
+| assets/logo.svg | the icon (`rel="icon"`) of www.meta.com, <https://static.xx.fbcdn.net/rsrc.php/yf/r/-7pQO6hUGK_.svg> | none |
+| assets/logo-mono.svg | the same file | removed the gradient definitions; every fill replaced by `currentColor` |
+
+Meta's [brand resources](https://www.meta.com/brand/resources/meta/company-brand/) publish the symbol only next to the wordmark, and say every use of the logo needs approval; nobody has asked.

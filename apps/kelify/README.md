@@ -40,6 +40,8 @@ matters to someone installing the app.
 
 ## Logos
 
+Changed on 2026-11-23, asked for by the project owner. `assets/logo.svg` and `assets/logo-mono.svg` were the icon with the name next to it. Both are now the icon alone: the same two paths, with the name's group left out and the `viewBox` set to the icon's bounds.
+
 TODO: record the official source of `assets/logo.svg` and `assets/logo-mono.svg` (Kelify's press
 kit, brand guidelines or its own site). They have been in the repository since before this
 README existed and their origin was not written down.

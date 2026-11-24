@@ -21,7 +21,6 @@ import {
   parseReplLine,
   parseReplTokens,
 } from '../src/repl-parser.js';
-import { SessionPool } from '../src/session-pool.js';
 import {
   addBinding,
   addInstallation,
@@ -44,9 +43,12 @@ import {
   setToolPermission,
   writeInstallationSecrets,
 } from '../src/state.js';
+import { StationClient } from '../src/station-client.js';
+import { StationSessions } from '../src/station-session.js';
 import { parseToolArgs } from '../src/tool-args.js';
-import { readCachedTools, writeCachedTools } from '../src/tools-cache.js';
+import { readCachedTools, writeCachedInstallations, writeCachedTools } from '../src/tools-cache.js';
 import type { CliContext, GlobalOptions, WorkspaceConfig } from '../src/types.js';
+import { startWorkspace, type TestWorkspace, writeApp } from './support/workspace.js';
 
 function makeCtx(tmpDir: string, config: WorkspaceConfig): CliContext {
   const configPath = join(tmpDir, 'agentapps.json');
@@ -156,14 +158,14 @@ describe('parseReplLine', () => {
   });
 
   it('parses alias tool command', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     const cmd = parseReplLine('hello tool greet name:World', { configPath, config, aliases: [] });
     expect(cmd).toEqual({ type: 'tool', alias: 'hello', toolName: 'greet', args: ['name:World'] });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('parses alias tool command without explicit tool keyword', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     const cmd = parseReplLine('hello greet name:World count:3', {
       configPath,
       config,
@@ -175,29 +177,29 @@ describe('parseReplLine', () => {
       toolName: 'greet',
       args: ['name:World', 'count:3'],
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('treats a bare alias as info', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     expect(parseReplLine('hello', { configPath, config, aliases: [] })).toEqual({
       type: 'info',
       alias: 'hello',
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('treats alias tool without a name as tools', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     expect(parseReplLine('hello tool', { configPath, config, aliases: [] })).toEqual({
       type: 'tools',
       alias: 'hello',
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('preserves reserved subcommands after alias', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     expect(parseReplLine('hello tools', { configPath, config, aliases: [] })).toEqual({
       type: 'tools',
       alias: 'hello',
@@ -212,11 +214,11 @@ describe('parseReplLine', () => {
       eventTypes: ['event.a'],
       unsubscribe: false,
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('parses auth logout and reauth subcommands', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     expect(parseReplLine('hello auth logout', { configPath, config, aliases: [] })).toEqual({
       type: 'auth',
       alias: 'hello',
@@ -231,7 +233,7 @@ describe('parseReplLine', () => {
       type: 'unknown',
       token: 'auth bogus',
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('parses policy subcommands', () => {
@@ -298,15 +300,17 @@ describe('parseReplLine', () => {
       type: 'key-create',
       name: 'my-key',
       userId: 'pablo',
-      workspaceId: undefined,
     });
-    expect(parseReplLine('key create my-key pablo ws-1', opts)).toEqual({
+    // STADMIN-REQ-8: the role is a word, `role:<role>`, not a flag.
+    expect(parseReplLine('key create ana u1 role:workspace-owner', opts)).toEqual({
       type: 'key-create',
-      name: 'my-key',
-      userId: 'pablo',
-      workspaceId: 'ws-1',
+      name: 'ana',
+      userId: 'u1',
+      role: 'workspace-owner',
     });
-    expect(parseReplLine('key create my-key', opts).type).toBe('unknown');
+    expect(parseReplLine('key create ana u1 role:boss', opts).type).toBe('usage');
+    expect(parseReplLine('key create ana u1 ws-1', opts).type).toBe('usage');
+    expect(parseReplLine('key create my-key', opts).type).toBe('usage');
     expect(parseReplLine('key revoke ak_1', opts)).toEqual({
       type: 'key-revoke',
       keyId: 'ak_1',
@@ -384,7 +388,7 @@ describe('parseReplTokens', () => {
   });
 
   it('preserves pre-tokenized args with spaces (one-shot mode)', () => {
-    addInstallation(configPath, 'perplexity', 'app.perplexity');
+    writeCachedInstallations(configPath, [{ alias: 'perplexity', appId: 'app.perplexity' }]);
     const cmd = parseReplTokens(['perplexity', 'tool', 'search', 'query:osos polares'], {
       configPath,
       config,
@@ -396,11 +400,11 @@ describe('parseReplTokens', () => {
       toolName: 'search',
       args: ['query:osos polares'],
     });
-    removeInstallation(configPath, 'perplexity');
+    writeCachedInstallations(configPath, []);
   });
 
   it('preserves inline JSON with spaces (one-shot mode)', () => {
-    addInstallation(configPath, 'perplexity', 'app.perplexity');
+    writeCachedInstallations(configPath, [{ alias: 'perplexity', appId: 'app.perplexity' }]);
     const cmd = parseReplTokens(['perplexity', 'tool', 'search', '{"query":"osos polares"}'], {
       configPath,
       config,
@@ -412,7 +416,7 @@ describe('parseReplTokens', () => {
       toolName: 'search',
       args: ['{"query":"osos polares"}'],
     });
-    removeInstallation(configPath, 'perplexity');
+    writeCachedInstallations(configPath, []);
   });
 
   it('handles top-level commands identically to parseReplLine', () => {
@@ -421,7 +425,7 @@ describe('parseReplTokens', () => {
   });
 
   it('handles shorthand tool invocation with spaced args', () => {
-    addInstallation(configPath, 'hello', 'app.hello');
+    writeCachedInstallations(configPath, [{ alias: 'hello', appId: 'app.hello' }]);
     const cmd = parseReplTokens(['hello', 'greet', 'name:hello world'], {
       configPath,
       config,
@@ -433,7 +437,7 @@ describe('parseReplTokens', () => {
       toolName: 'greet',
       args: ['name:hello world'],
     });
-    removeInstallation(configPath, 'hello');
+    writeCachedInstallations(configPath, []);
   });
 
   it('config command includes third token in args', () => {
@@ -475,7 +479,7 @@ describe('getCompletions', () => {
   beforeEach(() => {
     tmpDir = mkdtempSync(join(tmpdir(), 'agentapps-cli-completions-'));
     ctx = makeCtx(tmpDir, config);
-    addInstallation(ctx.configPath, 'gh', 'app.github');
+    writeCachedInstallations(ctx.configPath, [{ alias: 'gh', appId: 'app.github' }]);
   });
 
   afterEach(() => {
@@ -954,21 +958,17 @@ describe('renderers', () => {
 describe('command handlers', () => {
   let tmpDir: string;
   let ctx: CliContext;
+  let workspace: TestWorkspace;
 
-  beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'agentapps-cli-cmd-'));
-    const configPath = join(tmpDir, 'agentapps.json');
-    const config: WorkspaceConfig = {
-      apps: {
-        hello: { source: resolve(__dirname, '../../../apps/hello') },
-      },
-    };
-    writeFileSync(configPath, JSON.stringify(config), 'utf8');
-    ctx = { cwd: tmpDir, config, configPath };
+  beforeEach(async () => {
+    // The workspace's Station, as `serve` builds it: every command is its client.
+    workspace = await startWorkspace({ sources: [resolve(__dirname, '../../../apps/hello')] });
+    tmpDir = workspace.dir;
+    ctx = workspace.ctx();
   });
 
-  afterEach(() => {
-    rmSync(tmpDir, { recursive: true, force: true });
+  afterEach(async () => {
+    await workspace.stop();
   });
 
   it('apps returns apps', async () => {
@@ -1003,7 +1003,7 @@ describe('command handlers', () => {
   });
 
   it('[CLI-AC-2] a successful tool call prints only its result unless --verbose', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const call = (toolName: string, verbose: boolean) =>
       dispatchCommand(
         { type: 'tool', alias: 'hello', toolName, args: ['name:Pablo'] },
@@ -1025,7 +1025,7 @@ describe('command handlers', () => {
 
   it('install records an instance', async () => {
     const result = await dispatchCommand(
-      { type: 'install', appId: 'hello', alias: 'hello' },
+      { type: 'install', appId: 'app.hello', alias: 'hello' },
       { ctx, options: defaultOptions() },
     );
     expect(result.exitCode).toBe(0);
@@ -1033,7 +1033,7 @@ describe('command handlers', () => {
   });
 
   it('instances shows installed apps', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const result = await dispatchCommand(
       { type: 'installations' },
       { ctx, options: defaultOptions() },
@@ -1042,7 +1042,7 @@ describe('command handlers', () => {
   });
 
   it('tools lists tools for an instance', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const result = await dispatchCommand(
       { type: 'tools', alias: 'hello' },
       { ctx, options: defaultOptions() },
@@ -1052,7 +1052,7 @@ describe('command handlers', () => {
   });
 
   it('tool invokes a tool', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const result = await dispatchCommand(
       { type: 'tool', alias: 'hello', toolName: 'greet', args: ['name:World'] },
       { ctx, options: defaultOptions() },
@@ -1061,25 +1061,27 @@ describe('command handlers', () => {
     expect(result.success).toBe(true);
   });
 
-  it('session pool reuses one session per alias and reopens after release', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
-    const pool = new SessionPool();
+  it('kept sessions: one per alias, reopened after release', async () => {
+    const { installationId } = addInstallation(ctx.configPath, 'hello', 'app.hello');
+    const station = StationClient.for(ctx) as StationClient;
+    const pool = new StationSessions();
     try {
-      const first = await pool.acquire('hello', 'hello', ctx);
-      const again = await pool.acquire('hello', 'hello', ctx);
+      const first = await pool.acquire(station, 'hello', installationId);
+      const again = await pool.acquire(station, 'hello', installationId);
       expect(again).toBe(first);
 
       await pool.release('hello');
-      const reopened = await pool.acquire('hello', 'hello', ctx);
+      const reopened = await pool.acquire(station, 'hello', installationId);
       expect(reopened).not.toBe(first);
+      expect(reopened.id).not.toBe(first.id);
     } finally {
       await pool.closeAll();
     }
   });
 
   it('tool command reuses a pooled session across invocations', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
-    const sessions = new SessionPool();
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
+    const sessions = new StationSessions();
     try {
       const first = await dispatchCommand(
         { type: 'tool', alias: 'hello', toolName: 'greet', args: ['name:World'] },
@@ -1097,37 +1099,36 @@ describe('command handlers', () => {
   });
 
   it('install hints about missing system secrets', async () => {
-    const appSource = join(tmpDir, 'secret-app');
-    mkdirSync(join(appSource, 'dist'), { recursive: true });
-    writeFileSync(
-      join(appSource, 'agentapp.json'),
-      JSON.stringify({
-        id: 'secret-app',
+    const appSource = writeApp(
+      join(tmpDir, 'secret-app'),
+      {
+        id: 'app.secret',
         version: '1.0.0',
         auth: { type: 'api-key', systemSecrets: ['APIKEY', 'SECRET'] },
-      }),
+      },
+      'export function factory() {}',
     );
-    writeFileSync(join(appSource, 'dist', 'app.js'), 'export function factory() {}');
-
-    const configWithSecretApp: WorkspaceConfig = {
-      apps: { 'secret-app': { source: appSource } },
-    };
-    const secretCtx = makeCtx(tmpDir, configWithSecretApp);
+    // The Station Operator makes the App available; then it is installed.
+    const added = await dispatchCommand(
+      { type: 'station-apps', action: 'add', target: appSource },
+      { ctx, options: defaultOptions() },
+    );
+    expect(added.error).toBeUndefined();
 
     const result = await dispatchCommand(
-      { type: 'install', appId: 'secret-app', alias: 'mysecret' },
-      { ctx: secretCtx, options: defaultOptions() },
+      { type: 'install', appId: 'app.secret', alias: 'mysecret' },
+      { ctx, options: defaultOptions() },
     );
     expect(result.exitCode).toBe(0);
     expect(result.success).toBe(true);
     expect(result.data?.hint).toContain('Missing system secrets');
     expect(result.data?.hint).toContain('APIKEY');
     expect(result.data?.hint).toContain('SECRET');
-    expect(result.data?.hint).toContain('agentapps config secret-app');
+    expect(result.data?.hint).toContain('agentapps config app.secret');
   });
 
   it('uninstall removes an instance', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const result = await dispatchCommand(
       { type: 'uninstall', alias: 'hello' },
       { ctx, options: { ...defaultOptions(), yes: true } },
@@ -1232,14 +1233,14 @@ describe('command handlers', () => {
   });
 
   it('warm caches tools for all installed apps', async () => {
-    addInstallation(ctx.configPath, 'hello', 'hello');
+    addInstallation(ctx.configPath, 'hello', 'app.hello');
     const result = await dispatchCommand({ type: 'warm' }, { ctx, options: defaultOptions() });
     expect(result.exitCode).toBe(0);
     expect(result.success).toBe(true);
     expect(result.message).toContain('warmed');
     expect(result.message).toContain('cached');
     // The cache should now contain tools from the hello app.
-    const cached = readCachedTools(ctx.configPath, 'hello');
+    const cached = readCachedTools(ctx.configPath, 'app.hello');
     expect(cached.length).toBeGreaterThan(0);
   });
 
@@ -1404,15 +1405,22 @@ describe('Permission state', () => {
 describe('Permission commands', () => {
   let tmpDir: string;
   let ctx: CliContext;
+  let workspace: TestWorkspace;
 
-  beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), 'cli-perm-cmd-'));
-    const config = { apps: { 'app.test': { source: 'npm:app.test' } } };
-    ctx = makeCtx(tmpDir, config);
+  beforeEach(async () => {
+    const first = await startWorkspace();
+    await first.stop();
+    tmpDir = first.dir;
+    const source = writeApp(join(tmpDir, 'app.test'), { id: 'app.test', version: '1.0.0' });
+    workspace = await startWorkspace({ dir: tmpDir, sources: [source] });
+    ctx = workspace.ctx();
     addInstallation(ctx.configPath, 'myapp', 'app.test');
   });
 
-  afterEach(() => rmSync(tmpDir, { recursive: true, force: true }));
+  afterEach(async () => {
+    await workspace.stop();
+    rmSync(tmpDir, { recursive: true, force: true });
+  });
 
   it('permissions-set stores a per-tool override', async () => {
     const result = await dispatchCommand(

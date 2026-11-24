@@ -1,24 +1,42 @@
 /**
  * @agentapps/cli — config command.
  *
- * Configure secrets:
- *   - `config <appId> KEY:value`  — system secrets, stored per-app in
- *     `.secrets/apps/<appId>.json`, shared by all instances of that app.
- *   - `config <alias> KEY:value`  — installation secrets for an installed instance,
- *     stored in `.agentapps/installation-secrets/<installationId>.json`.
+ * Sets and removes secrets through the Station:
+ *   - `config <appId> KEY:value …`   system secrets of an App, shared by its
+ *     Installations; the Station Operator's to set.
+ *   - `config <alias> KEY:value …`   secrets of one Installation.
+ *   - `config <appId|alias> unset KEY …` removes them.
+ *
+ * With no values, it prints the App's setup instructions and asks for each
+ * declared secret. The CLI never reads or writes where secrets are kept.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { resolveSourcePath } from '../config.js';
-import { InstallationSecretsStore } from '../host.js';
-import { appSecretsPath, saveAppSecrets } from '../secrets-store.js';
-import { getInstallation, instanceSecretsPath } from '../state.js';
+import { promptSecrets } from '../secret-prompt.js';
+import { fetchSetupInstructions } from '../setup-instructions.js';
+import { isResult, type StationClient, StationError, stationOf } from '../station-client.js';
+import { findInstallation, type InstallationInfo } from '../station-session.js';
 import type { HandlerResult, ReplCommand } from '../types.js';
 import type { HandlerContext } from './types.js';
 
-const MANIFEST_NAME = 'agentapp.json';
+/** The redirect URI is the Station's, never a secret of an App (SETUP-REQ-8). */
+const REDIRECT_URI_KEY = 'REDIRECT_URI';
 
+interface AppInfo {
+  id: string;
+  auth: { systemSecrets: string[]; installationSecrets: string[]; hasSetup: boolean };
+}
+
+interface Change {
+  set: string[];
+  removed: string[];
+  notSet: string[];
+}
+
+/**
+ * @spec STADMIN-REQ-6
+ * @spec STADMIN-REQ-10
+ * @spec SETUP-REQ-5
+ */
 export async function handleConfig(
   command: ReplCommand,
   context: HandlerContext,
@@ -31,210 +49,50 @@ export async function handleConfig(
     };
   }
 
-  const { appId, args } = command;
-  const { ctx } = context;
-  const entry = ctx.config.apps[appId];
+  const { appId: target, args } = command;
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  if (!entry) {
-    // Not an app id — maybe an installed instance alias (installation secrets).
-    const instance = getInstallation(ctx.configPath, appId);
+  try {
+    const { apps } = await station.api<{ apps: AppInfo[] }>('GET', '/api/apps');
+    const app = apps.find((a) => a.id === target);
+    if (app) return await systemSecrets(station, app, args, context);
+
+    // Not an App id — maybe the alias of an Installation.
+    const instance = await findInstallation(station, target);
     if (instance) {
-      return handleUserSecrets(
-        instance.alias,
-        instance.installationId,
-        instance.appId,
-        args,
-        context,
-      );
+      const declared = apps.find((a) => a.id === instance.appId)?.auth.installationSecrets ?? [];
+      return await installationSecrets(station, instance, declared, args, context);
     }
     return {
       success: false,
       exitCode: 2,
       error: {
-        message: `App or Installation not found: ${appId}`,
+        message: `App or Installation not found: ${target}`,
         suggestion: 'Run "apps" to see available apps, or "installations" for installed apps.',
       },
     };
+  } catch (err) {
+    return station.failure(err);
   }
-
-  const source = resolveSourcePath(ctx.configPath, entry.source);
-  const manifest = readManifest(source);
-  const expectedKeys = getSystemSecretKeys(manifest);
-
-  if (expectedKeys.length === 0) {
-    return {
-      success: true,
-      exitCode: 0,
-      message: `App ${appId} does not declare any system secrets.`,
-    };
-  }
-
-  const parsed = parseConfigArgs(args);
-  if (parsed.error) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: parsed.error },
-    };
-  }
-
-  let provided = parsed.values;
-
-  if (Object.keys(provided).length === 0) {
-    // Interactive mode: prompt for all expected keys.
-    provided = await promptSecrets(expectedKeys, context.input, context.output);
-  } else {
-    // Explicit mode: validate key names but allow partial updates (merge with existing).
-    const unknown = Object.keys(provided).filter((k) => !expectedKeys.includes(k));
-    if (unknown.length > 0) {
-      return {
-        success: false,
-        exitCode: 2,
-        error: {
-          message: `Unexpected secret(s): ${unknown.join(', ')}`,
-          suggestion: `Expected keys: ${expectedKeys.join(', ')}`,
-        },
-      };
-    }
-  }
-
-  saveAppSecrets(ctx.configPath, appId, provided);
-
-  return {
-    success: true,
-    exitCode: 0,
-    message: `Configured ${Object.keys(provided).length} system secret(s) for ${appId}`,
-    data: {
-      appId,
-      keys: Object.keys(provided),
-      path: appSecretsPath(ctx.configPath, appId),
-    },
-  };
 }
 
-/** Configure installation secrets for an installed instance (alias). */
-async function handleUserSecrets(
-  alias: string,
-  installationId: string,
-  appId: string,
+/** What the arguments ask for: keys to remove, or values to set. */
+function parseArgs(
   args: string[],
-  context: HandlerContext,
-): Promise<HandlerResult> {
-  const { ctx } = context;
-  const entry = ctx.config.apps[appId];
-  if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: `App configuration missing for ${appId} (Installation ${alias})` },
-    };
+): { unset: string[] } | { values: Record<string, string> } | { error: string } {
+  if (args[0] === 'unset') {
+    const keys = args.slice(1);
+    if (keys.length === 0) return { error: 'Name at least one secret to remove: unset <KEY>' };
+    const withValue = keys.find((k) => k.includes(':'));
+    if (withValue) return { error: `unset takes names, not values: ${withValue}` };
+    return { unset: keys };
   }
-
-  const source = resolveSourcePath(ctx.configPath, entry.source);
-  const manifest = readManifest(source);
-  const expectedKeys = getUserSecretKeys(manifest);
-
-  if (expectedKeys.length === 0) {
-    return {
-      success: true,
-      exitCode: 0,
-      message: `App ${appId} does not declare any installation secrets.`,
-    };
-  }
-
-  const parsed = parseConfigArgs(args);
-  if (parsed.error) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: parsed.error },
-    };
-  }
-
-  let provided = parsed.values;
-
-  if (Object.keys(provided).length === 0) {
-    provided = await promptSecrets(expectedKeys, context.input, context.output);
-  } else {
-    const unknown = Object.keys(provided).filter((k) => !expectedKeys.includes(k));
-    if (unknown.length > 0) {
-      return {
-        success: false,
-        exitCode: 2,
-        error: {
-          message: `Unexpected Installation secret(s): ${unknown.join(', ')}`,
-          suggestion: `Expected keys: ${expectedKeys.join(', ')}`,
-        },
-      };
-    }
-  }
-
-  // Sessions resolve installation secrets by installationId — never key this by alias.
-  new InstallationSecretsStore(ctx.configPath, installationId).merge(provided);
-
-  return {
-    success: true,
-    exitCode: 0,
-    message: `Configured ${Object.keys(provided).length} Installation secret(s) for ${alias} (${appId})`,
-    data: {
-      alias,
-      appId,
-      keys: Object.keys(provided),
-      path: instanceSecretsPath(ctx.configPath, installationId),
-    },
-  };
-}
-
-function getUserSecretKeys(manifest: Record<string, unknown> | undefined): string[] {
-  if (!manifest) return [];
-  const auth = manifest.auth as Record<string, unknown> | undefined;
-  if (!auth) return [];
-  const installationSecrets = auth.installationSecrets;
-  if (!Array.isArray(installationSecrets)) return [];
-  return installationSecrets.filter((k): k is string => typeof k === 'string');
-}
-
-function readManifest(sourcePath: string): Record<string, unknown> | undefined {
-  const manifestPath = join(sourcePath, MANIFEST_NAME);
-  if (!existsSync(manifestPath)) return undefined;
-  try {
-    const raw = readFileSync(manifestPath, 'utf8');
-    return JSON.parse(raw) as Record<string, unknown>;
-  } catch {
-    return undefined;
-  }
-}
-
-/** Infrastructure secrets accepted for any app with OAuth auth. */
-const OAUTH_INFRA_KEYS = ['REDIRECT_URI'];
-
-function getSystemSecretKeys(manifest: Record<string, unknown> | undefined): string[] {
-  if (!manifest) return [];
-  const auth = manifest.auth as Record<string, unknown> | undefined;
-  if (!auth) return [];
-  const systemSecrets = auth.systemSecrets;
-  if (!Array.isArray(systemSecrets)) return [];
-  const keys = systemSecrets.filter((k): k is string => typeof k === 'string');
-  // For OAuth apps, also accept infrastructure keys (REDIRECT_URI, etc.)
-  if (auth.type === 'oauth2' || auth.provider) {
-    for (const k of OAUTH_INFRA_KEYS) {
-      if (!keys.includes(k)) keys.push(k);
-    }
-  }
-  return keys;
-}
-
-interface ParsedConfigArgs {
-  values: Record<string, string>;
-  error?: string;
-}
-
-function parseConfigArgs(args: string[]): ParsedConfigArgs {
   const values: Record<string, string> = {};
   for (const arg of args) {
     const colonIndex = arg.indexOf(':');
     if (colonIndex === -1) {
-      return { values, error: `Invalid secret argument (expected key:value): ${arg}` };
+      return { error: `Invalid secret argument (expected key:value): ${arg}` };
     }
     const key = arg.slice(0, colonIndex);
     let value = arg.slice(colonIndex + 1);
@@ -250,99 +108,133 @@ function parseConfigArgs(args: string[]): ParsedConfigArgs {
   return { values };
 }
 
-async function promptSecrets(
-  keys: string[],
-  input?: NodeJS.ReadableStream,
-  output?: NodeJS.WritableStream,
-): Promise<Record<string, string>> {
-  const stdin = input ?? process.stdin;
-  const stdout = output ?? process.stdout;
-  const result: Record<string, string> = {};
+/** The result of removing secrets. @spec STADMIN-REQ-10 */
+function removedResult(of: string, change: Change, data: Record<string, string>): HandlerResult {
+  const parts = [
+    ...(change.removed.length > 0 ? [`Removed ${change.removed.join(', ')} from ${of}`] : []),
+    ...(change.notSet.length > 0
+      ? [`${change.notSet.join(', ')} ${change.notSet.length === 1 ? 'was' : 'were'} not set`]
+      : []),
+  ];
+  return {
+    success: true,
+    exitCode: 0,
+    message: parts.join('; '),
+    data: { ...data, removed: change.removed },
+  };
+}
 
-  for (const key of keys) {
-    const value = await promptSecret(stdin, stdout, key);
-    if (value) result[key] = value;
+/** The result for a secret the Station refused because the App does not declare it. */
+function unexpectedSecret(err: unknown, what: string): HandlerResult | undefined {
+  if (!(err instanceof StationError) || err.code !== 'UNEXPECTED_SECRET') return undefined;
+  const unexpected = (err.body.unexpected as string[]) ?? [];
+  const expected = `Expected keys: ${((err.body.expected as string[]) ?? []).join(', ')}`;
+  return {
+    success: false,
+    exitCode: 2,
+    error: {
+      message: `Unexpected ${what}(s): ${unexpected.join(', ')}`,
+      // SETUP-REQ-8
+      suggestion: unexpected.includes(REDIRECT_URI_KEY)
+        ? `${expected}\nThe redirect URI is not a secret: the Station supplies it.`
+        : expected,
+    },
+  };
+}
+
+/** `config <appId> …`: the system secrets of an App. */
+async function systemSecrets(
+  station: StationClient,
+  app: AppInfo,
+  args: string[],
+  context: HandlerContext,
+): Promise<HandlerResult> {
+  const path = `/api/apps/${encodeURIComponent(app.id)}/secrets`;
+  const parsed = parseArgs(args);
+  if ('error' in parsed) return { success: false, exitCode: 2, error: { message: parsed.error } };
+
+  if ('unset' in parsed) {
+    const change = await station.api<Change>('PUT', path, { unset: parsed.unset });
+    return removedResult(app.id, change, { appId: app.id });
   }
 
-  return result;
-}
-
-interface TtyLikeReadable extends NodeJS.ReadableStream {
-  isTTY?: boolean;
-  setRawMode(mode: boolean): void;
-  resume(): this;
-  setEncoding(encoding: string): this;
-  on(event: 'data', listener: (data: Buffer) => void): this;
-  off(event: 'data', listener: (data: Buffer) => void): this;
-}
-
-interface TtyLikeWritable extends NodeJS.WritableStream {
-  isTTY?: boolean;
-}
-
-function promptSecret(
-  stdin: NodeJS.ReadableStream,
-  stdout: NodeJS.WritableStream,
-  key: string,
-): Promise<string> {
-  return new Promise((resolve) => {
-    const stdinTty = stdin as TtyLikeReadable;
-    const stdoutTty = stdout as TtyLikeWritable;
-    const isTTY = stdinTty.isTTY && stdoutTty.isTTY;
-
-    stdout.write(`Enter ${key}: `);
-
-    if (!isTTY) {
-      readlineFor(stdin, stdout).then((rl) => {
-        rl.question('', (answer) => {
-          rl.close();
-          resolve(answer.trim());
-        });
-      });
-      return;
-    }
-
-    stdinTty.setRawMode(true);
-    stdinTty.resume();
-    stdinTty.setEncoding('utf8');
-
-    let value = '';
-    const onData = (data: Buffer) => {
-      const str = data.toString('utf8');
-      for (const ch of str) {
-        if (ch === '\n' || ch === '\r') {
-          stdinTty.off('data', onData);
-          stdinTty.setRawMode(false);
-          stdout.write('\n');
-          resolve(value);
-          return;
-        }
-        if (ch === '\u0003') {
-          stdinTty.off('data', onData);
-          stdinTty.setRawMode(false);
-          stdout.write('\n');
-          process.exit(130);
-        }
-        if (ch === '\u007f') {
-          if (value.length > 0) {
-            value = value.slice(0, -1);
-            stdout.write('\b \b');
-          }
-          continue;
-        }
-        value += ch;
-        stdout.write('*');
-      }
+  const expectedKeys = app.auth.systemSecrets;
+  if (expectedKeys.length === 0 && Object.keys(parsed.values).length === 0) {
+    return {
+      success: true,
+      exitCode: 0,
+      message: `App ${app.id} does not declare any system secrets.`,
     };
-    stdinTty.on('data', onData);
-  });
+  }
+
+  let provided = parsed.values;
+  if (Object.keys(provided).length === 0) {
+    // Interactive mode: the App's setup instructions first, then a prompt per key.
+    // SETUP-REQ-5: the Station resolves them.
+    if (app.auth.hasSetup) {
+      const instructions = await fetchSetupInstructions(station, app.id);
+      if (instructions) (context.output ?? process.stdout).write(`${instructions}\n\n`);
+    }
+    provided = await promptSecrets(expectedKeys, context.input, context.output);
+  }
+
+  try {
+    const change = await station.api<Change>('PUT', path, { set: provided });
+    return {
+      success: true,
+      exitCode: 0,
+      message: `Configured ${change.set.length} system secret(s) for ${app.id}`,
+      data: { appId: app.id, keys: change.set },
+    };
+  } catch (err) {
+    const refused = unexpectedSecret(err, 'secret');
+    if (refused) return refused;
+    throw err;
+  }
 }
 
-async function readlineFor(
-  input: NodeJS.ReadableStream,
-  output: NodeJS.WritableStream,
-): Promise<import('node:readline').Interface> {
-  // Dynamic import avoids loading readline at module init when it is not needed.
-  const { createInterface } = await import('node:readline');
-  return createInterface({ input, output });
+/** `config <alias> …`: the secrets of one Installation. */
+async function installationSecrets(
+  station: StationClient,
+  instance: InstallationInfo,
+  expectedKeys: string[],
+  args: string[],
+  context: HandlerContext,
+): Promise<HandlerResult> {
+  const { alias, appId } = instance;
+  const path = `/api/installations/${encodeURIComponent(instance.installationId)}/secrets`;
+  const parsed = parseArgs(args);
+  if ('error' in parsed) return { success: false, exitCode: 2, error: { message: parsed.error } };
+
+  if ('unset' in parsed) {
+    const change = await station.api<Change>('PUT', path, { unset: parsed.unset });
+    return removedResult(alias, change, { alias, appId });
+  }
+
+  if (expectedKeys.length === 0) {
+    return {
+      success: true,
+      exitCode: 0,
+      message: `App ${appId} does not declare any installation secrets.`,
+    };
+  }
+
+  const provided =
+    Object.keys(parsed.values).length === 0
+      ? await promptSecrets(expectedKeys, context.input, context.output)
+      : parsed.values;
+
+  try {
+    const change = await station.api<Change>('PUT', path, { set: provided });
+    return {
+      success: true,
+      exitCode: 0,
+      message: `Configured ${change.set.length} Installation secret(s) for ${alias} (${appId})`,
+      data: { alias, appId, keys: change.set },
+    };
+  } catch (err) {
+    const refused = unexpectedSecret(err, 'Installation secret');
+    if (refused) return refused;
+    throw err;
+  }
 }

@@ -7,7 +7,7 @@ import { registerTools } from './tools/index.js';
 export const app = createApp({
   id: 'app.google.ads',
   name: 'Google Ads',
-  version: '1.0.1',
+  version: '1.1.0',
   description:
     'Google Ads API (REST, v26): list the accounts a Google user can reach (including through manager accounts), report on account, campaign, ad group, ad, keyword and search term performance, run read-only GAQL queries, pause or enable campaigns and ad groups, change campaign budgets and add negative keywords. Writes that can spend money are marked destructive.',
   tagline: 'Report on Google Ads performance and manage campaigns, budgets and negative keywords',
@@ -48,7 +48,7 @@ export const app = createApp({
     // Must stay "google": the host only asks Google for offline access (a refresh token)
     // when the provider is named google.
     provider: 'google',
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI', 'DEVELOPER_TOKEN'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'DEVELOPER_TOKEN'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'EMAIL', 'EXPIRY_DATE'],
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',

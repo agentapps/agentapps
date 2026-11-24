@@ -1,5 +1,24 @@
 # @agentapps/sdk
 
+## 0.3.0
+
+### Minor Changes
+
+- The CLI is a client of one Station. Every command talks to the Station at `cli.stationUrl`; nothing runs an app inside the command any more, so a tool called from the terminal and the same tool called from Claude Code take the same path, under the same Policy. A Station that is not running is said plainly, and the interactive mode offers to start it.
+
+  New commands: `station use <url>`, `station login`, `station logout`, `station apps [add <source|app-id> | remove <app-id>]`, `config <app-id|alias> unset <KEY>`, and `key create <name> <userId> role:<role>`.
+
+  **Breaking.** A workspace config needs `station.id`, `station.publicUrl`, `cli.stationUrl` and `workspace.id`; a config the CLI creates has them. `install` no longer adds an app that is not available: add it first with `station apps add`. `REDIRECT_URI` is no longer a secret of any app: the Station supplies the redirect URI, and `config` shows it with the app's setup instructions (`auth.setup` in the manifest). The `PUBLIC_URL` environment variable is no longer read.
+
+  **Breaking for embedders.** `StationServer` requires `publicUrl`, `stationId`, `workspaceId`, `secretStore` and `dataStore`; `secrets`, `documentStore`, `objectStore`, `volumesBasePath` and `stationSecret` are gone, and so is `SecretsManager`. `@agentapps/station` ships `LocalSecretStore`, `LocalDataStore`, in-memory ones for tests and a contract suite for each.
+
+  API Keys carry a role (`station-operator`, `workspace-owner`, `workspace-member`), and the Station has operations for its own state under `/api`. The Station refreshes OAuth tokens itself, also for calls that come through a Gateway.
+
+### Patch Changes
+
+- Updated dependencies
+  - @agentapps/protocol@0.3.0
+
 ## 0.2.5
 
 ### Patch Changes

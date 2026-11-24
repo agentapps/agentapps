@@ -6,11 +6,9 @@
  *   <alias> info      — inspect an installed instance (includes auth + tool count)
  */
 
-import { getAuthInfo } from '../auth-helper.js';
-import { resolveSourcePath, sourceMetadata } from '../config.js';
-import { resolveApp } from '../resolve.js';
-import { openAppSession } from '../session.js';
-import { getInstallation } from '../state.js';
+import { sourceMetadata } from '../config.js';
+import { isResult, StationError, stationOf } from '../station-client.js';
+import { findInstallation, withSession } from '../station-session.js';
 import type { HandlerResult, ReplCommand, ResultValue } from '../types.js';
 import type { HandlerContext } from './types.js';
 
@@ -54,14 +52,9 @@ export async function handleInfo(
     };
   }
 
-  let manifest: Record<string, unknown> | undefined;
-  try {
-    const app = await resolveApp(appId, resolveSourcePath(ctx.configPath, entry.source));
-    manifest = app.manifest;
-  } catch {
-    // DIST-REQ-2: not downloaded yet, so describe it from the catalog.
-    manifest = sourceMetadata(ctx.configPath, entry.source);
-  }
+  // The Manifest on disk once downloaded, otherwise the catalog entry
+  // (DIST-REQ-2). The App's code is not loaded to describe it.
+  const manifest = sourceMetadata(ctx.configPath, entry.source);
 
   if (!manifest) {
     return {
@@ -78,79 +71,57 @@ export async function handleInfo(
   };
 }
 
+/** `<alias> info`: the App behind an Installation, as the Station has it. */
 async function handleAliasInfo(alias: string, context: HandlerContext): Promise<HandlerResult> {
-  const { ctx } = context;
-  const instance = getInstallation(ctx.configPath, alias);
+  const station = stationOf(context);
+  if (isResult(station)) return station;
 
-  if (!instance) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: {
-        message: `Unknown alias: ${alias}`,
-        suggestion: 'Run "installations" to see installed apps.',
-      },
-    };
-  }
-
-  const entry = ctx.config.apps[instance.appId];
-  if (!entry) {
-    return {
-      success: false,
-      exitCode: 2,
-      error: { message: `App configuration missing for ${instance.appId}` },
-    };
-  }
-
-  const source = resolveSourcePath(ctx.configPath, entry.source);
-  let manifest: Record<string, unknown> | undefined;
   try {
-    const app = await resolveApp(instance.appId, source);
-    manifest = app.manifest;
-  } catch {
-    manifest = undefined;
-  }
-
-  if (!manifest) {
-    return {
-      success: false,
-      exitCode: 1,
-      error: { message: `Could not read manifest for ${instance.appId}` },
-    };
-  }
-
-  // Auth status
-  const auth = await getAuthInfo(instance.installationId, instance.appId, ctx);
-  const authStatus = auth.authenticated ? 'authenticated' : 'not configured';
-
-  // Tool count — boot a session and list tools
-  let toolCount = 0;
-  try {
-    const app = await resolveApp(instance.appId, source);
-    const { session, shutdown } = await openAppSession(app, ctx, instance.installationId);
-    try {
-      const tools = await session.listTools();
-      toolCount = tools.length;
-    } finally {
-      await session.close();
-      await shutdown();
+    const instance = await findInstallation(station, alias);
+    if (!instance) {
+      return {
+        success: false,
+        exitCode: 2,
+        error: {
+          message: `Unknown alias: ${alias}`,
+          suggestion: 'Run "installations" to see installed apps.',
+        },
+      };
     }
-  } catch {
-    // If we can't boot the session, report 0 tools
-    toolCount = 0;
+
+    let manifest: Record<string, unknown> | undefined;
+    try {
+      manifest = await station.api('GET', `/apps/${encodeURIComponent(instance.appId)}/manifest`);
+    } catch (err) {
+      if (!(err instanceof StationError)) throw err;
+      manifest = undefined;
+    }
+    if (!manifest) {
+      return {
+        success: false,
+        exitCode: 1,
+        error: { message: `Could not read manifest for ${instance.appId}` },
+      };
+    }
+
+    // Tool count: what the Station lists for this Installation.
+    let toolCount = 0;
+    try {
+      toolCount = (
+        await withSession(station, instance, context.sessions, (session) => session.listTools())
+      ).length;
+    } catch {
+      toolCount = 0;
+    }
+
+    const data = formatManifestData(manifest) as Record<string, ResultValue>;
+    data.Instance = alias;
+    data['Auth status'] = instance.auth?.authenticated ? 'authenticated' : 'not configured';
+    data.Tools = toolCount;
+    return { success: true, data: data as ResultValue, exitCode: 0 };
+  } catch (err) {
+    return station.failure(err);
   }
-
-  const data = formatManifestData(manifest);
-  const instanceData = data as Record<string, ResultValue>;
-  instanceData.Instance = alias;
-  instanceData['Auth status'] = authStatus;
-  instanceData.Tools = toolCount;
-
-  return {
-    success: true,
-    data: instanceData as ResultValue,
-    exitCode: 0,
-  };
 }
 
 function formatManifestData(manifest: Record<string, unknown>): ResultValue {

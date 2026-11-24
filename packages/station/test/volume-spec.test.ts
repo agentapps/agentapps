@@ -21,6 +21,7 @@ import {
   InProcessRuntime,
   type InstanceEnvironment,
   LocalProcessRuntime,
+  LocalVolumeStore,
   resolveMountPath,
   type VolumeHandlerContext,
 } from '../src/index.js';
@@ -40,7 +41,7 @@ function ctx(
   sessionId: string,
   permissions: { volume?: boolean } | undefined = { volume: true },
 ): VolumeHandlerContext {
-  return { volumesBasePath: base, workspaceId, sessionId, permissions };
+  return { volume: new LocalVolumeStore(base), workspaceId, sessionId, permissions };
 }
 
 function req(type: string, path: string, extra: Record<string, unknown> = {}) {
@@ -95,7 +96,7 @@ describe('Workspace Volume', () => {
       resolveMountPath({
         mountVolume: true,
         permissions: {},
-        volumesBasePath: base,
+        volume: new LocalVolumeStore(base),
         workspaceId: 'hexagon',
       }),
     ).toBeUndefined();
@@ -112,7 +113,7 @@ describe('Workspace Volume', () => {
         resolveMountPath({
           mountVolume: true,
           permissions: open.effectivePermissions?.permissions,
-          volumesBasePath: base,
+          volume: new LocalVolumeStore(base),
           workspaceId: 'hexagon',
         }),
     });

@@ -1,7 +1,7 @@
 {
   "id": "app.hunter",
   "name": "Hunter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Hunter.io email finder — find professional email addresses by domain, guess a person's email from their name, and verify email deliverability.",
   "tagline": "Find professional emails, guess addresses, and verify deliverability with Hunter.io",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

@@ -10,16 +10,24 @@ import { createApp } from '@agentapps/sdk';
 import { classifyGitHubError } from './tools/_github-error.js';
 import { registerTools } from './tools/index.js';
 
-const app = createApp({
+// Exported (not just wrapped in `factory`) so tests can call `app.toManifest()`
+// and compare it against `agentapp.json`: the two describe the same app.
+export const app = createApp({
   id: 'app.github',
-  version: '2.0.2',
+  version: '2.0.3',
   name: 'GitHub',
-  description: 'GitHub REST API (user-to-server OAuth) + local git operations',
+  description:
+    'GitHub repository management + local git development environment - repos, issues, pull requests, actions, commits, branches, releases, plus local git operations on cloned repos',
+  tagline: 'Manage repos, issues, PRs, and actions on GitHub',
   author: { name: 'Pablo López Torres', email: 'pablolopeztorres@gmail.com' },
   license: 'MIT',
-  category: 'developer-tools',
-  keywords: ['github', 'git', 'repos', 'issues', 'pull-requests', 'actions', 'ci-cd'],
-  runtime: { transport: 'stdio', command: 'node', args: ['dist/app.js'] },
+  logo: 'assets/logo.svg',
+  logoMono: 'assets/logo-mono.svg',
+  terms: 'https://agentapps.tech/terms',
+  category: 'development',
+  keywords: ['github', 'git', 'repositories', 'issues', 'pull-requests', 'ci-cd', 'actions'],
+  entrypoint: { type: 'module', path: 'src/app.ts', export: 'factory' },
+  runtime: { transport: 'stdio', command: 'tsx', args: ['src/app.ts'] },
   capabilities: { tools: true, health: true },
   auth: {
     type: 'github-app',
@@ -27,11 +35,24 @@ const app = createApp({
     appSlug: 'agentapps',
     setupUrl: 'https://github.com/apps/agentapps/installations/new',
     userOAuth: true,
+    tokenUrl: 'https://github.com/login/oauth/access_token',
+    permissions: {
+      contents: 'write',
+      issues: 'write',
+      pull_requests: 'write',
+      metadata: 'read',
+      workflows: 'write',
+      actions: 'write',
+      checks: 'write',
+      members: 'read',
+      administration: 'read',
+    },
+    events: ['installation', 'push', 'pull_request', 'issues'],
     systemSecrets: [
       'GITHUB_APP_ID',
-      'GITHUB_APP_PRIVATE_KEY',
       'GITHUB_APP_CLIENT_ID',
       'GITHUB_APP_CLIENT_SECRET',
+      'GITHUB_APP_PRIVATE_KEY',
       'GITHUB_APP_WEBHOOK_SECRET',
       'GITHUB_APP_SLUG',
     ],

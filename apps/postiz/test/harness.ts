@@ -1,0 +1,182 @@
+/**
+ * Test harness for the Postiz Agent App.
+ *
+ * Runs the app in-process behind the real station AppStation, so tests take the same
+ * protocol path as the CLI and MCP clients. The host side answers secret requests from
+ * the mutable `installationSecrets` and `systemSecrets` objects (delete a key to exercise a
+ * missing-secret path), records `ctx.secrets.updateInstallation()` calls in `secretUpdates`, and
+ * answers `ctx.auth.refresh()` from `refresh` (set `refresh.next` to null to make the
+ * refresh fail, as with a revoked refresh token). `fetch` is replaced per test; an
+ * unexpected request fails loudly.
+ */
+
+import {
+  createEnvelope,
+  createInProcessTransportPair,
+  type MessageBase,
+  PROTOCOL_VERSION,
+  type Transport,
+} from '@agentapps/protocol';
+import { AppStation, InProcessRuntime } from '@agentapps/station';
+import { afterEach, beforeEach, type Mock, vi } from 'vitest';
+import { factory } from '../src/app.js';
+
+export type Message = Record<string, unknown>;
+export type ToolInfo = { name: string; annotations?: Record<string, unknown> };
+
+let appStation: AppStation;
+let host: Transport;
+let received: MessageBase[] = [];
+let openSessionId: string | undefined;
+
+/** Fake installation secrets the host hands to the app (never real ones). */
+export let installationSecrets: Record<string, string> = {};
+/** Fake system secrets, shared by every installation (an OAuth client, an app id). */
+export let systemSecrets: Record<string, string> = {};
+/** What the app wrote with `ctx.secrets.updateInstallation()`, in order. */
+export const secretUpdates: Array<Record<string, string>> = [];
+/** What the host answers to `ctx.auth.refresh()`: a new access token, or null for a failure. */
+export const refresh: { next: string | null; calls: number } = { next: null, calls: 0 };
+
+beforeEach(() => {
+  openSessionId = undefined;
+  installationSecrets = {
+    POSTIZ_API_KEY: 'fake-postiz_api_key',
+    POSTIZ_API_URL: 'cloud',
+  };
+  systemSecrets = {};
+  secretUpdates.length = 0;
+  refresh.next = 'fake-refreshed-access-token';
+  refresh.calls = 0;
+  // Any request a test did not queue fails with a clear message.
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('unexpected fetch in test')));
+
+  appStation = new AppStation({
+    appId: 'app.postiz',
+    appVersion: '1.0.0',
+    runtime: new InProcessRuntime(factory),
+  });
+  const [hostSide, ctrlSide] = createInProcessTransportPair();
+  host = hostSide;
+  received = [];
+  host.onMessage((msg) => {
+    received.push(msg);
+    const m = msg as Message;
+    const requestId = (m.requestId as string) ?? (m.id as string);
+    const reply = (type: string, body: Message) =>
+      host.send({
+        ...createEnvelope(type, m.sessionId as string),
+        id: requestId,
+        requestId,
+        ...body,
+      } as MessageBase);
+    if (m.type === 'get_installation_secrets')
+      reply('installation_secrets', { secrets: installationSecrets });
+    if (m.type === 'get_system_secrets') reply('system_secrets', { secrets: systemSecrets });
+    if (m.type === 'update_installation_secrets') {
+      const update = m.secrets as Record<string, string>;
+      secretUpdates.push(update);
+      Object.assign(installationSecrets, update);
+      reply('update_installation_secrets_response', { success: true });
+    }
+    if (m.type === 'refresh_token') {
+      // Like the host: exchange the refresh token, store the new access token, return it.
+      refresh.calls++;
+      const token = refresh.next;
+      if (token) installationSecrets.ACCESS_TOKEN = token;
+      reply(
+        'refresh_token_response',
+        token ? { accessToken: token } : { accessToken: '', error: 'invalid_grant' },
+      );
+    }
+  });
+  appStation.accept(ctrlSide);
+});
+
+afterEach(async () => {
+  vi.unstubAllGlobals();
+  await appStation.shutdown();
+});
+
+async function waitFor(predicate: (msg: Message) => boolean, timeoutMs = 3000): Promise<Message> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const found = received.find((m) => predicate(m as Message));
+    if (found) return found as Message;
+    await new Promise((r) => setTimeout(r, 5));
+  }
+  throw new Error('Timeout waiting for message');
+}
+
+const waitForType = (type: string) => waitFor((m) => m.type === type);
+
+export async function initAndOpen(): Promise<string> {
+  host.send({
+    ...createEnvelope('initialize'),
+    supportedVersions: [PROTOCOL_VERSION],
+    host: { name: 'test', version: '1.0.0' },
+    capabilities: { directConnection: false },
+  } as MessageBase);
+  await waitForType('initialized');
+  received.length = 0;
+  host.send({
+    ...createEnvelope('session_open'),
+    installationId: 'inst_test',
+    tenant: { userId: 'u_test' },
+  } as MessageBase);
+  const opened = await waitForType('session_opened');
+  received.length = 0;
+  return opened.sessionId as string;
+}
+
+/** Calls a tool and returns the `tool_result` message ({ success, result | error }). */
+export async function callTool(tool: string, args: Record<string, unknown>): Promise<Message> {
+  openSessionId ??= await initAndOpen();
+  received.length = 0;
+  host.send({
+    ...createEnvelope('tool_call'),
+    sessionId: openSessionId,
+    tool,
+    arguments: args,
+    context: { userId: 'u_test', installationId: 'inst_test' },
+  } as MessageBase);
+  return waitForType('tool_result');
+}
+
+export async function listTools(): Promise<ToolInfo[]> {
+  const sessionId = await initAndOpen();
+  host.send({ ...createEnvelope('list_tools'), sessionId } as MessageBase);
+  return (await waitForType('tools_list')).tools as ToolInfo[];
+}
+
+export async function runHealthCheck(): Promise<Message> {
+  const sessionId = await initAndOpen();
+  host.send({ ...createEnvelope('health_check'), sessionId } as MessageBase);
+  return waitForType('health_status');
+}
+
+export function jsonResponse(
+  body: unknown,
+  status = 200,
+  headers: Record<string, string> = {},
+): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    statusText: status === 200 ? 'OK' : 'Error',
+    headers: { 'Content-Type': 'application/json', ...headers },
+  });
+}
+
+/** Answers the next fetch calls with these responses, in order; anything beyond fails. */
+export function mockFetch(...responses: Response[]): Mock {
+  const fetchMock = vi.fn().mockRejectedValue(new Error('unexpected fetch in test'));
+  for (const r of responses) fetchMock.mockResolvedValueOnce(r);
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock;
+}
+
+/** The URL and init of the n-th fetch call. */
+export function requestOf(fetchMock: Mock, index = 0): { url: URL; init: RequestInit } {
+  const [url, init] = fetchMock.mock.calls[index] as [string | URL, RequestInit];
+  return { url: new URL(String(url)), init: init ?? {} };
+}

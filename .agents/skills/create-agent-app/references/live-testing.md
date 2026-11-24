@@ -51,7 +51,9 @@ Give it a scratch config that lists only your app, so nothing else is touched:
 
 ```bash
 SCRATCH=<a scratch directory>; mkdir -p "$SCRATCH"
-printf '{ "apps": [ { "source": "%s" } ] }\n' "$(cd <app-dir> && pwd)" > "$SCRATCH/agentapps.json"
+PORT=<a free port, not the one of the user's own station>
+printf '{ "station": { "port": %s, "publicUrl": "http://localhost:%s" }, "cli": { "stationUrl": "http://localhost:%s" }, "apps": [ { "source": "%s" } ] }\n' \
+  "$PORT" "$PORT" "$PORT" "$(cd <app-dir> && pwd)" > "$SCRATCH/agentapps.json"
 cp ~/.agentapps/config.json "$SCRATCH/global-config.backup.json" 2>/dev/null || true
 aa() { npx @agentapps/cli --config "$SCRATCH/agentapps.json" "$@"; }   # a function works in bash and zsh
 ```
@@ -89,12 +91,15 @@ the code and stores the tokens for the installation. So:
 
 1. The user registers an OAuth client with the provider, or gives you its id and secret, with
    the station's callback as redirect URI: `<station.publicUrl>/auth/callback`
-   (`http://localhost:<port>/auth/callback` for a local station). A provider in a testing mode
-   (Google's "Testing" publishing status) accepts only listed test users: add the account first.
-2. Add `"station": { "publicUrl": "http://localhost:<port>" }` to the scratch `agentapps.json`
-   (or set `REDIRECT_URI` on the app id), start the station in another terminal with
-   `aa serve <port>`, and set the client on the app id:
-   `aa config app.<id> CLIENT_ID:"$CLIENT_ID" CLIENT_SECRET:"$CLIENT_SECRET"`.
+   (`http://localhost:<port>/auth/callback` for a local station). The redirect URI is never a
+   secret of the app: the station supplies it. A provider in a testing mode (Google's "Testing"
+   publishing status) accepts only listed test users: add the account first.
+2. The scratch `agentapps.json` above already carries both `station.publicUrl` (a station does
+   not start without a public URL) and `cli.stationUrl` (where the CLI finds the station). Start
+   the station in another terminal with `aa serve`, and set the client on the app id:
+   `aa config app.<id> CLIENT_ID:"$CLIENT_ID" CLIENT_SECRET:"$CLIENT_SECRET"`. Run
+   `aa config app.<id>` with no values to read the app's `auth.setup` steps with the redirect
+   URI filled in.
 3. `aa <alias> auth` opens the consent page and waits until the station has the tokens;
    `--url-only` prints the URL for a browser elsewhere. `aa <alias> auth reauth` discards the
    tokens and starts again, `aa <alias> auth logout` removes them. `aa status <alias>` says

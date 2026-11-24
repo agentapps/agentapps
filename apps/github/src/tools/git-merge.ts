@@ -1,5 +1,5 @@
 import type { AgentApp } from '@agentapps/sdk';
-import { assertIsRepo, resolveRepoPath, runGit } from '../lib/git-local.js';
+import { assertIsRepo, positional, resolveRepoPath, runGit } from '../lib/git-local.js';
 import { throwClassifiedGitError } from './_git-error.js';
 
 export function registerGitMergeTool(app: AgentApp) {
@@ -69,7 +69,7 @@ export function registerGitMergeTool(app: AgentApp) {
       if (a.strategyOption) flags.push('-X', a.strategyOption);
       if (a.message) flags.push('-m', a.message);
 
-      const result = runGit(repoPath, ['merge', ...flags, a.target]);
+      const result = runGit(repoPath, ['merge', ...flags, positional(a.target, 'target')]);
       if (result.code !== 0) throwClassifiedGitError(result);
 
       const branchResult = runGit(repoPath, ['rev-parse', '--abbrev-ref', 'HEAD']);

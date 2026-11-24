@@ -1,7 +1,7 @@
 {
   "id": "app.linear",
   "name": "Linear",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Linear issue tracking - list, create, update issues, manage projects, labels, teams and users",
   "tagline": "Manage issues, projects, and labels in Linear",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },

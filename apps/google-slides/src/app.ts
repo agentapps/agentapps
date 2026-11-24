@@ -4,7 +4,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.slides',
-  version: '2.0.2',
+  version: '2.1.0',
   name: 'Google Slides',
   description:
     'Create, read, update, and delete Google Slides presentations — full read/write support for slides, text, and batch operations',

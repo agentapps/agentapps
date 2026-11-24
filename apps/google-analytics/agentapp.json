@@ -1,11 +1,13 @@
 {
   "id": "app.google.analytics",
   "name": "Google Analytics",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Google Analytics 4 (GA4) — run reports, query realtime data, and manage properties and data streams",
   "tagline": "Run GA4 reports, query realtime data, and manage properties and data streams",
   "author": { "name": "Pablo López Torres", "email": "pablolopeztorres@gmail.com" },
   "license": "MIT",
+  "logo": "assets/logo.svg",
+  "logoMono": "assets/logo-mono.svg",
   "terms": "https://agentapps.tech/terms",
   "category": "google",
   "keywords": [
@@ -24,7 +26,7 @@
   "auth": {
     "type": "oauth2",
     "provider": "google",
-    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET", "REDIRECT_URI"],
+    "systemSecrets": ["CLIENT_ID", "CLIENT_SECRET"],
     "installationSecrets": ["ACCESS_TOKEN", "REFRESH_TOKEN", "EMAIL", "EXPIRY_DATE"],
     "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
     "tokenUrl": "https://oauth2.googleapis.com/token",

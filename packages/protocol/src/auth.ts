@@ -107,6 +107,15 @@ export type ApiKeyIdentity = z.infer<typeof ApiKeyIdentitySchema>;
 // API key record (stored — never contains the raw key)
 // ----------------------------------------------------------------------------
 
+/**
+ * The roles an API Key may carry: who operates the Station, who owns a
+ * Workspace, and who only uses it.
+ *
+ * @spec STADMIN-REQ-8
+ */
+export const API_KEY_ROLES = ['station-operator', 'workspace-owner', 'workspace-member'] as const;
+export type ApiKeyRole = (typeof API_KEY_ROLES)[number];
+
 /** Stored API key record. The raw key is never persisted — only its hash. */
 export const ApiKeyRecordSchema = z.object({
   /** Unique key identifier. */
@@ -129,6 +138,16 @@ export const ApiKeyRecordSchema = z.object({
   expiresAt: z.string().datetime().optional(),
   /** Revocation timestamp (ISO 8601). Present when the key has been revoked. */
   revokedAt: z.string().datetime().optional(),
+  /**
+   * What the key may administer. Absent means `workspace-member`: it calls
+   * tools under its Policy and administers nothing (STADMIN-REQ-8).
+   */
+  role: z.enum(API_KEY_ROLES).optional(),
+  /**
+   * The Workspace the key belongs to. Absent means the Station's home
+   * Workspace; a `station-operator` key belongs to none (STADMIN-REQ-3).
+   */
+  workspaceId: z.string().min(1).optional(),
 });
 export type ApiKeyRecord = z.infer<typeof ApiKeyRecordSchema>;
 

@@ -19,6 +19,7 @@ import {
   handleVolumeRequest,
   type VolumeHandlerContext,
 } from '../../src/file-handlers/volume-handlers.js';
+import { InMemorySecretStore, LocalDataStore, LocalVolumeStore } from '../../src/index.js';
 import { StationServer } from '../../src/server.js';
 
 // ---------------------------------------------------------------------------
@@ -39,11 +40,27 @@ beforeAll(async () => {
   process.env.AGENTAPPS_VOLUMES_BASE_PATH = tempBase;
   process.env.AGENTAPPS_STATION_SECRET = TEST_SECRET;
 
-  server = new StationServer();
+  // The server and the test share one Data Store and one link-signing secret.
+  const secretStore = new InMemorySecretStore();
+  await secretStore.setLinkSigningSecret({ stationId: 'stn_test' }, TEST_SECRET);
+  const dataStore = new LocalDataStore({
+    stationId: 'stn_test',
+    storageDir: join(tempBase, 'storage'),
+    dataDir: tempBase,
+    otherStationsDir: join(tempBase, 'stations'),
+  });
+  server = new StationServer({
+    stationId: 'stn_test',
+    workspaceId: 'ws_test',
+    secretStore,
+    dataStore,
+    publicUrl: 'http://station.test',
+  });
   const info = await server.start(0, '127.0.0.1');
   baseUrl = info.url;
   objectStore = new ObjectStore({
-    volumesBasePath: tempBase,
+    objects: dataStore.objects,
+    stationId: 'stn_test',
     stationSecret: TEST_SECRET,
     publicUrl: baseUrl,
   });
@@ -58,7 +75,7 @@ afterAll(async () => {
 
 function makeVolCtx(workspaceId: string): VolumeHandlerContext {
   return {
-    volumesBasePath: tempBase,
+    volume: new LocalVolumeStore(tempBase),
     workspaceId,
     sessionId: 'sess_int',
     permissions: { volume: true },

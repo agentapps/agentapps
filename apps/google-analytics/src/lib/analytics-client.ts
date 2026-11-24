@@ -10,7 +10,6 @@ import { google } from 'googleapis';
 export interface AnalyticsSecrets {
   CLIENT_ID?: string;
   CLIENT_SECRET?: string;
-  REDIRECT_URI?: string;
   ACCESS_TOKEN?: string;
   REFRESH_TOKEN?: string;
   EMAIL?: string;
@@ -36,7 +35,6 @@ export async function getAnalyticsSecrets(ctx: SecretsContext): Promise<Analytic
 export async function createAnalyticsClients(secrets: AnalyticsSecrets) {
   const clientId = secrets.CLIENT_ID;
   const clientSecret = secrets.CLIENT_SECRET;
-  const redirectUrisRaw = secrets.REDIRECT_URI;
 
   if (!clientId || !clientSecret) {
     throw new Error(
@@ -44,19 +42,7 @@ export async function createAnalyticsClients(secrets: AnalyticsSecrets) {
     );
   }
 
-  // Placeholder callback — the station overrides it with its own reachable
-  // domain via the REDIRECT_URI system secret ({publicUrl}/auth/callback).
-  let redirectUri = 'https://your-station.example.com/auth/callback';
-  if (redirectUrisRaw) {
-    try {
-      const uris = JSON.parse(redirectUrisRaw);
-      redirectUri = Array.isArray(uris) ? uris[0] : redirectUrisRaw;
-    } catch {
-      redirectUri = redirectUrisRaw;
-    }
-  }
-
-  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
 
   const accessToken = secrets.ACCESS_TOKEN;
   const refreshToken = secrets.REFRESH_TOKEN;

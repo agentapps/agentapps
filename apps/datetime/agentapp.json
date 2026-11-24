@@ -1,7 +1,7 @@
 {
   "$schema": "https://agentapps.dev/schemas/app-manifest.json",
   "id": "app.datetime",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "name": "Date & Time",
   "description": "Tells the model the current date, time and timezone on every turn.",
   "tagline": "The current date, time and timezone on every turn",

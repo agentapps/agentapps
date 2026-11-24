@@ -29,7 +29,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.google.calendar',
-  version: '2.0.0',
+  version: '2.1.0',
   name: 'Google Calendar',
   description:
     'Full Google Calendar integration with real OAuth2, token refresh, and complete event CRUD.',
@@ -45,7 +45,7 @@ const app = createApp({
     authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
     tokenUrl: 'https://oauth2.googleapis.com/token',
     scopes: ['https://www.googleapis.com/auth/calendar'],
-    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET', 'REDIRECT_URI'],
+    systemSecrets: ['CLIENT_ID', 'CLIENT_SECRET'],
     installationSecrets: ['ACCESS_TOKEN', 'REFRESH_TOKEN', 'expiresAt'],
   },
   installation: { singleton: true, requiresUserConsent: true },

@@ -9,7 +9,7 @@ import { registerTools } from './tools/index.js';
 
 const app = createApp({
   id: 'app.bash',
-  version: '1.0.2',
+  version: '1.0.3',
   name: 'Bash',
   description:
     'Execute bash commands on the system. Provides shell access for automation and system tasks.',

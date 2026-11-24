@@ -7,10 +7,12 @@
 useDefault = true
 
 [[allowlists]]
-description = "Synthetic fixtures in unit tests: a fake OAuth token, a fake API key and an invented pagination cursor. None is a real credential."
+description = "Synthetic fixtures in unit tests: a fake OAuth token, a fake API key, an invented pagination cursor and an invented Figma file key. None is a real credential."
 regexTarget = "match"
 regexes = [
   '''tok_figma_123''',
   '''rah_test_key_12345''',
   '''DgGerr1iVQreCJVjZDOW_grcp63nueBDipsS4DJpvJo''',
+  # An invented Figma file key in apps/figma/test/tools.test.ts (added 2026-11-24).
+  '''abcDEF123xyz''',
 ]
